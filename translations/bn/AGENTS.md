@@ -1,75 +1,78 @@
 # AGENTS.md
 
-## প্রকল্পের সংক্ষিপ্ত বিবরণ
+## প্রকল্পের পর্যালোচনা
 
-এটি একটি শিক্ষামূলক রিপোজিটরি যা জাভার মাধ্যমে জেনারেটিভ এআই ডেভেলপমেন্ট শেখার জন্য তৈরি। এটি একটি বিস্তৃত হাতে-কলমে কোর্স প্রদান করে যেখানে লার্জ ল্যাঙ্গুয়েজ মডেল (LLMs), প্রম্পট ইঞ্জিনিয়ারিং, এমবেডিংস, RAG (Retrieval-Augmented Generation), এবং মডেল কনটেক্সট প্রোটোকল (MCP) অন্তর্ভুক্ত রয়েছে।
+এটি জাভা দিয়ে জেনেরেটিভ এআই ডেভেলপমেন্ট শেখার জন্য একটি শিক্ষামূলক রেপোজিটরি। এটি লার্জ ল্যাংগুয়েজ মডেলস (LLMs), প্রম্পট ইঞ্জিনিয়ারিং, এম্বেডিংস, RAG (রিট্রিভাল-অগমেন্টেড জেনারেশন), এবং মডেল কন্টেক্সট প্রোটোকল (MCP) সহ একটি ব্যাপক হ্যান্ডস-অন কোর্স প্রদান করে।
 
-**মূল প্রযুক্তি:**
-- জাভা ২১
-- স্প্রিং বুট ৩.৫.x
-- স্প্রিং AI ১.১.x
-- মেভেন
+**প্রধান প্রযুক্তিসমূহ:**
+- Java 21
+- Spring Boot 3.5.x
+- Spring AI 1.1.x
+- Maven
 - LangChain4j
-- GitHub Models, Azure OpenAI, এবং OpenAI SDKs
+- Azure AI Foundry, Azure OpenAI, এবং OpenAI SDKs
 
-**আর্কিটেকচার:**
-- অধ্যায় অনুযায়ী সংগঠিত একাধিক স্ট্যান্ডঅ্যালোন স্প্রিং বুট অ্যাপ্লিকেশন
-- বিভিন্ন এআই প্যাটার্ন প্রদর্শনকারী নমুনা প্রকল্প
-- GitHub Codespaces-র জন্য প্রস্তুত, প্রি-কনফিগারড ডেভ কন্টেইনার সহ
+**স্থাপত্য:**
+- অধ্যায় অনুসারে সংগঠিত একাধিক স্বাধীন Spring Boot অ্যাপ্লিকেশন
+- বিভিন্ন এআই প্যাটার্ন প্রদর্শন করে নমুনা প্রকল্পসমূহ
+- প্রি-কনফিগার করা ডেভ কন্টেইনারসহ GitHub Codespaces-রেডি
 
-## সেটআপ কমান্ড
+## সেটআপ কমান্ডসমূহ
 
-### প্রয়োজনীয়তা
-- জাভা ২১ বা তার বেশি
-- মেভেন ৩.x
-- GitHub ব্যক্তিগত অ্যাক্সেস টোকেন (GitHub Models-এর জন্য)
-- ঐচ্ছিক: Azure OpenAI ক্রেডেনশিয়াল
+### পূর্বশর্তসমূহ
+- Java 21 বা তার উপরে
+- Maven 3.x
+- Azure AI Foundry মডেল ডিপ্লয়মেন্ট সহ একটি Azure সাবস্ক্রিপশন (`azd up` দিয়ে প্রোভিশন করুন)
+- Azure CLI (`az`) এবং Azure Developer CLI (`azd`), কীলেস অথেন্টিকেশনের জন্য সাইন ইন করা অবস্থায়
 
 ### পরিবেশ সেটআপ
 
 **অপশন ১: GitHub Codespaces (প্রস্তাবিত)**
 ```bash
-# Fork the repository and create a codespace from GitHub UI
-# The dev container will automatically install all dependencies
-# Wait ~2 minutes for environment setup
+# রিপোজিটরিটি ফর্ক করুন এবং GitHub UI থেকে একটি কোডস্পেস তৈরি করুন
+# ডেভ কনটেইনার স্বয়ংক্রিয়ভাবে সমস্ত ডিপেনডেন্সি ইনস্টল করবে
+# পরিবেশ সেটআপের জন্য প্রায় ২ মিনিট অপেক্ষা করুন
 ```
 
 **অপশন ২: লোকাল ডেভ কন্টেইনার**
 ```bash
-# Clone repository
+# রেপোজিটরি ক্লোন করুন
 git clone https://github.com/microsoft/Generative-AI-for-beginners-java.git
 cd Generative-AI-for-beginners-java
 
-# Open in VS Code with Dev Containers extension
-# Reopen in Container when prompted
+# Dev Containers এক্সটেনসন সহ VS Code এ খুলুন
+# প্রম্পট দেওয়া হলে কনটেইনারে পুনরায় খুলুন
 ```
 
 **অপশন ৩: লোকাল সেটআপ**
 ```bash
-# Install dependencies
+# ডিপেন্ডেন্সিগুলি ইনস্টল করুন
 sudo apt-get update
 sudo apt-get install -y maven openjdk-21-jdk
 
-# Verify installation
+# ইনস্টলেশন যাচাই করুন
 java -version
 mvn -version
 ```
 
 ### কনফিগারেশন
 
-**GitHub টোকেন সেটআপ:**
+**Azure AI Foundry সেটআপ (কীলেস, প্রস্তাবিত):**
 ```bash
-# Create a GitHub Personal Access Token
-# Set environment variable
-export GITHUB_TOKEN="your-token-here"
+# Foundry অ্যাকাউন্ট + মডেল ডিপ্লয়মেন্ট কোড হিসেবে প্রস্তুত করুন
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
+# azd আপনার এন্ডপয়েন্ট সহ examples/basic-chat-azure/.env লেখে (কোনো কী নয়)
 ```
 
-**Azure OpenAI সেটআপ (ঐচ্ছিক):**
+**ম্যানুয়াল এন্ডপয়েন্ট কনফিগ:**
 ```bash
-# For examples using Azure OpenAI
+# যদি আপনি azd ব্যবহার না করে থাকেন, তাহলে নিজে এন্ডপয়েন্ট সেট করুন (auth az login এর মাধ্যমে keyless থাকে)
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# .env সম্পাদনা করুন: AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com/
 ```
 
 ## ডেভেলপমেন্ট ওয়ার্কফ্লো
@@ -91,13 +94,13 @@ cp .env.example .env
 
 ### অ্যাপ্লিকেশন চালানো
 
-**স্প্রিং বুট অ্যাপ্লিকেশন চালানো:**
+**Spring Boot অ্যাপ্লিকেশন চালানো:**
 ```bash
 cd [project-directory]
 mvn spring-boot:run
 ```
 
-**প্রকল্প তৈরি করা:**
+**প্রকল্প বিল্ড করা:**
 ```bash
 cd [project-directory]
 mvn clean install
@@ -107,42 +110,42 @@ mvn clean install
 ```bash
 cd 04-PracticalSamples/calculator
 mvn spring-boot:run
-# Server runs on http://localhost:8080
+# সার্ভার চলে http://localhost:8080 এ
 ```
 
 **ক্লায়েন্ট উদাহরণ চালানো:**
 ```bash
-# After starting the server in another terminal
+# অন্য টার্মিনালে সার্ভার চালু করার পরে
 cd 04-PracticalSamples/calculator
 
-# Direct MCP client
+# সরাসরি MCP ক্লায়েন্ট
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient"
 
-# AI-powered client (requires GITHUB_TOKEN)
+# কৃত্রিম বুদ্ধিমত্তা চালিত ক্লায়েন্ট (AZURE_OPENAI_ENDPOINT + az login প্রয়োজন)
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient"
 
-# Interactive bot
+# ইন্টারেক্টিভ বট
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.Bot"
 ```
 
 ### হট রিলোড
-স্প্রিং বুট ডেভটুলস প্রকল্পগুলিতে অন্তর্ভুক্ত রয়েছে যা হট রিলোড সমর্থন করে:
+যে প্রজেক্টগুলো হট রিলোড সমর্থন করে সেগুলোতে Spring Boot DevTools অন্তর্ভুক্ত আছে:
 ```bash
-# Changes to Java files will automatically reload when saved
+# জাভা ফাইল পরিবর্তনগুলি সংরক্ষিত হলে স্বয়ংক্রিয়ভাবে পুনরায় লোড হবে
 mvn spring-boot:run
 ```
 
-## টেস্টিং নির্দেশনা
+## পরীক্ষার নির্দেশাবলী
 
 ### টেস্ট চালানো
 
-**প্রকল্পে সব টেস্ট চালানো:**
+**একটি প্রকল্পের সব টেস্ট চালানো:**
 ```bash
 cd [project-directory]
 mvn test
 ```
 
-**বিস্তারিত আউটপুট সহ টেস্ট চালানো:**
+**ভেরBOSE আউটপুট সহ টেস্ট চালানো:**
 ```bash
 mvn test -X
 ```
@@ -152,40 +155,40 @@ mvn test -X
 mvn test -Dtest=CalculatorServiceTest
 ```
 
-### টেস্টের কাঠামো
-- টেস্ট ফাইল JUnit 5 (Jupiter) ব্যবহার করে
-- টেস্ট ক্লাস `src/test/java/`-এ অবস্থিত
-- ক্যালকুলেটর প্রকল্পে ক্লায়েন্ট উদাহরণ `src/test/java/com/microsoft/mcp/sample/client/`-এ রয়েছে
+### টেস্ট কাঠামো
+- টেস্ট ফাইলগুলো JUnit 5 (Jupiter) ব্যবহার করে
+- টেস্ট ক্লাসগুলো `src/test/java/` এ অবস্থিত
+- ক্যালকুলেটর প্রকল্পের ক্লায়েন্ট উদাহরণগুলো `src/test/java/com/microsoft/mcp/sample/client/` এ আছে
 
 ### ম্যানুয়াল টেস্টিং
-অনেক উদাহরণ ইন্টারঅ্যাকটিভ অ্যাপ্লিকেশন যা ম্যানুয়াল টেস্টিং প্রয়োজন:
+অনেক উদাহরণই ইন্টারঅ্যাকটিভ অ্যাপ্লিকেশন যা ম্যানুয়াল টেস্টিং প্রয়োজন:
 
-1. `mvn spring-boot:run` দিয়ে অ্যাপ্লিকেশন শুরু করুন
-2. এন্ডপয়েন্ট পরীক্ষা করুন বা CLI-এর সাথে ইন্টারঅ্যাক্ট করুন
-3. প্রত্যাশিত আচরণ প্রকল্পের README.md-তে ডকুমেন্টেশনের সাথে মিলে কিনা যাচাই করুন
+1. `mvn spring-boot:run` দিয়ে অ্যাপ্লিকেশন স্টার্ট করুন
+2. এন্ডপয়েন্টগুলো টেস্ট করুন বা CLI এর সাথে ইন্টারঅ্যাক্ট করুন
+3. প্রত্যাশিত আচরণ প্রতিটি প্রকল্পের README.md এর সাথে মেলাচ্ছে কিনা যাচাই করুন
 
-### GitHub Models দিয়ে টেস্টিং
-- ফ্রি টিয়ার সীমা: ১৫টি অনুরোধ/মিনিট, ১৫০টি/দিন
-- সর্বাধিক ৫টি একযোগে অনুরোধ
-- দায়িত্বশীল এআই উদাহরণ দিয়ে বিষয়বস্তু ফিল্টারিং পরীক্ষা করুন
+### Azure AI Foundry এর সাথে টেস্টিং
+- উদাহরণ চালানোর আগে `az login` দিয়ে সাইন ইন করুন (কীলেস অথ)
+- নিশ্চিত করুন আপনার একাউন্টে রিসোর্সের জন্য Cognitive Services OpenAI User ভূমিকা আছে
+- অধ্যায় 5 এর রেসপনসিবল AI উদাহরণের সাথে কনটেন্ট ফিল্টারিং টেস্ট করুন
 
-## কোড স্টাইল নির্দেশিকা
+## কোড স্টাইল গাইডলাইনস
 
-### জাভা কনভেনশন
-- **জাভা ভার্সন:** জাভা ২১ আধুনিক ফিচার সহ
-- **স্টাইল:** স্ট্যান্ডার্ড জাভা কনভেনশন অনুসরণ করুন
-- **নামকরণ:** 
+### Java কনভেনশনস
+- **Java ভার্সন:** Java 21 আধুনিক ফিচারসহ
+- **স্টাইল:** স্ট্যান্ডার্ড Java কনভেনশন অনুযায়ী
+- **নেমিং:**
   - ক্লাস: PascalCase
   - মেথড/ভেরিয়েবল: camelCase
   - কনস্ট্যান্ট: UPPER_SNAKE_CASE
-  - প্যাকেজ নাম: ছোট হাতের অক্ষরে
+  - প্যাকেজ নাম: ছোট হাতের
 
-### স্প্রিং বুট প্যাটার্ন
-- বিজনেস লজিকের জন্য `@Service` ব্যবহার করুন
+### Spring Boot প্যাটার্নস
+- ব্যবসায়িক লজিকের জন্য `@Service` ব্যবহার করুন
 - REST এন্ডপয়েন্টের জন্য `@RestController` ব্যবহার করুন
-- কনফিগারেশন `application.yml` বা `application.properties`-এর মাধ্যমে করুন
-- হার্ড-কোডেড মানের পরিবর্তে পরিবেশ ভেরিয়েবল ব্যবহার করুন
-- MCP-তে প্রকাশিত মেথডের জন্য `@Tool` অ্যানোটেশন ব্যবহার করুন
+- কনফিগারেশন `application.yml` বা `application.properties` এর মাধ্যমে
+- হার্ড-কোডেড মানের বদলে পরিবেশ ভেরিয়েবল প্রাধান্য দিন
+- MCP-এক্সপোজড মেথডের জন্য `@Tool` অ্যানোটেশন ব্যবহার করুন
 
 ### ফাইল সংগঠন
 ```
@@ -206,20 +209,20 @@ src/
         └── com/microsoft/[component]/
 ```
 
-### নির্ভরতা
-- মেভেন `pom.xml`-এর মাধ্যমে পরিচালিত
-- স্প্রিং AI BOM ভার্সন ম্যানেজমেন্টের জন্য
-- LangChain4j এআই ইন্টিগ্রেশনের জন্য
-- স্প্রিং নির্ভরতার জন্য স্প্রিং বুট স্টার্টার প্যারেন্ট
+### ডিপেন্ডেন্সিসমূহ
+- Maven `pom.xml` এর মাধ্যমে ব্যবস্থাপনা
+- Spring AI BOM ভার্সন ম্যানেজমেন্টের জন্য
+- AI ইন্টিগ্রেশনের জন্য LangChain4j
+- স্প্রিং ডিপেন্ডেন্সির জন্য Spring Boot স্টার্টার প্যারেন্ট
 
 ### কোড মন্তব্য
-- পাবলিক API-এর জন্য JavaDoc যোগ করুন
-- জটিল এআই ইন্টারঅ্যাকশনের জন্য ব্যাখ্যামূলক মন্তব্য অন্তর্ভুক্ত করুন
-- MCP টুলের বর্ণনা স্পষ্টভাবে ডকুমেন্ট করুন
+- পাবলিক API এর জন্য JavaDoc যোগ করুন
+- জটিল AI ইন্টারঅ্যাকশনের জন্য ব্যাখ্যামূলক মন্তব্য দিন
+- MCP টুল বর্ণনাগুলো স্পষ্টভাবে ডকুমেন্ট করুন
 
 ## বিল্ড এবং ডিপ্লয়মেন্ট
 
-### প্রকল্প তৈরি
+### প্রকল্প বিল্ড
 
 **টেস্ট ছাড়া বিল্ড:**
 ```bash
@@ -231,126 +234,132 @@ mvn clean install -DskipTests
 mvn clean install
 ```
 
-**অ্যাপ্লিকেশন প্যাকেজ করা:**
+**অ্যাপ্লিকেশন প্যাকেজিং:**
 ```bash
 mvn package
-# Creates JAR in target/ directory
+# target/ ডিরেক্টরিতে JAR তৈরি করে
 ```
 
-### আউটপুট ডিরেক্টরি
-- কম্পাইল করা ক্লাস: `target/classes/`
-- টেস্ট ক্লাস: `target/test-classes/`
-- JAR ফাইল: `target/*.jar`
-- মেভেন আর্টিফ্যাক্ট: `target/`
+### আউটপুট ডিরেক্টরিসমূহ
+- কম্পাইল করা ক্লাসসমূহ: `target/classes/`
+- টেস্ট ক্লাসসমূহ: `target/test-classes/`
+- জার ফাইলসমূহ: `target/*.jar`
+- Maven আর্টিফ্যাক্টস: `target/`
 
 ### পরিবেশ-নির্দিষ্ট কনফিগারেশন
 
 **ডেভেলপমেন্ট:**
 ```yaml
-# application.yml
+# application.yml (keyless - no api-key; auth via DefaultAzureCredential)
 spring:
   ai:
-    openai:
-      api-key: ${GITHUB_TOKEN}
-      base-url: https://models.inference.ai.azure.com
+    azure:
+      openai:
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 **প্রোডাকশন:**
-- GitHub Models-এর পরিবর্তে Azure AI Foundry Models ব্যবহার করুন
-- বেস-URL Azure OpenAI এন্ডপয়েন্টে আপডেট করুন
-- সিক্রেট Azure Key Vault বা পরিবেশ ভেরিয়েবলের মাধ্যমে পরিচালনা করুন
+- কীলেস অথের জন্য `az login` এর বদলে ম্যানেজড আইডেন্টিটি ব্যবহার করুন
+- `AZURE_OPENAI_ENDPOINT` আপনার প্রোডাকশন Foundry রিসোর্স পয়েন্ট کرے
+- কনফিগারেশন পরিবেশ ভেরিয়েবল বা Azure Key Vault এর মাধ্যমে পরিচালনা করুন
 
 ### ডিপ্লয়মেন্ট বিবেচনা
-- এটি একটি শিক্ষামূলক রিপোজিটরি, নমুনা অ্যাপ্লিকেশন সহ
-- প্রোডাকশন ডিপ্লয়মেন্টের জন্য ডিজাইন করা হয়নি
-- নমুনাগুলি প্রোডাকশনে ব্যবহারযোগ্য প্যাটার্ন প্রদর্শন করে
-- নির্দিষ্ট ডিপ্লয়মেন্ট নোটের জন্য পৃথক প্রকল্পের README দেখুন
+- এটি একটি শিক্ষামূলক রেপোজিটরি যার নমুনা অ্যাপ্লিকেশন রয়েছে
+- সরাসরি প্রোডাকশনে ডিপ্লয় করার জন্য ডিজাইন করা হয়নি
+- নমুনাগুলো প্রোডাকশন ব্যবহারের জন্য প্যাটার্ন দেখায়
+- নির্দিষ্ট ডিপ্লয়মেন্ট নোটের জন্য প্রত্যেক প্রকল্পের README দেখুন
 
 ## অতিরিক্ত নোট
 
-### GitHub Models বনাম Azure OpenAI
-- **GitHub Models:** শেখার জন্য ফ্রি টিয়ার, ক্রেডিট কার্ড প্রয়োজন নেই
-- **Azure OpenAI:** প্রোডাকশন-রেডি, Azure সাবস্ক্রিপশন প্রয়োজন
-- কোড উভয়ের সাথে সামঞ্জস্যপূর্ণ - শুধু এন্ডপয়েন্ট এবং API কী পরিবর্তন করুন
+### Azure AI Foundry
+- **কীলেস অথ:** Microsoft Entra ID দিয়ে সংযুক্ত — কোনো API কী ম্যানেজ করতে হবে না
+- **কোড হিসেবে প্রোভিশন:** Bicep + azd (`azd up`) একাউন্ট ও মডেল ডিপ্লয়মেন্ট তৈরি করে
+- একই OpenAI-কমপ্যাটিবল কোড লোকালি (`az login`) এবং Azure-এ (ম্যানেজড আইডেন্টিটি) চলে
 
-### একাধিক প্রকল্প নিয়ে কাজ করা
-প্রতিটি নমুনা প্রকল্প স্ট্যান্ডঅ্যালোন:
+### একাধিক প্রকল্পের সাথে কাজ
+প্রত্যেক নমুনা প্রকল্প স্বাধীন:
 ```bash
-# Navigate to specific project
+# নির্দিষ্ট প্রজেক্টে নেভিগেট করুন
 cd 04-PracticalSamples/[project-name]
 
-# Each has its own pom.xml and can be built independently
+# প্রতিটির নিজস্ব pom.xml রয়েছে এবং স্বাধীনভাবে তৈরি করা যেতে পারে
 mvn clean install
 ```
 
 ### সাধারণ সমস্যা
 
-**জাভা ভার্সন মিসম্যাচ:**
+**Java ভার্সন মিলছে না:**
 ```bash
-# Verify Java 21
+# জাভা ২১ নিশ্চিত করুন
 java -version
-# Update JAVA_HOME if needed
+# প্রয়োজনে JAVA_HOME আপডেট করুন
 export JAVA_HOME=/usr/lib/jvm/msopenjdk-current
 ```
 
-**নির্ভরতা ডাউনলোড সমস্যা:**
+**ডিপেন্ডেন্সি ডাউনলোড সমস্যা:**
 ```bash
-# Clear Maven cache and retry
+# মেভেন ক্যাশে পরিষ্কার করুন এবং পুনরায় চেষ্টা করুন
 rm -rf ~/.m2/repository
 mvn clean install
 ```
 
-**GitHub টোকেন পাওয়া যায়নি:**
+**এন্ডপয়েন্ট বা সাইন-ইন পাওয়া যায়নি:**
 ```bash
-# Set in current session
-export GITHUB_TOKEN="your-token-here"
+# বর্তমান সেশনে এন্ডপয়েন্ট সেট করুন এবং সাইন ইন করুন (কি ছাড়া)
+export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
+az login
 
-# Or use .env file in project directory
-echo "GITHUB_TOKEN=your-token-here" > .env
+# অথবা প্রকল্প ডিরেক্টরিতে একটি .env ফাইল ব্যবহার করুন
+echo "AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/" > .env
 ```
 
-**পোর্ট ইতিমধ্যে ব্যবহৃত:**
+**পোর্ট ইতিমধ্যে ব্যবহার হচ্ছে:**
 ```bash
-# Spring Boot uses port 8080 by default
-# Change in application.properties:
+# Spring Boot ডিফল্টরূপে 8080 পোর্ট ব্যবহার করে
+# application.properties এ পরিবর্তন:
 server.port=8081
 ```
 
-### বহু-ভাষার সমর্থন
-- ৪৫+ ভাষায় ডকুমেন্টেশন উপলব্ধ, স্বয়ংক্রিয় অনুবাদের মাধ্যমে
-- অনুবাদ `translations/` ডিরেক্টরিতে রয়েছে
-- GitHub Actions ওয়ার্কফ্লো দ্বারা অনুবাদ পরিচালিত
+### বহুভাষা সমর্থন
+- ৪৫+ ভাষায় স্বয়ংক্রিয় অনুবাদের মাধ্যমে ডকুমেন্টেশন উপলব্ধ
+- অনুবাদসমূহ `translations/` ডিরেক্টরিতে
+- অনুবাদ GitHub Actions ওয়ার্কফ্লো দিয়ে পরিচালিত
 
-### শেখার পথ
-1. [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md) দিয়ে শুরু করুন
-2. অধ্যায়গুলো ক্রমানুসারে অনুসরণ করুন (01 → 05)
-3. প্রতিটি অধ্যায়ে হাতে-কলমে উদাহরণ সম্পন্ন করুন
-4. অধ্যায় ৪-এ নমুনা প্রকল্পগুলি অন্বেষণ করুন
-5. অধ্যায় ৫-এ দায়িত্বশীল এআই অনুশীলন শিখুন
+### শিক্ষার পথ
+1. [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md) থেকে শুরু করুন
+2. অধ্যায়গুলো ক্রম অনুযায়ী অনুসরণ করুন (01 → 05)
+3. প্রতিটি অধ্যায়ের হ্যান্ডস-অন উদাহরণ সম্পন্ন করুন
+4. অধ্যায় ৪ এর নমুনা প্রকল্পগুলো অন্বেষণ করুন
+5. অধ্যায় ৫ তে রেসপনসিবল AI অনুশীলন শিখুন
 
 ### ডেভেলপমেন্ট কন্টেইনার
 `.devcontainer/devcontainer.json` কনফিগার করে:
-- জাভা ২১ ডেভেলপমেন্ট পরিবেশ
-- প্রি-ইনস্টলড মেভেন
-- VS Code জাভা এক্সটেনশন
-- স্প্রিং বুট টুলস
+- Java 21 ডেভেলপমেন্ট পরিবেশ
+- Maven প্রি-ইনস্টল্ড
+- VS Code Java এক্সটেনশনস
+- Spring Boot টুলস
 - GitHub Copilot ইন্টিগ্রেশন
-- Docker-in-Docker সমর্থন
+- Docker-in-Docker সাপোর্ট
 - Azure CLI
 
-### পারফরম্যান্স বিবেচনা
-- GitHub Models ফ্রি টিয়ারে রেট সীমা রয়েছে
-- এমবেডিংসের জন্য উপযুক্ত ব্যাচ সাইজ ব্যবহার করুন
+### পারফরমেন্স বিবেচনা
+- Azure AI Foundry ডিপ্লয়মেন্টে প্রতি মিনিটে টোকেন/রিকোয়েস্ট কোটা থাকে
+- এম্বেডিংসের জন্য উপযুক্ত ব্যাচ সাইজ ব্যবহার করুন
 - পুনরাবৃত্ত API কলের জন্য ক্যাশিং বিবেচনা করুন
-- খরচ অপ্টিমাইজেশনের জন্য টোকেন ব্যবহার পর্যবেক্ষণ করুন
+- খরচ অপ্টিমাইজেশনের জন্য টোকেন ব্যবহারের পর্যবেক্ষণ করুন
 
 ### নিরাপত্তা নোট
-- `.env` ফাইল কখনোই কমিট করবেন না (`.gitignore`-এ ইতিমধ্যেই রয়েছে)
-- API কী-এর জন্য পরিবেশ ভেরিয়েবল ব্যবহার করুন
-- GitHub টোকেনের জন্য ন্যূনতম প্রয়োজনীয় স্কোপ রাখুন
-- অধ্যায় ৫-এ দায়িত্বশীল এআই নির্দেশিকা অনুসরণ করুন
+- কখনোই `.env` ফাইল কমিট করবেন না (ইতিমধ্যে `.gitignore` এ আছে)
+- API কীয়ের পরিবর্তে কীলেস অথ (Microsoft Entra ID) প্রাধান্য দিন
+- Azure-এ ম্যানেজড আইডেন্টিটি ব্যবহার করুন; লোকাল ডেভের জন্য `az login`
+- অধ্যায় ৫ এর রেসপনসিবল AI গাইডলাইন অনুসরণ করুন
 
 ---
 
-**অস্বীকৃতি**:  
-এই নথিটি AI অনুবাদ পরিষেবা [Co-op Translator](https://github.com/Azure/co-op-translator) ব্যবহার করে অনুবাদ করা হয়েছে। আমরা যথাসাধ্য সঠিকতার জন্য চেষ্টা করি, তবে অনুগ্রহ করে মনে রাখবেন যে স্বয়ংক্রিয় অনুবাদে ত্রুটি বা অসঙ্গতি থাকতে পারে। মূল ভাষায় থাকা নথিটিকে প্রামাণিক উৎস হিসেবে বিবেচনা করা উচিত। গুরুত্বপূর্ণ তথ্যের জন্য, পেশাদার মানব অনুবাদ সুপারিশ করা হয়। এই অনুবাদ ব্যবহারের ফলে কোনো ভুল বোঝাবুঝি বা ভুল ব্যাখ্যা হলে আমরা দায়ী থাকব না।
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**অস্বীকৃতি**:
+এই নথিটি AI অনুবাদ পরিষেবা [Co-op Translator](https://github.com/Azure/co-op-translator) ব্যবহার করে অনূদিত হয়েছে। যদিও আমরা শুদ্ধতার জন্য চেষ্টা করি, অনুগ্রহ করে মনে রাখবেন যে স্বয়ংক্রিয় অনুবাদে ত্রুটি বা অসঙ্গতি থাকতে পারে। মূল নথিটি তার স্বভাষায় কর্তৃত্বপূর্ণ উৎস হিসেবে বিবেচিত হওয়া উচিত। গুরুত্বপূর্ণ তথ্যের জন্য পেশাদার মানব অনুবাদ সুপারিশ করা হয়। এই অনুবাদের ব্যবহারে প্রয়োজনীয় ভুল বোঝাবুঝি বা ভুল ব্যাখ্যার জন্য আমরা দায়বদ্ধ নই।
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->
