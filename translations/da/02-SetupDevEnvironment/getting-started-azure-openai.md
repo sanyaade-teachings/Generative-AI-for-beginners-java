@@ -1,138 +1,151 @@
-# Opsætning af udviklingsmiljø for Azure OpenAI
+# Opsætning af udviklingsmiljøet til Azure AI Foundry
 
-> **Hurtig start**: Denne guide er til opsætning af Azure OpenAI. For en øjeblikkelig start med gratis modeller, brug [GitHub Models med Codespaces](./README.md#quick-start-cloud).
+> Denne guide opsætter **Azure AI Foundry**-modeller til Java AI-apps i dette kursus ved brug af **nøglefri** autentificering (Microsoft Entra ID) — ingen API-nøgler at administrere. Ny til værktøjerne? Start med [guiden til udviklingsmiljøet](./README.md).
 
-Denne guide hjælper dig med at opsætte Azure AI Foundry-modeller til dine Java AI-applikationer i dette kursus.
+Denne guide opsætter **Azure AI Foundry**-modeller til Java AI-apps i dette kursus. Du har to muligheder:
+
+- **Mulighed A — Provision med `azd` + Bicep (anbefalet):** én kommando implementerer Foundry-kontoen og modeller som kode. Ingen portal-klik.
+- **Mulighed B — Opret ressourcer manuelt** i Azure AI Foundry-portalen.
+
+Begge valgmuligheder bruger **nøglefri autentificering** (Microsoft Entra ID) — der er ingen API-nøgler at kopiere eller lække.
 
 ## Indholdsfortegnelse
 
-- [Hurtigt overblik over opsætning](../../../02-SetupDevEnvironment)
-- [Trin 1: Opret Azure AI Foundry-ressourcer](../../../02-SetupDevEnvironment)
-  - [Opret en hub og et projekt](../../../02-SetupDevEnvironment)
-  - [Udrul GPT-4o-mini-modellen](../../../02-SetupDevEnvironment)
-- [Trin 2: Opret din Codespace](../../../02-SetupDevEnvironment)
-- [Trin 3: Konfigurer dit miljø](../../../02-SetupDevEnvironment)
-- [Trin 4: Test din opsætning](../../../02-SetupDevEnvironment)
-- [Hvad er det næste?](../../../02-SetupDevEnvironment)
-- [Ressourcer](../../../02-SetupDevEnvironment)
-- [Yderligere ressourcer](../../../02-SetupDevEnvironment)
+- [Hvad bliver oprettet](#hvad-bliver-oprettet)
+- [Forudsætninger](#forudsætninger)
+- [Mulighed A: Provision med azd + Bicep (anbefalet)](#option-a-provision-with-azd--bicep-recommended)
+- [Mulighed B: Opret ressourcer manuelt](#mulighed-b-opret-ressourcer-manuelt)
+- [Konfigurer dit miljø](#konfigurer-dit-miljø)
+- [Test din opsætning](#test-din-opsætning)
+- [Hvad nu?](#hvad-nu)
+- [Ressourcer](#ressourcer)
+- [Yderligere ressourcer](#yderligere-ressourcer)
 
-## Hurtigt overblik over opsætning
+## Hvad bliver oprettet
 
-1. Opret Azure AI Foundry-ressourcer (Hub, Projekt, Model)
-2. Opret en Codespace med Java-udviklingscontainer
-3. Konfigurer din .env-fil med Azure OpenAI-legitimationsoplysninger
-4. Test din opsætning med eksempelprojektet
+Bicep-skabelonerne i [`infra/`](../../../02-SetupDevEnvironment/infra) opretter:
 
-## Trin 1: Opret Azure AI Foundry-ressourcer
+- En **Azure AI Foundry**-konto (`Microsoft.CognitiveServices/accounts`, type `AIServices`) med et projekt
+- En **chat**-udrulning — `gpt-4o-mini`
+- En **embedding**-udrulning — `text-embedding-3-small` (bruges i senere kapitler)
+- En **nøglefri rollefordeling** (`Cognitive Services OpenAI User`), så du logger ind med `az login` i stedet for at administrere nøgler
 
-### Opret en hub og et projekt
+## Forudsætninger
 
-1. Gå til [Azure AI Foundry Portal](https://ai.azure.com/) og log ind
-2. Klik på **+ Opret** → **Ny hub** (eller naviger til **Administration** → **Alle hubs** → **+ Ny hub**)
-3. Konfigurer din hub:
-   - **Hub-navn**: f.eks. "MyAIHub"
-   - **Abonnement**: Vælg dit Azure-abonnement
-   - **Ressourcegruppe**: Opret ny eller vælg eksisterende
-   - **Placering**: Vælg den nærmeste placering
-   - **Lagerkonto**: Brug standard eller konfigurer tilpasset
-   - **Key vault**: Brug standard eller konfigurer tilpasset
-   - Klik på **Næste** → **Gennemse + opret** → **Opret**
-4. Når den er oprettet, klik på **+ Nyt projekt** (eller **Opret projekt** fra hub-oversigten)
-   - **Projekt-navn**: f.eks. "GenAIJava"
-   - Klik på **Opret**
+- En [Azure-abonnement](https://azure.microsoft.com/free/)
+- [Azure Developer CLI (`azd`)](https://aka.ms/azure-dev/install)
+- [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli)
+- [Java 21+](https://learn.microsoft.com/java/openjdk/download) og [Maven 3.9+](https://maven.apache.org/download.cgi)
 
-### Udrul GPT-4o-mini-modellen
+## Mulighed A: Provision med azd + Bicep (anbefalet)
 
-1. I dit projekt, gå til **Modelkatalog** og søg efter **gpt-4o-mini**
-   - *Alternativ: Gå til **Udrulninger** → **+ Opret udrulning***
-2. Klik på **Udrul** på gpt-4o-mini-modelkortet
-3. Konfigurer udrulningen:
-   - **Udrulningsnavn**: "gpt-4o-mini"
-   - **Modelversion**: Brug den nyeste
-   - **Udrulningstype**: Standard
-4. Klik på **Udrul**
-5. Når den er udrullet, gå til **Udrulninger**-fanen og kopier følgende værdier:
-   - **Udrulningsnavn** (f.eks. "gpt-4o-mini")
-   - **Mål-URI** (f.eks. `https://your-hub-name.openai.azure.com/`) 
-      > **Vigtigt**: Kopier kun basis-URL'en (f.eks. `https://myhub.openai.azure.com/`) og ikke den fulde endpoint-sti.
-   - **Nøgle** (fra sektionen Nøgler og Endpoint)
-
-> **Stadig problemer?** Besøg den officielle [Azure AI Foundry Dokumentation](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project)
-
-## Trin 2: Opret din Codespace
-
-1. Fork denne repository til din GitHub-konto
-   > **Bemærk**: Hvis du vil redigere den grundlæggende konfiguration, kan du kigge på [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
-2. I din forkede repo, klik på **Code** → **Codespaces**-fanen
-3. Klik på **...** → **Ny med muligheder...**
-![opret en codespace med muligheder](../../../translated_images/da/codespaces.9945ded8ceb431a5.webp)
-4. Vælg **Dev container-konfiguration**: 
-   - **Generative AI Java Development Environment**
-5. Klik på **Opret codespace**
-
-## Trin 3: Konfigurer dit miljø
-
-Når din Codespace er klar, skal du opsætte dine Azure OpenAI-legitimationsoplysninger:
-
-1. **Naviger til eksempelprojektet fra repository-roden:**
-   ```bash
-   cd 02-SetupDevEnvironment/examples/basic-chat-azure
-   ```
-
-2. **Opret din .env-fil:**
-   ```bash
-   cp .env.example .env
-   ```
-
-3. **Rediger .env-filen med dine Azure OpenAI-legitimationsoplysninger:**
-   ```bash
-   # Your Azure OpenAI API key (from Azure AI Foundry portal)
-   AZURE_AI_KEY=your-actual-api-key-here
-   
-   # Your Azure OpenAI endpoint URL (e.g., https://myhub.openai.azure.com/)
-   AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-   ```
-
-   > **Sikkerhedsnotat**: 
-   > - Undlad at committe din `.env`-fil til versionskontrol
-   > - `.env`-filen er allerede inkluderet i `.gitignore`
-   > - Hold dine API-nøgler sikre og roter dem regelmæssigt
-
-## Trin 4: Test din opsætning
-
-Kør eksempelapplikationen for at teste din Azure OpenAI-forbindelse:
+Fra mappen `02-SetupDevEnvironment`:
 
 ```bash
+cd 02-SetupDevEnvironment
+
+# Log ind (begge værktøjer)
+azd auth login
+az login
+
+# Sørg for Foundry-kontoen + modeludrulninger
+azd up
+```
+
+`azd` beder om et **miljønavn** (for eksempel `genai-java`) og en **region**. Vælg en region, hvor `gpt-4o-mini` og `text-embedding-3-small` er tilgængelige — for eksempel `eastus2` eller `swedencentral`.
+
+Når provisioneringen er færdig, gør azd følgende:
+
+1. Implementerer alt defineret i [`infra/main.bicep`](../../../02-SetupDevEnvironment/infra/main.bicep).
+2. Kører en post-provision hook, der skriver [`examples/basic-chat-azure/.env`](../../../02-SetupDevEnvironment/examples/basic-chat-azure) med din endpoint og udrulningsnavne (ingen hemmeligheder).
+
+> **Tip:** Kør `azd up` igen når som helst for at anvende ændringer. Kør `azd down` for at slette alt og stoppe forbruget.
+
+For at se de genererede indstillinger:
+
+```bash
+azd env get-values
+```
+
+Spring nu videre til [Test din opsætning](#test-din-opsætning).
+
+## Mulighed B: Opret ressourcer manuelt
+
+Foretrækker du portalen? Opret ressourcerne manuelt:
+
+1. Gå til [Azure AI Foundry-portalen](https://ai.azure.com/) og log ind.
+2. **Opret et projekt** (dette opretter også en AI Foundry-ressource). Giv det et navn som `GenAIJava`.
+3. I dit projekt, åbn **Models + endpoints** → **Deploy model** → **Deploy base model**.
+4. Udrul **gpt-4o-mini** (udrulningsnavn `gpt-4o-mini`). Gentag for **text-embedding-3-small**, hvis du vil have embedding-eksemplerne.
+5. Fra **Oversigt**, kopier **endpoint** (for eksempel `https://<resource>.openai.azure.com/`).
+6. Giv dig selv nøglefri adgang: på ressourcen åbn **Access control (IAM)** → **Add role assignment** → tildel **Cognitive Services OpenAI User** til din konto.
+
+> **Ikke helt i mål?** Se [Azure AI Foundry dokumentationen](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects).
+
+## Konfigurer dit miljø
+
+**Hvis du brugte Mulighed A (`azd up`)**, er din settings-fil allerede skrevet — der er ikke noget at konfigurere. Spring til [Test din opsætning](#test-din-opsætning).
+
+**Hvis du brugte Mulighed B (manuel)**, opret `.env`-filen til eksemplet selv:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+cp .env.example .env
+```
+
+Rediger `.env` med din endpoint (ingen nøgle — autentificering er nøglefri):
+
+```bash
+AZURE_OPENAI_ENDPOINT=https://<your-resource>.openai.azure.com/
+AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini
+```
+
+> **Sikkerhedsnote:** Der er ingen API-nøgle at gemme. Du autentificerer med Microsoft Entra ID via `az login` (lokalt) eller en managed identity (i Azure). `.env`-filen indeholder kun ikke-hemmelige indstillinger og er allerede dækket af `.gitignore`.
+
+## Test din opsætning
+
+Sørg for, at du er logget ind, så nøglefri autentificering kan hente et token, og kør så eksemplet:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+
+az login          # hvis du ikke allerede er logget ind
 mvn clean spring-boot:run
 ```
 
-Du bør se et svar fra GPT-4o-mini-modellen!
+Du skulle gerne se et svar fra `gpt-4o-mini`-modellen!
 
-> **VS Code-brugere**: Du kan også trykke på `F5` i VS Code for at køre applikationen. Startkonfigurationen er allerede opsat til automatisk at indlæse din `.env`-fil.
+> **VS Code-brugere:** Tryk på `F5` for at køre. App’en indlæser din `.env` automatisk.
 
-> **Fuldstændigt eksempel**: Se [End-to-End Azure OpenAI Eksempel](./examples/basic-chat-azure/README.md) for detaljerede instruktioner og fejlfinding.
+> **Fuldstændigt eksempel:** Se [Basic Chat med Azure AI Foundry-eksemplet](./examples/basic-chat-azure/README.md) for detaljer og fejlfinding.
 
-## Hvad er det næste?
+## Hvad nu?
 
-**Opsætning fuldført!** Du har nu:
-- Azure OpenAI med gpt-4o-mini udrullet
-- Lokal .env-filkonfiguration
-- Java-udviklingsmiljø klar
+**Opsætningen er fuldført!** Du har nu:
+- Azure AI Foundry med `gpt-4o-mini` og `text-embedding-3-small` udrullet
+- Nøglefri autentificering (Microsoft Entra ID) — ingen nøgler at håndtere
+- En lokal `.env` med din endpoint og udrulningsnavne
+- Et Java-udviklingsmiljø klar til brug
 
 **Fortsæt til** [Kapitel 3: Core Generative AI Techniques](../03-CoreGenerativeAITechniques/README.md) for at begynde at bygge AI-applikationer!
 
 ## Ressourcer
 
-- [Azure AI Foundry Dokumentation](https://learn.microsoft.com/azure/ai-services/)
-- [Spring AI Azure OpenAI Dokumentation](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
+- [Azure Developer CLI (azd)](https://aka.ms/azure-dev/install)
+- [Nøglefri autentificering med Microsoft Entra ID](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
+- [Azure AI Foundry Dokumentation](https://learn.microsoft.com/azure/ai-foundry/)
+- [Spring AI Azure OpenAI Dokumentation](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
 - [Azure OpenAI Java SDK](https://learn.microsoft.com/java/api/overview/azure/ai-openai-readme)
 
 ## Yderligere ressourcer
 
 - [Download VS Code](https://code.visualstudio.com/Download)
-- [Få Docker Desktop](https://www.docker.com/products/docker-desktop)
-- [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
+- [Hent Docker Desktop](https://www.docker.com/products/docker-desktop)
+- [Dev Container-konfiguration](../../../.devcontainer/devcontainer.json)
 
-**Ansvarsfraskrivelse**:  
-Dette dokument er blevet oversat ved hjælp af AI-oversættelsestjenesten [Co-op Translator](https://github.com/Azure/co-op-translator). Selvom vi bestræber os på nøjagtighed, skal det bemærkes, at automatiserede oversættelser kan indeholde fejl eller unøjagtigheder. Det originale dokument på dets oprindelige sprog bør betragtes som den autoritative kilde. For kritisk information anbefales professionel menneskelig oversættelse. Vi påtager os ikke ansvar for eventuelle misforståelser eller fejltolkninger, der måtte opstå som følge af brugen af denne oversættelse.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Ansvarsfraskrivelse**:
+Dette dokument er blevet oversat ved hjælp af AI-oversættelsestjenesten [Co-op Translator](https://github.com/Azure/co-op-translator). Selvom vi bestræber os på nøjagtighed, skal du være opmærksom på, at automatiserede oversættelser kan indeholde fejl eller unøjagtigheder. Det originale dokument på dets oprindelige sprog bør betragtes som den autoritative kilde. For kritisk information anbefales professionel menneskelig oversættelse. Vi påtager os intet ansvar for misforståelser eller fejltolkninger, der opstår som følge af brugen af denne oversættelse.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

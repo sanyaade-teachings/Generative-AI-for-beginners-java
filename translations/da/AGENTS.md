@@ -2,74 +2,77 @@
 
 ## Projektoversigt
 
-Dette er et uddannelsesrepository til at lære udvikling af Generativ AI med Java. Det tilbyder et omfattende praktisk kursus, der dækker Large Language Models (LLMs), prompt engineering, embeddings, RAG (Retrieval-Augmented Generation) og Model Context Protocol (MCP).
+Dette er et uddannelseslager til læring af Generative AI-udvikling med Java. Det tilbyder et omfattende praktisk kursus, der dækker Large Language Models (LLMs), prompt engineering, embeddings, RAG (Retrieval-Augmented Generation) og Model Context Protocol (MCP).
 
-**Nøgleteknologier:**
+**Nøgle teknologier:**
 - Java 21
 - Spring Boot 3.5.x
 - Spring AI 1.1.x
 - Maven
 - LangChain4j
-- GitHub Models, Azure OpenAI og OpenAI SDKs
+- Azure AI Foundry, Azure OpenAI og OpenAI SDK’er
 
 **Arkitektur:**
-- Flere selvstændige Spring Boot-applikationer organiseret efter kapitler
-- Eksempelprojekter, der demonstrerer forskellige AI-mønstre
-- Klar til GitHub Codespaces med forudkonfigurerede udviklingscontainere
+- Flere standalone Spring Boot-applikationer organiseret efter kapitler
+- Eksempler på projekter, der demonstrerer forskellige AI-mønstre
+- GitHub Codespaces-klar med forudkonfigurerede udviklingscontainere
 
 ## Opsætningskommandoer
 
 ### Forudsætninger
 - Java 21 eller nyere
 - Maven 3.x
-- GitHub personlig adgangstoken (til GitHub Models)
-- Valgfrit: Azure OpenAI-legitimationsoplysninger
+- Azure-abonnement med en Azure AI Foundry-modeludrulning (opret med `azd up`)
+- Azure CLI (`az`) og Azure Developer CLI (`azd`), logget ind til keyless auth
 
 ### Miljøopsætning
 
 **Mulighed 1: GitHub Codespaces (Anbefalet)**
 ```bash
-# Fork the repository and create a codespace from GitHub UI
-# The dev container will automatically install all dependencies
-# Wait ~2 minutes for environment setup
+# Forgren repository'et og opret et codespace fra GitHub UI
+# Dev-containeren installerer automatisk alle afhængigheder
+# Vent ca. 2 minutter på opsætning af miljøet
 ```
 
-**Mulighed 2: Lokal udviklingscontainer**
+**Mulighed 2: Lokal Dev Container**
 ```bash
-# Clone repository
+# Klon repository
 git clone https://github.com/microsoft/Generative-AI-for-beginners-java.git
 cd Generative-AI-for-beginners-java
 
-# Open in VS Code with Dev Containers extension
-# Reopen in Container when prompted
+# Åbn i VS Code med Dev Containers-udvidelse
+# Genåbn i container, når du bliver bedt om det
 ```
 
 **Mulighed 3: Lokal opsætning**
 ```bash
-# Install dependencies
+# Installer afhængigheder
 sudo apt-get update
 sudo apt-get install -y maven openjdk-21-jdk
 
-# Verify installation
+# Bekræft installation
 java -version
 mvn -version
 ```
 
 ### Konfiguration
 
-**Opsætning af GitHub-token:**
+**Azure AI Foundry opsætning (keyless, anbefalet):**
 ```bash
-# Create a GitHub Personal Access Token
-# Set environment variable
-export GITHUB_TOKEN="your-token-here"
+# Provisioner Foundry-kontoen + modelimplementeringer som kode
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
+# azd skriver examples/basic-chat-azure/.env med dit endepunkt (ingen nøgle)
 ```
 
-**Opsætning af Azure OpenAI (Valgfrit):**
+**Manuel endpoint-konfiguration:**
 ```bash
-# For examples using Azure OpenAI
+# Hvis du ikke brugte azd, skal du selv indstille endepunktet (godkendelse forbliver nøgleløs via az login)
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# Rediger .env: AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com/
 ```
 
 ## Udviklingsworkflow
@@ -91,44 +94,44 @@ cp .env.example .env
 
 ### Kørsel af applikationer
 
-**Kørsel af en Spring Boot-applikation:**
+**Kør en Spring Boot-applikation:**
 ```bash
 cd [project-directory]
 mvn spring-boot:run
 ```
 
-**Bygning af et projekt:**
+**Byg et projekt:**
 ```bash
 cd [project-directory]
 mvn clean install
 ```
 
-**Start af MCP Calculator Server:**
+**Start MCP Calculator Server:**
 ```bash
 cd 04-PracticalSamples/calculator
 mvn spring-boot:run
-# Server runs on http://localhost:8080
+# Server kører på http://localhost:8080
 ```
 
-**Kørsel af klienteksempler:**
+**Kør klienteksempler:**
 ```bash
-# After starting the server in another terminal
+# Efter at have startet serveren i et andet terminalvindue
 cd 04-PracticalSamples/calculator
 
-# Direct MCP client
+# Direkte MCP-klient
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient"
 
-# AI-powered client (requires GITHUB_TOKEN)
+# AI-drevet klient (kræver AZURE_OPENAI_ENDPOINT + az login)
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient"
 
-# Interactive bot
+# Interaktiv bot
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.Bot"
 ```
 
 ### Hot Reload
 Spring Boot DevTools er inkluderet i projekter, der understøtter hot reload:
 ```bash
-# Changes to Java files will automatically reload when saved
+# Ændringer i Java-filer vil automatisk genindlæses, når de gemmes
 mvn spring-boot:run
 ```
 
@@ -154,38 +157,38 @@ mvn test -Dtest=CalculatorServiceTest
 
 ### Teststruktur
 - Testfiler bruger JUnit 5 (Jupiter)
-- Testklasser er placeret i `src/test/java/`
+- Testklasser ligger i `src/test/java/`
 - Klienteksempler i calculator-projektet findes i `src/test/java/com/microsoft/mcp/sample/client/`
 
-### Manuel testning
-Mange eksempler er interaktive applikationer, der kræver manuel testning:
+### Manuelle tests
+Mange eksempler er interaktive applikationer, der kræver manuel test:
 
 1. Start applikationen med `mvn spring-boot:run`
-2. Test endpoints eller interager med CLI
-3. Bekræft, at den forventede adfærd matcher dokumentationen i hver projekts README.md
+2. Test endpoints eller interagér via CLI
+3. Verificér forventet adfærd svarer til dokumentationen i hvert projekts README.md
 
-### Testning med GitHub Models
-- Begrænsninger for gratis niveau: 15 forespørgsler/minut, 150/dag
-- Maksimalt 5 samtidige forespørgsler
-- Test indholdsfiltrering med ansvarlige AI-eksempler
+### Test med Azure AI Foundry
+- Log ind med `az login` før kørsel af eksempler (keyless auth)
+- Sørg for, at din konto har rollen Cognitive Services OpenAI User på ressourcen
+- Test indholdsfiltrering med eksemplet om ansvarlig AI i Kapitel 5
 
-## Retningslinjer for kodestil
+## Kodestil retningslinjer
 
-### Java-konventioner
-- **Java-version:** Java 21 med moderne funktioner
-- **Stil:** Følg standard Java-konventioner
+### Java konventioner
+- **Java version:** Java 21 med moderne funktioner
+- **Stil:** Følg standard Java konventioner
 - **Navngivning:** 
   - Klasser: PascalCase
   - Metoder/variabler: camelCase
   - Konstanter: UPPER_SNAKE_CASE
-  - Pakkenavne: små bogstaver
+  - Pakke-navne: små bogstaver
 
-### Spring Boot-mønstre
+### Spring Boot mønstre
 - Brug `@Service` til forretningslogik
-- Brug `@RestController` til REST-endpoints
+- Brug `@RestController` til REST endpoints
 - Konfiguration via `application.yml` eller `application.properties`
-- Miljøvariabler foretrækkes frem for hårdkodede værdier
-- Brug `@Tool`-annotering til MCP-eksponerede metoder
+- Miljøvariabler foretrækkes frem for hardcodede værdier
+- Brug `@Tool` annotation for MCP-eksponerede metoder
 
 ### Filorganisering
 ```
@@ -207,26 +210,26 @@ src/
 ```
 
 ### Afhængigheder
-- Administreres via Maven `pom.xml`
+- Styres via Maven `pom.xml`
 - Spring AI BOM til versionsstyring
 - LangChain4j til AI-integrationer
 - Spring Boot starter parent til Spring-afhængigheder
 
 ### Kodekommentarer
-- Tilføj JavaDoc til offentlige API'er
-- Inkluder forklarende kommentarer til komplekse AI-interaktioner
-- Dokumentér MCP-værktøjsbeskrivelser tydeligt
+- Tilføj JavaDoc for offentlige APIs
+- Inkluder forklarende kommentarer for komplekse AI-interaktioner
+- Dokumentér MCP tool-beskrivelser klart
 
-## Bygning og udrulning
+## Byg og Udrulning
 
-### Bygning af projekter
+### Byg projekter
 
 **Byg uden tests:**
 ```bash
 mvn clean install -DskipTests
 ```
 
-**Byg med alle kontrolpunkter:**
+**Byg med alle checks:**
 ```bash
 mvn clean install
 ```
@@ -234,123 +237,129 @@ mvn clean install
 **Pak applikation:**
 ```bash
 mvn package
-# Creates JAR in target/ directory
+# Opretter JAR i target/-mappen
 ```
 
-### Outputmapper
+### Output-mapper
 - Kompilerede klasser: `target/classes/`
 - Testklasser: `target/test-classes/`
 - JAR-filer: `target/*.jar`
-- Maven-artikler: `target/`
+- Maven-artifakter: `target/`
 
 ### Miljøspecifik konfiguration
 
 **Udvikling:**
 ```yaml
-# application.yml
+# application.yml (keyless - no api-key; auth via DefaultAzureCredential)
 spring:
   ai:
-    openai:
-      api-key: ${GITHUB_TOKEN}
-      base-url: https://models.inference.ai.azure.com
+    azure:
+      openai:
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 **Produktion:**
-- Brug Azure AI Foundry Models i stedet for GitHub Models
-- Opdater base-url til Azure OpenAI-endpoint
-- Administrer hemmeligheder via Azure Key Vault eller miljøvariabler
+- Brug managed identity i stedet for `az login` til keyless auth
+- Peg `AZURE_OPENAI_ENDPOINT` på din produktions Foundry-ressource
+- Styr konfiguration via miljøvariabler eller Azure Key Vault
 
 ### Overvejelser ved udrulning
-- Dette er et uddannelsesrepository med eksempelapplikationer
-- Ikke designet til produktionsudrulning som det er
-- Eksempler demonstrerer mønstre, der kan tilpasses til produktionsbrug
-- Se individuelle projekt-README'er for specifikke udrulningsnoter
+- Dette er et undervisningslager med eksempelsapplikationer
+- Ikke designet til direkte produktion
+- Eksempler demonstrerer mønstre, der kan tilpasses produktion
+- Se individuelle projekters README’er for specifikke udrulningsnoter
 
-## Yderligere noter
+## Yderligere bemærkninger
 
-### GitHub Models vs Azure OpenAI
-- **GitHub Models:** Gratis niveau til læring, ingen kreditkort påkrævet
-- **Azure OpenAI:** Produktionsklar, kræver Azure-abonnement
-- Koden er kompatibel mellem begge - skift blot endpoint og API-nøgle
+### Azure AI Foundry
+- **Keyless auth:** forbind med Microsoft Entra ID — ingen API-nøgler at administrere
+- **Provisoneret som kode:** Bicep + azd (`azd up`) opretter konto og modeludrulninger
+- Samme OpenAI-kompatible kode kører lokalt (`az login`) og i Azure (managed identity)
 
 ### Arbejde med flere projekter
-Hvert eksempelprojekt er selvstændigt:
+Hvert eksempelprojekt er standalone:
 ```bash
-# Navigate to specific project
+# Naviger til specifikt projekt
 cd 04-PracticalSamples/[project-name]
 
-# Each has its own pom.xml and can be built independently
+# Hver har sin egen pom.xml og kan bygges uafhængigt
 mvn clean install
 ```
 
 ### Almindelige problemer
 
-**Java-version mismatch:**
+**Java versions mismatch:**
 ```bash
-# Verify Java 21
+# Bekræft Java 21
 java -version
-# Update JAVA_HOME if needed
+# Opdater JAVA_HOME, hvis nødvendigt
 export JAVA_HOME=/usr/lib/jvm/msopenjdk-current
 ```
 
 **Problemer med afhængighedsdownload:**
 ```bash
-# Clear Maven cache and retry
+# Ryd Maven-cache og prøv igen
 rm -rf ~/.m2/repository
 mvn clean install
 ```
 
-**GitHub-token ikke fundet:**
+**Endpoint eller login ikke fundet:**
 ```bash
-# Set in current session
-export GITHUB_TOKEN="your-token-here"
+# Indstil slutpunktet i den aktuelle session og log ind (uden nøgle)
+export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
+az login
 
-# Or use .env file in project directory
-echo "GITHUB_TOKEN=your-token-here" > .env
+# Eller brug en .env-fil i projektmappen
+echo "AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/" > .env
 ```
 
 **Port allerede i brug:**
 ```bash
-# Spring Boot uses port 8080 by default
-# Change in application.properties:
+# Spring Boot bruger som standard port 8080
+# Ændring i application.properties:
 server.port=8081
 ```
 
-### Flersproget support
+### Understøttelse af flere sprog
 - Dokumentation tilgængelig på 45+ sprog via automatisk oversættelse
-- Oversættelser i `translations/`-mappen
-- Oversættelse administreret af GitHub Actions workflow
+- Oversættelser i `translations/` mappe
+- Oversættelse styres af GitHub Actions workflow
 
-### Læringssti
+### Læringsvej
 1. Start med [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md)
 2. Følg kapitlerne i rækkefølge (01 → 05)
-3. Fuldfør praktiske eksempler i hvert kapitel
-4. Udforsk eksempelprojekter i kapitel 4
-5. Lær ansvarlige AI-praksisser i kapitel 5
+3. Udfør praktiske eksempler i hvert kapitel
+4. Udforsk eksempelsprojekter i Kapitel 4
+5. Lær ansvarlig AI-praksis i Kapitel 5
 
 ### Udviklingscontainer
 `.devcontainer/devcontainer.json` konfigurerer:
 - Java 21 udviklingsmiljø
 - Maven forudinstalleret
 - VS Code Java-udvidelser
-- Spring Boot-værktøjer
+- Spring Boot værktøjer
 - GitHub Copilot-integration
-- Docker-in-Docker support
+- Docker-i-Docker understøttelse
 - Azure CLI
 
-### Ydelsesmæssige overvejelser
-- GitHub Models gratis niveau har hastighedsbegrænsninger
-- Brug passende batchstørrelser til embeddings
-- Overvej caching til gentagne API-kald
+### Ydelsesovervejelser
+- Azure AI Foundry-udrulninger har per-minut token/forespørgselskvoter
+- Brug passende batch-størrelser til embeddings
+- Overvej caching ved gentagne API-kald
 - Overvåg tokenforbrug for omkostningsoptimering
 
-### Sikkerhedsnoter
-- Commit aldrig `.env`-filer (allerede i `.gitignore`)
-- Brug miljøvariabler til API-nøgler
-- GitHub-tokens bør have minimale nødvendige tilladelser
-- Følg ansvarlige AI-retningslinjer i kapitel 5
+### Sikkerhedsbemærkninger
+- Overfør aldrig `.env` filer (allerede i `.gitignore`)
+- Foretræk keyless auth (Microsoft Entra ID) fremfor API-nøgler
+- Brug managed identities i Azure; `az login` til lokal udvikling
+- Følg ansvarlige AI-retningslinjer i Kapitel 5
 
 ---
 
-**Ansvarsfraskrivelse**:  
-Dette dokument er blevet oversat ved hjælp af AI-oversættelsestjenesten [Co-op Translator](https://github.com/Azure/co-op-translator). Selvom vi bestræber os på nøjagtighed, skal det bemærkes, at automatiserede oversættelser kan indeholde fejl eller unøjagtigheder. Det originale dokument på dets oprindelige sprog bør betragtes som den autoritative kilde. For kritisk information anbefales professionel menneskelig oversættelse. Vi påtager os ikke ansvar for misforståelser eller fejltolkninger, der måtte opstå som følge af brugen af denne oversættelse.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Ansvarsfraskrivelse**:
+Dette dokument er blevet oversat ved hjælp af AI-oversættelsestjenesten [Co-op Translator](https://github.com/Azure/co-op-translator). Selvom vi bestræber os på nøjagtighed, skal du være opmærksom på, at automatiserede oversættelser kan indeholde fejl eller unøjagtigheder. Det originale dokument på dets oprindelige sprog bør betragtes som den autoritative kilde. For kritisk information anbefales professionel menneskelig oversættelse. Vi påtager os intet ansvar for misforståelser eller fejltolkninger, der opstår som følge af brugen af denne oversættelse.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

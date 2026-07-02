@@ -1,8 +1,8 @@
 # AGENTS.md
 
-## Projektin yleiskuvaus
+## Projektin yleiskatsaus
 
-Tämä on opetusarkisto, joka on tarkoitettu Generatiivisen tekoälyn kehittämisen oppimiseen Java-kielellä. Se tarjoaa kattavan käytännön kurssin, joka käsittelee suuria kielimalleja (LLM), kehotetekniikkaa, upotuksia, RAG:ia (Retrieval-Augmented Generation) ja Model Context Protocol (MCP) -protokollaa.
+Tämä on opetusrekisteri Generatiivisen tekoälyn kehittämisen oppimiseen Java-kielellä. Se tarjoaa kattavan käytännön kurssin, joka kattaa suuret kielimallit (LLM), kehotteiden suunnittelun, upotukset, RAG:n (Retrieval-Augmented Generation) ja Malli-kontekstiprotokollan (MCP).
 
 **Keskeiset teknologiat:**
 - Java 21
@@ -10,69 +10,72 @@ Tämä on opetusarkisto, joka on tarkoitettu Generatiivisen tekoälyn kehittämi
 - Spring AI 1.1.x
 - Maven
 - LangChain4j
-- GitHub Models, Azure OpenAI ja OpenAI SDK:t
+- Azure AI Foundry, Azure OpenAI ja OpenAI SDK:t
 
 **Arkkitehtuuri:**
-- Useita itsenäisiä Spring Boot -sovelluksia, jotka on järjestetty lukujen mukaan
-- Esimerkkiprojekteja, jotka havainnollistavat erilaisia tekoälymalleja
-- Valmiiksi konfiguroitu GitHub Codespaces -kehitysympäristö
+- Useita itsenäisiä Spring Boot -sovelluksia luvuittain järjestettynä
+- Esimerkkiprojekteja, jotka demonstroivat erilaisia tekoälykuvioita
+- GitHub Codespaces -valmiit esikonfiguroiduilla kehityssäiliöillä
 
-## Asennuskomennot
+## Asennuskäskyt
 
 ### Esivaatimukset
 - Java 21 tai uudempi
 - Maven 3.x
-- GitHubin henkilökohtainen käyttöoikeustunnus (GitHub Models -käyttöön)
-- Valinnainen: Azure OpenAI -tunnukset
+- Azure-tilaus, jossa on Azure AI Foundry -malliasennus (provisioi `azd up` komennolla)
+- Azure CLI (`az`) ja Azure Developer CLI (`azd`), kirjauduttu sisään avaimettomaan tunnistautumiseen
 
 ### Ympäristön asennus
 
-**Vaihtoehto 1: GitHub Codespaces (suositeltu)**
+**Vaihtoehto 1: GitHub Codespaces (suositus)**
 ```bash
-# Fork the repository and create a codespace from GitHub UI
-# The dev container will automatically install all dependencies
-# Wait ~2 minutes for environment setup
+# Haarauta repositorio ja luo codespace GitHub-käyttöliittymästä
+# Kehityssäiliö asentaa automaattisesti kaikki riippuvuudet
+# Odota noin 2 minuuttia ympäristön asennusta varten
 ```
 
-**Vaihtoehto 2: Paikallinen kehityskontti**
+**Vaihtoehto 2: Paikallinen kehityssäiliö**
 ```bash
-# Clone repository
+# Kopioi varasto
 git clone https://github.com/microsoft/Generative-AI-for-beginners-java.git
 cd Generative-AI-for-beginners-java
 
-# Open in VS Code with Dev Containers extension
-# Reopen in Container when prompted
+# Avaa VS Codessa Dev Containers -laajennuksella
+# Avaa uudelleen säiliössä, kun sinua kehotetaan
 ```
 
 **Vaihtoehto 3: Paikallinen asennus**
 ```bash
-# Install dependencies
+# Asenna riippuvuudet
 sudo apt-get update
 sudo apt-get install -y maven openjdk-21-jdk
 
-# Verify installation
+# Vahvista asennus
 java -version
 mvn -version
 ```
 
 ### Konfigurointi
 
-**GitHub-tunnuksen asennus:**
+**Azure AI Foundryn asennus (avaimeton, suositus):**
 ```bash
-# Create a GitHub Personal Access Token
-# Set environment variable
-export GITHUB_TOKEN="your-token-here"
+# Määritä Foundry-tili + mallin käyttöönotot koodina
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
+# azd kirjoittaa examples/basic-chat-azure/.env tiedoston päätepisteelläsi (ei avainta)
 ```
 
-**Azure OpenAI -asennus (valinnainen):**
+**Manuaalinen päätepisteen konfigurointi:**
 ```bash
-# For examples using Azure OpenAI
+# Jos et käyttänyt azd:tä, aseta päätepiste itse (todentaminen pysyy avaimettomana az loginin kautta)
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# Muokkaa .env: AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com/
 ```
 
-## Kehitystyön kulku
+## Kehitystyönkulku
 
 ### Projektin rakenne
 ```
@@ -89,9 +92,9 @@ cp .env.example .env
 └── translations/                # Multi-language support
 ```
 
-### Sovellusten suorittaminen
+### Sovellusten käynnistäminen
 
-**Spring Boot -sovelluksen suorittaminen:**
+**Spring Boot -sovelluksen käynnistäminen:**
 ```bash
 cd [project-directory]
 mvn spring-boot:run
@@ -103,32 +106,32 @@ cd [project-directory]
 mvn clean install
 ```
 
-**MCP-laskinpalvelimen käynnistäminen:**
+**MCP-laskimen palvelimen käynnistäminen:**
 ```bash
 cd 04-PracticalSamples/calculator
 mvn spring-boot:run
-# Server runs on http://localhost:8080
+# Palvelin toimii osoitteessa http://localhost:8080
 ```
 
 **Asiakasesimerkkien suorittaminen:**
 ```bash
-# After starting the server in another terminal
+# Käynnistämisen jälkeen palvelin toisessa päätelaitteessa
 cd 04-PracticalSamples/calculator
 
-# Direct MCP client
+# Suora MCP-asiakas
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient"
 
-# AI-powered client (requires GITHUB_TOKEN)
+# Tekoälypohjainen asiakas (vaatii AZURE_OPENAI_ENDPOINT + az login)
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient"
 
-# Interactive bot
+# Vuorovaikutteinen botti
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.Bot"
 ```
 
-### Kuuman latauksen tuki
-Spring Boot DevTools sisältyy projekteihin, jotka tukevat kuuman latauksen ominaisuutta:
+### Kuuma uudelleenkäynnistys
+Spring Boot DevTools sisältyy projekteihin, jotka tukevat kuumaa uudelleenkäynnistystä:
 ```bash
-# Changes to Java files will automatically reload when saved
+# Java-tiedostojen muutokset ladataan automaattisesti uudelleen tallennettaessa
 mvn spring-boot:run
 ```
 
@@ -142,7 +145,7 @@ cd [project-directory]
 mvn test
 ```
 
-**Suorita testit yksityiskohtaisella tulostuksella:**
+**Suorita testit yksityiskohtaisilla tulosteilla:**
 ```bash
 mvn test -X
 ```
@@ -152,40 +155,40 @@ mvn test -X
 mvn test -Dtest=CalculatorServiceTest
 ```
 
-### Testirakenne
-- Testitiedostot käyttävät JUnit 5 (Jupiter) -kirjastoa
-- Testiluokat sijaitsevat `src/test/java/`-hakemistossa
-- Laskinprojektin asiakasesimerkit ovat `src/test/java/com/microsoft/mcp/sample/client/`-hakemistossa
+### Testauksen rakenne
+- Testitiedostot käyttävät JUnit 5:tä (Jupiter)
+- Testiluokat sijaitsevat kansiossa `src/test/java/`
+- Asiakasesimerkit laskuprojektissa ovat kansiossa `src/test/java/com/microsoft/mcp/sample/client/`
 
 ### Manuaalinen testaus
 Monet esimerkit ovat interaktiivisia sovelluksia, jotka vaativat manuaalista testausta:
 
 1. Käynnistä sovellus komennolla `mvn spring-boot:run`
-2. Testaa päätepisteitä tai käytä komentoriviliittymää
-3. Varmista, että odotettu toiminta vastaa dokumentaatiota kunkin projektin README.md-tiedostossa
+2. Testaa päätepisteitä tai toimi komentoriviltä
+3. Varmista, että odotettu käyttäytyminen vastaa kunkin projektin README.md-tiedostossa olevaa dokumentaatiota
 
-### Testaus GitHub Models -mallien kanssa
-- Ilmaisen tason rajoitukset: 15 pyyntöä/minuutti, 150/päivä
-- Enintään 5 samanaikaista pyyntöä
-- Testaa sisällön suodatusta vastuullisen tekoälyn esimerkeillä
+### Testaus Azure AI Foundryn kanssa
+- Kirjaudu sisään `az login` -komennolla ennen esimerkkien suorittamista (avaimeton tunnistus)
+- Varmista, että tililläsi on Cognitive Services OpenAI User -rooli resurssissa
+- Testaa sisällön suodatus vastuullisen AI-esimerkillä luvussa 5
 
 ## Koodityyliohjeet
 
 ### Java-konventiot
-- **Java-versio:** Java 21 moderneilla ominaisuuksilla
-- **Tyyli:** Noudata standardeja Java-konventioita
+- **Java-versio:** Java 21 modernien ominaisuuksien kanssa
+- **Tyyli:** Noudata vakiintuneita Java-käytäntöjä
 - **Nimeäminen:** 
   - Luokat: PascalCase
   - Metodit/muuttujat: camelCase
-  - Vakiot: UPPER_SNAKE_CASE
-  - Pakettien nimet: pienaakkoset
+  - Konstanteille: UPPER_SNAKE_CASE
+  - Pakettinimet: pienaakkoset
 
 ### Spring Boot -mallit
 - Käytä `@Service` liiketoimintalogiikkaan
 - Käytä `@RestController` REST-päätepisteisiin
-- Konfigurointi `application.yml` tai `application.properties` -tiedostojen kautta
-- Ympäristömuuttujat suositeltavia kovakoodattujen arvojen sijaan
-- Käytä `@Tool`-annotaatiota MCP:n tarjoamiin metodeihin
+- Konfiguraatio `application.yml` tai `application.properties` -tiedostojen kautta
+- Ympäristömuuttujat mieluummin kovakoodattujen arvojen sijaan
+- Käytä `@Tool`-annotaatiota MCP:n julkaisemiin metodeihin
 
 ### Tiedostojen organisointi
 ```
@@ -207,150 +210,156 @@ src/
 ```
 
 ### Riippuvuudet
-- Hallitaan Mavenin `pom.xml`-tiedoston kautta
-- Spring AI BOM versiohallintaan
-- LangChain4j tekoälyintegraatioihin
-- Spring Boot starter -emoluokka Spring-riippuvuuksille
+- Hallitaan Mavenin `pom.xml`:n kautta
+- Spring AI BOM versionhallintaan
+- LangChain4j tekoälyintegraatioita varten
+- Spring Boot starter parent Spring-riippuvuuksille
 
 ### Koodikommentit
 - Lisää JavaDoc julkisiin rajapintoihin
-- Sisällytä selittäviä kommentteja monimutkaisiin tekoälytoimintoihin
+- Sisällytä selittäviä kommentteja monimutkaisista tekoälytoiminnoista
 - Dokumentoi MCP-työkalujen kuvaukset selkeästi
 
-## Rakentaminen ja käyttöönotto
+## Käännäminen ja käyttöönotto
 
-### Projektien rakentaminen
+### Projektien kääntäminen
 
-**Rakenna ilman testejä:**
+**Käännä ilman testejä:**
 ```bash
 mvn clean install -DskipTests
 ```
 
-**Rakenna kaikki tarkistukset mukaan lukien:**
+**Käännä kaikilla tarkistuksilla:**
 ```bash
 mvn clean install
 ```
 
-**Paketoi sovellus:**
+**Pakkaa sovellus:**
 ```bash
 mvn package
-# Creates JAR in target/ directory
+# Luo JAR-tiedoston target/-hakemistoon
 ```
 
-### Tulostushakemistot
+### Tulostuskansiot
 - Käännetyt luokat: `target/classes/`
 - Testiluokat: `target/test-classes/`
 - JAR-tiedostot: `target/*.jar`
-- Mavenin artefaktit: `target/`
+- Maven-artifaktit: `target/`
 
-### Ympäristökohtainen konfigurointi
+### Ympäristökohtainen konfiguraatio
 
 **Kehitys:**
 ```yaml
-# application.yml
+# application.yml (keyless - no api-key; auth via DefaultAzureCredential)
 spring:
   ai:
-    openai:
-      api-key: ${GITHUB_TOKEN}
-      base-url: https://models.inference.ai.azure.com
+    azure:
+      openai:
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 **Tuotanto:**
-- Käytä Azure AI Foundry Models -malleja GitHub Models -mallien sijaan
-- Päivitä base-url Azure OpenAI -päätepisteeseen
-- Hallitse salaisuuksia Azure Key Vaultin tai ympäristömuuttujien kautta
+- Käytä hallittua identiteettiä `az login` sijaan avaimettomaan tunnistautumiseen
+- Aseta `AZURE_OPENAI_ENDPOINT` tuotantoympäristön Foundryn resurssiin
+- Hallitse asetukset ympäristömuuttujilla tai Azure Key Vaultilla
 
-### Käyttöönoton huomioita
-- Tämä on opetusarkisto, joka sisältää esimerkkisovelluksia
-- Ei suunniteltu tuotantokäyttöön sellaisenaan
-- Esimerkit havainnollistavat malleja, joita voi mukauttaa tuotantokäyttöön
-- Katso yksittäisten projektien README-tiedostot erityisiä käyttöönotto-ohjeita varten
+### Käyttöönottoon liittyvät huomioinnit
+- Tämä on opetusrekisteri esimerkkisovelluksilla
+- Ei suunniteltu suoraan tuotantokäyttöön
+- Esimerkit demonstroivat malleja, joita voi soveltaa tuotantoon
+- Katso kunkin projektin README:t tarkemmat käyttöönottotiedot
 
-## Lisähuomioita
+## Lisätietoja
 
-### GitHub Models vs Azure OpenAI
-- **GitHub Models:** Ilmainen oppimiskäyttöön, ei vaadi luottokorttia
-- **Azure OpenAI:** Tuotantokäyttöön valmis, vaatii Azure-tilauksen
-- Koodi on yhteensopiva molempien kanssa - vaihda vain päätepiste ja API-avain
+### Azure AI Foundry
+- **Avaimeton tunnistus:** yhdistä Microsoft Entra ID:llä — API-avaimia ei tarvitse hallita
+- **Provisionointi koodina:** Bicep + azd (`azd up`) luo tilin ja malliasennukset
+- Sama OpenAI-yhteensopiva koodi toimii paikallisesti (`az login`) ja Azuren hallitulla identiteetillä
 
-### Työskentely useiden projektien kanssa
+### Usean projektin työskentely
 Jokainen esimerkkiprojekti on itsenäinen:
 ```bash
-# Navigate to specific project
+# Siirry tiettyyn projektiin
 cd 04-PracticalSamples/[project-name]
 
-# Each has its own pom.xml and can be built independently
+# Jokaisella on oma pom.xml-tiedosto ja ne voidaan kääntää itsenäisesti
 mvn clean install
 ```
 
-### Yleiset ongelmat
+### Yleisimmät ongelmat
 
-**Java-version yhteensopimattomuus:**
+**Java-version ristiriita:**
 ```bash
-# Verify Java 21
+# Vahvista Java 21
 java -version
-# Update JAVA_HOME if needed
+# Päivitä JAVA_HOME tarvittaessa
 export JAVA_HOME=/usr/lib/jvm/msopenjdk-current
 ```
 
 **Riippuvuuksien latausongelmat:**
 ```bash
-# Clear Maven cache and retry
+# Tyhjennä Mavenin välimuisti ja yritä uudelleen
 rm -rf ~/.m2/repository
 mvn clean install
 ```
 
-**GitHub-tunnusta ei löydy:**
+**Päätepistettä tai kirjautumista ei löydy:**
 ```bash
-# Set in current session
-export GITHUB_TOKEN="your-token-here"
+# Aseta palvelupiste nykyiseen istuntoon ja kirjaudu sisään (avaimeton)
+export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
+az login
 
-# Or use .env file in project directory
-echo "GITHUB_TOKEN=your-token-here" > .env
+# Tai käytä .env-tiedostoa projektihakemistossa
+echo "AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/" > .env
 ```
 
-**Portti jo käytössä:**
+**Portti on jo käytössä:**
 ```bash
-# Spring Boot uses port 8080 by default
-# Change in application.properties:
+# Spring Boot käyttää oletuksena porttia 8080
+# Muutos tiedostossa application.properties:
 server.port=8081
 ```
 
 ### Monikielinen tuki
-- Dokumentaatio saatavilla yli 45 kielellä automaattisen käännöksen avulla
-- Käännökset `translations/`-hakemistossa
-- Käännösten hallinta GitHub Actions -työnkulun kautta
+- Dokumentaatio saatavilla yli 45 kielellä automatisoidun kääntämisen avulla
+- Käännökset kansiossa `translations/`
+- Käännöksiä hallitaan GitHub Actions -työnkululla
 
 ### Oppimispolku
-1. Aloita [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md)
+1. Aloita [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md) -dokumentilla
 2. Seuraa lukuja järjestyksessä (01 → 05)
 3. Suorita käytännön esimerkit jokaisessa luvussa
-4. Tutki esimerkkiprojekteja luvussa 4
-5. Opettele vastuullisen tekoälyn käytäntöjä luvussa 5
+4. Tutustu esimerkkiprojekteihin luvussa 4
+5. Opi vastuullisen tekoälyn käytännöt luvussa 5
 
-### Kehityskontti
-`.devcontainer/devcontainer.json` konfiguroi:
-- Java 21 -kehitysympäristön
-- Maven valmiiksi asennettuna
+### Kehityssäiliö
+Tiedosto `.devcontainer/devcontainer.json` konfiguroi:
+- Java 21 kehitysympäristön
+- Mavenin valmiiksi asennettuna
 - VS Code Java -laajennukset
 - Spring Boot -työkalut
-- GitHub Copilot -integraatio
-- Docker-in-Docker-tuki
-- Azure CLI
+- GitHub Copilot -integraation
+- Docker-in-Docker -tuen
+- Azure CLI:n
 
 ### Suorituskykyhuomiot
-- GitHub Models -ilmaisen tason rajoitukset
-- Käytä sopivia eräkokoja upotuksille
-- Harkitse välimuistia toistuville API-kutsuille
-- Seuraa tokenien käyttöä kustannusten optimointia varten
+- Azure AI Foundryn asennuksilla on token-/pyyntörajoituksia minuutissa
+- Käytä sopivan kokoisia eräpaketteja upotuksiin
+- Harkitse välimuistia toistuvissa API-kutsuissa
+- Seuraa tokenin käyttöä kustannusten optimointia varten
 
-### Turvallisuusohjeet
-- Älä koskaan tallenna `.env`-tiedostoja (jo lisätty `.gitignore`-tiedostoon)
-- Käytä ympäristömuuttujia API-avaimille
-- GitHub-tunnuksilla tulisi olla vain tarvittavat käyttöoikeudet
+### Turvallisuusmuistutukset
+- Älä koskaan tallenna `.env`-tiedostoja versiohallintaan (on jo `.gitignore`-tiedostossa)
+- Suosi avaimetonta tunnistautumista (Microsoft Entra ID) API-avainten sijaan
+- Käytä Azure-ympäristössä hallittuja identiteettejä; paikallisessa kehityksessä `az login` -kirjautumista
 - Noudata vastuullisen tekoälyn ohjeita luvussa 5
 
 ---
 
-**Vastuuvapauslauseke**:  
-Tämä asiakirja on käännetty käyttämällä AI-käännöspalvelua [Co-op Translator](https://github.com/Azure/co-op-translator). Vaikka pyrimme tarkkuuteen, huomioithan, että automaattiset käännökset voivat sisältää virheitä tai epätarkkuuksia. Alkuperäistä asiakirjaa sen alkuperäisellä kielellä tulisi pitää ensisijaisena lähteenä. Kriittisen tiedon osalta suositellaan ammattimaista ihmiskäännöstä. Emme ole vastuussa väärinkäsityksistä tai virhetulkinnoista, jotka johtuvat tämän käännöksen käytöstä.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Vastuuvapauslauseke**:
+Tämä asiakirja on käännetty käyttämällä tekoälypohjaista käännöspalvelua [Co-op Translator](https://github.com/Azure/co-op-translator). Vaikka pyrimme tarkkuuteen, otathan huomioon, että automaattiset käännökset saattavat sisältää virheitä tai epätarkkuuksia. Alkuperäinen asiakirja sen alkuperäiskielellä on virallinen lähde. Tärkeissä asioissa suositellaan ammattimaista ihmiskäännöstä. Emme ole vastuussa tämän käännöksen käytöstä aiheutuvista väärinymmärryksistä tai tulkinnoista.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

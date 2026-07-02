@@ -1,27 +1,27 @@
-# Lemmikkitarinan luontiohje aloittelijoille
+# Lemmikkitarinageneraattorin opas aloittelijoille
 
 ## Sisällysluettelo
 
-- [Edellytykset](../../../../04-PracticalSamples/petstory)
-- [Projektirakenteen ymmärtäminen](../../../../04-PracticalSamples/petstory)
-- [Keskeisten komponenttien selitys](../../../../04-PracticalSamples/petstory)
-  - [1. Pääsovellus](../../../../04-PracticalSamples/petstory)
-  - [2. Verkkokontrolleri](../../../../04-PracticalSamples/petstory)
-  - [3. Tarinapalvelu](../../../../04-PracticalSamples/petstory)
-  - [4. Verkkopohjat](../../../../04-PracticalSamples/petstory)
-  - [5. Konfiguraatio](../../../../04-PracticalSamples/petstory)
-- [Sovelluksen käynnistäminen](../../../../04-PracticalSamples/petstory)
-- [Miten kaikki toimii yhdessä](../../../../04-PracticalSamples/petstory)
-- [AI-integraation ymmärtäminen](../../../../04-PracticalSamples/petstory)
-- [Seuraavat askeleet](../../../../04-PracticalSamples/petstory)
+- [Esivaatimukset](#esivaatimukset)
+- [Projektirakenteen ymmärtäminen](#projektirakenteen-ymmärtäminen)
+- [Keskeiset komponentit selitettynä](#keskeiset-komponentit-selitettynä)
+  - [1. Pääsovellus](#1-pääsovellus)
+  - [2. Web-kontrolleri](#2-web-kontrolleri)
+  - [3. Tarinapalvelu](#3-tarinapalvelu)
+  - [4. Web-mallit](#4-web-mallit)
+  - [5. Konfiguraatio](#5-konfiguraatio)
+- [Sovelluksen suorittaminen](#sovelluksen-suorittaminen)
+- [Kuinka kaikki toimii yhdessä](#kuinka-kaikki-toimii-yhdessä)
+- [AI-integraation ymmärtäminen](#ai-integraation-ymmärtäminen)
+- [Seuraavat askeleet](#seuraavat-askeleet)
 
-## Edellytykset
+## Esivaatimukset
 
 Ennen aloittamista varmista, että sinulla on:
 - Java 21 tai uudempi asennettuna
 - Maven riippuvuuksien hallintaan
-- GitHub-tili, jossa on henkilökohtainen käyttöoikeustunnus (PAT) `models:read`-oikeuksilla
-- Perustiedot Javasta, Spring Bootista ja verkkokehityksestä
+- Azure AI Foundry -mallin käyttöönotto (provisionoi komennolla `azd up` — katso [Luku 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md)), kirjaudu sisään `az login` (avaimeton autentikointi)
+- Perusteet Javasta, Spring Bootista ja web-kehityksestä
 
 ## Projektirakenteen ymmärtäminen
 
@@ -42,13 +42,13 @@ petstory/
 └── pom.xml                           # Maven dependencies
 ```
 
-## Keskeisten komponenttien selitys
+## Keskeiset komponentit selitettynä
 
 ### 1. Pääsovellus
 
 **Tiedosto:** `PetStoryApplication.java`
 
-Tämä on Spring Boot -sovelluksen aloituspiste:
+Tämä on Spring Boot -sovelluksen pääsisäänkäynti:
 
 ```java
 @SpringBootApplication
@@ -61,14 +61,14 @@ public class PetStoryApplication {
 
 **Mitä tämä tekee:**
 - `@SpringBootApplication`-annotaatio mahdollistaa automaattisen konfiguroinnin ja komponenttien skannauksen
-- Käynnistää sisäänrakennetun verkkopalvelimen (Tomcat) portissa 8080
-- Luo kaikki tarvittavat Spring-beansit ja -palvelut automaattisesti
+- Käynnistää sisäisen web-palvelimen (Tomcat) portissa 8080
+- Luo kaikki tarvittavat Spring-beanit ja -palvelut automaattisesti
 
-### 2. Verkkokontrolleri
+### 2. Web-kontrolleri
 
 **Tiedosto:** `PetController.java`
 
-Tämä käsittelee kaikki verkkopyynnöt ja käyttäjän vuorovaikutukset:
+Tämä hoitaa kaikki web-pyynnöt ja käyttäjän vuorovaikutukset:
 
 ```java
 @Controller
@@ -82,7 +82,7 @@ public class PetController {
     
     @GetMapping("/")
     public String index() {
-        return "index";  // Returns index.html template
+        return "index";  // Palauttaa index.html-mallin
     }
     
     @PostMapping("/generate-story")
@@ -90,24 +90,24 @@ public class PetController {
                                Model model, 
                                RedirectAttributes redirectAttributes) {
         
-        // Input validation
+        // Syötteen validointi
         if (description.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please provide a description.");
             return "redirect:/";
         }
         
-        // Sanitize input for security
+        // Puhdista syöte turvallisuuden vuoksi
         String sanitizedDescription = sanitizeInput(description);
         
-        // Generate story with error handling
+        // Luo tarina virheenkäsittelyllä
         try {
             String story = storyService.generateStory(sanitizedDescription);
             model.addAttribute("caption", sanitizedDescription);
             model.addAttribute("story", story);
-            return "result";  // Returns result.html template
+            return "result";  // Palauttaa result.html-mallin
             
         } catch (Exception e) {
-            // Use fallback story if AI fails
+            // Käytä varatarinaa, jos tekoäly epäonnistuu
             String fallbackStory = generateFallbackStory(sanitizedDescription);
             model.addAttribute("story", fallbackStory);
             return "result";
@@ -117,7 +117,7 @@ public class PetController {
     private String sanitizeInput(String input) {
         return input.replaceAll("[<>\"'&]", "")  // Remove dangerous characters
                    .trim()
-                   .substring(0, Math.min(input.length(), 500));  // Limit length
+                   .substring(0, Math.min(input.length(), 500));  // Rajoita pituus
     }
 }
 ```
@@ -126,12 +126,12 @@ public class PetController {
 
 1. **Reittien käsittely**: `@GetMapping("/")` näyttää latauslomakkeen, `@PostMapping("/generate-story")` käsittelee lähetykset
 2. **Syötteen validointi**: Tarkistaa tyhjät kuvaukset ja pituusrajat
-3. **Turvallisuus**: Puhdistaa käyttäjän syötteen XSS-hyökkäysten estämiseksi
-4. **Virheenkäsittely**: Tarjoaa varatarinoita, kun AI-palvelu epäonnistuu
-5. **Mallin sidonta**: Välittää dataa HTML-pohjille Springin `Model`-luokan avulla
+3. **Turvallisuus**: Siivoaa käyttäjän syötteen estääkseen XSS-hyökkäyksiä
+4. **Virheenkäsittely**: Tarjoaa varatarinoita, jos AI-palvelu epäonnistuu
+5. **Mallin sitominen**: Välittää dataa HTML-malleille Springin `Model`-objektin avulla
 
 **Varajärjestelmä:**
-Kontrolleri sisältää valmiiksi kirjoitettuja tarinapohjia, joita käytetään, kun AI-palvelu ei ole käytettävissä:
+Kontrolleri sisältää valmiiksi kirjoitettuja tarinamekintöjä, joita käytetään, kun AI-palvelu ei ole käytettävissä:
 
 ```java
 private String generateFallbackStory(String description) {
@@ -141,7 +141,7 @@ private String generateFallbackStory(String description) {
         "In a cozy home filled with love, there lived an extraordinary pet..."
     };
     
-    // Use description hash for consistent responses
+    // Käytä kuvaushashia johdonmukaisiin vastauksiin
     int index = Math.abs(description.hashCode() % storyTemplates.length);
     return storyTemplates[index];
 }
@@ -151,7 +151,7 @@ private String generateFallbackStory(String description) {
 
 **Tiedosto:** `StoryService.java`
 
-Tämä palvelu kommunikoi GitHub Models -palvelun kanssa tarinoiden luomiseksi:
+Tämä palvelu kommunikoi Azure AI Foundryn kanssa tuottaakseen tarinoita avaimettomalla autentikoinnilla:
 
 ```java
 @Service
@@ -160,18 +160,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // Foundryn OpenAI-yhteensopiva päätepiste sijaitsee polussa /openai/v1/
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // Avaineton todennus Microsoft Entra ID:llä (ei API-avainta)
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -182,16 +186,16 @@ public class StoryService {
         
         String userPrompt = "Write a fun short story about a pet described as: " + description;
         
-        // Configure the AI request
+        // Määritä tekoälypyyntö
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(modelName)
                 .addSystemMessage(systemPrompt)
                 .addUserMessage(userPrompt)
-                .maxCompletionTokens(500)  // Limit response length
-                .temperature(0.8)          // Control creativity (0.0-1.0)
+                .maxCompletionTokens(500)  // Rajoita vastauspituus
+                .temperature(0.8)          // Säädä luovuutta (0.0-1.0)
                 .build();
         
-        // Send request and get response
+        // Lähetä pyyntö ja vastaanota vastaus
         ChatCompletion response = openAIClient.chat().completions().create(params);
         
         return response.choices().get(0).message().content().orElse("");
@@ -199,19 +203,19 @@ public class StoryService {
 }
 ```
 
-**Keskeiset komponentit:**
+**Keskeiset osat:**
 
-1. **OpenAI-asiakas**: Käyttää virallista OpenAI Java SDK:ta, joka on konfiguroitu GitHub Models -palvelulle
-2. **Järjestelmäkehotus**: Asettaa AI:n käyttäytymisen kirjoittamaan perheystävällisiä lemmikkitarinoita
-3. **Käyttäjäkehotus**: Kertoo AI:lle tarkalleen, millainen tarina kirjoitetaan kuvauksen perusteella
-4. **Parametrit**: Kontrolloi tarinan pituutta ja luovuuden tasoa
-5. **Virheenkäsittely**: Heittää poikkeuksia, jotka kontrolleri sieppaa ja käsittelee
+1. **OpenAI-asiakas**: Käyttää virallista OpenAI Java SDK:ta, joka on konfiguroitu Azure AI Foundrylle (avaimeton)
+2. **Järjestelmäkehotus**: Asettaa AI:n käyttäytymään niin, että se kirjoittaa perheystävällisiä lemmikkitarinoita
+3. **Käyttäjäkehotus**: Kertoo AI:lle tarkalleen, minkä tarinan kirjoittaa kuvauksen perusteella
+4. **Parametrit**: Ohjaa tarinan pituutta ja luovuustasoa
+5. **Virheenkäsittely**: Heittää poikkeuksia, jotka kontrolleri nappaa ja käsittelee
 
-### 4. Verkkopohjat
+### 4. Web-mallit
 
 **Tiedosto:** `index.html` (Latauslomake)
 
-Pääsivu, jossa käyttäjät kuvaavat lemmikkinsä:
+Pääsivu, jossa käyttäjät kuvailevat lemmikkejään:
 
 ```html
 <!DOCTYPE html>
@@ -260,7 +264,7 @@ Pääsivu, jossa käyttäjät kuvaavat lemmikkinsä:
 
 **Tiedosto:** `result.html` (Tarinan näyttö)
 
-Näyttää luodun tarinan:
+Näyttää generoidun tarinan:
 
 ```html
 <!DOCTYPE html>
@@ -293,18 +297,18 @@ Näyttää luodun tarinan:
 </html>
 ```
 
-**Pohjan ominaisuudet:**
+**Mallin ominaisuudet:**
 
 1. **Thymeleaf-integraatio**: Käyttää `th:`-attribuutteja dynaamiseen sisältöön
-2. **Responsiivinen suunnittelu**: CSS-tyylit mobiilille ja työpöydälle
+2. **Responsiivinen muotoilu**: CSS-tyylit mobiili- ja työpöytäkäyttöön
 3. **Virheenkäsittely**: Näyttää validointivirheet käyttäjille
-4. **Asiakaspään käsittely**: JavaScript-kuvan analysointiin (Transformers.js:n avulla)
+4. **Asiakaspään käsittely**: JavaScript kuvien analyysiin (Transformers.js-kirjastoa hyödyntäen)
 
 ### 5. Konfiguraatio
 
 **Tiedosto:** `application.properties`
 
-Sovelluksen asetukset:
+Sovelluksen konfiguraatioasetukset:
 
 ```properties
 spring.application.name=pet-story-app
@@ -316,52 +320,55 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 **Konfiguraation selitys:**
 
-1. **Tiedoston lataus**: Sallii enintään 10 MB:n kuvat
-2. **Lokitus**: Kontrolloi, mitä tietoja kirjataan suorituksen aikana
-3. **GitHub Models**: Määrittää, mitä AI-mallia ja päätepistettä käytetään
-4. **Turvallisuus**: Virheenkäsittelyasetukset, jotka estävät arkaluontoisten tietojen paljastamisen
+1. **Tiedostojen lataus**: Sallii korkeintaan 10MB kuvat
+2. **Lokitus**: Määrittää, mitä tietoja kirjataan suorituksen aikana
+3. **Azure AI Foundry**: Määrittää käytettävän päätepisteen ja mallin käyttöönoton (avaimeton autentikointi)
+4. **Turvallisuus**: Virheenkäsittelyn asetukset, jotta arkaluontoisia tietoja ei vuoda
 
-## Sovelluksen käynnistäminen
+## Sovelluksen suorittaminen
 
-### Vaihe 1: Aseta GitHub-tunnus
+### Vaihe 1: Kirjaudu sisään ja määritä päätepisteesi
 
-Ensiksi sinun täytyy asettaa GitHub-tunnus ympäristömuuttujaksi:
+Autentikointi on avaimetonta (Microsoft Entra ID), joten API-avainta ei tarvita. Kirjaudu sisään ja määritä Foundry-päätepisteesi:
 
 **Windows (Komentokehote):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-**Miksi tämä on tarpeen:**
-- GitHub Models vaatii autentikointia AI-mallien käyttöön
-- Ympäristömuuttujien käyttö pitää arkaluontoiset tunnukset poissa lähdekoodista
-- `models:read`-oikeus antaa pääsyn AI-päätelmiin
+**Miksi tämä tarvitaan:**
+- Azure AI Foundry käyttää Microsoft Entra ID:tä autentikoimaan inference-pyynnöt
+- Avaimeton autentikointi tarkoittaa, ettei salasanoja tai avaimia ole lähdekoodissa tai ympäristössä
+- Tililläsi pitää olla **Cognitive Services OpenAI User** -rooli resurssissa
 
-### Vaihe 2: Rakenna ja käynnistä
+### Vaihe 2: Käännä ja suorita
 
 Siirry projektihakemistoon:
 ```bash
 cd 04-PracticalSamples/petstory
 ```
 
-Rakenna sovellus:
+Käännä sovellus:
 ```bash
 mvn clean compile
 ```
@@ -373,49 +380,51 @@ mvn spring-boot:run
 
 Sovellus käynnistyy osoitteessa `http://localhost:8080`.
 
-### Vaihe 3: Testaa sovellus
+### Vaihe 3: Testaa sovellusta
 
 1. **Avaa** `http://localhost:8080` selaimessasi
-2. **Kuvaile** lemmikkisi tekstialueella (esim. "Leikkisä kultainennoutaja, joka rakastaa noutamista")
-3. **Klikkaa** "Luo tarina" saadaksesi AI:n luoman tarinan
-4. **Vaihtoehtoisesti**, lataa lemmikkikuva automaattisen kuvauksen luomiseksi
-5. **Näe** luova tarina lemmikkisi kuvauksen perusteella
+2. **Kuvaile** lemmikkiäsi tekstikentässä (esim. "Leikkisä kultainennoutaja, joka rakastaa noutamista")
+3. **Klikkaa** "Generate Story" saadaksesi tekoälyn luoman tarinan
+4. **Vaihtoehtoisesti** lataa lemmikkisi kuva, jolloin kuvaus generoidaan automaattisesti
+5. **Katso** luova tarina lemmikkisi kuvauksen pohjalta
 
-## Miten kaikki toimii yhdessä
+## Kuinka kaikki toimii yhdessä
 
-Näin koko prosessi etenee, kun luot lemmikkitarinan:
+Tässä on koko prosessi, kun luot lemmikkitarinan:
 
-1. **Käyttäjän syöte**: Kuvaat lemmikkisi verkkolomakkeella
-2. **Lomakkeen lähetys**: Selaimesi lähettää POST-pyynnön osoitteeseen `/generate-story`
+1. **Käyttäjän syöte**: Kuvailet lemmikkisi web-lomakkeella
+2. **Lomakkeen lähetys**: Selain lähettää POST-pyynnön osoitteeseen `/generate-story`
 3. **Kontrollerin käsittely**: `PetController` validoi ja puhdistaa syötteen
-4. **AI-palvelun kutsu**: `StoryService` lähettää pyynnön GitHub Models API:lle
-5. **Tarinan luonti**: AI luo luovan tarinan kuvauksen perusteella
+4. **AI-palvelun kutsu**: `StoryService` lähettää pyynnön Azure AI Foundry -malliin
+5. **Tarinan luonti**: AI tuottaa luovan tarinan kuvauksen perusteella
 6. **Vastauksen käsittely**: Kontrolleri vastaanottaa tarinan ja lisää sen malliin
-7. **Pohjan renderöinti**: Thymeleaf renderöi `result.html`-sivun tarinan kanssa
-8. **Näyttö**: Käyttäjä näkee luodun tarinan selaimessaan
+7. **Mallin renderöinti**: Thymeleaf renderöi `result.html`-sivun tarinalla
+8. **Näyttö**: Käyttäjä näkee generoidun tarinan selaimessa
 
-**Virheenkäsittelyn kulku:**
+**Virheenkäsittely:**
 Jos AI-palvelu epäonnistuu:
-1. Kontrolleri sieppaa poikkeuksen
-2. Luo varatarinan valmiiksi kirjoitetuista pohjista
-3. Näyttää varatarinan ja huomautuksen AI:n saatavuudesta
-4. Käyttäjä saa silti tarinan, mikä varmistaa hyvän käyttökokemuksen
+1. Kontrolleri nappaa poikkeuksen
+2. Tuottaa varatarinan valmiiden mallien avulla
+3. Näyttää varatarinan ja huomautuksen AI-palvelun tilapäisestä poissaolosta
+4. Käyttäjälle tarjotaan silti tarina, mikä takaa hyvän käyttökokemuksen
 
 ## AI-integraation ymmärtäminen
 
-### GitHub Models API
-Sovellus käyttää GitHub Models -palvelua, joka tarjoaa ilmaisen pääsyn erilaisiin AI-malleihin:
+### Azure AI Foundry (avaimeton)
+Sovellus käyttää Azure AI Foundryta avaimettomalla autentikoinnilla (Microsoft Entra ID):
 
 ```java
-// Authentication with GitHub token
+// Avaineton todennus - ei API-avainta
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
-### Kehotusmuotoilu
-Palvelu käyttää huolellisesti suunniteltuja kehotuksia hyvien tulosten saamiseksi:
+### Kehotetekniikat
+Palvelu käyttää huolellisesti suunniteltuja kehotteita hyvien tulosten saamiseksi:
 
 ```java
 String systemPrompt = "You are a creative storyteller who writes fun, " +
@@ -424,7 +433,7 @@ String systemPrompt = "You are a creative storyteller who writes fun, " +
 ```
 
 ### Vastauksen käsittely
-AI:n vastaus otetaan talteen ja validoidaan:
+AI:n vastaus poimitaan ja validoidaan:
 
 ```java
 ChatCompletion response = openAIClient.chat().completions().create(params);
@@ -435,5 +444,9 @@ String story = response.choices().get(0).message().content().orElse("");
 
 Lisää esimerkkejä löydät kohdasta [Luku 04: Käytännön esimerkit](../README.md)
 
-**Vastuuvapauslauseke**:  
-Tämä asiakirja on käännetty käyttämällä tekoälypohjaista käännöspalvelua [Co-op Translator](https://github.com/Azure/co-op-translator). Vaikka pyrimme tarkkuuteen, huomioithan, että automaattiset käännökset voivat sisältää virheitä tai epätarkkuuksia. Alkuperäinen asiakirja sen alkuperäisellä kielellä tulisi pitää ensisijaisena lähteenä. Kriittisen tiedon osalta suositellaan ammattimaista ihmiskäännöstä. Emme ole vastuussa väärinkäsityksistä tai virhetulkinnoista, jotka johtuvat tämän käännöksen käytöstä.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Vastuuvapauslauseke**:
+Tämä asiakirja on käännetty käyttämällä tekoälypohjaista käännöspalvelua [Co-op Translator](https://github.com/Azure/co-op-translator). Vaikka pyrimme tarkkuuteen, otathan huomioon, että automaattiset käännökset saattavat sisältää virheitä tai epätarkkuuksia. Alkuperäinen asiakirja sen alkuperäiskielellä on virallinen lähde. Tärkeissä asioissa suositellaan ammattimaista ihmiskäännöstä. Emme ole vastuussa tämän käännöksen käytöstä aiheutuvista väärinymmärryksistä tai tulkinnoista.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

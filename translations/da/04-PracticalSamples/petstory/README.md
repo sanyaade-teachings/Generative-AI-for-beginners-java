@@ -1,31 +1,31 @@
-# Pet Historie Generator Tutorial for Begyndere
+# Pet Story Generator Tutorial for Begyndere
 
 ## Indholdsfortegnelse
 
-- [Forudsætninger](../../../../04-PracticalSamples/petstory)
-- [Forstå Projektstrukturen](../../../../04-PracticalSamples/petstory)
-- [Kernekomponenter Forklaret](../../../../04-PracticalSamples/petstory)
-  - [1. Hovedapplikation](../../../../04-PracticalSamples/petstory)
-  - [2. Web Controller](../../../../04-PracticalSamples/petstory)
-  - [3. Historie Service](../../../../04-PracticalSamples/petstory)
-  - [4. Web Skabeloner](../../../../04-PracticalSamples/petstory)
-  - [5. Konfiguration](../../../../04-PracticalSamples/petstory)
-- [Kør Applikationen](../../../../04-PracticalSamples/petstory)
-- [Hvordan Det Hele Fungerer Sammen](../../../../04-PracticalSamples/petstory)
-- [Forstå AI Integrationen](../../../../04-PracticalSamples/petstory)
-- [Næste Skridt](../../../../04-PracticalSamples/petstory)
+- [Forudsætninger](#forudsætninger)
+- [Forståelse af Projektstrukturen](#forståelse-af-projektstrukturen)
+- [Hovedkomponenter Forklaret](#hovedkomponenter-forklaret)
+  - [1. Hovedapplikation](#1-hovedapplikation)
+  - [2. Web Controller](#2-web-controller)
+  - [3. Story Service](#3-story-service)
+  - [4. Web Skabeloner](#4-web-skabeloner)
+  - [5. Konfiguration](#5-konfiguration)
+- [Køre Applikationen](#køre-applikationen)
+- [Hvordan Det Hele Fungerer Sammen](#hvordan-det-hele-fungerer-sammen)
+- [Forståelse af AI-Integrationen](#forståelse-af-ai-integrationen)
+- [Næste Skridt](#næste-skridt)
 
 ## Forudsætninger
 
-Før du starter, skal du sikre dig, at du har:
+Før du går i gang, skal du sikre dig, at du har:
 - Java 21 eller nyere installeret
 - Maven til afhængighedsstyring
-- En GitHub-konto med en personlig adgangstoken (PAT) med `models:read` tilladelse
+- En Azure AI Foundry modeludrulning (opret den med `azd up` — se [Kapitel 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md)), logget ind med `az login` (nøglefri autentificering)
 - Grundlæggende forståelse af Java, Spring Boot og webudvikling
 
-## Forstå Projektstrukturen
+## Forståelse af Projektstrukturen
 
-Pet historie projektet har flere vigtige filer:
+Pet story-projektet har flere vigtige filer:
 
 ```
 petstory/
@@ -42,13 +42,13 @@ petstory/
 └── pom.xml                           # Maven dependencies
 ```
 
-## Kernekomponenter Forklaret
+## Hovedkomponenter Forklaret
 
 ### 1. Hovedapplikation
 
 **Fil:** `PetStoryApplication.java`
 
-Dette er indgangspunktet for vores Spring Boot applikation:
+Dette er indgangspunktet for vores Spring Boot-applikation:
 
 ```java
 @SpringBootApplication
@@ -60,15 +60,15 @@ public class PetStoryApplication {
 ```
 
 **Hvad dette gør:**
-- `@SpringBootApplication` annotation aktiverer auto-konfiguration og komponentscanning
-- Starter en indbygget webserver (Tomcat) på port 8080
+- `@SpringBootApplication` annotationen aktiverer auto-konfiguration og komponent-scanning
+- Starter en indlejret webserver (Tomcat) på port 8080
 - Opretter automatisk alle nødvendige Spring beans og services
 
 ### 2. Web Controller
 
 **Fil:** `PetController.java`
 
-Denne håndterer alle webforespørgsler og brugerinteraktioner:
+Denne håndterer alle webanmodninger og brugerinteraktioner:
 
 ```java
 @Controller
@@ -82,7 +82,7 @@ public class PetController {
     
     @GetMapping("/")
     public String index() {
-        return "index";  // Returns index.html template
+        return "index";  // Returnerer index.html skabelon
     }
     
     @PostMapping("/generate-story")
@@ -90,24 +90,24 @@ public class PetController {
                                Model model, 
                                RedirectAttributes redirectAttributes) {
         
-        // Input validation
+        // Indtastningsvalidering
         if (description.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please provide a description.");
             return "redirect:/";
         }
         
-        // Sanitize input for security
+        // Rens input for sikkerhed
         String sanitizedDescription = sanitizeInput(description);
         
-        // Generate story with error handling
+        // Generer historie med fejlhåndtering
         try {
             String story = storyService.generateStory(sanitizedDescription);
             model.addAttribute("caption", sanitizedDescription);
             model.addAttribute("story", story);
-            return "result";  // Returns result.html template
+            return "result";  // Returnerer result.html skabelon
             
         } catch (Exception e) {
-            // Use fallback story if AI fails
+            // Brug fallback-historie hvis AI fejler
             String fallbackStory = generateFallbackStory(sanitizedDescription);
             model.addAttribute("story", fallbackStory);
             return "result";
@@ -117,21 +117,21 @@ public class PetController {
     private String sanitizeInput(String input) {
         return input.replaceAll("[<>\"'&]", "")  // Remove dangerous characters
                    .trim()
-                   .substring(0, Math.min(input.length(), 500));  // Limit length
+                   .substring(0, Math.min(input.length(), 500));  // Begræns længde
     }
 }
 ```
 
 **Nøglefunktioner:**
 
-1. **Rutehåndtering**: `@GetMapping("/")` viser uploadformularen, `@PostMapping("/generate-story")` behandler indsendelser
+1. **Rutehåndtering**: `@GetMapping("/")` viser upload-formularen, `@PostMapping("/generate-story")` behandler indsendelser
 2. **Inputvalidering**: Tjekker for tomme beskrivelser og længdebegrænsninger
-3. **Sikkerhed**: Renser brugerinput for at forhindre XSS-angreb
-4. **Fejlhåndtering**: Tilbyder fallback-historier, når AI-tjenesten fejler
-5. **Modelbinding**: Sender data til HTML-skabeloner ved hjælp af Spring's `Model`
+3. **Sikkerhed**: Rensker brugerinput for at forhindre XSS-angreb
+4. **Fejlhåndtering**: Tilbyder fallback-historier, når AI-service fejler
+5. **Model Binding**: Overfører data til HTML-skabeloner ved hjælp af Springs `Model`
 
 **Fallback System:**
-Controlleren inkluderer forudskrevne historie skabeloner, der bruges, når AI-tjenesten ikke er tilgængelig:
+Controlleren inkluderer forudskrevne historie-skabeloner, der bruges, når AI-servicen ikke er tilgængelig:
 
 ```java
 private String generateFallbackStory(String description) {
@@ -141,17 +141,17 @@ private String generateFallbackStory(String description) {
         "In a cozy home filled with love, there lived an extraordinary pet..."
     };
     
-    // Use description hash for consistent responses
+    // Brug beskrivelses-hash for konsistente svar
     int index = Math.abs(description.hashCode() % storyTemplates.length);
     return storyTemplates[index];
 }
 ```
 
-### 3. Historie Service
+### 3. Story Service
 
 **Fil:** `StoryService.java`
 
-Denne service kommunikerer med GitHub Models for at generere historier:
+Denne service kommunikerer med Azure AI Foundry for at generere historier med nøglefri autentificering:
 
 ```java
 @Service
@@ -160,18 +160,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // Foundrys OpenAI-kompatible endpoint findes under /openai/v1/
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // Nøglefri autentificering med Microsoft Entra ID (ingen API-nøgle)
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -182,16 +186,16 @@ public class StoryService {
         
         String userPrompt = "Write a fun short story about a pet described as: " + description;
         
-        // Configure the AI request
+        // Konfigurer AI-forespørgslen
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(modelName)
                 .addSystemMessage(systemPrompt)
                 .addUserMessage(userPrompt)
-                .maxCompletionTokens(500)  // Limit response length
-                .temperature(0.8)          // Control creativity (0.0-1.0)
+                .maxCompletionTokens(500)  // Begræns svarlængde
+                .temperature(0.8)          // Kontroller kreativitet (0,0-1,0)
                 .build();
         
-        // Send request and get response
+        // Send forespørgsel og modtag svar
         ChatCompletion response = openAIClient.chat().completions().create(params);
         
         return response.choices().get(0).message().content().orElse("");
@@ -201,17 +205,17 @@ public class StoryService {
 
 **Nøglekomponenter:**
 
-1. **OpenAI Klient**: Bruger den officielle OpenAI Java SDK konfigureret til GitHub Models
-2. **System Prompt**: Indstiller AI's adfærd til at skrive familievenlige pet historier
-3. **Bruger Prompt**: Fortæller AI præcis, hvilken historie der skal skrives baseret på beskrivelsen
-4. **Parametre**: Styrer historielængde og kreativitet
-5. **Fejlhåndtering**: Kaster undtagelser, som controlleren fanger og håndterer
+1. **OpenAI Client**: Bruger den officielle OpenAI Java SDK konfigureret til Azure AI Foundry (nøglefri)
+2. **System Prompt**: Sætter AIs adfærd til at skrive familievenlige dyrehistorier
+3. **User Prompt**: Fortæller AI præcis hvilken historie der skal skrives baseret på beskrivelsen
+4. **Parametre**: Kontrollerer historiens længde og kreativitet
+5. **Fejlhåndtering**: Smider undtagelser, som controlleren fanger og håndterer
 
 ### 4. Web Skabeloner
 
-**Fil:** `index.html` (Uploadformular)
+**Fil:** `index.html` (Upload Formular)
 
-Hovedsiden, hvor brugere beskriver deres kæledyr:
+Hovedsiden, hvor brugerne beskriver deres kæledyr:
 
 ```html
 <!DOCTYPE html>
@@ -298,13 +302,13 @@ Viser den genererede historie:
 1. **Thymeleaf Integration**: Bruger `th:` attributter til dynamisk indhold
 2. **Responsivt Design**: CSS-styling til mobil og desktop
 3. **Fejlhåndtering**: Viser valideringsfejl til brugerne
-4. **Klient-side Behandling**: JavaScript til billedanalyse (ved hjælp af Transformers.js)
+4. **Klientsidebehandling**: JavaScript til billedanalyse (ved brug af Transformers.js)
 
 ### 5. Konfiguration
 
 **Fil:** `application.properties`
 
-Konfigurationsindstillinger for applikationen:
+Konfigurationsindstillinger til applikationen:
 
 ```properties
 spring.application.name=pet-story-app
@@ -316,47 +320,50 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 **Konfiguration forklaret:**
 
-1. **Filupload**: Tillader billeder op til 10MB
-2. **Logning**: Styrer, hvilken information der logges under eksekvering
-3. **GitHub Models**: Angiver, hvilken AI-model og endpoint der skal bruges
-4. **Sikkerhed**: Fejlhåndteringskonfiguration for at undgå eksponering af følsomme oplysninger
+1. **Fil Upload**: Tillader billeder op til 10MB
+2. **Logging**: Kontrollerer hvilken information der logges under kørsel
+3. **Azure AI Foundry**: Angiver endpoint og modeludrulning der skal bruges (nøglefri autentificering)
+4. **Sikkerhed**: Fejlhåndteringskonfiguration for at undgå at afsløre følsomme oplysninger
 
-## Kør Applikationen
+## Køre Applikationen
 
-### Trin 1: Indstil Din GitHub Token
+### Trin 1: Log Ind og Sæt Dit Endpoint
 
-Først skal du indstille din GitHub token som en miljøvariabel:
+Autentificering er nøglefri (Microsoft Entra ID), så der er ingen API-nøgle. Log ind og angiv dit Foundry-endpoint:
 
 **Windows (Kommandoprompt):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Hvorfor dette er nødvendigt:**
-- GitHub Models kræver autentificering for at få adgang til AI-modeller
-- Brug af miljøvariabler holder følsomme tokens ude af kildekoden
-- `models:read` tilladelsen giver adgang til AI-inferens
+- Azure AI Foundry bruger Microsoft Entra ID til at autentificere inferensanmodninger
+- Nøglefri autentificering betyder ingen hemmeligheder i din kildekode eller miljø
+- Din konto skal have rollen **Cognitive Services OpenAI User** på ressourcen
 
 ### Trin 2: Byg og Kør
 
-Naviger til projektmappen:
+Skift til projektmappen:
 ```bash
 cd 04-PracticalSamples/petstory
 ```
@@ -376,46 +383,48 @@ Applikationen starter på `http://localhost:8080`.
 ### Trin 3: Test Applikationen
 
 1. **Åbn** `http://localhost:8080` i din browser
-2. **Beskriv** dit kæledyr i tekstfeltet (f.eks. "En legesyg golden retriever, der elsker at hente")
-3. **Klik** på "Generer Historie" for at få en AI-genereret historie
+2. **Beskriv** dit kæledyr i tekstfeltet (f.eks. "En legesyg golden retriever, der elsker at hente ting")
+3. **Klik** på "Generate Story" for at få en AI-genereret historie
 4. **Alternativt**, upload et kæledyrsbillede for automatisk at generere en beskrivelse
 5. **Se** den kreative historie baseret på din kæledyrsbeskrivelse
 
 ## Hvordan Det Hele Fungerer Sammen
 
-Her er den komplette proces, når du genererer en pet historie:
+Her er den komplette proces, når du genererer en kæledyrshistorie:
 
-1. **Brugerinput**: Du beskriver dit kæledyr på webformularen
-2. **Formularindsendelse**: Browseren sender en POST-forespørgsel til `/generate-story`
-3. **Controller Behandling**: `PetController` validerer og renser input
-4. **AI Service Kald**: `StoryService` sender forespørgsel til GitHub Models API
+1. **Brugerinput**: Du beskriver dit kæledyr i webformularen
+2. **Formularindsendelse**: Browseren sender en POST-anmodning til `/generate-story`
+3. **Controllerbehandling**: `PetController` validerer og renser input
+4. **AI Servicekald**: `StoryService` sender anmodning til Azure AI Foundry modellen
 5. **Historiegenerering**: AI genererer en kreativ historie baseret på beskrivelsen
-6. **Responshåndtering**: Controller modtager historien og tilføjer den til modellen
-7. **Skabelonrendering**: Thymeleaf renderer `result.html` med historien
-8. **Visning**: Brugeren ser den genererede historie i sin browser
+6. **Svarhåndtering**: Controller modtager historien og tilføjer den til modellen
+7. **Skabelonrendering**: Thymeleaf render `result.html` med historien
+8. **Visning**: Brugeren ser den genererede historie i browseren
 
-**Fejlhåndteringsproces:**
-Hvis AI-tjenesten fejler:
-1. Controller fanger undtagelsen
+**Fejlhåndteringsflow:**
+Hvis AI-servicen fejler:
+1. Controlleren fanger undtagelsen
 2. Genererer en fallback-historie ved hjælp af forudskrevne skabeloner
-3. Viser fallback-historien med en note om AI's utilgængelighed
+3. Viser fallback-historien med en note om AI-ustabilitet
 4. Brugeren får stadig en historie, hvilket sikrer en god brugeroplevelse
 
-## Forstå AI Integrationen
+## Forståelse af AI-Integrationen
 
-### GitHub Models API
-Applikationen bruger GitHub Models, som giver gratis adgang til forskellige AI-modeller:
+### Azure AI Foundry (nøglefri)
+Applikationen bruger Azure AI Foundry med nøglefri autentificering (Microsoft Entra ID):
 
 ```java
-// Authentication with GitHub token
+// Nøglefri autentificering - ingen API-nøgle
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
 ### Prompt Engineering
-Servicen bruger nøje udformede prompts for at opnå gode resultater:
+Servicen bruger nøje udformede prompts til at opnå gode resultater:
 
 ```java
 String systemPrompt = "You are a creative storyteller who writes fun, " +
@@ -423,8 +432,8 @@ String systemPrompt = "You are a creative storyteller who writes fun, " +
                      "Keep stories under 500 words and appropriate for all ages.";
 ```
 
-### Responsbehandling
-AI-responsen udtrækkes og valideres:
+### Svarbehandling
+AI-svaret trækkes ud og valideres:
 
 ```java
 ChatCompletion response = openAIClient.chat().completions().create(params);
@@ -435,5 +444,9 @@ String story = response.choices().get(0).message().content().orElse("");
 
 For flere eksempler, se [Kapitel 04: Praktiske eksempler](../README.md)
 
-**Ansvarsfraskrivelse**:  
-Dette dokument er blevet oversat ved hjælp af AI-oversættelsestjenesten [Co-op Translator](https://github.com/Azure/co-op-translator). Selvom vi bestræber os på at sikre nøjagtighed, skal det bemærkes, at automatiserede oversættelser kan indeholde fejl eller unøjagtigheder. Det originale dokument på dets oprindelige sprog bør betragtes som den autoritative kilde. For kritisk information anbefales professionel menneskelig oversættelse. Vi påtager os ikke ansvar for eventuelle misforståelser eller fejltolkninger, der måtte opstå som følge af brugen af denne oversættelse.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Ansvarsfraskrivelse**:
+Dette dokument er blevet oversat ved hjælp af AI-oversættelsestjenesten [Co-op Translator](https://github.com/Azure/co-op-translator). Selvom vi bestræber os på nøjagtighed, skal du være opmærksom på, at automatiserede oversættelser kan indeholde fejl eller unøjagtigheder. Det originale dokument på dets oprindelige sprog bør betragtes som den autoritative kilde. For kritisk information anbefales professionel menneskelig oversættelse. Vi påtager os intet ansvar for misforståelser eller fejltolkninger, der opstår som følge af brugen af denne oversættelse.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

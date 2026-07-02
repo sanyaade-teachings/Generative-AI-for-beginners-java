@@ -1,21 +1,17 @@
 # Ansvarlig Generativ AI
 
-[![Responsible Generative AI](https://img.youtube.com/vi/rF-b2BTSMQ4/0.jpg)](https://www.youtube.com/watch?v=rF-b2BTSMQ4 "Responsible Generative AI")
 
-> **Video**: [Se videooversigten for denne lektion](https://www.youtube.com/watch?v=rF-b2BTSMQ4).
-> Du kan også klikke på miniaturebilledet ovenfor for at åbne den samme video.
+## Hvad Du Vil lære
 
-## Hvad Du Vil Lære
-
-- Lær de etiske overvejelser og bedste praksis, der er vigtige for AI-udvikling
-- Byg indholdsfiltrering og sikkerhedsforanstaltninger ind i dine applikationer
-- Test og håndter AI-sikkerhedssvar ved hjælp af GitHub Models' indbyggede beskyttelse
+- Lær de etiske overvejelser og bedste praksis, der betyder noget for AI-udvikling
+- Byg indholdsfilttering og sikkerhedsforanstaltninger ind i dine applikationer
+- Test og håndter AI-sikkerhedsreaktioner ved hjælp af Azure AI Foundrys indbyggede indholdsfilttering
 - Anvend ansvarlige AI-principper til at skabe sikre, etiske AI-systemer
 
 ## Indholdsfortegnelse
 
 - [Introduktion](#introduktion)
-- [GitHub Models indbyggede sikkerhed](#github-models-indbyggede-sikkerhed)
+- [Azure AI Foundry Content Safety](#azure-ai-foundry-content-safety)
 - [Praktisk eksempel: Ansvarlig AI-sikkerhedsdemo](#praktisk-eksempel-ansvarlig-ai-sikkerhedsdemo)
   - [Hvad demoen viser](#hvad-demoen-viser)
   - [Opsætningsinstruktioner](#opsætningsinstruktioner)
@@ -23,77 +19,77 @@
   - [Forventet output](#forventet-output)
 - [Bedste praksis for ansvarlig AI-udvikling](#bedste-praksis-for-ansvarlig-ai-udvikling)
 - [Vigtig bemærkning](#vigtig-bemærkning)
-- [Opsummering](#opsummering)
+- [Resumé](#resumé)
 - [Kursusafslutning](#kursusafslutning)
 - [Næste skridt](#næste-skridt)
 
 ## Introduktion
 
-Dette sidste kapitel fokuserer på de kritiske aspekter ved at bygge ansvarlige og etiske generative AI-applikationer. Du vil lære, hvordan du implementerer sikkerhedsforanstaltninger, håndterer indholdsfiltrering og anvender bedste praksis for ansvarlig AI-udvikling ved hjælp af værktøjerne og rammerne, der er dækket i tidligere kapitler. At forstå disse principper er afgørende for at bygge AI-systemer, som ikke kun er teknisk imponerende, men også sikre, etiske og pålidelige.
+Dette sidste kapitel fokuserer på de kritiske aspekter ved at bygge ansvarlige og etiske generative AI-applikationer. Du vil lære at implementere sikkerhedsforanstaltninger, håndtere indholdsfilttering og anvende bedste praksis for ansvarlig AI-udvikling ved hjælp af de værktøjer og rammer, der er dækket i tidligere kapitler. At forstå disse principper er essentielt for at bygge AI-systemer, der ikke kun er teknisk imponerende, men også sikre, etiske og troværdige.
 
-## GitHub Models indbyggede sikkerhed
+## Azure AI Foundry Content Safety
 
-GitHub Models leveres med grundlæggende indholdsfiltrering fra starten. Det er som at have en venlig dørmand i din AI-klub - ikke den mest sofistikerede, men den klarer opgaven i basale scenarier.
+Azure AI Foundry-modeller leveres med indholdsfilttering ud af boksen, drevet af Azure AI Content Safety. Skadelige prompts og svar bliver automatisk screenet på tværs af flere kategorier, før de nogensinde når — eller forlader — modellen.
 
-**Hvad GitHub Models beskytter mod:**
-- **Skadeligt indhold**: Blokerer åbenlyst voldeligt, seksuelt eller farligt indhold
-- **Grundlæggende hadefuld tale**: Filtrerer klar diskriminerende sprogbrug
-- **Enkle jailbreaks**: Modstår grundlæggende forsøg på at omgå sikkerhedsgitre
+**Hvad Azure AI Foundry beskytter mod:**
+- **Skadeligt indhold**: Blokerer voldeligt, seksuelt, selvskadende eller farligt indhold
+- **Hadetale**: Filtres diskriminerende sprogbrug
+- **Jailbreaks**: Registrerer prompt-injektion og forsøg på at omgå sikkerhedsgitre
 
 ## Praktisk eksempel: Ansvarlig AI-sikkerhedsdemo
 
-Dette kapitel inkluderer en praktisk demonstration af, hvordan GitHub Models implementerer ansvarlige AI-sikkerhedsforanstaltninger ved at teste prompts, der potentielt kunne overtræde sikkerhedsretningslinjer.
+Dette kapitel indeholder en praktisk demonstration af, hvordan Azure AI Foundry implementerer ansvarlige AI-sikkerhedsforanstaltninger ved at teste prompts, der potentielt kan overtræde sikkerhedsguidelines.
 
 ### Hvad demoen viser
 
-`ResponsibleGithubModels`-klassen følger denne proces:
-1. Initialiserer GitHub Models-klienten med autentifikation
-2. Tester skadelige prompts (vold, hadefuld tale, misinformation, ulovligt indhold)
-3. Sender hver prompt til GitHub Models API
-4. Håndterer svar: hårde blokeringer (HTTP-fejl), bløde afvisninger (høflige "Jeg kan ikke hjælpe" svar) eller normal indholdsgenerering
-5. Viser resultater, der indikerer hvilket indhold der blev blokeret, afvist eller tilladt
-6. Tester sikkert indhold til sammenligning
+`ResponsibleAIDemo` klassen følger denne flow:
+1. Initialiser Azure AI Foundry-klienten med nøglefri autentificering (Microsoft Entra ID)
+2. Test skadelige prompts (vold, hadetale, misinformation, ulovligt indhold)
+3. Send hver prompt til Azure AI Foundry-modellen
+4. Håndter svar: hårde blokeringer (HTTP-fejl), bløde afvisninger (høflige "jeg kan ikke hjælpe" svar) eller normal indholdsgenerering
+5. Vis resultater, der viser hvilket indhold der blev blokeret, afvist eller tilladt
+6. Test sikkert indhold for sammenligning
 
 ![Responsible AI Safety Demo](../../../translated_images/da/responsible.e4f51a917bafa4bf.webp)
 
 ### Opsætningsinstruktioner
 
-1. **Angiv din GitHub Personlige Adgangstoken:**
+1. **Log ind og sæt din Azure AI Foundry-endpoint** (nøglefri auth — ingen API-nøgle). Kør `az login` først, derefter:
    
    På Windows (Kommandoprompt):
    ```cmd
-   set GITHUB_TOKEN=your_github_token_here
+   set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    ```
    
    På Windows (PowerShell):
    ```powershell
-   $env:GITHUB_TOKEN="your_github_token_here"
+   $env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
    ```
    
    På Linux/macOS:
    ```bash
-   export GITHUB_TOKEN=your_github_token_here
+   export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    ```   
 
 ### Kørsel af demoen
 
-1. **Gå til eksempelmappen:**
+1. **Naviger til examples-mappen:**
    ```bash
    cd 03-CoreGenerativeAITechniques/examples
    ```
 
 2. **Kompilér og kør demoen:**
    ```bash
-   mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleGithubModels"
+   mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleAIDemo"
    ```
 
 ### Forventet output
 
-Demoen vil teste forskellige typer potentielt skadelige prompts og vise, hvordan moderne AI-sikkerhed fungerer gennem to mekanismer:
+Demoen tester forskellige typer potentielt skadelige prompts og viser, hvordan moderne AI-sikkerhed fungerer gennem to mekanismer:
 
-- **Hårde blokeringer**: HTTP 400 fejl når indhold blokeres af sikkerhedsfiltre før det når modellen
-- **Bløde afvisninger**: Modellen svarer med høflige afslag som "Jeg kan ikke hjælpe med det" (mest almindeligt med moderne modeller)
-- **Sikkert indhold**, som får et normalt svar
+- **Hårde blokeringer**: HTTP 400-fejl, når indhold blokeres af sikkerhedsfiltre før det når modellen
+- **Bløde afvisninger**: Modellen svarer med høflige afvisninger såsom "Jeg kan ikke hjælpe med det" (mest almindeligt med moderne modeller)
+- **Sikkert indhold** som får et normalt svar
 
 Eksempel på outputformat:
 ```
@@ -113,58 +109,58 @@ Status: Response generated successfully
 ────────────────────────────────────────────────────────────
 ```
 
-**Bemærk**: Både hårde blokeringer og bløde afvisninger indikerer, at sikkerhedssystemet virker korrekt.
+**Bemærk**: Både hårde blokeringer og bløde afvisninger indikerer, at sikkerhedssystemet fungerer korrekt.
 
 ## Bedste praksis for ansvarlig AI-udvikling
 
-Når du bygger AI-applikationer, skal du følge disse væsentlige praksisser:
+Når du bygger AI-applikationer, følg disse essentielle praksisser:
 
-1. **Håndter altid potentielle svar fra sikkerhedsfiltre på en god måde**
+1. **Håndter altid potentielle sikkerhedsfilterresponser elegant**
    - Implementer korrekt fejlhåndtering for blokeret indhold
-   - Giv meningsfuld tilbagemelding til brugere, når indhold filtreres
+   - Giv meningsfuld feedback til brugere, når indhold bliver filtreret
 
-2. **Implementer egne supplerende valideringer af indhold, hvor det er relevant**
+2. **Implementer dine egne yderligere valideringer af indhold, hvor det er relevant**
    - Tilføj domænespecifikke sikkerhedstjek
-   - Opret tilpassede valideringsregler til dit brugstilfælde
+   - Opret brugerdefinerede valideringsregler til dit brugstilfælde
 
 3. **Uddan brugere om ansvarlig AI-brug**
    - Giv klare retningslinjer for acceptabel brug
-   - Forklar, hvorfor noget indhold kan blive blokeret
+   - Forklar hvorfor visse indhold kan blive blokeret
 
 4. **Overvåg og log sikkerhedshændelser for forbedring**
    - Spor mønstre i blokeret indhold
    - Forbedr løbende dine sikkerhedsforanstaltninger
 
 5. **Respekter platformens indholdspolitikker**
-   - Hold dig opdateret med platformens retningslinjer
-   - Følg betingelser for tjeneste og etiske retningslinjer
+   - Hold dig opdateret med platformvejledninger
+   - Følg servicebetingelser og etiske retningslinjer
 
 ## Vigtig bemærkning
 
-Dette eksempel bruger med vilje problematiske prompts til udelukkende pædagogiske formål. Målet er at demonstrere sikkerhedsforanstaltninger, ikke at omgå dem. Brug altid AI-værktøjer ansvarligt og etisk.
+Dette eksempel bruger bevidst problematiske prompts til udelukkende uddannelsesformål. Målet er at demonstrere sikkerhedsforanstaltninger, ikke at omgå dem. Brug altid AI-værktøjer ansvarligt og etisk.
 
-## Opsummering
+## Resumé
 
-**Tillykke!** Du har med succes:
+**Tillykke!** Du har succesfuldt:
 
-- **Implementeret AI-sikkerhedsforanstaltninger** herunder indholdsfiltrering og håndtering af sikkerhedssvar
-- **Anvendt ansvarlige AI-principper** til at bygge etiske og pålidelige AI-systemer
-- **Testet sikkerhedsmekanismer** ved brug af GitHub Models' indbyggede beskyttelsesfunktioner
+- **Implementeret AI-sikkerhedsforanstaltninger** inklusive indholdsfilttering og håndtering af sikkerhedsresponser
+- **Anvendt ansvarlige AI-principper** til at bygge etiske og troværdige AI-systemer
+- **Testet sikkerheds mekanismer** ved hjælp af Azure AI Foundrys indbyggede indholdssikkerhedsfunktioner
 - **Lært bedste praksis** for ansvarlig AI-udvikling og implementering
 
-**Ressourcer for ansvarlig AI:**
-- [Microsoft Trust Center](https://www.microsoft.com/trust-center) - Lær om Microsofts tilgang til sikkerhed, privatliv og overholdelse
+**Ressourcer til ansvarlig AI:**
+- [Microsoft Trust Center](https://www.microsoft.com/trust-center) - Lær om Microsofts tilgang til sikkerhed, privatliv og compliance
 - [Microsoft Responsible AI](https://www.microsoft.com/ai/responsible-ai) - Udforsk Microsofts principper og praksisser for ansvarlig AI-udvikling
 
 ## Kursusafslutning
 
-Tillykke med at have gennemført kurset Generativ AI for Begyndere!
+Tillykke med at have gennemført Generative AI for Beginners kurset!
 
 ![Course Completion](../../../translated_images/da/image.73c7e2ff4a652e77.webp)
 
 **Det du har opnået:**
 - Sat dit udviklingsmiljø op
-- Lært centrale teknikker inden for generativ AI
+- Lært kerne teknikker inden for generativ AI
 - Udforsket praktiske AI-applikationer
 - Forstået ansvarlige AI-principper
 
@@ -192,6 +188,6 @@ Fortsæt din AI-læringsrejse med disse yderligere ressourcer:
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Ansvarsfraskrivelse**:  
-Dette dokument er oversat ved hjælp af AI-oversættelsestjenesten [Co-op Translator](https://github.com/Azure/co-op-translator). Selvom vi stræber efter nøjagtighed, skal du være opmærksom på, at automatiserede oversættelser kan indeholde fejl eller unøjagtigheder. Det oprindelige dokument på dets oprindelige sprog bør betragtes som den autoritative kilde. For kritisk information anbefales professionel menneskelig oversættelse. Vi påtager os ikke ansvar for misforståelser eller fejltolkninger, der opstår som følge af brugen af denne oversættelse.
+**Ansvarsfraskrivelse**:
+Dette dokument er blevet oversat ved hjælp af AI-oversættelsestjenesten [Co-op Translator](https://github.com/Azure/co-op-translator). Selvom vi bestræber os på nøjagtighed, skal du være opmærksom på, at automatiserede oversættelser kan indeholde fejl eller unøjagtigheder. Det originale dokument på dets oprindelige sprog bør betragtes som den autoritative kilde. For kritisk information anbefales professionel menneskelig oversættelse. Vi påtager os intet ansvar for misforståelser eller fejltolkninger, der opstår som følge af brugen af denne oversættelse.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->
