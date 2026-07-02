@@ -1,8 +1,8 @@
 # AGENTS.md
 
-## ภาพรวมของโปรเจกต์
+## ภาพรวมโครงการ
 
-นี่คือคลังข้อมูลเพื่อการศึกษาเกี่ยวกับการพัฒนา Generative AI ด้วย Java โดยมีคอร์สแบบลงมือทำที่ครอบคลุม Large Language Models (LLMs), การออกแบบคำสั่ง (prompt engineering), embeddings, RAG (Retrieval-Augmented Generation) และ Model Context Protocol (MCP)
+นี่คือที่เก็บโค้ดเพื่อการศึกษาเกี่ยวกับการพัฒนา Generative AI ด้วย Java โดยมีหลักสูตรแบบลงมือทำที่ครอบคลุม Large Language Models (LLMs), prompt engineering, embeddings, RAG (Retrieval-Augmented Generation) และ Model Context Protocol (MCP)
 
 **เทคโนโลยีหลัก:**
 - Java 21
@@ -10,71 +10,74 @@
 - Spring AI 1.1.x
 - Maven
 - LangChain4j
-- GitHub Models, Azure OpenAI และ OpenAI SDKs
+- Azure AI Foundry, Azure OpenAI และ OpenAI SDKs
 
 **สถาปัตยกรรม:**
-- แอปพลิเคชัน Spring Boot แบบแยกส่วนที่จัดเรียงตามบท
-- โปรเจกต์ตัวอย่างที่แสดงรูปแบบ AI ต่างๆ
-- พร้อมใช้งานกับ GitHub Codespaces โดยมี dev containers ที่ตั้งค่าไว้ล่วงหน้า
+- แอปพลิเคชัน Spring Boot หลายตัวแยกส่วนตามบทเรียน
+- โครงการตัวอย่างที่แสดงแพตเทิร์น AI หลากหลาย
+- พร้อมใช้งานกับ GitHub Codespaces ที่ตั้งค่าคอนเทนเนอร์สำหรับการพัฒนาไว้ล่วงหน้า
 
-## คำสั่งการตั้งค่า
+## คำสั่งติดตั้ง
 
-### ข้อกำหนดเบื้องต้น
+### สิ่งที่ต้องเตรียม
 - Java 21 หรือสูงกว่า
 - Maven 3.x
-- GitHub personal access token (สำหรับ GitHub Models)
-- ตัวเลือกเพิ่มเติม: ข้อมูลรับรอง Azure OpenAI
+- บัญชีสมาชิก Azure พร้อมการใช้งาน Azure AI Foundry และการติดตั้งโมเดล (ตั้งค่าด้วย `azd up`)
+- Azure CLI (`az`) และ Azure Developer CLI (`azd`) พร้อมเซ็นชื่อเข้าระบบสำหรับ keyless auth
 
 ### การตั้งค่าสภาพแวดล้อม
 
-**ตัวเลือกที่ 1: GitHub Codespaces (แนะนำ)**
+**ตัวเลือก 1: GitHub Codespaces (แนะนำ)**
 ```bash
-# Fork the repository and create a codespace from GitHub UI
-# The dev container will automatically install all dependencies
-# Wait ~2 minutes for environment setup
+# Fork โครงการและสร้าง codespace จาก GitHub UI
+# dev container จะติดตั้ง dependencies ทั้งหมดโดยอัตโนมัติ
+# รอประมาณ ~2 นาทีสำหรับการตั้งค่าสภาพแวดล้อม
 ```
 
-**ตัวเลือกที่ 2: Local Dev Container**
+**ตัวเลือก 2: Dev Container ในเครื่อง**
 ```bash
-# Clone repository
+# โคลนรีโพสิทอรี
 git clone https://github.com/microsoft/Generative-AI-for-beginners-java.git
 cd Generative-AI-for-beginners-java
 
-# Open in VS Code with Dev Containers extension
-# Reopen in Container when prompted
+# เปิดใน VS Code พร้อมส่วนขยาย Dev Containers
+# เปิดใหม่ในคอนเทนเนอร์เมื่อมีการแจ้งเตือน
 ```
 
-**ตัวเลือกที่ 3: Local Setup**
+**ตัวเลือก 3: การตั้งค่าในเครื่อง**
 ```bash
-# Install dependencies
+# ติดตั้ง dependencies
 sudo apt-get update
 sudo apt-get install -y maven openjdk-21-jdk
 
-# Verify installation
+# ตรวจสอบการติดตั้ง
 java -version
 mvn -version
 ```
 
-### การตั้งค่าคอนฟิก
+### การกำหนดค่า
 
-**การตั้งค่า GitHub Token:**
+**การตั้งค่า Azure AI Foundry (keyless, แนะนำ):**
 ```bash
-# Create a GitHub Personal Access Token
-# Set environment variable
-export GITHUB_TOKEN="your-token-here"
+# จัดเตรียมบัญชี Foundry + การปรับใช้โมเดลเป็นโค้ด
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
+# azd เขียน examples/basic-chat-azure/.env ด้วยจุดสิ้นสุดของคุณ (ไม่มีคีย์)
 ```
 
-**การตั้งค่า Azure OpenAI (ตัวเลือกเพิ่มเติม):**
+**การตั้งค่า endpoint ด้วยตนเอง:**
 ```bash
-# For examples using Azure OpenAI
+# หากคุณไม่ได้ใช้ azd ให้ตั้งค่า endpoint ด้วยตัวเอง (การตรวจสอบสิทธิ์จะยังคงไม่ใช้คีย์ผ่าน az login)
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# แก้ไข .env: AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com/
 ```
 
 ## เวิร์กโฟลว์การพัฒนา
 
-### โครงสร้างโปรเจกต์
+### โครงสร้างโครงการ
 ```
 /
 ├── 01-IntroToGenAI/              # Chapter 1: Introduction
@@ -91,44 +94,44 @@ cp .env.example .env
 
 ### การรันแอปพลิเคชัน
 
-**การรันแอปพลิเคชัน Spring Boot:**
+**รันแอป Spring Boot:**
 ```bash
 cd [project-directory]
 mvn spring-boot:run
 ```
 
-**การสร้างโปรเจกต์:**
+**สร้างโครงการ:**
 ```bash
 cd [project-directory]
 mvn clean install
 ```
 
-**การเริ่มต้น MCP Calculator Server:**
+**เริ่ม MCP Calculator Server:**
 ```bash
 cd 04-PracticalSamples/calculator
 mvn spring-boot:run
-# Server runs on http://localhost:8080
+# เซิร์ฟเวอร์ทำงานบน http://localhost:8080
 ```
 
-**การรันตัวอย่าง Client:**
+**รันตัวอย่าง Client:**
 ```bash
-# After starting the server in another terminal
+# หลังจากเริ่มเซิร์ฟเวอร์ในเทอร์มินัลอื่น
 cd 04-PracticalSamples/calculator
 
-# Direct MCP client
+# ลูกค้า MCP ตรง
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient"
 
-# AI-powered client (requires GITHUB_TOKEN)
+# ลูกค้าที่ขับเคลื่อนด้วย AI (ต้องใช้ AZURE_OPENAI_ENDPOINT + az login)
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient"
 
-# Interactive bot
+# หุ่นยนต์ตอบโต้แบบอินเทอร์แอคทีฟ
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.Bot"
 ```
 
-### Hot Reload
-Spring Boot DevTools รวมอยู่ในโปรเจกต์ที่รองรับการโหลดใหม่:
+### การโหลดซ้ำแบบ Hot Reload
+Spring Boot DevTools รวมอยู่ในโปรเจ็กต์ที่รองรับ hot reload:
 ```bash
-# Changes to Java files will automatically reload when saved
+# การเปลี่ยนแปลงไฟล์ Java จะโหลดใหม่โดยอัตโนมัติเมื่อบันทึกแล้ว
 mvn spring-boot:run
 ```
 
@@ -136,56 +139,56 @@ mvn spring-boot:run
 
 ### การรันการทดสอบ
 
-**รันการทดสอบทั้งหมดในโปรเจกต์:**
+**รันการทดสอบทั้งหมดในโครงการ:**
 ```bash
 cd [project-directory]
 mvn test
 ```
 
-**รันการทดสอบพร้อมผลลัพธ์แบบละเอียด:**
+**รันการทดสอบพร้อมแสดงผลแบบละเอียด:**
 ```bash
 mvn test -X
 ```
 
-**รันคลาสการทดสอบเฉพาะ:**
+**รันคลาสทดสอบเฉพาะ:**
 ```bash
 mvn test -Dtest=CalculatorServiceTest
 ```
 
 ### โครงสร้างการทดสอบ
-- ไฟล์การทดสอบใช้ JUnit 5 (Jupiter)
-- คลาสการทดสอบอยู่ใน `src/test/java/`
-- ตัวอย่าง Client ในโปรเจกต์ calculator อยู่ใน `src/test/java/com/microsoft/mcp/sample/client/`
+- ไฟล์ทดสอบใช้ JUnit 5 (Jupiter)
+- คลาสทดสอบอยู่ใน `src/test/java/`
+- ตัวอย่าง client ในโครงการ calculator อยู่ใน `src/test/java/com/microsoft/mcp/sample/client/`
 
-### การทดสอบแบบ Manual
-ตัวอย่างหลายตัวเป็นแอปพลิเคชันแบบโต้ตอบที่ต้องการการทดสอบแบบ Manual:
+### การทดสอบด้วยตนเอง
+หลายตัวอย่างเป็นแอปแบบโต้ตอบที่ต้องทดสอบด้วยตนเอง:
 
-1. เริ่มต้นแอปพลิเคชันด้วย `mvn spring-boot:run`
+1. เริ่มแอปด้วย `mvn spring-boot:run`
 2. ทดสอบ endpoints หรือโต้ตอบกับ CLI
-3. ตรวจสอบว่าพฤติกรรมที่คาดหวังตรงกับเอกสารใน README.md ของแต่ละโปรเจกต์
+3. ตรวจสอบให้แน่ใจว่าพฤติกรรมที่คาดหวังตรงกับเอกสาร README.md ของแต่ละโครงการ
 
-### การทดสอบกับ GitHub Models
-- ข้อจำกัดของ Free tier: 15 คำขอต่อ/นาที, 150 ต่อวัน
-- สูงสุด 5 คำขอพร้อมกัน
-- ทดสอบการกรองเนื้อหาด้วยตัวอย่าง AI ที่รับผิดชอบ
+### การทดสอบกับ Azure AI Foundry
+- ลงชื่อเข้าใช้ด้วย `az login` ก่อนรันตัวอย่าง (keyless auth)
+- ตรวจสอบว่าบัญชีของคุณมีบทบาท Cognitive Services OpenAI User บนทรัพยากรนั้น
+- ทดสอบการกรองเนื้อหาด้วยตัวอย่าง responsible AI ในบทที่ 5
 
 ## แนวทางการเขียนโค้ด
 
-### ข้อกำหนด Java
-- **เวอร์ชัน Java:** Java 21 พร้อมฟีเจอร์สมัยใหม่
-- **รูปแบบ:** ปฏิบัติตามข้อกำหนดมาตรฐานของ Java
+### ข้อตกลง Java
+- **เวอร์ชัน Java:** Java 21 พร้อมคุณสมบัติสมัยใหม่
+- **สไตล์:** ปฏิบัติตามมาตรฐานข้อตกลง Java
 - **การตั้งชื่อ:** 
   - คลาส: PascalCase
   - เมธอด/ตัวแปร: camelCase
   - ค่าคงที่: UPPER_SNAKE_CASE
   - ชื่อแพ็กเกจ: ตัวพิมพ์เล็กทั้งหมด
 
-### รูปแบบ Spring Boot
-- ใช้ `@Service` สำหรับตรรกะทางธุรกิจ
+### แพตเทิร์น Spring Boot
+- ใช้ `@Service` สำหรับตรรกะธุรกิจ
 - ใช้ `@RestController` สำหรับ REST endpoints
-- การตั้งค่าผ่าน `application.yml` หรือ `application.properties`
-- ตัวแปรสภาพแวดล้อมควรใช้แทนค่าที่กำหนดไว้ในโค้ด
-- ใช้ `@Tool` annotation สำหรับเมธอดที่เปิดเผยผ่าน MCP
+- กำหนดค่าผ่าน `application.yml` หรือ `application.properties`
+- ชอบใช้ environment variables มากกว่าค่าที่กำหนดในโค้ด
+- ใช้ annotation `@Tool` สำหรับเมธอดที่เปิดเผยผ่าน MCP
 
 ### การจัดระเบียบไฟล์
 ```
@@ -206,27 +209,27 @@ src/
         └── com/microsoft/[component]/
 ```
 
-### การจัดการ Dependencies
+### การจัดการ Dependency
 - จัดการผ่าน Maven `pom.xml`
-- Spring AI BOM สำหรับการจัดการเวอร์ชัน
-- LangChain4j สำหรับการผสานรวม AI
-- Spring Boot starter parent สำหรับ dependencies ของ Spring
+- Spring AI BOM สำหรับจัดการเวอร์ชัน
+- LangChain4j สำหรับการเชื่อมต่อ AI
+- Spring Boot starter parent สำหรับ dependency ของ Spring
 
-### คอมเมนต์ในโค้ด
+### คอมเมนต์โค้ด
 - เพิ่ม JavaDoc สำหรับ public APIs
-- รวมคอมเมนต์อธิบายสำหรับการโต้ตอบ AI ที่ซับซ้อน
-- เอกสารคำอธิบายเครื่องมือ MCP อย่างชัดเจน
+- รวมคอมเมนต์อธิบายสำหรับการติดต่อกับ AI ที่ซับซ้อน
+- บันทึกคำอธิบายเครื่องมือ MCP อย่างชัดเจน
 
-## การสร้างและการปรับใช้
+## การสร้างและการนำขึ้นใช้งาน
 
-### การสร้างโปรเจกต์
+### การสร้างโครงการ
 
-**สร้างโดยไม่รันการทดสอบ:**
+**สร้างโดยไม่รันทดสอบ:**
 ```bash
 mvn clean install -DskipTests
 ```
 
-**สร้างพร้อมการตรวจสอบทั้งหมด:**
+**สร้างพร้อมตรวจสอบทั้งหมด:**
 ```bash
 mvn clean install
 ```
@@ -234,123 +237,129 @@ mvn clean install
 **แพ็กเกจแอปพลิเคชัน:**
 ```bash
 mvn package
-# Creates JAR in target/ directory
+# สร้างไฟล์ JAR ในไดเรกทอรี target/
 ```
 
-### ไดเรกทอรีผลลัพธ์
+### โฟลเดอร์ผลลัพธ์
 - คลาสที่คอมไพล์แล้ว: `target/classes/`
-- คลาสการทดสอบ: `target/test-classes/`
+- คลาสทดสอบ: `target/test-classes/`
 - ไฟล์ JAR: `target/*.jar`
-- อาร์ติแฟกต์ Maven: `target/`
+- artifact ของ Maven: `target/`
 
-### การตั้งค่าคอนฟิกเฉพาะสภาพแวดล้อม
+### การกำหนดค่าสภาพแวดล้อมตามการใช้งาน
 
-**Development:**
+**สภาพแวดล้อมการพัฒนา:**
 ```yaml
-# application.yml
+# application.yml (keyless - no api-key; auth via DefaultAzureCredential)
 spring:
   ai:
-    openai:
-      api-key: ${GITHUB_TOKEN}
-      base-url: https://models.inference.ai.azure.com
+    azure:
+      openai:
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
-**Production:**
-- ใช้ Azure AI Foundry Models แทน GitHub Models
-- อัปเดต base-url เป็น endpoint ของ Azure OpenAI
-- จัดการ secrets ผ่าน Azure Key Vault หรือ environment variables
+**สภาพแวดล้อมการผลิต:**
+- ใช้ managed identity แทน `az login` สำหรับ keyless auth
+- ตั้งค่า `AZURE_OPENAI_ENDPOINT` ชี้ไปยัง Foundry resource ใน production
+- จัดการการตั้งค่าผ่าน environment variables หรือ Azure Key Vault
 
-### ข้อควรพิจารณาในการปรับใช้
-- นี่คือคลังข้อมูลเพื่อการศึกษาพร้อมแอปพลิเคชันตัวอย่าง
-- ไม่ได้ออกแบบมาเพื่อการปรับใช้ใน production โดยตรง
-- ตัวอย่างแสดงรูปแบบที่สามารถปรับใช้ใน production
-- ดู README ของโปรเจกต์แต่ละตัวสำหรับหมายเหตุการปรับใช้เฉพาะ
+### ข้อควรพิจารณาในการนำขึ้นใช้งาน
+- นี่คือที่เก็บโค้ดเพื่อการศึกษาและตัวอย่างแอปพลิเคชัน
+- ไม่ได้ออกแบบมาเพื่อนำขึ้นใช้งาน production โดยตรง
+- ตัวอย่างแสดงแพตเทิร์นให้สามารถปรับใช้ใน production ได้
+- ดู README ของแต่ละโปรเจ็กต์สำหรับหมายเหตุการนำขึ้นใช้งานเฉพาะ
 
 ## หมายเหตุเพิ่มเติม
 
-### GitHub Models vs Azure OpenAI
-- **GitHub Models:** Free tier สำหรับการเรียนรู้ ไม่ต้องใช้บัตรเครดิต
-- **Azure OpenAI:** พร้อมใช้งานใน production ต้องการการสมัครสมาชิก Azure
-- โค้ดสามารถใช้งานร่วมกันได้ระหว่างทั้งสอง - เพียงเปลี่ยน endpoint และ API key
+### Azure AI Foundry
+- **การยืนยันตัวตนแบบ keyless:** เชื่อมต่อกับ Microsoft Entra ID — ไม่มีคีย์ API ให้บริหารจัดการ
+- **จัดเตรียมเป็นโค้ด:** Bicep + azd (`azd up`) สร้างบัญชีและการติดตั้งโมเดล
+- โค้ดที่เข้ากันกับ OpenAI เดียวกันทำงานได้ทั้งในเครื่อง (`az login`) และบน Azure (managed identity)
 
-### การทำงานกับโปรเจกต์หลายตัว
-แต่ละโปรเจกต์ตัวอย่างเป็นแบบ standalone:
+### การทำงานกับหลายโปรเจ็กต์
+แต่ละโปรเจ็กต์ตัวอย่างแยกส่วน:
 ```bash
-# Navigate to specific project
+# ไปยังโปรเจกต์เฉพาะ
 cd 04-PracticalSamples/[project-name]
 
-# Each has its own pom.xml and can be built independently
+# แต่ละโปรเจกต์มีไฟล์ pom.xml ของตัวเองและสามารถสร้างได้อย่างอิสระ
 mvn clean install
 ```
 
 ### ปัญหาทั่วไป
 
-**Java Version ไม่ตรงกัน:**
+**ความไม่ตรงกันของเวอร์ชัน Java:**
 ```bash
-# Verify Java 21
+# ตรวจสอบ Java 21
 java -version
-# Update JAVA_HOME if needed
+# อัปเดต JAVA_HOME หากจำเป็น
 export JAVA_HOME=/usr/lib/jvm/msopenjdk-current
 ```
 
 **ปัญหาการดาวน์โหลด Dependency:**
 ```bash
-# Clear Maven cache and retry
+# ล้างแคช Maven และลองใหม่อีกครั้ง
 rm -rf ~/.m2/repository
 mvn clean install
 ```
 
-**GitHub Token ไม่พบ:**
+**พบปัญหา endpoint หรือการลงชื่อเข้าใช้ไม่เจอ:**
 ```bash
-# Set in current session
-export GITHUB_TOKEN="your-token-here"
+# ตั้งค่า endpoint ในเซสชันปัจจุบันและเข้าสู่ระบบ (ไม่ใช้คีย์)
+export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
+az login
 
-# Or use .env file in project directory
-echo "GITHUB_TOKEN=your-token-here" > .env
+# หรือใช้ไฟล์ .env ในไดเรกทอรีโปรเจกต์
+echo "AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/" > .env
 ```
 
 **พอร์ตถูกใช้งานแล้ว:**
 ```bash
-# Spring Boot uses port 8080 by default
-# Change in application.properties:
+# Spring Boot ใช้พอร์ต 8080 เป็นค่าเริ่มต้น
+# เปลี่ยนใน application.properties:
 server.port=8081
 ```
 
-### การรองรับหลายภาษา
-- เอกสารมีให้บริการในกว่า 45 ภาษา ผ่านการแปลอัตโนมัติ
-- การแปลอยู่ในไดเรกทอรี `translations/`
-- การแปลจัดการโดย GitHub Actions workflow
+### การสนับสนุนหลายภาษา
+- เอกสารพร้อมใช้งานใน 45+ ภาษา ผ่านการแปลอัตโนมัติ
+- ไฟล์แปลอยู่ในไดเรกทอรี `translations/`
+- การแปลจัดการด้วย workflow ของ GitHub Actions
 
 ### เส้นทางการเรียนรู้
 1. เริ่มต้นที่ [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md)
-2. ทำตามบทต่างๆ ตามลำดับ (01 → 05)
-3. ทำตัวอย่างแบบลงมือทำในแต่ละบทให้เสร็จสมบูรณ์
-4. สำรวจโปรเจกต์ตัวอย่างในบทที่ 4
-5. เรียนรู้แนวปฏิบัติ AI ที่รับผิดชอบในบทที่ 5
+2. เรียงตามลำดับบทเรียน (01 → 05)
+3. ทำตัวอย่างลงมือทำในแต่ละบท
+4. สำรวจโครงการตัวอย่างในบทที่ 4
+5. เรียนรู้หลักการ responsible AI ในบทที่ 5
 
-### Development Container
-ไฟล์ `.devcontainer/devcontainer.json` ตั้งค่า:
-- สภาพแวดล้อมการพัฒนา Java 21
+### คอนเทนเนอร์สำหรับการพัฒนา
+ไฟล์ `.devcontainer/devcontainer.json` กำหนด:
+- สภาพแวดล้อมพัฒนา Java 21
 - ติดตั้ง Maven ล่วงหน้า
-- ส่วนขยาย Java สำหรับ VS Code
+- ส่วนขยาย Java ของ VS Code
 - เครื่องมือ Spring Boot
-- การผสานรวม GitHub Copilot
+- การรวม GitHub Copilot
 - รองรับ Docker-in-Docker
 - Azure CLI
 
 ### ข้อควรพิจารณาด้านประสิทธิภาพ
-- Free tier ของ GitHub Models มีข้อจำกัดด้านอัตรา
-- ใช้ขนาด batch ที่เหมาะสมสำหรับ embeddings
-- พิจารณาการแคชสำหรับการเรียก API ซ้ำ
-- ตรวจสอบการใช้งาน token เพื่อเพิ่มประสิทธิภาพต้นทุน
+- Azure AI Foundry มีโควต้านับโทเค็น/คำร้องต่อนาที
+- ใช้ batch ขนาดเหมาะสมสำหรับ embeddings
+- พิจารณาแคชผลลัพธ์สำหรับเรียก API ซ้ำ
+- ตรวจสอบการใช้โทเค็นเพื่อประหยัดค่าใช้จ่าย
 
 ### หมายเหตุด้านความปลอดภัย
-- ห้าม commit ไฟล์ `.env` (อยู่ใน `.gitignore` แล้ว)
-- ใช้ environment variables สำหรับ API keys
-- GitHub tokens ควรมี scope ที่จำเป็นน้อยที่สุด
-- ปฏิบัติตามแนวทาง AI ที่รับผิดชอบในบทที่ 5
+- หลีกเลี่ยงการ commit ไฟล์ `.env` (ไฟล์นี้มีใน `.gitignore` แล้ว)
+- แนะนำใช้ keyless auth (Microsoft Entra ID) แทนคีย์ API
+- ใช้ managed identities บน Azure; ใช้ `az login` สำหรับพัฒนาในเครื่อง
+- ปฏิบัติตามแนวทาง responsible AI ในบทที่ 5
 
 ---
 
-**ข้อจำกัดความรับผิดชอบ**:  
-เอกสารนี้ได้รับการแปลโดยใช้บริการแปลภาษา AI [Co-op Translator](https://github.com/Azure/co-op-translator) แม้ว่าเราจะพยายามให้การแปลมีความถูกต้อง แต่โปรดทราบว่าการแปลอัตโนมัติอาจมีข้อผิดพลาดหรือความไม่ถูกต้อง เอกสารต้นฉบับในภาษาดั้งเดิมควรถือเป็นแหล่งข้อมูลที่เชื่อถือได้ สำหรับข้อมูลที่สำคัญ ขอแนะนำให้ใช้บริการแปลภาษามนุษย์ที่มีความเชี่ยวชาญ เราไม่รับผิดชอบต่อความเข้าใจผิดหรือการตีความผิดที่เกิดจากการใช้การแปลนี้
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**ปฏิเสธความรับผิดชอบ**:
+เอกสารนี้ได้รับการแปลโดยใช้บริการแปลภาษา AI [Co-op Translator](https://github.com/Azure/co-op-translator) ขณะที่เราพยายามให้ความถูกต้อง โปรดทราบว่าการแปลโดยอัตโนมัติอาจมีข้อผิดพลาดหรือความไม่ถูกต้อง เอกสารต้นฉบับในภาษาต้นทางควรถูกพิจารณาเป็นแหล่งข้อมูลที่เชื่อถือได้ สำหรับข้อมูลที่สำคัญ แนะนำให้ใช้การแปลโดยมนุษย์มืออาชีพ เราไม่รับผิดชอบต่อความเข้าใจผิดหรือการตีความที่ผิดพลาดที่เกิดขึ้นจากการใช้การแปลนี้
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

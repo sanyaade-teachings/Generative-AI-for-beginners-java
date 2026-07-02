@@ -1,31 +1,31 @@
-# Οδηγός για Αρχάριους: Δημιουργία Ιστοριών για Κατοικίδια
+# Οδηγός Δημιουργίας Ιστορίας Κατοικιδίων για Αρχάριους
 
 ## Πίνακας Περιεχομένων
 
-- [Προαπαιτούμενα](../../../../04-PracticalSamples/petstory)
-- [Κατανόηση της Δομής του Έργου](../../../../04-PracticalSamples/petstory)
-- [Επεξήγηση των Βασικών Στοιχείων](../../../../04-PracticalSamples/petstory)
-  - [1. Κύρια Εφαρμογή](../../../../04-PracticalSamples/petstory)
-  - [2. Ελεγκτής Ιστού](../../../../04-PracticalSamples/petstory)
-  - [3. Υπηρεσία Ιστοριών](../../../../04-PracticalSamples/petstory)
-  - [4. Πρότυπα Ιστού](../../../../04-PracticalSamples/petstory)
-  - [5. Ρυθμίσεις](../../../../04-PracticalSamples/petstory)
-- [Εκτέλεση της Εφαρμογής](../../../../04-PracticalSamples/petstory)
-- [Πώς Όλα Λειτουργούν Μαζί](../../../../04-PracticalSamples/petstory)
-- [Κατανόηση της Ενσωμάτωσης AI](../../../../04-PracticalSamples/petstory)
-- [Επόμενα Βήματα](../../../../04-PracticalSamples/petstory)
+- [Προαπαιτούμενα](#προαπαιτούμενα)
+- [Κατανόηση της Δομής του Έργου](#κατανόηση-της-δομής-του-έργου)
+- [Επεξήγηση Βασικών Στοιχείων](#επεξήγηση-βασικών-στοιχείων)
+  - [1. Κύρια Εφαρμογή](#1-κύρια-εφαρμογή)
+  - [2. Ελεγκτής Ιστού](#2-ελεγκτής-ιστού)
+  - [3. Υπηρεσία Ιστορίας](#3-υπηρεσία-ιστορίας)
+  - [4. Πρότυπα Ιστού](#4-πρότυπα-ιστού)
+  - [5. Διαμόρφωση](#5-διαμόρφωση)
+- [Εκτέλεση της Εφαρμογής](#εκτέλεση-της-εφαρμογής)
+- [Πώς Λειτουργούν Όλα Μαζί](#πώς-λειτουργούν-όλα-μαζί)
+- [Κατανόηση της Ενσωμάτωσης Τεχνητής Νοημοσύνης](#κατανόηση-της-ενσωμάτωσης-τεχνητής-νοημοσύνης)
+- [Επόμενα Βήματα](#επόμενα-βήματα)
 
 ## Προαπαιτούμενα
 
 Πριν ξεκινήσετε, βεβαιωθείτε ότι έχετε:
-- Εγκατεστημένο Java 21 ή νεότερη έκδοση
-- Maven για τη διαχείριση εξαρτήσεων
-- Έναν λογαριασμό GitHub με προσωπικό διακριτικό πρόσβασης (PAT) με το πεδίο `models:read`
-- Βασική κατανόηση της Java, του Spring Boot και της ανάπτυξης ιστού
+- Εγκατεστημένη την Java 21 ή νεότερη
+- Το Maven για διαχείριση εξαρτήσεων
+- Αναπτύξει μοντέλο Azure AI Foundry (προμηθευτείτε το με `azd up` — δείτε το [Κεφάλαιο 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md)), συνδεδεμένοι με `az login` (αυθεντικοποίηση χωρίς κλειδί)
+- Βασική κατανόηση της Java, Spring Boot και ανάπτυξης ιστοσελίδων
 
 ## Κατανόηση της Δομής του Έργου
 
-Το έργο δημιουργίας ιστοριών για κατοικίδια περιλαμβάνει αρκετά σημαντικά αρχεία:
+Το έργο ιστορίας κατοικιδίων περιέχει αρκετά σημαντικά αρχεία:
 
 ```
 petstory/
@@ -42,13 +42,13 @@ petstory/
 └── pom.xml                           # Maven dependencies
 ```
 
-## Επεξήγηση των Βασικών Στοιχείων
+## Επεξήγηση Βασικών Στοιχείων
 
 ### 1. Κύρια Εφαρμογή
 
 **Αρχείο:** `PetStoryApplication.java`
 
-Αυτό είναι το σημείο εκκίνησης για την εφαρμογή Spring Boot:
+Αυτή είναι η είσοδος για την εφαρμογή Spring Boot μας:
 
 ```java
 @SpringBootApplication
@@ -60,15 +60,15 @@ public class PetStoryApplication {
 ```
 
 **Τι κάνει:**
-- Ο σχολιασμός `@SpringBootApplication` ενεργοποιεί την αυτόματη διαμόρφωση και τη σάρωση στοιχείων
-- Ξεκινά έναν ενσωματωμένο διακομιστή ιστού (Tomcat) στην πόρτα 8080
+- Η ανάλυση `@SpringBootApplication` ενεργοποιεί αυτόματη διαμόρφωση και σάρωση συστατικών
+- Εκκινεί έναν ενσωματωμένο διακομιστή ιστού (Tomcat) στην θύρα 8080
 - Δημιουργεί αυτόματα όλα τα απαραίτητα Spring beans και υπηρεσίες
 
 ### 2. Ελεγκτής Ιστού
 
 **Αρχείο:** `PetController.java`
 
-Αυτός διαχειρίζεται όλα τα αιτήματα ιστού και τις αλληλεπιδράσεις με τον χρήστη:
+Αυτός διαχειρίζεται όλα τα αιτήματα ιστού και τις αλληλεπιδράσεις των χρηστών:
 
 ```java
 @Controller
@@ -82,7 +82,7 @@ public class PetController {
     
     @GetMapping("/")
     public String index() {
-        return "index";  // Returns index.html template
+        return "index";  // Επιστρέφει το πρότυπο index.html
     }
     
     @PostMapping("/generate-story")
@@ -90,24 +90,24 @@ public class PetController {
                                Model model, 
                                RedirectAttributes redirectAttributes) {
         
-        // Input validation
+        // Επαλήθευση εισόδου
         if (description.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please provide a description.");
             return "redirect:/";
         }
         
-        // Sanitize input for security
+        // Καθαρισμός εισόδου για ασφάλεια
         String sanitizedDescription = sanitizeInput(description);
         
-        // Generate story with error handling
+        // Δημιουργία ιστορίας με διαχείριση σφαλμάτων
         try {
             String story = storyService.generateStory(sanitizedDescription);
             model.addAttribute("caption", sanitizedDescription);
             model.addAttribute("story", story);
-            return "result";  // Returns result.html template
+            return "result";  // Επιστρέφει το πρότυπο result.html
             
         } catch (Exception e) {
-            // Use fallback story if AI fails
+            // Χρήση εναλλακτικής ιστορίας αν αποτύχει η AI
             String fallbackStory = generateFallbackStory(sanitizedDescription);
             model.addAttribute("story", fallbackStory);
             return "result";
@@ -117,21 +117,21 @@ public class PetController {
     private String sanitizeInput(String input) {
         return input.replaceAll("[<>\"'&]", "")  // Remove dangerous characters
                    .trim()
-                   .substring(0, Math.min(input.length(), 500));  // Limit length
+                   .substring(0, Math.min(input.length(), 500));  // Περιορισμός μήκους
     }
 }
 ```
 
 **Κύρια χαρακτηριστικά:**
 
-1. **Διαχείριση Διαδρομών**: Το `@GetMapping("/")` εμφανίζει τη φόρμα μεταφόρτωσης, ενώ το `@PostMapping("/generate-story")` επεξεργάζεται τις υποβολές
+1. **Διαχείριση Διαδρομών**: Το `@GetMapping("/")` εμφανίζει τη φόρμα αποστολής, το `@PostMapping("/generate-story")` επεξεργάζεται υποβολές
 2. **Επικύρωση Εισόδου**: Ελέγχει για κενές περιγραφές και όρια μήκους
-3. **Ασφάλεια**: Καθαρίζει την είσοδο του χρήστη για την αποτροπή επιθέσεων XSS
-4. **Διαχείριση Σφαλμάτων**: Παρέχει προκαθορισμένες ιστορίες όταν η υπηρεσία AI αποτυγχάνει
-5. **Σύνδεση Μοντέλου**: Μεταφέρει δεδομένα στα πρότυπα HTML χρησιμοποιώντας το `Model` του Spring
+3. **Ασφάλεια**: Καθαρίζει την είσοδο χρήστη για αποφυγή επιθέσεων XSS
+4. **Διαχείριση Σφαλμάτων**: Παρέχει εναλλακτικές ιστορίες όταν η υπηρεσία AI αποτυγχάνει
+5. **Δέσμευση Μοντέλου**: Μεταφέρει δεδομένα στα HTML πρότυπα χρησιμοποιώντας το Spring `Model`
 
-**Σύστημα Εφεδρείας:**
-Ο ελεγκτής περιλαμβάνει προκαθορισμένα πρότυπα ιστοριών που χρησιμοποιούνται όταν η υπηρεσία AI δεν είναι διαθέσιμη:
+**Σύστημα Εναλλακτικής Επιλογής:**
+Ο ελεγκτής περιλαμβάνει προεγγραμμένα πρότυπα ιστοριών που χρησιμοποιούνται όταν η υπηρεσία AI δεν είναι διαθέσιμη:
 
 ```java
 private String generateFallbackStory(String description) {
@@ -141,17 +141,17 @@ private String generateFallbackStory(String description) {
         "In a cozy home filled with love, there lived an extraordinary pet..."
     };
     
-    // Use description hash for consistent responses
+    // Χρησιμοποιήστε το hash περιγραφής για συνεπείς απαντήσεις
     int index = Math.abs(description.hashCode() % storyTemplates.length);
     return storyTemplates[index];
 }
 ```
 
-### 3. Υπηρεσία Ιστοριών
+### 3. Υπηρεσία Ιστορίας
 
 **Αρχείο:** `StoryService.java`
 
-Αυτή η υπηρεσία επικοινωνεί με τα GitHub Models για τη δημιουργία ιστοριών:
+Αυτή η υπηρεσία επικοινωνεί με το Azure AI Foundry για να δημιουργεί ιστορίες χρησιμοποιώντας αυθεντικοποίηση χωρίς κλειδί:
 
 ```java
 @Service
@@ -160,18 +160,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // Το συμβατό με OpenAI τελικό σημείο του Foundry βρίσκεται κάτω από /openai/v1/
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // Αυθεντικοποίηση χωρίς κλειδί με Microsoft Entra ID (χωρίς κλειδί API)
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -182,16 +186,16 @@ public class StoryService {
         
         String userPrompt = "Write a fun short story about a pet described as: " + description;
         
-        // Configure the AI request
+        // Διαμορφώστε το αίτημα AI
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(modelName)
                 .addSystemMessage(systemPrompt)
                 .addUserMessage(userPrompt)
-                .maxCompletionTokens(500)  // Limit response length
-                .temperature(0.8)          // Control creativity (0.0-1.0)
+                .maxCompletionTokens(500)  // Περιορίστε το μήκος της απόκρισης
+                .temperature(0.8)          // Ελέγξτε τη δημιουργικότητα (0.0-1.0)
                 .build();
         
-        // Send request and get response
+        // Αποστολή αιτήματος και λήψη απόκρισης
         ChatCompletion response = openAIClient.chat().completions().create(params);
         
         return response.choices().get(0).message().content().orElse("");
@@ -201,15 +205,15 @@ public class StoryService {
 
 **Κύρια στοιχεία:**
 
-1. **Πελάτης OpenAI**: Χρησιμοποιεί το επίσημο OpenAI Java SDK διαμορφωμένο για τα GitHub Models
-2. **Σύστημα Προτροπών**: Ρυθμίζει τη συμπεριφορά του AI για να γράφει φιλικές προς την οικογένεια ιστορίες κατοικίδιων
-3. **Προτροπή Χρήστη**: Ενημερώνει το AI για την ιστορία που πρέπει να γράψει βάσει της περιγραφής
-4. **Παράμετροι**: Ελέγχει το μήκος της ιστορίας και το επίπεδο δημιουργικότητας
-5. **Διαχείριση Σφαλμάτων**: Ρίχνει εξαιρέσεις που ο ελεγκτής αναλαμβάνει να διαχειριστεί
+1. **OpenAI Client**: Χρησιμοποιεί το επίσημο OpenAI Java SDK ρυθμισμένο για Azure AI Foundry (χωρίς κλειδί)
+2. **Σύστημα Οδηγίας**: Καθορίζει τη συμπεριφορά του AI για να γράφει οικογενειακές ιστορίες κατοικιδίων
+3. **Οδηγία Χρήστη**: Παροτρύνει το AI τι ακριβώς ιστορία να γράψει βάσει της περιγραφής
+4. **Παράμετροι**: Ελέγχουν το μήκος και τη δημιουργικότητα της ιστορίας
+5. **Διαχείριση Σφαλμάτων**: Πετάει εξαιρέσεις που το controller αναλαμβάνει και διαχειρίζεται
 
 ### 4. Πρότυπα Ιστού
 
-**Αρχείο:** `index.html` (Φόρμα Μεταφόρτωσης)
+**Αρχείο:** `index.html` (Φόρμα Αποστολής)
 
 Η κύρια σελίδα όπου οι χρήστες περιγράφουν τα κατοικίδιά τους:
 
@@ -260,7 +264,7 @@ public class StoryService {
 
 **Αρχείο:** `result.html` (Εμφάνιση Ιστορίας)
 
-Εμφανίζει τη δημιουργημένη ιστορία:
+Εμφανίζει την παραγόμενη ιστορία:
 
 ```html
 <!DOCTYPE html>
@@ -293,14 +297,14 @@ public class StoryService {
 </html>
 ```
 
-**Χαρακτηριστικά Προτύπων:**
+**Χαρακτηριστικά προτύπου:**
 
 1. **Ενσωμάτωση Thymeleaf**: Χρησιμοποιεί χαρακτηριστικά `th:` για δυναμικό περιεχόμενο
-2. **Ανταποκρινόμενος Σχεδιασμός**: Στυλ CSS για κινητά και επιτραπέζιους υπολογιστές
+2. **Ανταποκρινόμενος Σχεδιασμός**: Στυλιζάρισμα CSS για κινητές και επιτραπέζιες συσκευές
 3. **Διαχείριση Σφαλμάτων**: Εμφανίζει μηνύματα επικύρωσης στους χρήστες
-4. **Επεξεργασία στην Πλευρά του Πελάτη**: JavaScript για ανάλυση εικόνων (χρησιμοποιώντας Transformers.js)
+4. **Επεξεργασία στην πλευρά του πελάτη**: JavaScript για ανάλυση εικόνας (χρησιμοποιώντας Transformers.js)
 
-### 5. Ρυθμίσεις
+### 5. Διαμόρφωση
 
 **Αρχείο:** `application.properties`
 
@@ -316,47 +320,50 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
-**Επεξήγηση Ρυθμίσεων:**
+**Επεξήγηση Διαμόρφωσης:**
 
-1. **Μεταφόρτωση Αρχείων**: Επιτρέπει εικόνες έως 10MB
-2. **Καταγραφή**: Ελέγχει ποιες πληροφορίες καταγράφονται κατά την εκτέλεση
-3. **GitHub Models**: Καθορίζει ποιο μοντέλο AI και ποιο endpoint θα χρησιμοποιηθεί
-4. **Ασφάλεια**: Ρυθμίσεις διαχείρισης σφαλμάτων για την αποφυγή αποκάλυψης ευαίσθητων πληροφοριών
+1. **Αποστολή Αρχείων**: Επιτρέπει εικόνες έως 10MB
+2. **Καταγραφή**: Ελέγχει τις πληροφορίες που καταγράφονται κατά την εκτέλεση
+3. **Azure AI Foundry**: Προσδιορίζει το endpoint και την ανάπτυξη μοντέλου που θα χρησιμοποιηθεί (χωρίς κλειδί)
+4. **Ασφάλεια**: Διαμόρφωση διαχείρισης σφαλμάτων για αποφυγή αποκάλυψης ευαίσθητων πληροφοριών
 
 ## Εκτέλεση της Εφαρμογής
 
-### Βήμα 1: Ορίστε το Διακριτικό GitHub
+### Βήμα 1: Σύνδεση και Ρύθμιση του Endpoint
 
-Πρώτα, πρέπει να ορίσετε το διακριτικό GitHub ως μεταβλητή περιβάλλοντος:
+Η αυθεντικοποίηση είναι χωρίς κλειδί (Microsoft Entra ID), οπότε δεν απαιτείται API key. Συνδεθείτε και ορίστε το endpoint του Foundry:
 
 **Windows (Command Prompt):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Γιατί είναι απαραίτητο:**
-- Τα GitHub Models απαιτούν έλεγχο ταυτότητας για πρόσβαση στα μοντέλα AI
-- Η χρήση μεταβλητών περιβάλλοντος διατηρεί τα ευαίσθητα διακριτικά εκτός του πηγαίου κώδικα
-- Το πεδίο `models:read` παρέχει πρόσβαση σε AI inference
+- Το Azure AI Foundry χρησιμοποιεί το Microsoft Entra ID για την αυθεντικοποίηση αιτημάτων inference
+- Η αυθεντικοποίηση χωρίς κλειδί σημαίνει ότι δεν υπάρχουν μυστικά στον κώδικα ή στο περιβάλλον σας
+- Ο λογαριασμός σας πρέπει να έχει το ρόλο **Cognitive Services OpenAI User** στον πόρο
 
 ### Βήμα 2: Δημιουργία και Εκτέλεση
 
-Μεταβείτε στον κατάλογο του έργου:
+Πλοηγηθείτε στον φάκελο του έργου:
 ```bash
 cd 04-PracticalSamples/petstory
 ```
@@ -366,56 +373,58 @@ cd 04-PracticalSamples/petstory
 mvn clean compile
 ```
 
-Ξεκινήστε τον διακομιστή:
+Εκκινήστε τον διακομιστή:
 ```bash
 mvn spring-boot:run
 ```
 
-Η εφαρμογή θα ξεκινήσει στο `http://localhost:8080`.
+Η εφαρμογή θα ξεκινήσει στη διεύθυνση `http://localhost:8080`.
 
 ### Βήμα 3: Δοκιμή της Εφαρμογής
 
-1. **Ανοίξτε** το `http://localhost:8080` στον περιηγητή σας
-2. **Περιγράψτε** το κατοικίδιό σας στο πεδίο κειμένου (π.χ., "Ένας παιχνιδιάρης χρυσός ρετρίβερ που λατρεύει να φέρνει αντικείμενα")
-3. **Κάντε κλικ** στο "Generate Story" για να λάβετε μια ιστορία που δημιουργήθηκε από AI
-4. **Εναλλακτικά**, ανεβάστε μια εικόνα κατοικίδιου για αυτόματη δημιουργία περιγραφής
-5. **Δείτε** τη δημιουργική ιστορία που βασίζεται στην περιγραφή του κατοικίδιου σας
+1. **Ανοίξτε** `http://localhost:8080` στον περιηγητή σας
+2. **Περιγράψτε** το κατοικίδιό σας στο πεδίο κειμένου (π.χ. "Ένας παιχνιδιάρης χρυσός ριτρίβερ που αγαπά να φέρνει αντικείμενα")
+3. **Κάντε κλικ** στο "Generate Story" για να λάβετε μια ιστορία που δημιούργησε το AI
+4. **Εναλλακτικά**, ανεβάστε μια εικόνα κατοικιδίου για αυτόματη δημιουργία περιγραφής
+5. **Δείτε** την δημιουργική ιστορία με βάση την περιγραφή του κατοικιδίου σας
 
-## Πώς Όλα Λειτουργούν Μαζί
+## Πώς Λειτουργούν Όλα Μαζί
 
-Ακολουθεί η πλήρης ροή όταν δημιουργείτε μια ιστορία για κατοικίδιο:
+Ακολουθεί η πλήρης ροή όταν δημιουργείτε μια ιστορία κατοικιδίου:
 
 1. **Είσοδος Χρήστη**: Περιγράφετε το κατοικίδιό σας στη φόρμα ιστού
-2. **Υποβολή Φόρμας**: Ο περιηγητής στέλνει αίτημα POST στο `/generate-story`
+2. **Υποβολή Φόρμας**: Ο περιηγητής στέλνει POST αίτημα στο `/generate-story`
 3. **Επεξεργασία από τον Ελεγκτή**: Ο `PetController` επικυρώνει και καθαρίζει την είσοδο
-4. **Κλήση Υπηρεσίας AI**: Ο `StoryService` στέλνει αίτημα στο API των GitHub Models
-5. **Δημιουργία Ιστορίας**: Το AI δημιουργεί μια δημιουργική ιστορία βάσει της περιγραφής
-6. **Διαχείριση Απόκρισης**: Ο ελεγκτής λαμβάνει την ιστορία και την προσθέτει στο μοντέλο
-7. **Απόδοση Προτύπου**: Το Thymeleaf αποδίδει το `result.html` με την ιστορία
-8. **Εμφάνιση**: Ο χρήστης βλέπει τη δημιουργημένη ιστορία στον περιηγητή του
+4. **Κλήση Υπηρεσίας AI**: Ο `StoryService` στέλνει το αίτημα στο μοντέλο Azure AI Foundry
+5. **Δημιουργία Ιστορίας**: Το AI παράγει μια δημιουργική ιστορία βάσει της περιγραφής
+6. **Διαχείριση Απάντησης**: Ο ελεγκτής λαμβάνει την ιστορία και τη προσθέτει στο μοντέλο
+7. **Απόδοση Προτύπου**: Ο Thymeleaf αποδίδει το `result.html` με την ιστορία
+8. **Εμφάνιση**: Ο χρήστης βλέπει την ιστορία που δημιουργήθηκε στον περιηγητή του
 
 **Ροή Διαχείρισης Σφαλμάτων:**
 Αν η υπηρεσία AI αποτύχει:
 1. Ο ελεγκτής πιάνει την εξαίρεση
-2. Δημιουργεί μια εφεδρική ιστορία χρησιμοποιώντας προκαθορισμένα πρότυπα
-3. Εμφανίζει την εφεδρική ιστορία με σημείωση για τη μη διαθεσιμότητα του AI
-4. Ο χρήστης λαμβάνει ακόμα μια ιστορία, διασφαλίζοντας καλή εμπειρία χρήστη
+2. Δημιουργεί μια εναλλακτική ιστορία χρησιμοποιώντας προεγγραμμένα πρότυπα
+3. Εμφανίζει την εναλλακτική ιστορία με μια σημείωση για μη διαθεσιμότητα του AI
+4. Ο χρήστης λαμβάνει ακόμα μια ιστορία, εξασφαλίζοντας καλή εμπειρία χρήστη
 
-## Κατανόηση της Ενσωμάτωσης AI
+## Κατανόηση της Ενσωμάτωσης Τεχνητής Νοημοσύνης
 
-### API των GitHub Models
-Η εφαρμογή χρησιμοποιεί τα GitHub Models, τα οποία παρέχουν δωρεάν πρόσβαση σε διάφορα μοντέλα AI:
+### Azure AI Foundry (χωρίς κλειδί)
+Η εφαρμογή χρησιμοποιεί το Azure AI Foundry με αυθεντικοποίηση χωρίς κλειδί (Microsoft Entra ID):
 
 ```java
-// Authentication with GitHub token
+// Αυθεντικοποίηση χωρίς κλειδί - χωρίς κλειδί API
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
-### Μηχανική Προτροπών
-Η υπηρεσία χρησιμοποιεί προσεκτικά σχεδιασμένες προτροπές για να επιτύχει καλά αποτελέσματα:
+### Μηχανική Οδηγιών (Prompt Engineering)
+Η υπηρεσία χρησιμοποιεί προσεκτικά κατασκευασμένες οδηγίες για καλύτερα αποτελέσματα:
 
 ```java
 String systemPrompt = "You are a creative storyteller who writes fun, " +
@@ -423,8 +432,8 @@ String systemPrompt = "You are a creative storyteller who writes fun, " +
                      "Keep stories under 500 words and appropriate for all ages.";
 ```
 
-### Επεξεργασία Απόκρισης
-Η απόκριση του AI εξάγεται και επικυρώνεται:
+### Επεξεργασία Απάντησης
+Η απάντηση του AI εξάγεται και επικυρώνεται:
 
 ```java
 ChatCompletion response = openAIClient.chat().completions().create(params);
@@ -433,7 +442,11 @@ String story = response.choices().get(0).message().content().orElse("");
 
 ## Επόμενα Βήματα
 
-Για περισσότερα παραδείγματα, δείτε [Κεφάλαιο 04: Πρακτικά παραδείγματα](../README.md)
+Για περισσότερα παραδείγματα, δείτε το [Κεφάλαιο 04: Πρακτικά παραδείγματα](../README.md)
 
-**Αποποίηση ευθύνης**:  
-Αυτό το έγγραφο έχει μεταφραστεί χρησιμοποιώντας την υπηρεσία αυτόματης μετάφρασης [Co-op Translator](https://github.com/Azure/co-op-translator). Παρόλο που καταβάλλουμε προσπάθειες για ακρίβεια, παρακαλούμε να έχετε υπόψη ότι οι αυτόματες μεταφράσεις ενδέχεται να περιέχουν λάθη ή ανακρίβειες. Το πρωτότυπο έγγραφο στη μητρική του γλώσσα θα πρέπει να θεωρείται η αυθεντική πηγή. Για κρίσιμες πληροφορίες, συνιστάται επαγγελματική ανθρώπινη μετάφραση. Δεν φέρουμε ευθύνη για τυχόν παρεξηγήσεις ή εσφαλμένες ερμηνείες που προκύπτουν από τη χρήση αυτής της μετάφρασης.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Αποποίηση ευθυνών**:
+Αυτό το έγγραφο έχει μεταφραστεί χρησιμοποιώντας την υπηρεσία μετάφρασης με τεχνητή νοημοσύνη [Co-op Translator](https://github.com/Azure/co-op-translator). Ενώ επιδιώκουμε την ακρίβεια, παρακαλούμε να έχετε υπόψη ότι οι αυτοματοποιημένες μεταφράσεις ενδέχεται να περιέχουν λάθη ή ανακρίβειες. Το πρωτότυπο έγγραφο στη μητρική του γλώσσα πρέπει να θεωρείται η αυθεντική πηγή. Για κρίσιμες πληροφορίες, συνιστάται επαγγελματική ανθρώπινη μετάφραση. Δεν φέρουμε ευθύνη για τυχόν παρεξηγήσεις ή λανθασμένες ερμηνείες που προκύπτουν από τη χρήση αυτής της μετάφρασης.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->
