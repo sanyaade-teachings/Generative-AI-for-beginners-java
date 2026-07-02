@@ -1,8 +1,8 @@
 # AGENTS.md
 
-## Pangkalahatang-ideya ng Proyekto
+## Project Overview
 
-Ito ay isang pang-edukasyong repository para sa pag-aaral ng pagbuo ng Generative AI gamit ang Java. Nagbibigay ito ng komprehensibong hands-on na kurso na sumasaklaw sa Large Language Models (LLMs), prompt engineering, embeddings, RAG (Retrieval-Augmented Generation), at Model Context Protocol (MCP).
+Ito ay isang pang-edukasyon na repositoryo para matutunan ang Generative AI development gamit ang Java. Nagbibigay ito ng komprehensibong hands-on na kurso na sumasaklaw sa Large Language Models (LLMs), prompt engineering, embeddings, RAG (Retrieval-Augmented Generation), at ang Model Context Protocol (MCP).
 
 **Pangunahing Teknolohiya:**
 - Java 21
@@ -10,69 +10,72 @@ Ito ay isang pang-edukasyong repository para sa pag-aaral ng pagbuo ng Generativ
 - Spring AI 1.1.x
 - Maven
 - LangChain4j
-- GitHub Models, Azure OpenAI, at OpenAI SDKs
+- Azure AI Foundry, Azure OpenAI, at OpenAI SDKs
 
 **Arkitektura:**
-- Maramihang standalone Spring Boot applications na nakaayos ayon sa mga kabanata
-- Mga sample na proyekto na nagpapakita ng iba't ibang AI patterns
-- Handa sa GitHub Codespaces na may pre-configured na dev containers
+- Maramihang standalone na Spring Boot applications na inayos ayon sa mga kabanata
+- Mga sample na proyekto na nagpapakita ng iba't ibang AI na mga pattern
+- GitHub Codespaces-ready na may pre-configured na dev containers
 
-## Mga Utos sa Setup
+## Setup Commands
 
 ### Mga Kinakailangan
 - Java 21 o mas mataas
 - Maven 3.x
-- GitHub personal access token (para sa GitHub Models)
-- Opsyonal: Azure OpenAI credentials
+- Azure subscription na may Azure AI Foundry model deployment (proseso gamit ang `azd up`)
+- Azure CLI (`az`) at Azure Developer CLI (`azd`), naka sign-in para sa keyless auth
 
-### Pag-set up ng Kapaligiran
+### Pagsasaayos ng Kapaligiran
 
 **Opsyon 1: GitHub Codespaces (Inirerekomenda)**
 ```bash
-# Fork the repository and create a codespace from GitHub UI
-# The dev container will automatically install all dependencies
-# Wait ~2 minutes for environment setup
+# I-fork ang repository at gumawa ng codespace mula sa GitHub UI
+# Awtomatikong i-install ng dev container ang lahat ng dependencies
+# Maghintay ng mga ~2 minuto para sa pag-setup ng kapaligiran
 ```
 
 **Opsyon 2: Lokal na Dev Container**
 ```bash
-# Clone repository
+# Kopyahin ang repositoryo
 git clone https://github.com/microsoft/Generative-AI-for-beginners-java.git
 cd Generative-AI-for-beginners-java
 
-# Open in VS Code with Dev Containers extension
-# Reopen in Container when prompted
+# Buksan sa VS Code gamit ang Dev Containers extension
+# Muling buksan sa Container kapag na-prompt
 ```
 
 **Opsyon 3: Lokal na Setup**
 ```bash
-# Install dependencies
+# I-install ang mga kinakailangang dependencies
 sudo apt-get update
 sudo apt-get install -y maven openjdk-21-jdk
 
-# Verify installation
+# Suriin ang pag-install
 java -version
 mvn -version
 ```
 
 ### Konpigurasyon
 
-**Pag-set up ng GitHub Token:**
+**Azure AI Foundry Setup (keyless, inirerekomenda):**
 ```bash
-# Create a GitHub Personal Access Token
-# Set environment variable
-export GITHUB_TOKEN="your-token-here"
+# Maghanda ng Foundry account + mga deployment ng modelo bilang code
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
+# Isinusulat ng azd ang examples/basic-chat-azure/.env kasama ang iyong endpoint (walang key)
 ```
 
-**Pag-set up ng Azure OpenAI (Opsyonal):**
+**Manwal na pagkokonekta ng endpoint:**
 ```bash
-# For examples using Azure OpenAI
+# Kung hindi mo ginamit ang azd, itakda mo ang endpoint nang sarili (mananatiling keyless ang auth sa pamamagitan ng az login)
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# I-edit ang .env: AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com/
 ```
 
-## Workflow ng Pag-develop
+## Development Workflow
 
 ### Estruktura ng Proyekto
 ```
@@ -89,7 +92,7 @@ cp .env.example .env
 └── translations/                # Multi-language support
 ```
 
-### Pagpapatakbo ng Mga Aplikasyon
+### Pagpapatakbo ng mga Application
 
 **Pagpapatakbo ng Spring Boot application:**
 ```bash
@@ -103,89 +106,89 @@ cd [project-directory]
 mvn clean install
 ```
 
-**Pagpapatakbo ng MCP Calculator Server:**
+**Pagsimula ng MCP Calculator Server:**
 ```bash
 cd 04-PracticalSamples/calculator
 mvn spring-boot:run
-# Server runs on http://localhost:8080
+# Tumakbo ang server sa http://localhost:8080
 ```
 
-**Pagpapatakbo ng Mga Halimbawa ng Kliyente:**
+**Pagpapatakbo ng Mga Halimbawang Kliyente:**
 ```bash
-# After starting the server in another terminal
+# Pagkatapos simulan ang server sa ibang terminal
 cd 04-PracticalSamples/calculator
 
-# Direct MCP client
+# Direktang MCP client
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient"
 
-# AI-powered client (requires GITHUB_TOKEN)
+# Client na pinatatakbo ng AI (kailangan ang AZURE_OPENAI_ENDPOINT + az login)
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient"
 
-# Interactive bot
+# Interaktibong bot
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.Bot"
 ```
 
 ### Hot Reload
 Kasama ang Spring Boot DevTools sa mga proyekto na sumusuporta sa hot reload:
 ```bash
-# Changes to Java files will automatically reload when saved
+# Ang mga pagbabago sa mga Java file ay awtomatikong magre-reload kapag na-save
 mvn spring-boot:run
 ```
 
-## Mga Tagubilin sa Pagsubok
+## Mga Panuto para sa Pagsusuri
 
-### Pagpapatakbo ng Mga Pagsubok
+### Pagpapatakbo ng mga Pagsubok
 
-**Patakbuhin ang lahat ng pagsubok sa isang proyekto:**
+**Patakbuhin lahat ng pagsubok sa isang proyekto:**
 ```bash
 cd [project-directory]
 mvn test
 ```
 
-**Patakbuhin ang mga pagsubok na may detalyadong output:**
+**Patakbuhin ang mga pagsubok na may verbose output:**
 ```bash
 mvn test -X
 ```
 
-**Patakbuhin ang partikular na test class:**
+**Patakbuhin ang tiyak na test class:**
 ```bash
 mvn test -Dtest=CalculatorServiceTest
 ```
 
 ### Estruktura ng Pagsubok
-- Ang mga test file ay gumagamit ng JUnit 5 (Jupiter)
+- Ginagamit ang mga test file ng JUnit 5 (Jupiter)
 - Ang mga test class ay matatagpuan sa `src/test/java/`
-- Ang mga halimbawa ng kliyente sa calculator project ay nasa `src/test/java/com/microsoft/mcp/sample/client/`
+- Ang mga halimbawang kliyente sa calculator project ay nasa `src/test/java/com/microsoft/mcp/sample/client/`
 
-### Manu-manong Pagsubok
-Maraming mga halimbawa ang interactive na mga aplikasyon na nangangailangan ng manu-manong pagsubok:
+### Manwal na Pagsusuri
+Maraming halimbawa ay mga interactive na aplikasyon na nangangailangan ng manwal na pagsusuri:
 
-1. Patakbuhin ang application gamit ang `mvn spring-boot:run`
-2. Subukan ang mga endpoint o makipag-ugnayan sa CLI
-3. Siguraduhing ang inaasahang pag-uugali ay tumutugma sa dokumentasyon sa README.md ng bawat proyekto
+1. Simulan ang aplikasyon gamit ang `mvn spring-boot:run`
+2. Suriin ang mga endpoint o makipag-interact sa CLI
+3. Tiyakin na ang inaasahang gawi ay tumutugma sa dokumentasyon sa README.md ng bawat proyekto
 
-### Pagsubok gamit ang GitHub Models
-- Mga limitasyon sa libreng tier: 15 kahilingan/minuto, 150/araw
-- Maximum na 5 sabay-sabay na kahilingan
-- Subukan ang content filtering gamit ang mga halimbawa ng responsible AI
+### Pagsusuri gamit ang Azure AI Foundry
+- Mag sign-in gamit ang `az login` bago patakbuhin ang mga halimbawa (keyless auth)
+- Siguraduhing mayroong Cognitive Services OpenAI User role ang iyong account sa resource
+- Subukan ang content filtering gamit ang responsible AI example sa Kabanata 5
 
 ## Mga Alituntunin sa Estilo ng Code
 
 ### Mga Konbensyon sa Java
-- **Bersyon ng Java:** Java 21 na may modernong mga tampok
+- **Bersyon ng Java:** Java 21 na may modernong mga katangian
 - **Estilo:** Sundin ang karaniwang mga konbensyon sa Java
 - **Pagpapangalan:** 
   - Mga Klase: PascalCase
-  - Mga Pamamaraan/variable: camelCase
-  - Mga Constants: UPPER_SNAKE_CASE
-  - Mga Pangalan ng Package: lowercase
+  - Mga Metodo/variable: camelCase
+  - Mga Constant: UPPER_SNAKE_CASE
+  - Mga pangalan ng package: maliit ang titik
 
 ### Mga Pattern ng Spring Boot
-- Gumamit ng `@Service` para sa business logic
-- Gumamit ng `@RestController` para sa REST endpoints
-- Konpigurasyon sa pamamagitan ng `application.yml` o `application.properties`
-- Mas gusto ang mga environment variable kaysa sa mga hard-coded na halaga
-- Gumamit ng `@Tool` annotation para sa mga pamamaraan na nakalantad sa MCP
+- Gamitin ang `@Service` para sa business logic
+- Gamitin ang `@RestController` para sa mga REST endpoint
+- Konpigurasyon gamit ang `application.yml` o `application.properties`
+- Mas gusto ang environment variables kaysa sa hard-coded na mga halaga
+- Gamitin ang `@Tool` annotation para sa mga MCP-exposed na mga metodo
 
 ### Organisasyon ng File
 ```
@@ -206,151 +209,157 @@ src/
         └── com/microsoft/[component]/
 ```
 
-### Mga Dependency
-- Pinamamahalaan sa pamamagitan ng Maven `pom.xml`
+### Mga Dependencies
+- Pinamamahalaan gamit ang Maven `pom.xml`
 - Spring AI BOM para sa pamamahala ng bersyon
 - LangChain4j para sa AI integrations
-- Spring Boot starter parent para sa mga dependency ng Spring
+- Spring Boot starter parent para sa Spring dependencies
 
 ### Mga Komento sa Code
-- Magdagdag ng JavaDoc para sa mga pampublikong API
-- Isama ang mga paliwanag na komento para sa mga kumplikadong AI interactions
-- I-dokumenta nang malinaw ang mga paglalarawan ng MCP tool
+- Magdagdag ng JavaDoc para sa mga public API
+- Isama ang mga paliwanag na komento para sa komplikadong AI interactions
+- I-dokumento nang malinaw ang mga paglalarawan ng MCP tool
 
-## Pagbuo at Pag-deploy
+## Pagbuo at Deployment
 
-### Pagbuo ng Mga Proyekto
+### Pagbuo ng mga Proyekto
 
-**Pagbuo nang walang mga pagsubok:**
+**Pagbuo nang walang pagsusuri:**
 ```bash
 mvn clean install -DskipTests
 ```
 
-**Pagbuo na may lahat ng mga tseke:**
+**Pagbuo na may lahat ng tseke:**
 ```bash
 mvn clean install
 ```
 
-**Pag-package ng application:**
+**Pag-package ng aplikasyon:**
 ```bash
 mvn package
-# Creates JAR in target/ directory
+# Lumilikha ng JAR sa direktoryo ng target/
 ```
 
-### Mga Output Directory
-- Mga compiled na klase: `target/classes/`
+### Mga Output na Direktoryo
+- Mga na-compile na klase: `target/classes/`
 - Mga test class: `target/test-classes/`
 - Mga JAR file: `target/*.jar`
 - Mga Maven artifact: `target/`
 
-### Konpigurasyon na Tukoy sa Kapaligiran
+### Kapaligirang Espesipikong Konpigurasyon
 
-**Pag-develop:**
+**Development:**
 ```yaml
-# application.yml
+# application.yml (keyless - no api-key; auth via DefaultAzureCredential)
 spring:
   ai:
-    openai:
-      api-key: ${GITHUB_TOKEN}
-      base-url: https://models.inference.ai.azure.com
+    azure:
+      openai:
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 **Produksyon:**
-- Gumamit ng Azure AI Foundry Models sa halip na GitHub Models
-- I-update ang base-url sa Azure OpenAI endpoint
-- Pamahalaan ang mga lihim sa pamamagitan ng Azure Key Vault o mga environment variable
+- Gumamit ng managed identity sa halip na `az login` para sa keyless auth
+- Itutok ang `AZURE_OPENAI_ENDPOINT` sa iyong production Foundry resource
+- Pamahalaan ang konpigurasyon sa pamamagitan ng environment variables o Azure Key Vault
 
-### Mga Pagsasaalang-alang sa Pag-deploy
-- Ito ay isang pang-edukasyong repository na may mga sample na aplikasyon
-- Hindi idinisenyo para sa produksyon na pag-deploy sa kasalukuyang anyo
-- Ang mga halimbawa ay nagpapakita ng mga pattern na maaaring iakma para sa produksyon
-- Tingnan ang README.md ng bawat proyekto para sa mga partikular na tala sa pag-deploy
+### Mga Pagsasaalang-alang para sa Deployment
+- Ito ay isang pang-edukasyon na repositoryo na may mga sample na aplikasyon
+- Hindi ito idinisenyo para sa production deployment nang direkta
+- Ipinapakita ng mga sample ang mga pattern na maaari mong baguhin para sa production use
+- Tingnan ang mga README ng bawat proyekto para sa mga tukoy na tala sa deployment
 
 ## Karagdagang Tala
 
-### GitHub Models vs Azure OpenAI
-- **GitHub Models:** Libreng tier para sa pag-aaral, walang kinakailangang credit card
-- **Azure OpenAI:** Handa para sa produksyon, nangangailangan ng Azure subscription
-- Ang code ay compatible sa pagitan ng dalawa - baguhin lamang ang endpoint at API key
+### Azure AI Foundry
+- **Keyless auth:** kumonekta gamit ang Microsoft Entra ID — walang kailangan na pamahalaang API keys
+- **Provisioned as code:** Bicep + azd (`azd up`) ang gumagawa ng account at model deployments
+- Ang parehong OpenAI-compatible code ay tumatakbo nang lokal (`az login`) at sa Azure (managed identity)
 
-### Paggawa gamit ang Maramihang Proyekto
+### Paggamit ng Maramihang Proyekto
 Ang bawat sample na proyekto ay standalone:
 ```bash
-# Navigate to specific project
+# Mag-navigate sa partikular na proyekto
 cd 04-PracticalSamples/[project-name]
 
-# Each has its own pom.xml and can be built independently
+# Bawat isa ay may sariling pom.xml at maaaring itayo nang magkahiwalay
 mvn clean install
 ```
 
 ### Karaniwang Mga Isyu
 
-**Hindi Tugma ang Bersyon ng Java:**
+**Maling Bersyon ng Java:**
 ```bash
-# Verify Java 21
+# Suriin ang Java 21
 java -version
-# Update JAVA_HOME if needed
+# I-update ang JAVA_HOME kung kinakailangan
 export JAVA_HOME=/usr/lib/jvm/msopenjdk-current
 ```
 
 **Mga Isyu sa Pag-download ng Dependency:**
 ```bash
-# Clear Maven cache and retry
+# I-clear ang Maven cache at subukang muli
 rm -rf ~/.m2/repository
 mvn clean install
 ```
 
-**Hindi Natagpuan ang GitHub Token:**
+**Hindi Makakita ng Endpoint o Sign-in:**
 ```bash
-# Set in current session
-export GITHUB_TOKEN="your-token-here"
+# Itakda ang endpoint sa kasalukuyang session at mag-sign in (walang susi)
+export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
+az login
 
-# Or use .env file in project directory
-echo "GITHUB_TOKEN=your-token-here" > .env
+# O gumamit ng .env file sa direktoryo ng proyekto
+echo "AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/" > .env
 ```
 
-**Port na Ginagamit na:**
+**Port Na Ginagamit Na:**
 ```bash
-# Spring Boot uses port 8080 by default
-# Change in application.properties:
+# Ang Spring Boot ay gumagamit ng port 8080 bilang default
+# Baguhin sa application.properties:
 server.port=8081
 ```
 
-### Suporta sa Multi-Language
-- Ang dokumentasyon ay magagamit sa mahigit 45 na wika sa pamamagitan ng automated na pagsasalin
-- Ang mga pagsasalin ay nasa `translations/` directory
-- Ang pagsasalin ay pinamamahalaan ng GitHub Actions workflow
+### Suporta sa Maramihang Wika
+- Dokumentasyon ay makukuha sa 45+ na mga wika sa pamamagitan ng automated na pagsasalin
+- Mga pagsasalin nasa direktoryong `translations/`
+- Pamamahala ng pagsasalin gamit ang GitHub Actions workflow
 
 ### Landas ng Pag-aaral
-1. Simulan sa [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md)
-2. Sundin ang mga kabanata sa pagkakasunod-sunod (01 → 05)
+1. Magsimula sa [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md)
+2. Sundan ang mga kabanata nang sunud-sunod (01 → 05)
 3. Kumpletuhin ang mga hands-on na halimbawa sa bawat kabanata
-4. Galugarin ang mga sample na proyekto sa Kabanata 4
-5. Matutunan ang mga responsible AI practices sa Kabanata 5
+4. Tuklasin ang mga sample na proyekto sa Kabanata 4
+5. Matutunan ang mga responsableng AI na gawi sa Kabanata 5
 
 ### Development Container
-Ang `.devcontainer/devcontainer.json` ay nagko-configure ng:
-- Java 21 development environment
-- Maven na naka-pre-install
-- VS Code Java extensions
-- Mga tool ng Spring Boot
+Inaayos ng `.devcontainer/devcontainer.json` ang:
+- Java 21 na development environment
+- Maven na naka-install na
+- Mga VS Code Java extension
+- Mga Spring Boot na tool
 - Integrasyon ng GitHub Copilot
-- Docker-in-Docker support
+- Suporta sa Docker-in-Docker
 - Azure CLI
 
 ### Mga Pagsasaalang-alang sa Performance
-- Ang libreng tier ng GitHub Models ay may mga limitasyon sa rate
-- Gumamit ng naaangkop na batch sizes para sa embeddings
+- Ang mga deployment ng Azure AI Foundry ay may mga quota ng token/request kada minuto
+- Gamitin ang wastong batch sizes para sa embeddings
 - Isaalang-alang ang caching para sa mga paulit-ulit na API calls
-- Subaybayan ang paggamit ng token para sa cost optimization
+- I-monitor ang paggamit ng token para sa cost optimization
 
 ### Mga Tala sa Seguridad
-- Huwag kailanman i-commit ang `.env` files (nasa `.gitignore` na)
-- Gumamit ng mga environment variable para sa mga API key
-- Ang mga GitHub token ay dapat may minimal na kinakailangang scopes
-- Sundin ang mga responsible AI guidelines sa Kabanata 5
+- Huwag kailanman i-commit ang `.env` files (nasa `.gitignore` na ito)
+- Mas gusto ang keyless auth (Microsoft Entra ID) kaysa sa API keys
+- Gumamit ng managed identities sa Azure; `az login` para sa lokal na development
+- Sundin ang mga gabay sa responsableng AI sa Kabanata 5
 
 ---
 
-**Paunawa**:  
-Ang dokumentong ito ay isinalin gamit ang AI translation service na [Co-op Translator](https://github.com/Azure/co-op-translator). Bagama't sinisikap naming maging tumpak, pakitandaan na ang mga awtomatikong pagsasalin ay maaaring maglaman ng mga pagkakamali o hindi pagkakatugma. Ang orihinal na dokumento sa kanyang katutubong wika ang dapat ituring na opisyal na pinagmulan. Para sa mahalagang impormasyon, inirerekomenda ang propesyonal na pagsasalin ng tao. Hindi kami mananagot sa anumang hindi pagkakaunawaan o maling interpretasyon na dulot ng paggamit ng pagsasaling ito.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Pagtatanggi**:
+Ang dokumentong ito ay isinalin gamit ang serbisyo ng AI translation na [Co-op Translator](https://github.com/Azure/co-op-translator). Bagama't nagsusumikap kami para sa katumpakan, pakatandaan na ang awtomatikong pagsasalin ay maaaring maglaman ng mga pagkakamali o hindi pagkakatugma. Ang orihinal na dokumento sa orihinal nitong wika ang dapat ituring na pangunahing sanggunian. Para sa mahahalagang impormasyon, inirerekomenda ang propesyonal na pagsasalin ng tao. Hindi kami mananagot sa anumang maling pagkakaintindi o maling interpretasyon na nagmula sa paggamit ng pagsasaling ito.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

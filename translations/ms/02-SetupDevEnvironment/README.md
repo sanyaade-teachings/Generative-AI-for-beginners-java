@@ -1,107 +1,98 @@
-# Menyediakan Persekitaran Pembangunan untuk Generative AI bagi Java
+# Menyiapkan Persekitaran Pembangunan untuk Generative AI bagi Java
 
-> **Mula Cepat**: Kod dalam Awan dalam 2 minit - Lompat ke [Persediaan GitHub Codespaces](../../../02-SetupDevEnvironment) - tiada pemasangan tempatan diperlukan dan menggunakan model github!
-
-> **Berminat dengan Azure OpenAI?**, lihat [Panduan Persediaan Azure OpenAI](getting-started-azure-openai.md) kami dengan langkah untuk mencipta sumber Azure OpenAI baru.
+> **Mula Cepat:** Sediakan model AI anda di **Azure AI Foundry** sebagai kod dengan Bicep + `azd` dalam beberapa minit — lihat [Panduan Persediaan Azure AI Foundry](getting-started-azure-openai.md). Pengesahan adalah **tanpa kekunci** (Microsoft Entra ID), jadi tiada kunci API untuk diuruskan.
 
 ## Apa yang Anda Akan Pelajari
 
-- Menyediakan persekitaran pembangunan Java untuk aplikasi AI
-- Memilih dan mengkonfigurasi persekitaran pembangunan pilihan anda (utamakan awan dengan Codespaces, bekas dev tempatan, atau persediaan tempatan penuh)
-- Uji persediaan anda dengan menyambung ke Model GitHub
+- Menyiapkan persekitaran pembangunan Java untuk aplikasi AI
+- Memilih dan mengkonfigurasi persekitaran pembangunan pilihan anda (awan dahulu dengan Codespaces, bekas dev tempatan, atau tetapan penuh tempatan)
+- Uji tetapan anda dengan menyambung kepada model Azure AI Foundry
 
 ## Jadual Kandungan
 
-- [Apa yang Anda Akan Pelajari](../../../02-SetupDevEnvironment)
-- [Pengenalan](../../../02-SetupDevEnvironment)
-- [Langkah 1: Sediakan Persekitaran Pembangunan Anda](../../../02-SetupDevEnvironment)
-  - [Pilihan A: GitHub Codespaces (Disyorkan)](../../../02-SetupDevEnvironment)
-  - [Pilihan B: Bekas Dev Tempatan](../../../02-SetupDevEnvironment)
-  - [Pilihan C: Gunakan Pemasangan Tempatan Sedia Ada Anda](../../../02-SetupDevEnvironment)
-- [Langkah 2: Cipta Token Akses Peribadi GitHub](../../../02-SetupDevEnvironment)
-- [Langkah 3: Uji Persediaan Anda](../../../02-SetupDevEnvironment)
-- [Menyelesaikan Masalah](../../../02-SetupDevEnvironment)
-- [Ringkasan](../../../02-SetupDevEnvironment)
-- [Langkah Seterusnya](../../../02-SetupDevEnvironment)
+- [Apa yang Anda Akan Pelajari](#apa-yang-anda-akan-pelajari)
+- [Pengenalan](#pengenalan)
+- [Langkah 1: Menyiapkan Persekitaran Pembangunan Anda](#langkah-1-menyiapkan-persekitaran-pembangunan-anda)
+  - [Pilihan A: GitHub Codespaces (Disyorkan)](#pilihan-a-github-codespaces-disyorkan)
+  - [Pilihan B: Bekas Dev Tempatan](#pilihan-b-bekas-dev-tempatan)
+  - [Pilihan C: Gunakan Pemasangan Tempatan Sedia Ada Anda](#pilihan-c-gunakan-pemasangan-tempatan-sedia-ada-anda)
+- [Langkah 2: Sediakan Azure AI Foundry](#langkah-2-sediakan-azure-ai-foundry)
+- [Langkah 3: Uji Tetapan Anda](#langkah-3-uji-tetapan-anda)
+- [Penyelesaian Masalah](#penyelesaian-masalah)
+- [Ringkasan](#ringkasan)
+- [Langkah Seterusnya](#langkah-seterusnya)
 
 ## Pengenalan
 
-Bab ini akan memandu anda melalui penyediaan persekitaran pembangunan. Kami akan menggunakan **Model GitHub** sebagai contoh utama kerana ia percuma, mudah disediakan dengan hanya akaun GitHub, tidak memerlukan kad kredit, dan menyediakan akses kepada pelbagai model untuk eksperimen.
+Bab ini akan memandu anda melalui penyediaan persekitaran pembangunan. Kita akan menggunakan **Azure AI Foundry** untuk model sepanjang kursus ini. Anda menyediakan model sebagai kod dengan Bicep dan Azure Developer CLI (`azd`), kemudian sambung dengan **pengesahan tanpa kekunci** (Microsoft Entra ID) — tiada kunci API untuk disalin atau bocor.
 
-**Tiada persediaan tempatan diperlukan!** Anda boleh mula menulis kod serta-merta menggunakan GitHub Codespaces, yang menyediakan persekitaran pembangunan penuh dalam pelayar anda.
+**Tiada tetapan tempatan diperlukan!** Anda boleh gunakan GitHub Codespaces, yang menyediakan persekitaran pembangunan penuh dalam pelayar anda, dan menyediakan Foundry dari situ.
 
-<img src="../../../translated_images/ms/models.cb07f8af0d724e4d.webp" alt="Tangkapan skrin: Model GitHub" width="50%">
+Kami menggunakan **Azure AI Foundry** untuk kursus ini kerana ia:
+- **Disediakan sebagai kod** — satu `azd up` menyebarkan akaun dan penyebaran model
+- **Tanpa kekunci** — sahkan dengan log masuk Azure anda atau identiti pengurus
+- **Sedia untuk produksi** — kod yang sama berjalan secara tempatan dan di Azure
+- **Fleksibel** — tukar model dengan mengubah nama penyebaran, bukan kod anda
 
-Kami mengesyorkan menggunakan [**Model GitHub**](https://github.com/marketplace?type=models) untuk kursus ini kerana ia:
-- **Percuma** untuk bermula
-- **Mudah** disediakan hanya dengan akaun GitHub
-- **Tiada kad kredit** diperlukan
-- **Banyak model** tersedia untuk eksperimen
-
-> **Nota**: Model GitHub yang digunakan dalam latihan ini mempunyai had percuma berikut:
-> - 15 permintaan setiap minit (150 sehari)
-> - ~8,000 perkataan masuk, ~4,000 perkataan keluar setiap permintaan
-> - 5 permintaan serentak
-> 
-> Untuk penggunaan pengeluaran, naik taraf ke Model Azure AI Foundry dengan akaun Azure anda. Kod anda tidak perlu diubah. Lihat [dokumentasi Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/quickstart-github-models).
+> **Nota**: Penyebaran Azure AI Foundry dikenakan bayaran mengikut token (bayar ikut penggunaan). Lihat [panduan persediaan Azure AI Foundry](getting-started-azure-openai.md) untuk butiran penyediaan, rantau, dan kos.
 
 
-## Langkah 1: Sediakan Persekitaran Pembangunan Anda
+## Langkah 1: Menyiapkan Persekitaran Pembangunan Anda
 
 <a name="quick-start-cloud"></a>
 
-Kami telah mencipta bekas pembangunan yang sudah dikonfigurasikan untuk meminimumkan masa persediaan dan memastikan anda mempunyai semua alat yang diperlukan untuk kursus Generative AI bagi Java ini. Pilih pendekatan pembangunan anda yang disukai:
+Kami telah mencipta bekas pembangunan yang telah dipra-konfigurasi untuk meminimumkan masa penyediaan dan memastikan anda mempunyai semua alat yang diperlukan untuk kursus Generative AI bagi Java ini. Pilih pendekatan pembangunan pilihan anda:
 
-### Pilihan Persediaan Persekitaran:
+### Pilihan Penyediaan Persekitaran:
 
 #### Pilihan A: GitHub Codespaces (Disyorkan)
 
-**Mula menulis kod dalam 2 minit - tiada persediaan tempatan diperlukan!**
+**Mula menulis kod dalam 2 minit - tiada tetapan tempatan diperlukan!**
 
 1. Fork repositori ini ke akaun GitHub anda
-   > **Nota**: Jika anda mahu mengubah suai konfigurasi asas sila lihat [Konfigurasi Bekas Dev](../../../.devcontainer/devcontainer.json)
+   > **Nota**: Jika anda ingin mengubah config asas sila lihat [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
 2. Klik **Code** → tab **Codespaces** → **...** → **New with options...**
-3. Gunakan tetapan default – ini akan memilih **Konfigurasi bekas Dev**: **Persekitaran Pembangunan Generative AI Java** devcontainer khas yang dibuat untuk kursus ini
+3. Gunakan lalai – ini akan memilih **Dev container configuration**: **Persekitaran Pembangunan Generative AI Java** custom devcontainer yang dibuat untuk kursus ini
 4. Klik **Create codespace**
-5. Tunggu kira-kira 2 minit untuk persekitaran bersedia
-6. Teruskan ke [Langkah 2: Cipta Token GitHub](../../../02-SetupDevEnvironment)
+5. Tunggu kira-kira 2 minit sehingga persekitaran sedia
+6. Teruskan ke [Langkah 2: Sediakan Azure AI Foundry](#langkah-2-sediakan-azure-ai-foundry)
 
-<img src="../../../translated_images/ms/codespaces.9945ded8ceb431a5.webp" alt="Tangkapan skrin: submenu Codespaces" width="50%">
+<img src="../../../translated_images/ms/codespaces.9945ded8ceb431a5.webp" alt="Screenshot: Codespaces submenu" width="50%">
 
-<img src="../../../translated_images/ms/image.833552b62eee7766.webp" alt="Tangkapan skrin: New with options" width="50%">
+<img src="../../../translated_images/ms/image.833552b62eee7766.webp" alt="Screenshot: New with options" width="50%">
 
-<img src="../../../translated_images/ms/codespaces-create.b44a36f728660ab7.webp" alt="Tangkapan skrin: pilihan buat codespace" width="50%">
+<img src="../../../translated_images/ms/codespaces-create.b44a36f728660ab7.webp" alt="Screenshot: Create codespace options" width="50%">
 
 
-> **Kelebihan Codespaces**:
+> **Faedah Codespaces**:
 > - Tiada pemasangan tempatan diperlukan
-> - Boleh digunakan pada mana-mana peranti dengan pelayar
-> - Telah dikonfigurasikan dengan semua alat dan kebergantungan
-> - 60 jam percuma setiap bulan untuk akaun peribadi
-> - Persekitaran konsisten bagi semua pelajar
+> - Berfungsi pada mana-mana peranti dengan pelayar
+> - Dipra-konfigurasi dengan semua alat dan kebergantungan
+> - 60 jam percuma sebulan untuk akaun peribadi
+> - Persekitaran konsisten untuk semua pelajar
 
 #### Pilihan B: Bekas Dev Tempatan
 
-**Untuk pembangun yang memilih pembangunan tempatan dengan Docker**
+**Untuk pembangun yang lebih suka pembangunan tempatan dengan Docker**
 
 1. Fork dan klon repositori ini ke mesin tempatan anda
-   > **Nota**: Jika anda mahu mengubah suai konfigurasi asas sila lihat [Konfigurasi Bekas Dev](../../../.devcontainer/devcontainer.json)
+   > **Nota**: Jika anda ingin mengubah config asas sila lihat [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
 2. Pasang [Docker Desktop](https://www.docker.com/products/docker-desktop/) dan [VS Code](https://code.visualstudio.com/)
-3. Pasang [sambungan Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) dalam VS Code
+3. Pasang [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) dalam VS Code
 4. Buka folder repositori dalam VS Code
 5. Apabila diminta, klik **Reopen in Container** (atau gunakan `Ctrl+Shift+P` → "Dev Containers: Reopen in Container")
 6. Tunggu bekas dibina dan dimulakan
-7. Teruskan ke [Langkah 2: Cipta Token GitHub](../../../02-SetupDevEnvironment)
+7. Teruskan ke [Langkah 2: Sediakan Azure AI Foundry](#langkah-2-sediakan-azure-ai-foundry)
 
-<img src="../../../translated_images/ms/devcontainer.21126c9d6de64494.webp" alt="Tangkapan skrin: persediaan bekas Dev" width="50%">
+<img src="../../../translated_images/ms/devcontainer.21126c9d6de64494.webp" alt="Screenshot: Dev container setup" width="50%">
 
-<img src="../../../translated_images/ms/image-3.bf93d533bbc84268.webp" alt="Tangkapan skrin: siap bina bekas Dev" width="50%">
+<img src="../../../translated_images/ms/image-3.bf93d533bbc84268.webp" alt="Screenshot: Dev container build complete" width="50%">
 
 #### Pilihan C: Gunakan Pemasangan Tempatan Sedia Ada Anda
 
-**Untuk pembangun yang sudah ada persekitaran Java**
+**Untuk pembangun dengan persekitaran Java sedia ada**
 
-Keperluan:
+Prasyarat:
 - [Java 21+](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html) 
 - [Maven 3.9+](https://maven.apache.org/download.cgi)
 - [VS Code](https://code.visualstudio.com) atau IDE pilihan anda
@@ -109,146 +100,125 @@ Keperluan:
 Langkah:
 1. Klon repositori ini ke mesin tempatan anda
 2. Buka projek dalam IDE anda
-3. Teruskan ke [Langkah 2: Cipta Token GitHub](../../../02-SetupDevEnvironment)
+3. Teruskan ke [Langkah 2: Sediakan Azure AI Foundry](#langkah-2-sediakan-azure-ai-foundry)
 
-> **Petua Pro**: Jika mesin anda berspesifikasi rendah tetapi mahu VS Code secara tempatan, gunakan GitHub Codespaces! Anda boleh sambungkan VS Code tempatan anda ke Codespace yang dihos di awan untuk gabungan terbaik.
+> **Petua Pro**: Jika anda mempunyai mesin berspesifikasi rendah tetapi mahu VS Code secara tempatan, gunakan GitHub Codespaces! Anda boleh sambungkan VS Code tempatan anda ke Codespace yang dihoskan di awan untuk yang terbaik dari kedua-dua dunia.
 
-<img src="../../../translated_images/ms/image-2.fc0da29a6e4d2aff.webp" alt="Tangkapan skrin: instans devcontainer tempatan yang dibuat" width="50%">
+<img src="../../../translated_images/ms/image-2.fc0da29a6e4d2aff.webp" alt="Screenshot: created local devcontainer instance" width="50%">
 
 
-## Langkah 2: Cipta Token Akses Peribadi GitHub
+## Langkah 2: Sediakan Azure AI Foundry
 
-1. Navigasi ke [Tetapan GitHub](https://github.com/settings/profile) dan pilih **Settings** dari menu profil anda.
-2. Dalam bar sisi kiri, klik **Developer settings** (biasanya di bawah sekali).
-3. Di bawah **Personal access tokens**, klik **Fine-grained tokens** (atau ikut [pautan](https://github.com/settings/personal-access-tokens) terus).
-4. Klik **Generate new token**.
-5. Di bawah "Token name", berikan nama yang menerangkan (contohnya, `GenAI-Java-Course-Token`).
-6. Tetapkan tarikh luput (disyorkan: 7 hari untuk amalan keselamatan terbaik).
-7. Di bawah "Resource owner", pilih akaun pengguna anda.
-8. Di bawah "Repository access", pilih repositori yang anda mahu gunakan dengan Model GitHub (atau "All repositories" jika perlu).
-9. Di bawah "Account permissions", cari **Models** dan tetapkan kepada **Read-only**.
-10. Klik **Generate token**.
-11. **Salin dan simpan token anda sekarang** – anda tidak akan melihatnya lagi!
+Sebarkan model AI kursus ke Azure AI Foundry sebagai kod. Dari akar repositori:
 
-> **Petua Keselamatan**: Gunakan skop minimum yang diperlukan dan tempoh luput paling singkat yang praktikal untuk token akses anda.
+```bash
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
+```
 
-## Langkah 3: Uji Persediaan Anda dengan Contoh Model GitHub
+`azd` akan meminta nama persekitaran dan rantau, menyediakan akaun Azure AI Foundry dengan penyebaran `gpt-4o-mini` dan `text-embedding-3-small`, dan menulis titik hujung dalam `.env` contoh — semua dengan pengesahan **tanpa kekunci** (tiada kunci API).
 
-Setelah persekitaran pembangunan anda sedia, mari uji integrasi Model GitHub dengan aplikasi contoh kami dalam [`02-SetupDevEnvironment/examples/github-models`](../../../02-SetupDevEnvironment/examples/github-models).
+> **Panduan penuh:** Lihat [Panduan Persediaan Azure AI Foundry](getting-started-azure-openai.md) untuk prasyarat, alternatif manual (portal), panduan rantau, dan nota kos/pembersihan.
+
+## Langkah 3: Uji Tetapan Anda
+
+Setelah model Foundry anda disediakan, uji sambungan dengan aplikasi contoh dalam [`02-SetupDevEnvironment/examples/basic-chat-azure`](../../../02-SetupDevEnvironment/examples/basic-chat-azure).
 
 1. Buka terminal dalam persekitaran pembangunan anda.
-2. Navigasi ke contoh Model GitHub:
+2. Navigasi ke contoh:
    ```bash
-   cd 02-SetupDevEnvironment/examples/github-models
+   cd 02-SetupDevEnvironment/examples/basic-chat-azure
    ```
-3. Tetapkan token GitHub anda sebagai pembolehubah persekitaran:
+3. Pastikan anda sudah log masuk (pengesahan tanpa kekunci memerlukan token):
    ```bash
-   # macOS/Linux
-   export GITHUB_TOKEN=your_token_here
-   
-   # Windows (Command Prompt)
-   set GITHUB_TOKEN=your_token_here
-   
-   # Windows (PowerShell)
-   $env:GITHUB_TOKEN="your_token_here"
+   az login
    ```
-
+   > Jika anda menjalankan `azd up`, fail `.env` dengan titik hujung anda sudah ditulis untuk anda.
 4. Jalankan aplikasi:
    ```bash
-   mvn compile exec:java -Dexec.mainClass="com.example.githubmodels.App"
+   mvn clean spring-boot:run
    ```
 
-Anda harus melihat output yang serupa dengan:
-```text
-Using model: gpt-4.1-nano
-Sending request to GitHub Models...
-Response: Hello World!
-```
+Anda harus melihat respons daripada model `gpt-4o-mini`.
 
 ### Memahami Kod Contoh
 
-Pertama, mari fahami apa yang kita jalankan. Contoh di bawah `examples/github-models` menggunakan OpenAI Java SDK untuk sambung ke Model GitHub:
+Contoh di bawah `examples/basic-chat-azure` adalah aplikasi Spring Boot yang menggunakan **Spring AI** untuk menyambung ke Azure AI Foundry dengan pengesahan tanpa kekunci.
 
-**Apa yang kod ini lakukan:**
-- **Menyambung** ke Model GitHub menggunakan token akses peribadi anda
-- **Menghantar** mesej mudah "Say Hello World!" ke model AI
+**Apa yang dilakukan kod ini:**
+- **Menyambung** ke Azure AI Foundry menggunakan log masuk Azure anda (Microsoft Entra ID) — tanpa kunci API
+- **Menghantar** prompt kepada model `gpt-4o-mini`
 - **Menerima** dan memaparkan respons AI
-- **Memastikan** persediaan anda berfungsi dengan betul
+- **Mengesahkan** tetapan anda berfungsi dengan betul
 
 **Kebergantungan Utama** (dalam `pom.xml`):
 ```xml
 <dependency>
-    <groupId>com.openai</groupId>
-    <artifactId>openai-java</artifactId>
-    <version>2.12.0</version>
+    <groupId>org.springframework.ai</groupId>
+    <artifactId>spring-ai-starter-model-azure-openai</artifactId>
 </dependency>
 ```
 
-**Kod Utama** (`App.java`):
-```java
-// Sambungkan ke Model GitHub menggunakan OpenAI Java SDK
-OpenAIClient client = OpenAIOkHttpClient.builder()
-    .apiKey(pat)
-    .baseUrl("https://models.inference.ai.azure.com")
-    .build();
-
-// Cipta permintaan penyempurnaan perbualan
-ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
-    .model(modelId)
-    .addSystemMessage("You are a concise assistant.")
-    .addUserMessage("Say Hello World!")
-    .build();
-
-// Dapatkan respons AI
-ChatCompletion response = client.chat().completions().create(params);
-System.out.println("Response: " + response.choices().get(0).message().content().orElse("No response content"));
+**Konfigurasi** (`application.yml`):
+```yaml
+spring:
+  ai:
+    azure:
+      openai:
+        # Endpoint only - no api-key. Spring AI uses DefaultAzureCredential (keyless).
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 ## Ringkasan
 
-Bagus! Kini anda sudah menyediakan segala-galanya:
+Hebat! Anda kini mempunyai semua yang diperlukan:
 
-- Mencipta Token Akses Peribadi GitHub dengan kebenaran yang betul untuk akses model AI
-- Menjalankan persekitaran pembangunan Java anda (sama ada Codespaces, bekas dev, atau tempatan)
-- Menyambung ke Model GitHub menggunakan OpenAI Java SDK untuk pembangunan AI percuma
-- Menguji semuanya berfungsi dengan contoh mudah yang berinteraksi dengan model AI
+- Model Azure AI Foundry disediakan sebagai kod dengan Bicep + `azd`
+- Persekitaran pembangunan Java anda berjalan (sama ada Codespaces, bekas dev, atau tempatan)
+- Disambung ke Azure AI Foundry dengan pengesahan tanpa kekunci (Microsoft Entra ID) — tiada kunci API
+- Uji semuanya berfungsi dengan contoh mudah yang berbual dengan model anda
 
 ## Langkah Seterusnya
 
-[Bab 3: Teknik Asas Generative AI](../03-CoreGenerativeAITechniques/README.md)
+[Bab 3: Teknik Teras Generative AI](../03-CoreGenerativeAITechniques/README.md)
 
-## Menyelesaikan Masalah
+## Penyelesaian Masalah
 
 Ada masalah? Berikut adalah masalah biasa dan penyelesaiannya:
 
-- **Token tidak berfungsi?** 
-  - Pastikan anda menyalin token sepenuhnya tanpa ruang tambahan
-  - Sahkan token ditetapkan dengan betul sebagai pembolehubah persekitaran
-  - Semak token mempunyai kebenaran yang betul (Models: Read-only)
+- **Pengesahan gagal (401/403)?** 
+  - Jalankan `az login` — pengesahan adalah tanpa kekunci, jadi anda mesti log masuk
+  - Sahkan akaun anda mempunyai peranan **Cognitive Services OpenAI User** pada sumber
+  - Jika baru sahaja menyediakan, tunggu sebentar untuk penganugerahan peranan disebarkan
 
-- **Maven tidak ditemui?** 
-  - Jika menggunakan bekas dev/Codespaces, Maven harus sudah dipasang
-  - Untuk persediaan tempatan, pastikan Java 21+ dan Maven 3.9+ dipasang
-  - Cuba `mvn --version` untuk semak pemasangan
+- **Maven tidak dijumpai?** 
+  - Jika menggunakan bekas dev/Codespaces, Maven sudah dipasang terlebih dahulu
+  - Untuk tetapan tempatan, pastikan Java 21+ dan Maven 3.9+ dipasang
+  - Cuba `mvn --version` untuk sahkan pemasangan
 
-- **Isu sambungan?** 
-  - Semak sambungan internet anda
-  - Pastikan GitHub boleh dicapai dari rangkaian anda
-  - Pastikan anda tidak berada di belakang firewall yang menyekat titik akhir Model GitHub
+- **`azd` tidak ditemui atau penyediaan gagal?** 
+  - Pasang [Azure Developer CLI](https://aka.ms/azure-dev/install) dan jalankan `azd auth login`
+  - Pilih rantau di mana `gpt-4o-mini` tersedia (contoh `eastus2`)
+  - Lihat [panduan persediaan Azure AI Foundry](getting-started-azure-openai.md) untuk butiran
 
-- **Bekas dev tidak bermula?** 
+- **Bekas dev tidak mula?** 
   - Pastikan Docker Desktop sedang berjalan (untuk pembangunan tempatan)
   - Cuba bina semula bekas: `Ctrl+Shift+P` → "Dev Containers: Rebuild Container"
 
 - **Ralat kompilasi aplikasi?**
-  - Pastikan anda berada dalam direktori yang betul: `02-SetupDevEnvironment/examples/github-models`
-  - Cuba bersih dan bina semula: `mvn clean compile`
+  - Pastikan anda berada dalam direktori betul: `02-SetupDevEnvironment/examples/basic-chat-azure`
+  - Cuba bersihkan dan bina semula: `mvn clean compile`
 
-> **Perlukan bantuan?**: Masih ada isu? Buka isu dalam repositori dan kami akan bantu anda.
+> **Perlu bantuan?**: Masih ada masalah? Buka isu dalam repositori dan kami akan membantu anda.
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Penafian**:  
-Dokumen ini telah diterjemahkan menggunakan perkhidmatan terjemahan AI [Co-op Translator](https://github.com/Azure/co-op-translator). Walaupun kami berusaha untuk mencapai ketepatan, sila ambil perhatian bahawa terjemahan automatik mungkin mengandungi kesilapan atau ketidaktepatan. Dokumen asal dalam bahasa asalnya hendaklah dianggap sebagai sumber yang sahih. Untuk maklumat penting, terjemahan profesional oleh manusia adalah disyorkan. Kami tidak bertanggungjawab atas sebarang salah faham atau salah tafsir yang timbul daripada penggunaan terjemahan ini.
+**Penafian**:
+Dokumen ini telah diterjemahkan menggunakan perkhidmatan terjemahan AI [Co-op Translator](https://github.com/Azure/co-op-translator). Walaupun kami berusaha untuk ketepatan, sila ambil maklum bahawa terjemahan automatik mungkin mengandungi kesilapan atau ketidaktepatan. Dokumen asal dalam bahasa asalnya harus dianggap sebagai sumber yang sahih. Untuk maklumat penting, terjemahan oleh manusia profesional adalah disyorkan. Kami tidak bertanggungjawab terhadap sebarang salah faham atau salah tafsir yang timbul daripada penggunaan terjemahan ini.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

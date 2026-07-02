@@ -1,31 +1,31 @@
-# Tutorial sa Pet Story Generator para sa mga Baguhan
+# Pet Story Generator Tutorial para sa mga Baguhan
 
-## Nilalaman
+## Table of Contents
 
-- [Mga Kinakailangan](../../../../04-PracticalSamples/petstory)
-- [Pag-unawa sa Estruktura ng Proyekto](../../../../04-PracticalSamples/petstory)
-- [Paliwanag sa Mga Pangunahing Komponent](../../../../04-PracticalSamples/petstory)
-  - [1. Pangunahing Aplikasyon](../../../../04-PracticalSamples/petstory)
-  - [2. Web Controller](../../../../04-PracticalSamples/petstory)
-  - [3. Story Service](../../../../04-PracticalSamples/petstory)
-  - [4. Web Templates](../../../../04-PracticalSamples/petstory)
-  - [5. Konpigurasyon](../../../../04-PracticalSamples/petstory)
-- [Pagpapatakbo ng Aplikasyon](../../../../04-PracticalSamples/petstory)
-- [Paano Nagtutulungan ang Lahat](../../../../04-PracticalSamples/petstory)
-- [Pag-unawa sa AI Integration](../../../../04-PracticalSamples/petstory)
-- [Mga Susunod na Hakbang](../../../../04-PracticalSamples/petstory)
+- [Mga Kinakailangan](#mga-kinakailangan)
+- [Pag-unawa sa Istruktura ng Proyekto](#pag-unawa-sa-istruktura-ng-proyekto)
+- [Paliwanag ng Mga Pangunahing Bahagi](#paliwanag-ng-mga-pangunahing-bahagi)
+  - [1. Pangunahing Aplikasyon](#1-pangunahing-aplikasyon)
+  - [2. Web Controller](#2-web-controller)
+  - [3. Story Service](#3-story-service)
+  - [4. Mga Web Template](#4-mga-web-template)
+  - [5. Pag-configure](#5-pag-configure)
+- [Pagpapatakbo ng Aplikasyon](#pagpapatakbo-ng-aplikasyon)
+- [Paano Ito Nagtutulungan](#paano-ito-nagtutulungan)
+- [Pag-unawa sa AI Integration](#pag-unawa-sa-ai-integration)
+- [Mga Susunod na Hakbang](#mga-susunod-na-hakbang)
 
 ## Mga Kinakailangan
 
 Bago magsimula, siguraduhing mayroon ka ng:
 - Java 21 o mas mataas na naka-install
 - Maven para sa pamamahala ng dependency
-- Isang GitHub account na may personal access token (PAT) na may `models:read` scope
+- Isang Azure AI Foundry model deployment (i-provision gamit ang `azd up` — tingnan ang [Kabanata 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md)), naka-sign in gamit ang `az login` (keyless auth)
 - Pangunahing kaalaman sa Java, Spring Boot, at web development
 
-## Pag-unawa sa Estruktura ng Proyekto
+## Pag-unawa sa Istruktura ng Proyekto
 
-Ang proyekto ng pet story ay may ilang mahahalagang file:
+Ang pet story project ay may ilang mahahalagang files:
 
 ```
 petstory/
@@ -42,7 +42,7 @@ petstory/
 └── pom.xml                           # Maven dependencies
 ```
 
-## Paliwanag sa Mga Pangunahing Komponent
+## Paliwanag ng Mga Pangunahing Bahagi
 
 ### 1. Pangunahing Aplikasyon
 
@@ -60,15 +60,15 @@ public class PetStoryApplication {
 ```
 
 **Ano ang ginagawa nito:**
-- Ang `@SpringBootApplication` annotation ay nagbibigay-daan sa auto-configuration at component scanning
-- Sinisimulan ang embedded web server (Tomcat) sa port 8080
-- Awtomatikong nililikha ang lahat ng kinakailangang Spring beans at services
+- Ang `@SpringBootApplication` annotation ay nagpapagana ng auto-configuration at component scanning
+- Nagpapasimula ng embedded web server (Tomcat) sa port 8080
+- Awtomatikong lumilikha ng lahat ng kinakailangang Spring beans at services
 
 ### 2. Web Controller
 
 **File:** `PetController.java`
 
-Ito ang humahawak sa lahat ng web requests at interaksyon ng user:
+Ito ang humahawak sa lahat ng web requests at user interactions:
 
 ```java
 @Controller
@@ -82,7 +82,7 @@ public class PetController {
     
     @GetMapping("/")
     public String index() {
-        return "index";  // Returns index.html template
+        return "index";  // Nagbabalik ng index.html na template
     }
     
     @PostMapping("/generate-story")
@@ -90,24 +90,24 @@ public class PetController {
                                Model model, 
                                RedirectAttributes redirectAttributes) {
         
-        // Input validation
+        // Pag-validate ng input
         if (description.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please provide a description.");
             return "redirect:/";
         }
         
-        // Sanitize input for security
+        // Linisin ang input para sa seguridad
         String sanitizedDescription = sanitizeInput(description);
         
-        // Generate story with error handling
+        // Bumuo ng kuwento na may paghawak ng error
         try {
             String story = storyService.generateStory(sanitizedDescription);
             model.addAttribute("caption", sanitizedDescription);
             model.addAttribute("story", story);
-            return "result";  // Returns result.html template
+            return "result";  // Nagbabalik ng result.html na template
             
         } catch (Exception e) {
-            // Use fallback story if AI fails
+            // Gumamit ng fallback na kuwento kung pumalya ang AI
             String fallbackStory = generateFallbackStory(sanitizedDescription);
             model.addAttribute("story", fallbackStory);
             return "result";
@@ -117,21 +117,21 @@ public class PetController {
     private String sanitizeInput(String input) {
         return input.replaceAll("[<>\"'&]", "")  // Remove dangerous characters
                    .trim()
-                   .substring(0, Math.min(input.length(), 500));  // Limit length
+                   .substring(0, Math.min(input.length(), 500));  // Limitahan ang haba
     }
 }
 ```
 
-**Mga Pangunahing Tampok:**
+**Pangunahing tampok:**
 
-1. **Route Handling**: Ang `@GetMapping("/")` ay nagpapakita ng upload form, habang ang `@PostMapping("/generate-story")` ay nagpoproseso ng mga submission
-2. **Input Validation**: Sinusuri ang mga walang laman na deskripsyon at limitasyon sa haba
-3. **Seguridad**: Nililinis ang input ng user upang maiwasan ang XSS attacks
-4. **Error Handling**: Nagbibigay ng fallback stories kapag hindi gumana ang AI service
-5. **Model Binding**: Ipinapasa ang data sa HTML templates gamit ang Spring's `Model`
+1. **Route Handling**: `@GetMapping("/")` ay nagpapakita ng upload form, `@PostMapping("/generate-story")` ay nagpoproseso ng mga submission
+2. **Input Validation**: Sinusuri kung walang laman ang descriptions at mga limitasyon sa haba
+3. **Security**: Nililinis ang user input upang maiwasan ang XSS attacks
+4. **Error Handling**: Nagbibigay ng fallback stories kapag nabigo ang AI service
+5. **Model Binding**: Pinapasa ang data sa mga HTML template gamit ang Spring's `Model`
 
 **Fallback System:**
-Ang controller ay may kasamang pre-written story templates na ginagamit kapag hindi available ang AI service:
+Kasama sa controller ang mga pre-written na story templates na ginagamit kapag hindi available ang AI service:
 
 ```java
 private String generateFallbackStory(String description) {
@@ -141,7 +141,7 @@ private String generateFallbackStory(String description) {
         "In a cozy home filled with love, there lived an extraordinary pet..."
     };
     
-    // Use description hash for consistent responses
+    // Gamitin ang hash ng paglalarawan para sa mga pare-parehong tugon
     int index = Math.abs(description.hashCode() % storyTemplates.length);
     return storyTemplates[index];
 }
@@ -151,7 +151,7 @@ private String generateFallbackStory(String description) {
 
 **File:** `StoryService.java`
 
-Ang service na ito ang nakikipag-ugnayan sa GitHub Models para makabuo ng mga kwento:
+Ang serbisyo na ito ay nakikipag-ugnayan sa Azure AI Foundry para bumuo ng mga kwento gamit ang keyless authentication:
 
 ```java
 @Service
@@ -160,18 +160,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // Ang OpenAI-compatible na endpoint ng Foundry ay matatagpuan sa ilalim ng /openai/v1/
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // Keyless authentication gamit ang Microsoft Entra ID (walang API key)
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -182,16 +186,16 @@ public class StoryService {
         
         String userPrompt = "Write a fun short story about a pet described as: " + description;
         
-        // Configure the AI request
+        // I-configure ang AI request
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(modelName)
                 .addSystemMessage(systemPrompt)
                 .addUserMessage(userPrompt)
-                .maxCompletionTokens(500)  // Limit response length
-                .temperature(0.8)          // Control creativity (0.0-1.0)
+                .maxCompletionTokens(500)  // Limitahan ang haba ng sagot
+                .temperature(0.8)          // Kontrolin ang pagiging malikhain (0.0-1.0)
                 .build();
         
-        // Send request and get response
+        // Ipadala ang request at kunin ang tugon
         ChatCompletion response = openAIClient.chat().completions().create(params);
         
         return response.choices().get(0).message().content().orElse("");
@@ -199,19 +203,19 @@ public class StoryService {
 }
 ```
 
-**Mga Pangunahing Komponent:**
+**Pangunahing bahagi:**
 
-1. **OpenAI Client**: Ginagamit ang opisyal na OpenAI Java SDK na naka-configure para sa GitHub Models
-2. **System Prompt**: Itinatakda ang ugali ng AI upang magsulat ng family-friendly na pet stories
-3. **User Prompt**: Sinasabi sa AI kung anong kwento ang isusulat base sa deskripsyon
-4. **Parameters**: Kinokontrol ang haba ng kwento at antas ng creativity
-5. **Error Handling**: Nagpapadala ng exceptions na hinuhuli at pinoproseso ng controller
+1. **OpenAI Client**: Ginagamit ang opisyal na OpenAI Java SDK na naka-configure para sa Azure AI Foundry (keyless)
+2. **System Prompt**: Itinakda ang pag-uugali ng AI upang magsulat ng mga kwentong pang-pamilya tungkol sa mga alagang hayop
+3. **User Prompt**: Sinasabi sa AI kung anong kwento ang isusulat base sa description
+4. **Parameters**: Kinokontrol ang haba ng kwento at antas ng pagkamalikhain
+5. **Error Handling**: Nagbubuga ng mga exceptions na hinahawakan at pinamamahalaan ng controller
 
-### 4. Web Templates
+### 4. Mga Web Template
 
 **File:** `index.html` (Upload Form)
 
-Ang pangunahing pahina kung saan inilalarawan ng mga user ang kanilang mga alagang hayop:
+Pangunahing pahina kung saan inilalarawan ng mga user ang kanilang mga alaga:
 
 ```html
 <!DOCTYPE html>
@@ -258,9 +262,9 @@ Ang pangunahing pahina kung saan inilalarawan ng mga user ang kanilang mga alaga
 </html>
 ```
 
-**File:** `result.html` (Story Display)
+**File:** `result.html` (Pagpapakita ng Kwento)
 
-Ipinapakita ang nabuo na kwento:
+Ipinapakita ang na-generate na kwento:
 
 ```html
 <!DOCTYPE html>
@@ -293,18 +297,18 @@ Ipinapakita ang nabuo na kwento:
 </html>
 ```
 
-**Mga Tampok ng Template:**
+**Mga tampok ng template:**
 
-1. **Thymeleaf Integration**: Gumagamit ng `th:` attributes para sa dynamic na nilalaman
+1. **Thymeleaf Integration**: Gumagamit ng `th:` na attributes para sa dynamic na nilalaman
 2. **Responsive Design**: CSS styling para sa mobile at desktop
 3. **Error Handling**: Ipinapakita ang mga validation errors sa mga user
-4. **Client-side Processing**: JavaScript para sa image analysis (gamit ang Transformers.js)
+4. **Client-side Processing**: JavaScript para sa pagsusuri ng imahe (gamit ang Transformers.js)
 
-### 5. Konpigurasyon
+### 5. Pag-configure
 
 **File:** `application.properties`
 
-Mga setting ng konpigurasyon para sa aplikasyon:
+Mga settings para sa aplikasyon:
 
 ```properties
 spring.application.name=pet-story-app
@@ -316,52 +320,55 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
-**Paliwanag sa Konpigurasyon:**
+**Paliwanag ng configuration:**
 
 1. **File Upload**: Pinapayagan ang mga imahe hanggang 10MB
-2. **Logging**: Kinokontrol kung anong impormasyon ang ilalagay sa log habang tumatakbo
-3. **GitHub Models**: Tinutukoy kung aling AI model at endpoint ang gagamitin
-4. **Seguridad**: Konpigurasyon sa error handling upang maiwasan ang paglalantad ng sensitibong impormasyon
+2. **Logging**: Kinokontrol kung anong impormasyon ang nilalagay sa log habang tumatakbo
+3. **Azure AI Foundry**: Tinukoy ang endpoint at model deployment na gagamitin (keyless auth)
+4. **Security**: Pag-configure ng error handling upang hindi mailantad ang sensitibong impormasyon
 
 ## Pagpapatakbo ng Aplikasyon
 
-### Hakbang 1: Itakda ang Iyong GitHub Token
+### Hakbang 1: Mag-sign In at I-set ang Iyong Endpoint
 
-Una, kailangan mong itakda ang iyong GitHub token bilang environment variable:
+Ang authentication ay keyless (Microsoft Entra ID), kaya walang API key. Mag-sign in at i-set ang iyong Foundry endpoint:
 
 **Windows (Command Prompt):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Bakit ito kailangan:**
-- Ang GitHub Models ay nangangailangan ng authentication para ma-access ang AI models
-- Ang paggamit ng environment variables ay nagtatago ng sensitibong tokens mula sa source code
-- Ang `models:read` scope ay nagbibigay ng access sa AI inference
+- Ginagamit ng Azure AI Foundry ang Microsoft Entra ID para i-authenticate ang mga inference requests
+- Ibig sabihin ng keyless auth na walang mga secret sa iyong source code o environment
+- Kailangan ng iyong account ang **Cognitive Services OpenAI User** role sa resource
 
 ### Hakbang 2: I-build at Patakbuhin
 
-Pumunta sa project directory:
+Pumunta sa direktoryo ng proyekto:
 ```bash
 cd 04-PracticalSamples/petstory
 ```
 
-I-build ang application:
+I-build ang aplikasyon:
 ```bash
 mvn clean compile
 ```
@@ -371,51 +378,53 @@ Simulan ang server:
 mvn spring-boot:run
 ```
 
-Ang application ay magsisimula sa `http://localhost:8080`.
+Mag-uumpisa ang aplikasyon sa `http://localhost:8080`.
 
 ### Hakbang 3: Subukan ang Aplikasyon
 
 1. **Buksan** ang `http://localhost:8080` sa iyong browser
-2. **Ilarawan** ang iyong alagang hayop sa text area (hal., "Isang masayahing golden retriever na mahilig mag-fetch")
+2. **Ilarawan** ang iyong alaga sa text area (halimbawa, "Isang masiglang golden retriever na mahilig mag-fetch")
 3. **I-click** ang "Generate Story" para makakuha ng AI-generated na kwento
-4. **Bilang alternatibo**, mag-upload ng larawan ng alagang hayop para awtomatikong makabuo ng deskripsyon
-5. **Tingnan** ang malikhaing kwento base sa deskripsyon ng iyong alagang hayop
+4. **O kaya naman**, mag-upload ng larawan ng alaga upang awtomatikong makabuo ng description
+5. **Tingnan** ang malikhaing kwento base sa iyong paglalarawan ng alaga
 
-## Paano Nagtutulungan ang Lahat
+## Paano Ito Nagtutulungan
 
-Narito ang kumpletong daloy kapag gumagawa ng pet story:
+Narito ang buong daloy kapag nag-generate ka ng kwento ng alaga:
 
-1. **Input ng User**: Inilalarawan mo ang iyong alagang hayop sa web form
-2. **Form Submission**: Ang browser ay nagpapadala ng POST request sa `/generate-story`
-3. **Controller Processing**: Ang `PetController` ay nagva-validate at nililinis ang input
-4. **AI Service Call**: Ang `StoryService` ay nagpapadala ng request sa GitHub Models API
-5. **Story Generation**: Ang AI ay bumubuo ng malikhaing kwento base sa deskripsyon
+1. **User Input**: Ikinukwento mo ang iyong alaga sa web form
+2. **Form Submission**: Nagpapadala ang browser ng POST request sa `/generate-story`
+3. **Controller Processing**: Tine-validate at nililinis ng `PetController` ang input
+4. **AI Service Call**: Nagpapadala ang `StoryService` ng request sa Azure AI Foundry model
+5. **Story Generation**: Gumagawa ang AI ng malikhaing kwento base sa paglalarawan
 6. **Response Handling**: Tinatanggap ng controller ang kwento at idinadagdag ito sa model
-7. **Template Rendering**: Ang Thymeleaf ay nire-render ang `result.html` kasama ang kwento
-8. **Display**: Nakikita ng user ang nabuo na kwento sa kanilang browser
+7. **Template Rendering**: Ipinapakita ng Thymeleaf ang `result.html` na may kwento
+8. **Display**: Nakikita ng user ang na-generate na kwento sa kanilang browser
 
-**Daloy ng Error Handling:**
-Kapag hindi gumana ang AI service:
-1. Hinuhuli ng controller ang exception
-2. Gumagawa ng fallback story gamit ang pre-written templates
-3. Ipinapakita ang fallback story na may paalala tungkol sa hindi availability ng AI
-4. Nakakakuha pa rin ng kwento ang user, na nagbibigay ng magandang karanasan
+**Daloy ng Pag-handle ng Error:**
+Kung mabigo ang AI service:
+1. Nahuhuli ng controller ang exception
+2. Gumagawa ng fallback story gamit ang mga pre-written na template
+3. Ipinapakita ang fallback story kasama ang paalala tungkol sa hindi availability ng AI
+4. Nakakakuha pa rin ang user ng kwento, na nagpapanatili ng magandang karanasan
 
 ## Pag-unawa sa AI Integration
 
-### GitHub Models API
-Ginagamit ng application ang GitHub Models, na nagbibigay ng libreng access sa iba't ibang AI models:
+### Azure AI Foundry (keyless)
+Gumagamit ang aplikasyon ng Azure AI Foundry gamit ang keyless authentication (Microsoft Entra ID):
 
 ```java
-// Authentication with GitHub token
+// Walang susi na pagpapatunay - walang API key
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
 ### Prompt Engineering
-Gumagamit ang service ng maingat na dinisenyong prompts para makakuha ng magagandang resulta:
+Maingat na ginawa ang mga prompt ng serbisyo upang makamit ang magagandang resulta:
 
 ```java
 String systemPrompt = "You are a creative storyteller who writes fun, " +
@@ -424,7 +433,7 @@ String systemPrompt = "You are a creative storyteller who writes fun, " +
 ```
 
 ### Response Processing
-Ang AI response ay kinukuha at sinusuri:
+Ina-extract at tines-triktura ang sagot ng AI:
 
 ```java
 ChatCompletion response = openAIClient.chat().completions().create(params);
@@ -433,7 +442,11 @@ String story = response.choices().get(0).message().content().orElse("");
 
 ## Mga Susunod na Hakbang
 
-Para sa higit pang mga halimbawa, tingnan ang [Chapter 04: Practical samples](../README.md)
+Para sa higit pang mga halimbawa, tingnan ang [Kabanata 04: Praktikal na mga halimbawa](../README.md)
 
-**Paunawa**:  
-Ang dokumentong ito ay isinalin gamit ang AI translation service na [Co-op Translator](https://github.com/Azure/co-op-translator). Bagama't sinisikap naming maging tumpak, pakitandaan na ang mga awtomatikong pagsasalin ay maaaring maglaman ng mga pagkakamali o hindi pagkakatugma. Ang orihinal na dokumento sa kanyang katutubong wika ang dapat ituring na opisyal na sanggunian. Para sa mahalagang impormasyon, inirerekomenda ang propesyonal na pagsasalin ng tao. Hindi kami mananagot sa anumang hindi pagkakaunawaan o maling interpretasyon na maaaring magmula sa paggamit ng pagsasaling ito.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Pagtatanggi**:
+Ang dokumentong ito ay isinalin gamit ang serbisyo ng AI translation na [Co-op Translator](https://github.com/Azure/co-op-translator). Bagama't nagsusumikap kami para sa katumpakan, pakatandaan na ang awtomatikong pagsasalin ay maaaring maglaman ng mga pagkakamali o hindi pagkakatugma. Ang orihinal na dokumento sa orihinal nitong wika ang dapat ituring na pangunahing sanggunian. Para sa mahahalagang impormasyon, inirerekomenda ang propesyonal na pagsasalin ng tao. Hindi kami mananagot sa anumang maling pagkakaintindi o maling interpretasyon na nagmula sa paggamit ng pagsasaling ito.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

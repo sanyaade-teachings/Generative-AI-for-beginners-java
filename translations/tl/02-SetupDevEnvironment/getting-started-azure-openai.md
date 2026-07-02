@@ -1,131 +1,140 @@
-# Pagtatakda ng Development Environment para sa Azure OpenAI
+# Pagsasaayos ng Development Environment para sa Azure AI Foundry
 
-> **Quick Start**: Ang gabay na ito ay para sa Azure OpenAI setup. Para sa mabilisang pagsisimula gamit ang mga libreng modelo, gamitin ang [GitHub Models with Codespaces](./README.md#quick-start-cloud).
+> Itong gabay ay nagse-setup ng **Azure AI Foundry** models para sa Java AI apps sa kursong ito, gamit ang **keyless** na authentication (Microsoft Entra ID) — walang API keys na kailangang pamahalaan. Bago sa tooling? Magsimula sa [development environment guide](./README.md).
 
-Ang gabay na ito ay tutulong sa iyo na i-set up ang mga modelo ng Azure AI Foundry para sa iyong mga Java AI app sa kursong ito.
+Itong gabay ay nagse-setup ng **Azure AI Foundry** models para sa Java AI apps sa kursong ito. Mayroon kang dalawang pagpipilian:
 
-## Talaan ng Nilalaman
+- **Option A — Magprovision gamit ang `azd` + Bicep (inirerekomenda):** isang utos lang ang nagde-deploy ng Foundry account at mga modelo bilang code. Walang pag-click sa portal.
+- **Option B — Gawin ang mga resources nang mano-mano** sa Azure AI Foundry portal.
 
-- [Pangkalahatang-ideya ng Mabilisang Setup](../../../02-SetupDevEnvironment)
-- [Hakbang 1: Gumawa ng Azure AI Foundry Resources](../../../02-SetupDevEnvironment)
-  - [Gumawa ng Hub at Project](../../../02-SetupDevEnvironment)
-  - [I-deploy ang GPT-4o-mini Model](../../../02-SetupDevEnvironment)
-- [Hakbang 2: Gumawa ng Iyong Codespace](../../../02-SetupDevEnvironment)
-- [Hakbang 3: I-configure ang Iyong Environment](../../../02-SetupDevEnvironment)
-- [Hakbang 4: Subukan ang Iyong Setup](../../../02-SetupDevEnvironment)
-- [Ano ang Susunod?](../../../02-SetupDevEnvironment)
-- [Mga Resources](../../../02-SetupDevEnvironment)
-- [Karagdagang Resources](../../../02-SetupDevEnvironment)
+Parehong gumagamit ng **keyless authentication** (Microsoft Entra ID) — walang API keys na kailangang kopyahin o malantad.
 
-## Pangkalahatang-ideya ng Mabilisang Setup
+## Table of Contents
 
-1. Gumawa ng Azure AI Foundry resources (Hub, Project, Model)
-2. Gumawa ng Codespace gamit ang Java development container
-3. I-configure ang iyong .env file gamit ang Azure OpenAI credentials
-4. Subukan ang iyong setup gamit ang example project
+- [Ano ang Nai-create](#ano-ang-nai-create)
+- [Mga Kinakailangan](#mga-kinakailangan)
+- [Option A: Provision gamit ang azd + Bicep (Inirerekomenda)](#option-a-provision-with-azd--bicep-recommended)
+- [Option B: Gawin ang mga Resources nang Mano-mano](#option-b-gawin-ang-mga-resources-nang-mano-mano)
+- [I-configure ang Iyong Kapaligiran](#i-configure-ang-iyong-kapaligiran)
+- [Subukan ang Iyong Setup](#subukan-ang-iyong-setup)
+- [Ano ang Susunod?](#ano-ang-susunod)
+- [Mga Resources](#mga-resources)
+- [Karagdagang Resources](#karagdagang-resources)
 
-## Hakbang 1: Gumawa ng Azure AI Foundry Resources
+## Ano ang Nai-create
 
-### Gumawa ng Hub at Project
+Ang mga Bicep templates sa [`infra/`](../../../02-SetupDevEnvironment/infra) ay nagpoprovide ng:
 
-1. Pumunta sa [Azure AI Foundry Portal](https://ai.azure.com/) at mag-sign in
-2. I-click ang **+ Create** → **New hub** (o mag-navigate sa **Management** → **All hubs** → **+ New hub**)
-3. I-configure ang iyong hub:
-   - **Hub name**: Halimbawa, "MyAIHub"
-   - **Subscription**: Piliin ang iyong Azure subscription
-   - **Resource group**: Gumawa ng bago o piliin ang umiiral
-   - **Location**: Piliin ang pinakamalapit sa iyo
-   - **Storage account**: Gamitin ang default o mag-configure ng custom
-   - **Key vault**: Gamitin ang default o mag-configure ng custom
-   - I-click ang **Next** → **Review + create** → **Create**
-4. Kapag nagawa na, i-click ang **+ New project** (o **Create project** mula sa hub overview)
-   - **Project name**: Halimbawa, "GenAIJava"
-   - I-click ang **Create**
+- Isang **Azure AI Foundry** account (`Microsoft.CognitiveServices/accounts`, kind `AIServices`) na may project
+- Isang **chat** deployment — `gpt-4o-mini`
+- Isang **embedding** deployment — `text-embedding-3-small` (ginagamit sa mga huling kabanata)
+- Isang **keyless role assignment** (`Cognitive Services OpenAI User`) kaya makakapag-sign in ka gamit ang `az login` imbes na mag-manage ng mga keys
 
-### I-deploy ang GPT-4o-mini Model
+## Mga Kinakailangan
 
-1. Sa iyong project, pumunta sa **Model catalog** at hanapin ang **gpt-4o-mini**
-   - *Alternatibo: Pumunta sa **Deployments** → **+ Create deployment***
-2. I-click ang **Deploy** sa gpt-4o-mini model card
-3. I-configure ang deployment:
-   - **Deployment name**: "gpt-4o-mini"
-   - **Model version**: Gamitin ang pinakabago
-   - **Deployment type**: Standard
-4. I-click ang **Deploy**
-5. Kapag na-deploy na, pumunta sa **Deployments** tab at kopyahin ang mga sumusunod:
-   - **Deployment name** (Halimbawa, "gpt-4o-mini")
-   - **Target URI** (Halimbawa, `https://your-hub-name.openai.azure.com/`) 
-      > **Mahalaga**: Kopyahin lamang ang base URL (Halimbawa, `https://myhub.openai.azure.com/`) hindi ang buong endpoint path.
-   - **Key** (mula sa Keys and Endpoint section)
+- Isang [Azure subscription](https://azure.microsoft.com/free/)
+- [Azure Developer CLI (`azd`)](https://aka.ms/azure-dev/install)
+- [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli)
+- [Java 21+](https://learn.microsoft.com/java/openjdk/download) at [Maven 3.9+](https://maven.apache.org/download.cgi)
 
-> **May problema pa rin?** Bisitahin ang opisyal na [Azure AI Foundry Documentation](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project)
+## Option A: Provision gamit ang azd + Bicep (Inirerekomenda)
 
-## Hakbang 2: Gumawa ng Iyong Codespace
-
-1. I-fork ang repository na ito sa iyong GitHub account
-   > **Tandaan**: Kung nais mong i-edit ang basic config, tingnan ang [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
-2. Sa iyong forked repo, i-click ang **Code** → **Codespaces** tab
-3. I-click ang **...** → **New with options...**
-![creating a codespace with options](../../../translated_images/tl/codespaces.9945ded8ceb431a5.webp)
-4. Piliin ang **Dev container configuration**: 
-   - **Generative AI Java Development Environment**
-5. I-click ang **Create codespace**
-
-## Hakbang 3: I-configure ang Iyong Environment
-
-Kapag handa na ang iyong Codespace, i-set up ang iyong Azure OpenAI credentials:
-
-1. **Mag-navigate sa example project mula sa repository root:**
-   ```bash
-   cd 02-SetupDevEnvironment/examples/basic-chat-azure
-   ```
-
-2. **Gumawa ng iyong .env file:**
-   ```bash
-   cp .env.example .env
-   ```
-
-3. **I-edit ang .env file gamit ang iyong Azure OpenAI credentials:**
-   ```bash
-   # Your Azure OpenAI API key (from Azure AI Foundry portal)
-   AZURE_AI_KEY=your-actual-api-key-here
-   
-   # Your Azure OpenAI endpoint URL (e.g., https://myhub.openai.azure.com/)
-   AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-   ```
-
-   > **Tandaan sa Seguridad**: 
-   > - Huwag kailanman i-commit ang iyong `.env` file sa version control
-   > - Ang `.env` file ay kasama na sa `.gitignore`
-   > - Panatilihing ligtas ang iyong API keys at i-rotate ang mga ito nang regular
-
-## Hakbang 4: Subukan ang Iyong Setup
-
-Patakbuhin ang example application upang subukan ang iyong Azure OpenAI connection:
+Mula sa folder na `02-SetupDevEnvironment`:
 
 ```bash
+cd 02-SetupDevEnvironment
+
+# Mag-sign in (parehong tools)
+azd auth login
+az login
+
+# I-provision ang Foundry account + model deployments
+azd up
+```
+
+Hihingin ng `azd` ang isang **environment name** (halimbawa `genai-java`) at isang **region**. Pumili ng region kung saan available ang `gpt-4o-mini` at `text-embedding-3-small` — halimbawa `eastus2` o `swedencentral`.
+
+Kapag natapos ang provisioning, ang azd ay:
+
+1. Ide-deploy lahat ng nakasaad sa [`infra/main.bicep`](../../../02-SetupDevEnvironment/infra/main.bicep).
+2. Patatakbuhin ang postprovision hook na nagsusulat ng [`examples/basic-chat-azure/.env`](../../../02-SetupDevEnvironment/examples/basic-chat-azure) na may iyong endpoint at pangalan ng deployments (walang mga sikreto).
+
+> **Tip:** Patakbuhin muli ang `azd up` anumang oras para i-apply ang mga pagbabago. Patakbuhin ang `azd down` para burahin lahat at ihinto ang pag-incur ng gastos.
+
+Para makita ang mga nagawang settings:
+
+```bash
+azd env get-values
+```
+
+Ngayon, tumalon sa [Test Your Setup](#subukan-ang-iyong-setup).
+
+## Option B: Gawin ang mga Resources nang Mano-mano
+
+Mas gusto ang portal? Gumawa ng mga resources nang manu-mano:
+
+1. Pumunta sa [Azure AI Foundry portal](https://ai.azure.com/) at mag-sign in.
+2. **Gumawa ng project** (ito rin ay gumagawa ng AI Foundry resource). Bigyan ito ng pangalan tulad ng `GenAIJava`.
+3. Sa iyong project, buksan ang **Models + endpoints** → **Deploy model** → **Deploy base model**.
+4. I-deploy ang **gpt-4o-mini** (deployment name ay `gpt-4o-mini`). Ulitin para sa **text-embedding-3-small** kung gusto mo ang embedding examples.
+5. Mula sa **Overview**, kopyahin ang **endpoint** (halimbawa `https://<resource>.openai.azure.com/`).
+6. Bigyan ang iyong sarili ng keyless access: sa resource, buksan ang **Access control (IAM)** → **Add role assignment** → i-assign ang **Cognitive Services OpenAI User** sa iyong account.
+
+> **May problema pa?** Tingnan ang [Azure AI Foundry documentation](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects).
+
+## I-configure ang Iyong Kapaligiran
+
+**Kung ginamit mo ang Option A (`azd up`)**, nakasulat na ang iyong settings file — walang kailangan i-configure. Tumalon na sa [Test Your Setup](#subukan-ang-iyong-setup).
+
+**Kung ginamit mo ang Option B (manu-mano)**, gawin mo ang `.env` file ng example:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+cp .env.example .env
+```
+
+I-edit ang `.env` gamit ang iyong endpoint (walang key — keyless ang auth):
+
+```bash
+AZURE_OPENAI_ENDPOINT=https://<your-resource>.openai.azure.com/
+AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini
+```
+
+> **Paalala sa seguridad:** Walang API key na dapat itago. Nag-a-authenticate ka gamit ang Microsoft Entra ID via `az login` (lokal) o managed identity (sa Azure). Ang `.env` file ay may lamang mga hindi sikreto na settings at sakop na ito ng `.gitignore`.
+
+## Subukan ang Iyong Setup
+
+Siguraduhing naka-sign in ka para makakuha ng token ang keyless auth, pagkatapos patakbuhin ang example:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+
+az login          # kung hindi ka pa naka-sign in
 mvn clean spring-boot:run
 ```
 
-Makikita mo ang response mula sa GPT-4o-mini model!
+Dapat kang makakita ng tugon mula sa `gpt-4o-mini` model!
 
-> **VS Code Users**: Maaari mo ring pindutin ang `F5` sa VS Code upang patakbuhin ang application. Ang launch configuration ay naka-set up na upang awtomatikong i-load ang iyong `.env` file.
+> **Para sa mga gumagamit ng VS Code:** Pindutin ang `F5` para tumakbo. Awtomatiko nitong niloload ang iyong `.env`.
 
-> **Buong halimbawa**: Tingnan ang [End-to-End Azure OpenAI Example](./examples/basic-chat-azure/README.md) para sa detalyadong mga tagubilin at troubleshooting.
+> **Buong example:** Tingnan ang [Basic Chat with Azure AI Foundry example](./examples/basic-chat-azure/README.md) para sa mga detalye at troubleshooting.
 
 ## Ano ang Susunod?
 
-**Setup Kumpleto!** Ngayon ay mayroon ka nang:
-- Azure OpenAI na may gpt-4o-mini na naka-deploy
-- Lokal na .env file configuration
-- Java development environment na handa
+**Kumpleto na ang setup!** Ngayon ay mayroon ka nang:
+- Azure AI Foundry na may `gpt-4o-mini` at `text-embedding-3-small` na naka-deploy
+- Keyless authentication (Microsoft Entra ID) — walang mga keys na kailangang pamahalaan
+- Lokal na `.env` file na may iyong endpoint at mga pangalan ng deployment
+- Isang Java development environment na handa nang gamitin
 
-**Magpatuloy sa** [Chapter 3: Core Generative AI Techniques](../03-CoreGenerativeAITechniques/README.md) upang simulan ang paggawa ng AI applications!
+**Magpatuloy sa** [Chapter 3: Core Generative AI Techniques](../03-CoreGenerativeAITechniques/README.md) para simulan ang paggawa ng AI applications!
 
 ## Mga Resources
 
-- [Azure AI Foundry Documentation](https://learn.microsoft.com/azure/ai-services/)
-- [Spring AI Azure OpenAI Documentation](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
+- [Azure Developer CLI (azd)](https://aka.ms/azure-dev/install)
+- [Keyless authentication gamit ang Microsoft Entra ID](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
+- [Azure AI Foundry Documentation](https://learn.microsoft.com/azure/ai-foundry/)
+- [Spring AI Azure OpenAI Documentation](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
 - [Azure OpenAI Java SDK](https://learn.microsoft.com/java/api/overview/azure/ai-openai-readme)
 
 ## Karagdagang Resources
@@ -134,5 +143,9 @@ Makikita mo ang response mula sa GPT-4o-mini model!
 - [Kunin ang Docker Desktop](https://www.docker.com/products/docker-desktop)
 - [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
 
-**Paunawa**:  
-Ang dokumentong ito ay isinalin gamit ang AI translation service na [Co-op Translator](https://github.com/Azure/co-op-translator). Bagama't sinisikap naming maging tumpak, pakitandaan na ang mga awtomatikong pagsasalin ay maaaring maglaman ng mga pagkakamali o hindi pagkakatugma. Ang orihinal na dokumento sa orihinal nitong wika ang dapat ituring na opisyal na sanggunian. Para sa mahalagang impormasyon, inirerekomenda ang propesyonal na pagsasalin ng tao. Hindi kami mananagot sa anumang hindi pagkakaunawaan o maling interpretasyon na dulot ng paggamit ng pagsasaling ito.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Pagtatanggi**:
+Ang dokumentong ito ay isinalin gamit ang serbisyo ng AI translation na [Co-op Translator](https://github.com/Azure/co-op-translator). Bagama't nagsusumikap kami para sa katumpakan, pakatandaan na ang awtomatikong pagsasalin ay maaaring maglaman ng mga pagkakamali o hindi pagkakatugma. Ang orihinal na dokumento sa orihinal nitong wika ang dapat ituring na pangunahing sanggunian. Para sa mahahalagang impormasyon, inirerekomenda ang propesyonal na pagsasalin ng tao. Hindi kami mananagot sa anumang maling pagkakaintindi o maling interpretasyon na nagmula sa paggamit ng pagsasaling ito.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

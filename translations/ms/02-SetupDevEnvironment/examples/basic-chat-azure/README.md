@@ -1,104 +1,59 @@
-# Contoh Asas Chat dengan Azure OpenAI - End-to-End
+# Perbualan Asas dengan Azure AI Foundry - Contoh End-to-End
 
-Contoh ini menunjukkan cara untuk mencipta aplikasi Spring Boot yang mudah, yang berhubung dengan Azure OpenAI dan menguji tetapan anda.
+Contoh ini adalah aplikasi Spring Boot mudah yang berhubung dengan model **Azure AI Foundry** menggunakan **pengesahan tanpa kunci** (Microsoft Entra ID) dan menguji tetapan anda. Ia menggunakan `ChatClient` dari Spring AI.
 
-## Kandungan
+## Jadual Kandungan
 
-- [Prasyarat](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Permulaan Pantas](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Pilihan Konfigurasi](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Pilihan 1: Pembolehubah Persekitaran (fail .env) - Disyorkan](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Pilihan 2: Rahsia GitHub Codespace](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Menjalankan Aplikasi](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Menggunakan Maven](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Menggunakan VS Code](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Output Dijangka](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Rujukan Konfigurasi](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Pembolehubah Persekitaran](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Konfigurasi Spring](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Penyelesaian Masalah](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Isu Biasa](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Mod Debug](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Langkah Seterusnya](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Sumber](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
+- [Prasyarat](#prasyarat)
+- [Mula Pantas](#mula-pantas)
+- [Bagaimana Pengesahan Berfungsi](#bagaimana-pengesahan-berfungsi)
+- [Menjalankan Aplikasi](#menjalankan-aplikasi)
+  - [Menggunakan Maven](#menggunakan-maven)
+  - [Menggunakan VS Code](#menggunakan-vs-code)
+  - [Output Dijangka](#output-dijangka)
+- [Rujukan Konfigurasi](#rujukan-konfigurasi)
+  - [Pembolehubah Persekitaran](#pembolehubah-persekitaran)
+  - [Konfigurasi Spring](#konfigurasi-spring)
+- [Penyelesaian Masalah](#penyelesaian-masalah)
+  - [Isu Biasa](#isu-biasa)
+  - [Mod Debug](#mod-debug)
+- [Langkah Seterusnya](#langkah-seterusnya)
+- [Sumber](#sumber)
 
 ## Prasyarat
 
-Sebelum menjalankan contoh ini, pastikan anda telah:
+Sebelum menjalankan contoh ini, pastikan anda mempunyai:
 
-- Menyelesaikan [panduan tetapan Azure OpenAI](../../getting-started-azure-openai.md)  
-- Melakukan penyebaran sumber Azure OpenAI (melalui portal Azure AI Foundry)  
-- Melakukan penyebaran model gpt-4o-mini (atau alternatif)  
-- Mendapatkan kunci API dan URL endpoint dari Azure  
+- Sumber Azure AI Foundry dengan pelaksanaan `gpt-4o-mini` — sediakan dengan `azd up` atau secara manual melalui [panduan penyediaan Azure AI Foundry](../../getting-started-azure-openai.md)
+- Peranan **Cognitive Services OpenAI User** pada sumber tersebut (templat Bicep menetapkan ini untuk anda)
+- [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli), sudah log masuk dengan `az login`
+- Java 21+ dan Maven 3.9+
 
-## Permulaan Pantas
+> **Tiada kunci API diperlukan** — pengesahan adalah tanpa kunci melalui Microsoft Entra ID.
+
+## Mula Pantas
 
 ```bash
-# 1. Navigate to project
+# 1. Navigasi ke projek
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 
-# 2. Configure credentials
-cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# 2. Log masuk supaya pengesahan tanpa kunci boleh mendapatkan token
+az login
 
-# 3. Run the application
+# 3. Konfigurasikan titik akhir
+#    - Jika anda menjalankan `azd up`, .env telah ditulis untuk anda (langkau ini).
+#    - Jika tidak, salin templat dan tetapkan AZURE_OPENAI_ENDPOINT:
+cp .env.example .env
+
+# 4. Jalankan aplikasi
 mvn spring-boot:run
 ```
 
-## Pilihan Konfigurasi
+## Bagaimana Pengesahan Berfungsi
 
-### Pilihan 1: Pembolehubah Persekitaran (fail .env) - Disyorkan
+Contoh ini mengesahkan dengan **Microsoft Entra ID** — tiada kunci API digunakan.
 
-**Langkah 1: Cipta fail konfigurasi anda**
-```bash
-cp .env.example .env
-```
-
-**Langkah 2: Tambahkan kelayakan Azure OpenAI anda**
-```bash
-# Your Azure OpenAI API key (from Azure AI Foundry portal)
-AZURE_AI_KEY=your-actual-api-key-here
-
-# Your Azure OpenAI endpoint URL (e.g., https://your-hub-name.openai.azure.com/)
-AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-> **Nota Keselamatan**: 
-> - Jangan sekali-kali komit fail `.env` anda ke kawalan versi
-> - Fail `.env` sudah disenaraikan dalam `.gitignore`
-> - Pastikan kunci API anda selamat dan putarkannya secara berkala
-
-### Pilihan 2: Rahsia GitHub Codespace
-
-Untuk GitHub Codespaces, tetapkan rahsia ini dalam repositori anda:
-- `AZURE_AI_KEY` - Kunci API Azure OpenAI anda
-- `AZURE_AI_ENDPOINT` - URL endpoint Azure OpenAI anda
-
-Aplikasi akan secara automatik mengesan dan menggunakan rahsia ini.
-
-### Alternatif: Pembolehubah Persekitaran Langsung
-
-<details>
-<summary>Klik untuk melihat arahan khusus platform</summary>
-
-**Linux/macOS (bash/zsh):**
-```bash
-export AZURE_AI_KEY=your-actual-api-key-here
-export AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (Command Prompt):**
-```cmd
-set AZURE_AI_KEY=your-actual-api-key-here
-set AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (PowerShell):**
-```powershell
-$env:AZURE_AI_KEY="your-actual-api-key-here"
-$env:AZURE_AI_ENDPOINT="https://your-hub-name.openai.azure.com/"
-```
-</details>
+Apabila hanya `spring.ai.azure.openai.endpoint` ditetapkan (dan tiada api-key), Spring AI membina klien Azure OpenAI dengan [`DefaultAzureCredential`](https://learn.microsoft.com/java/api/com.azure.identity.defaultazurecredential). Kredensial itu secara automatik mencari token daripada sesi `az login` anda secara tempatan, atau daripada pengenalan terurus apabila dijalankan di Azure — jadi kod yang sama berfungsi di kedua-dua tempat tanpa perubahan.
 
 ## Menjalankan Aplikasi
 
@@ -114,7 +69,7 @@ mvn spring-boot:run
 2. Tekan `F5` atau gunakan panel "Run and Debug"
 3. Pilih konfigurasi "Spring Boot-BasicChatApplication"
 
-> **Nota**: Konfigurasi VS Code secara automatik memuatkan fail .env anda
+> **Nota**: Konfigurasi VS Code memuatkan fail .env anda secara automatik
 
 ### Output Dijangka
 
@@ -136,61 +91,62 @@ Success! Azure OpenAI connection is working correctly.
 
 ### Pembolehubah Persekitaran
 
-| Pembolehubah | Penerangan | Diperlukan | Contoh |
-|--------------|------------|------------|--------|
-| `AZURE_AI_KEY` | Kunci API Azure OpenAI | Ya | `abc123...` |
-| `AZURE_AI_ENDPOINT` | URL endpoint Azure OpenAI | Ya | `https://my-hub.openai.azure.com/` |
-| `AZURE_AI_MODEL_DEPLOYMENT` | Nama penyebaran model | Tidak | `gpt-4o-mini` (lalai) |
+| Pembolehubah | Penerangan | Wajib | Contoh |
+|--------------|------------|--------|--------|
+| `AZURE_OPENAI_ENDPOINT` | URL titik hujung Foundry (Azure OpenAI) | Ya | `https://my-resource.openai.azure.com/` |
+| `AZURE_OPENAI_DEPLOYMENT` | Nama pelaksanaan model perbualan | Tidak | `gpt-4o-mini` (lalai) |
+
+> Tiada pembolehubah kunci API — pengesahan adalah tanpa kunci (Microsoft Entra ID melalui `az login`).
 
 ### Konfigurasi Spring
 
 Fail `application.yml` mengkonfigurasi:
-- **Kunci API**: `${AZURE_AI_KEY}` - Dari pembolehubah persekitaran
-- **Endpoint**: `${AZURE_AI_ENDPOINT}` - Dari pembolehubah persekitaran  
-- **Model**: `${AZURE_AI_MODEL_DEPLOYMENT:gpt-4o-mini}` - Dari pembolehubah persekitaran dengan lalai
-- **Temperature**: `0.7` - Mengawal kreativiti (0.0 = deterministik, 1.0 = kreatif)
-- **Max Tokens**: `500` - Panjang respons maksimum
+- **Titik Hujung**: `${AZURE_OPENAI_ENDPOINT}` - Dari pembolehubah persekitaran
+- **Pelaksanaan**: `${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}` - Dari pembolehubah persekitaran dengan sandaran
+- **Pengesahan**: tanpa kunci — tiada `api-key` ditetapkan, jadi Spring AI menggunakan `DefaultAzureCredential`
+- **Suhu**: `0.7` - Mengawal kreativiti (0.0 = deterministik, 1.0 = kreatif)
+- **Max Token**: `500` - Panjang maksimum respons
 
 ## Penyelesaian Masalah
 
 ### Isu Biasa
 
 <details>
-<summary><strong>Ralat: "The API key is not valid"</strong></summary>
+<summary><strong>Ralat: 401 / "PermissionDenied" / ralat token</strong></summary>
 
-- Periksa bahawa `AZURE_AI_KEY` anda telah ditetapkan dengan betul dalam fail `.env` anda
-- Pastikan kunci API disalin tepat seperti yang diberikan dalam portal Azure AI Foundry
-- Pastikan tiada ruang tambahan atau tanda petik di sekitar kunci
+- Jalankan `az login` — pengesahan tanpa kunci memerlukan log masuk aktif untuk mendapatkan token
+- Sahkan akaun anda mempunyai peranan **Cognitive Services OpenAI User** pada sumber tersebut
+- Jika anda baru sahaja melantik peranan itu, tunggu beberapa minit untuk ia disebarkan
+- Pastikan anda berada dalam penyewa/langganan yang betul (`az account show`)
 </details>
 
 <details>
-<summary><strong>Ralat: "The endpoint is not valid"</strong></summary>
+<summary><strong>Ralat: "The endpoint is not valid" / ralat sambungan</strong></summary>
 
-- Pastikan `AZURE_AI_ENDPOINT` anda termasuk URL penuh (contoh: `https://your-hub-name.openai.azure.com/`)
-- Periksa konsistensi garis miring di akhir URL
-- Pastikan endpoint sepadan dengan wilayah penyebaran Azure anda
+- Pastikan `AZURE_OPENAI_ENDPOINT` adalah URL asas penuh (contoh, `https://your-resource.openai.azure.com/`)
+- Semak konsistensi garis miring akhir
+- Sahkan titik hujung sepadan dengan sumber yang disediakan (`azd env get-values`)
 </details>
 
 <details>
 <summary><strong>Ralat: "The deployment was not found"</strong></summary>
 
-- Pastikan nama penyebaran model anda sepadan tepat dengan yang disebarkan di Azure
-- Periksa bahawa model telah berjaya disebarkan dan aktif
-- Cuba gunakan nama penyebaran lalai: `gpt-4o-mini`
+- Sahkan `AZURE_OPENAI_DEPLOYMENT` sepadan dengan nama pelaksanaan dalam Azure
+- Periksa model telah berjaya dilaksanakan dan aktif
+- Nama pelaksanaan lalai ialah `gpt-4o-mini`
 </details>
 
 <details>
-<summary><strong>VS Code: Pembolehubah persekitaran tidak dimuatkan</strong></summary>
+<summary><strong>VS Code: Pembolehubah persekitaran tidak dimuat</strong></summary>
 
-- Pastikan fail `.env` anda berada di direktori akar projek (tahap yang sama dengan `pom.xml`)
-- Cuba jalankan `mvn spring-boot:run` dalam terminal bersepadu VS Code
-- Periksa bahawa sambungan Java VS Code telah dipasang dengan betul
-- Pastikan konfigurasi pelancaran mempunyai `"envFile": "${workspaceFolder}/.env"`
+- Pastikan fail `.env` anda berada di direktori root projek (paras yang sama dengan `pom.xml`)
+- Cuba jalankan `mvn spring-boot:run` dalam terminal terbenam VS Code
+- Semak sambungan Java VS Code telah dipasang dengan betul
 </details>
 
 ### Mod Debug
 
-Untuk mengaktifkan log terperinci, nyahkomen baris ini dalam `application.yml`:
+Untuk menghidupkan log terperinci, nyahkomen baris berikut dalam `application.yml`:
 
 ```yaml
 logging:
@@ -201,16 +157,20 @@ logging:
 
 ## Langkah Seterusnya
 
-**Tetapan Selesai!** Teruskan perjalanan pembelajaran anda:
+**Persediaan Lengkap!** Teruskan perjalanan pembelajaran anda:
 
 [Bab 3: Teknik Teras AI Generatif](../../../03-CoreGenerativeAITechniques/README.md)
 
 ## Sumber
 
-- [Dokumentasi Spring AI Azure OpenAI](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
-- [Dokumentasi Perkhidmatan Azure OpenAI](https://learn.microsoft.com/azure/ai-services/openai/)
+- [Dokumentasi Spring AI Azure OpenAI](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
+- [Pengesahan tanpa kunci dengan Microsoft Entra ID](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
 - [Portal Azure AI Foundry](https://ai.azure.com/)
-- [Dokumentasi Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project)
+- [Dokumentasi Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/)
 
-**Penafian**:  
-Dokumen ini telah diterjemahkan menggunakan perkhidmatan terjemahan AI [Co-op Translator](https://github.com/Azure/co-op-translator). Walaupun kami berusaha untuk memastikan ketepatan, sila ambil perhatian bahawa terjemahan automatik mungkin mengandungi kesilapan atau ketidaktepatan. Dokumen asal dalam bahasa asalnya harus dianggap sebagai sumber yang berwibawa. Untuk maklumat yang kritikal, terjemahan manusia profesional adalah disyorkan. Kami tidak bertanggungjawab atas sebarang salah faham atau salah tafsir yang timbul daripada penggunaan terjemahan ini.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Penafian**:
+Dokumen ini telah diterjemahkan menggunakan perkhidmatan terjemahan AI [Co-op Translator](https://github.com/Azure/co-op-translator). Walaupun kami berusaha untuk ketepatan, sila ambil maklum bahawa terjemahan automatik mungkin mengandungi kesilapan atau ketidaktepatan. Dokumen asal dalam bahasa asalnya harus dianggap sebagai sumber yang sahih. Untuk maklumat penting, terjemahan oleh manusia profesional adalah disyorkan. Kami tidak bertanggungjawab terhadap sebarang salah faham atau salah tafsir yang timbul daripada penggunaan terjemahan ini.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

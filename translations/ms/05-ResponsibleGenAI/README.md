@@ -1,78 +1,74 @@
 # AI Generatif Bertanggungjawab
 
-[![Responsible Generative AI](https://img.youtube.com/vi/rF-b2BTSMQ4/0.jpg)](https://www.youtube.com/watch?v=rF-b2BTSMQ4 "Responsible Generative AI")
 
-> **Video**: [Tonton video gambaran keseluruhan untuk pelajaran ini](https://www.youtube.com/watch?v=rF-b2BTSMQ4).
-> Anda juga boleh klik imej mini di atas untuk membuka video yang sama.
-
-## Apa Yang Akan Anda Pelajari
+## Apa yang Akan Anda Pelajari
 
 - Pelajari pertimbangan etika dan amalan terbaik yang penting untuk pembangunan AI
 - Bina penapisan kandungan dan langkah keselamatan ke dalam aplikasi anda
-- Uji dan kendalikan tindak balas keselamatan AI menggunakan perlindungan terbina dalam GitHub Models
-- Gunakan prinsip AI bertanggungjawab untuk mencipta sistem AI yang selamat dan beretika
+- Uji dan kendalikan respons keselamatan AI menggunakan penapisan kandungan terbina dalam Azure AI Foundry
+- Terapkan prinsip AI bertanggungjawab untuk mencipta sistem AI yang selamat dan beretika
 
 ## Jadual Kandungan
 
 - [Pengenalan](#pengenalan)
-- [Keselamatan Terbina Dalam GitHub Models](#keselamatan-terbina-dalam-github-models)
+- [Keselamatan Kandungan Azure AI Foundry](#keselamatan-kandungan-azure-ai-foundry)
 - [Contoh Praktikal: Demo Keselamatan AI Bertanggungjawab](#contoh-praktikal-demo-keselamatan-ai-bertanggungjawab)
-  - [Apa Yang Ditunjukkan Demo](#apa-yang-ditunjukkan-demo)
+  - [Apa yang Ditunjukkan Demo](#apa-yang-ditunjukkan-demo)
   - [Arahan Persediaan](#arahan-persediaan)
   - [Menjalankan Demo](#menjalankan-demo)
-  - [Keluaran Dijangka](#keluaran-dijangka)
-- [Amalan Terbaik Untuk Pembangunan AI Bertanggungjawab](#amalan-terbaik-untuk-pembangunan-ai-bertanggungjawab)
+  - [Output yang Dijangka](#output-yang-dijangka)
+- [Amalan Terbaik untuk Pembangunan AI Bertanggungjawab](#amalan-terbaik-untuk-pembangunan-ai-bertanggungjawab)
 - [Nota Penting](#nota-penting)
 - [Ringkasan](#ringkasan)
-- [Penamat Kursus](#penamat-kursus)
+- [Penyiapan Kursus](#penyiapan-kursus)
 - [Langkah Seterusnya](#langkah-seterusnya)
 
 ## Pengenalan
 
-Bab terakhir ini memberi tumpuan kepada aspek penting dalam membina aplikasi AI generatif yang bertanggungjawab dan beretika. Anda akan belajar bagaimana untuk melaksanakan langkah keselamatan, mengendalikan penapisan kandungan, dan menggunakan amalan terbaik untuk pembangunan AI bertanggungjawab menggunakan alat dan rangka kerja yang dibincangkan dalam bab-bab sebelumnya. Memahami prinsip ini adalah penting untuk membina sistem AI yang bukan sahaja mengagumkan dari segi teknikal tetapi juga selamat, beretika dan boleh dipercayai.
+Bab terakhir ini memberi tumpuan kepada aspek penting dalam membina aplikasi AI generatif yang bertanggungjawab dan beretika. Anda akan belajar cara melaksanakan langkah-langkah keselamatan, menangani penapisan kandungan, dan menerapkan amalan terbaik untuk pembangunan AI bertanggungjawab menggunakan alat dan rangka kerja yang diliputi dalam bab sebelumnya. Memahami prinsip-prinsip ini amat penting untuk membina sistem AI yang bukan sahaja mengagumkan dari segi teknikal tetapi juga selamat, beretika, dan boleh dipercayai.
 
-## Keselamatan Terbina Dalam GitHub Models
+## Keselamatan Kandungan Azure AI Foundry
 
-GitHub Models dilengkapi dengan penapisan kandungan asas secara terbina dalam. Ia seperti mempunyai pengawal kelab yang mesra di kelab AI anda - bukan yang paling canggih, tetapi melakukan kerja untuk senario asas.
+Model Azure AI Foundry datang dengan penapisan kandungan secara terbina dalam, dikuasakan oleh Azure AI Content Safety. Arahan dan respons yang berbahaya disaring secara automatik merentasi beberapa kategori sebelum ia sampai — atau meninggalkan — model tersebut.
 
-**Apa Yang Dilindungi Oleh GitHub Models:**
-- **Kandungan Berbahaya**: Menghalang kandungan yang jelas mengandungi keganasan, seksual atau berbahaya
-- **Ucapan Kebencian Asas**: Menapis bahasa diskriminasi yang jelas
-- **Penembusan Ringkas**: Menentang usaha asas untuk memintas tembok keselamatan
+**Apa yang Azure AI Foundry Lindungi:**
+- **Kandungan Berbahaya**: Menghalang kandungan ganas, seksual, mencederakan diri sendiri, atau berbahaya
+- **Ucapan Kebencian**: Menapis bahasa yang diskriminasi
+- **Jailbreaks**: Mengesan suntikan arahan dan cubaan untuk memintas pagar keselamatan
 
 ## Contoh Praktikal: Demo Keselamatan AI Bertanggungjawab
 
-Bab ini termasuk demonstrasi praktikal bagaimana GitHub Models melaksanakan langkah keselamatan AI bertanggungjawab dengan menguji arahan yang berpotensi melanggar panduan keselamatan.
+Bab ini termasuk demonstrasi praktikal bagaimana Azure AI Foundry melaksanakan langkah keselamatan AI bertanggungjawab dengan menguji arahan yang berpotensi melanggar garis panduan keselamatan.
 
-### Apa Yang Ditunjukkan Demo
+### Apa yang Ditunjukkan Demo
 
-Kelas `ResponsibleGithubModels` mengikuti aliran ini:
-1. Inisialisasi klien GitHub Models dengan pengesahan
+Kelas `ResponsibleAIDemo` mengikuti aliran ini:
+1. Inisialisasi klien Azure AI Foundry dengan pengesahan tanpa kunci (Microsoft Entra ID)
 2. Uji arahan berbahaya (keganasan, ucapan kebencian, maklumat salah, kandungan haram)
-3. Hantar setiap arahan ke API GitHub Models
-4. Kendalikan tindak balas: sekatan keras (ralat HTTP), penolakan lembut (tindak balas sopan "Saya tidak dapat membantu"), atau penjanaan kandungan biasa
-5. Papar hasil yang menunjukkan kandungan mana yang disekat, ditolak, atau dibenarkan
+3. Hantar setiap arahan ke model Azure AI Foundry
+4. Kendalikan respons: sekatan keras (ralat HTTP), penolakan lembut (respons sopan "Saya tidak boleh membantu"), atau penjanaan kandungan biasa
+5. Paparkan keputusan menunjukkan kandungan yang disekat, ditolak, atau dibenarkan
 6. Uji kandungan selamat untuk perbandingan
 
-![Responsible AI Safety Demo](../../../translated_images/ms/responsible.e4f51a917bafa4bf.webp)
+![Demo Keselamatan AI Bertanggungjawab](../../../translated_images/ms/responsible.e4f51a917bafa4bf.webp)
 
 ### Arahan Persediaan
 
-1. **Tetapkan Token Akses Peribadi GitHub anda:**
+1. **Log masuk dan tetapkan titik hujung Azure AI Foundry anda** (pengesahan tanpa kunci — tiada kunci API). Jalankan `az login` terlebih dahulu, kemudian:
    
-   Di Windows (Command Prompt):
+   Pada Windows (Command Prompt):
    ```cmd
-   set GITHUB_TOKEN=your_github_token_here
+   set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    ```
    
-   Di Windows (PowerShell):
+   Pada Windows (PowerShell):
    ```powershell
-   $env:GITHUB_TOKEN="your_github_token_here"
+   $env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
    ```
    
-   Di Linux/macOS:
+   Pada Linux/macOS:
    ```bash
-   export GITHUB_TOKEN=your_github_token_here
+   export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    ```   
 
 ### Menjalankan Demo
@@ -82,20 +78,20 @@ Kelas `ResponsibleGithubModels` mengikuti aliran ini:
    cd 03-CoreGenerativeAITechniques/examples
    ```
 
-2. **Kompil dan jalankan demo:**
+2. **Kompilasi dan jalankan demo:**
    ```bash
-   mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleGithubModels"
+   mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleAIDemo"
    ```
 
-### Keluaran Dijangka
+### Output yang Dijangka
 
 Demo akan menguji pelbagai jenis arahan yang berpotensi berbahaya dan menunjukkan bagaimana keselamatan AI moden berfungsi melalui dua mekanisme:
 
 - **Sekatan Keras**: Ralat HTTP 400 apabila kandungan disekat oleh penapis keselamatan sebelum sampai ke model
-- **Penolakan Lembut**: Model memberi respons penolakan sopan seperti "Saya tidak dapat membantu dengan itu" (paling biasa dengan model moden)
-- **Kandungan selamat** yang mendapat respons normal
+- **Penolakan Lembut**: Model memberi respons penolakan sopan seperti "Saya tidak boleh membantu dengan itu" (paling biasa dengan model moden)
+- **Kandungan selamat** yang mendapat respons biasa
 
-Format keluaran contoh:
+Format output contoh:
 ```
 === Responsible AI Safety Demonstration ===
 
@@ -113,58 +109,58 @@ Status: Response generated successfully
 ────────────────────────────────────────────────────────────
 ```
 
-**Nota**: Kedua-dua sekatan keras dan penolakan lembut menunjukkan sistem keselamatan berfungsi dengan betul.
+**Nota**: Sekatan keras dan penolakan lembut menunjukkan sistem keselamatan berfungsi dengan betul.
 
-## Amalan Terbaik Untuk Pembangunan AI Bertanggungjawab
+## Amalan Terbaik untuk Pembangunan AI Bertanggungjawab
 
 Apabila membina aplikasi AI, ikut amalan penting ini:
 
-1. **Sentiasa kendalikan tindak balas penapis keselamatan dengan baik**
-   - Laksanakan pengendalian ralat yang sesuai untuk kandungan yang disekat
+1. **Sentiasa kendalikan kemungkinan respons penapis keselamatan dengan cermat**
+   - Laksanakan pengendalian ralat yang betul untuk kandungan yang disekat
    - Berikan maklum balas bermakna kepada pengguna apabila kandungan ditapis
 
 2. **Laksanakan pengesahan kandungan tambahan sendiri jika sesuai**
    - Tambah pemeriksaan keselamatan khusus domain
    - Cipta peraturan pengesahan tersuai untuk kes penggunaan anda
 
-3. **Didik pengguna mengenai penggunaan AI yang bertanggungjawab**
-   - Berikan garis panduan jelas mengenai penggunaan yang boleh diterima
+3. **Didik pengguna tentang penggunaan AI yang bertanggungjawab**
+   - Sediakan garis panduan jelas tentang penggunaan yang boleh diterima
    - Terangkan mengapa sesetengah kandungan mungkin disekat
 
-4. **Pantau dan log insiden keselamatan untuk penambahbaikan**
-   - Jejaki corak kandungan yang disekat
-   - Sentiasa tingkatkan langkah keselamatan anda
+4. **Pantau dan rekod insiden keselamatan untuk penambahbaikan**
+   - Jejak corak kandungan yang disekat
+   - Tingkatkan langkah keselamatan anda secara berterusan
 
-5. **Hormati polisi kandungan platform**
+5. **Hormati dasar kandungan platform**
    - Sentiasa kemas kini dengan garis panduan platform
-   - Ikuti terma perkhidmatan dan garis panduan etika
+   - Ikut terma perkhidmatan dan garis panduan etika
 
 ## Nota Penting
 
-Contoh ini menggunakan arahan bermasalah secara sengaja untuk tujuan pendidikan sahaja. Tujuannya adalah untuk menunjukkan langkah keselamatan, bukan untuk memintasnya. Sentiasa gunakan alat AI secara bertanggungjawab dan beretika.
+Contoh ini menggunakan arahan yang bermasalah secara sengaja untuk tujuan pendidikan sahaja. Matlamatnya adalah untuk menunjukkan langkah keselamatan, bukan untuk memintasnya. Sentiasa gunakan alat AI dengan bertanggungjawab dan beretika.
 
 ## Ringkasan
 
 **Tahniah!** Anda telah berjaya:
 
-- **Melaksanakan langkah keselamatan AI** termasuk penapisan kandungan dan pengendalian tindak balas keselamatan
-- **Mengaplikasi prinsip AI bertanggungjawab** untuk membina sistem AI yang beretika dan boleh dipercayai
-- **Menguji mekanisme keselamatan** menggunakan keupayaan perlindungan terbina dalam GitHub Models
-- **Mempelajari amalan terbaik** untuk pembangunan dan penyebaran AI bertanggungjawab
+- **Melaksanakan langkah keselamatan AI** termasuk penapisan kandungan dan pengendalian respons keselamatan
+- **Menerapkan prinsip AI bertanggungjawab** untuk membina sistem AI yang beretika dan boleh dipercayai
+- **Menguji mekanisme keselamatan** menggunakan keupayaan keselamatan kandungan terbina dalam Azure AI Foundry
+- **Memahami amalan terbaik** untuk pembangunan dan penggunaan AI bertanggungjawab
 
 **Sumber AI Bertanggungjawab:**
-- [Microsoft Trust Center](https://www.microsoft.com/trust-center) - Pelajari pendekatan Microsoft terhadap keselamatan, privasi, dan pematuhan
+- [Microsoft Trust Center](https://www.microsoft.com/trust-center) - Ketahui pendekatan Microsoft terhadap keselamatan, privasi, dan pematuhan
 - [Microsoft Responsible AI](https://www.microsoft.com/ai/responsible-ai) - Terokai prinsip dan amalan Microsoft untuk pembangunan AI bertanggungjawab
 
-## Penamat Kursus
+## Penyiapan Kursus
 
-Tahniah kerana telah menamatkan kursus Generative AI for Beginners!
+Tahniah kerana telah menyiapkan kursus Generative AI for Beginners!
 
-![Course Completion](../../../translated_images/ms/image.73c7e2ff4a652e77.webp)
+![Penyiapan Kursus](../../../translated_images/ms/image.73c7e2ff4a652e77.webp)
 
 **Apa yang telah anda capai:**
 - Menyediakan persekitaran pembangunan anda
-- Mempelajari teknik AI generatif teras
+- Mempelajari teknik asas AI generatif
 - Meneroka aplikasi AI praktikal
 - Memahami prinsip AI bertanggungjawab
 
@@ -192,6 +188,6 @@ Teruskan perjalanan pembelajaran AI anda dengan sumber tambahan ini:
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Penafian**:  
-Dokumen ini telah diterjemahkan menggunakan perkhidmatan terjemahan AI [Co-op Translator](https://github.com/Azure/co-op-translator). Walaupun kami berusaha untuk ketepatan, sila ambil maklum bahawa terjemahan automatik mungkin mengandungi kesilapan atau ketidaktepatan. Dokumen asal dalam bahasa asalnya harus dianggap sebagai sumber yang sah. Untuk maklumat penting, terjemahan profesional oleh manusia adalah disyorkan. Kami tidak bertanggungjawab atas sebarang salah faham atau salah tafsir yang timbul daripada penggunaan terjemahan ini.
+**Penafian**:
+Dokumen ini telah diterjemahkan menggunakan perkhidmatan terjemahan AI [Co-op Translator](https://github.com/Azure/co-op-translator). Walaupun kami berusaha untuk ketepatan, sila ambil maklum bahawa terjemahan automatik mungkin mengandungi kesilapan atau ketidaktepatan. Dokumen asal dalam bahasa asalnya harus dianggap sebagai sumber yang sahih. Untuk maklumat penting, terjemahan oleh manusia profesional adalah disyorkan. Kami tidak bertanggungjawab terhadap sebarang salah faham atau salah tafsir yang timbul daripada penggunaan terjemahan ini.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

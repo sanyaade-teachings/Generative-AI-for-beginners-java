@@ -1,21 +1,17 @@
 # Responsible Generative AI
 
-[![Responsible Generative AI](https://img.youtube.com/vi/rF-b2BTSMQ4/0.jpg)](https://www.youtube.com/watch?v=rF-b2BTSMQ4 "Responsible Generative AI")
-
-> **Video**: [Panoorin ang video overview para sa araling ito](https://www.youtube.com/watch?v=rF-b2BTSMQ4).
-> Maaari mo ring i-click ang thumbnail na larawan sa itaas upang buksan ang parehong video.
 
 ## What You'll Learn
 
-- Matutunan ang mga etikal na konsiderasyon at pinakamahusay na mga kasanayan na mahalaga para sa pag-unlad ng AI
-- Bumuo ng content filtering at mga hakbang sa kaligtasan sa iyong mga aplikasyon
-- Subukan at hawakan ang mga tugon sa kaligtasan ng AI gamit ang mga built-in na proteksyon ng GitHub Models
-- Ilapat ang mga prinsipyo ng responsable AI upang lumikha ng ligtas, etikal na mga sistema ng AI
+- Matutunan ang mga etikal na konsiderasyon at pinakamahusay na mga gawain na mahalaga para sa pag-develop ng AI
+- Magtayo ng content filtering at mga panukalang pangkaligtasan sa iyong mga aplikasyon
+- Subukan at hawakan ang mga tugon ng AI sa kaligtasan gamit ang built-in na content filtering ng Azure AI Foundry
+- Ipatupad ang mga prinsipyong responsable sa AI upang makagawa ng ligtas, etikal na mga sistema ng AI
 
 ## Table of Contents
 
 - [Introduction](#introduction)
-- [GitHub Models Built-in Safety](#github-models-built-in-safety)
+- [Azure AI Foundry Content Safety](#azure-ai-foundry-content-safety)
 - [Practical Example: Responsible AI Safety Demo](#practical-example-responsible-ai-safety-demo)
   - [What the Demo Shows](#what-the-demo-shows)
   - [Setup Instructions](#setup-instructions)
@@ -29,50 +25,50 @@
 
 ## Introduction
 
-Ang huling kabanatang ito ay nakatuon sa mga kritikal na aspeto ng pagbuo ng responsable at etikal na mga generative AI na aplikasyon. Matututuhan mo kung paano magpatupad ng mga hakbang sa kaligtasan, hawakan ang content filtering, at ilapat ang mga pinakamahusay na kasanayan para sa responsable na pag-unlad ng AI gamit ang mga tools at framework na natalakay sa mga naunang kabanata. Mahalaga ang pag-unawa sa mga prinsipyong ito upang makagawa ng mga AI system na hindi lamang teknikal na kahanga-hanga kundi ligtas, etikal, at mapagkakatiwalaan.
+Ang huling kabanatang ito ay nakatuon sa mga kritikal na aspeto ng paggawa ng responsable at etikal na generative AI na mga aplikasyon. Matututuhan mo kung paano ipatupad ang mga panukalang pangkaligtasan, hawakan ang content filtering, at gamitin ang mga pinakamahusay na gawain para sa responsable na pag-develop ng AI gamit ang mga tools at frameworks na natalakay sa mga naunang kabanata. Mahalaga ang pag-unawa sa mga prinsipyong ito para makabuo ng mga AI system na hindi lamang teknikal na kahanga-hanga kundi ligtas, etikal, at mapagkakatiwalaan.
 
-## GitHub Models Built-in Safety
+## Azure AI Foundry Content Safety
 
-Ang GitHub Models ay may kasamang basic na content filtering nang direkta. Para itong isang magiliw na bouncer sa iyong AI club - hindi pinakamaselan, ngunit nagagawa ang trabaho para sa mga simpleng sitwasyon.
+Ang mga modelo ng Azure AI Foundry ay may built-in na content filtering, na pinapagana ng Azure AI Content Safety. Ang mga mapanganib na prompt at tugon ay awtomatikong sinusuri sa ilang mga kategorya bago pa man umabot o lumabas mula sa modelo.
 
-**Mga Pinoprotektahan ng GitHub Models:**
-- **Mapanganib na Nilalaman**: Hinaharang ang mga halatang marahas, sekswal, o delikadong nilalaman
-- **Pangunahing Hate Speech**: Naga-filter ng malinaw na diskriminatoryong wika
-- **Simpleng Jailbreaks**: Pinipigilan ang mga simpleng pagtatangkang lampasan ang mga safety guardrails
+**Ano ang Pinoprotektahan ng Azure AI Foundry:**
+- **Mapanganib na Nilalaman**: Hinaharang ang marahas, sekswal, self-harm, o delikadong nilalaman
+- **Pang-uusig na Pananalita**: Nililinis ang diskriminatoryong wika
+- **Jailbreaks**: Natutukoy ang prompt-injection at pagtatangkang lampasan ang mga safety guardrails
 
 ## Practical Example: Responsible AI Safety Demo
 
-Kasama sa kabanatang ito ang isang praktikal na demo kung paano ipinatutupad ng GitHub Models ang mga hakbang sa responsableng kaligtasan ng AI sa pamamagitan ng pagsubok ng mga prompt na posibleng lumabag sa mga patnubay sa kaligtasan.
+Kasama sa kabanatang ito ang isang praktikal na demo kung paano ipinatutupad ng Azure AI Foundry ang mga panukalang responsable sa kaligtasan ng AI sa pamamagitan ng pagsubok ng mga prompt na maaaring lumabag sa mga gabay sa kaligtasan.
 
 ### What the Demo Shows
 
-Ang klase na `ResponsibleGithubModels` ay sumusunod sa daloy na ito:
-1. I-initialize ang GitHub Models client gamit ang authentication
-2. Subukan ang mga mapanganib na prompt (karahasan, hate speech, maling impormasyon, illegal na nilalaman)
-3. Ipadala ang bawat prompt sa GitHub Models API
-4. Hawakan ang mga tugon: hard blocks (HTTP errors), soft refusals (magalang na tugon na "Hindi ako makakatulong"), o normal na pagbuo ng nilalaman
-5. Ipakita ang mga resulta kung aling nilalaman ang naharang, tinanggihan, o pinayagan
-6. Subukan ang ligtas na nilalaman bilang paghahambing
+Ang klase na `ResponsibleAIDemo` ay sumusunod sa daloy na ito:
+1. I-initialize ang Azure AI Foundry client gamit ang keyless authentication (Microsoft Entra ID)
+2. Subukan ang mga mapanganib na prompt (karahasan, pang-uusig na pananalita, maling impormasyon, ilegal na nilalaman)
+3. Ipadala ang bawat prompt sa Azure AI Foundry model
+4. Hawakan ang mga tugon: hard blocks (HTTP errors), soft refusals (magalang na tugon na "Hindi ako makakatulong"), o karaniwang pagbuo ng nilalaman
+5. Ipakita ang mga resulta kung alin ang na-block, tinanggihan, o pinayagan
+6. Subukan ang ligtas na nilalaman para sa paghahambing
 
 ![Responsible AI Safety Demo](../../../translated_images/tl/responsible.e4f51a917bafa4bf.webp)
 
 ### Setup Instructions
 
-1. **Itakda ang iyong GitHub Personal Access Token:**
+1. **Mag-sign in at itakda ang iyong Azure AI Foundry endpoint** (keyless auth — walang API key). Patakbuhin muna ang `az login`, pagkatapos:
    
    Sa Windows (Command Prompt):
    ```cmd
-   set GITHUB_TOKEN=your_github_token_here
+   set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    ```
    
    Sa Windows (PowerShell):
    ```powershell
-   $env:GITHUB_TOKEN="your_github_token_here"
+   $env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
    ```
    
    Sa Linux/macOS:
    ```bash
-   export GITHUB_TOKEN=your_github_token_here
+   export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    ```   
 
 ### Running the Demo
@@ -84,18 +80,18 @@ Ang klase na `ResponsibleGithubModels` ay sumusunod sa daloy na ito:
 
 2. **I-compile at patakbuhin ang demo:**
    ```bash
-   mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleGithubModels"
+   mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleAIDemo"
    ```
 
 ### Expected Output
 
-Susubukan ng demo ang iba't ibang uri ng posibleng mapanganib na mga prompt at ipapakita kung paano gumagana ang modernong kaligtasan ng AI sa pamamagitan ng dalawang mekanismo:
+Susubukan ng demo ang iba't ibang uri ng maaaring mapanganib na prompt at ipapakita kung paano gumagana ang modernong AI safety sa pamamagitan ng dalawang mekanismo:
 
-- **Hard Blocks**: HTTP 400 errors kapag naharang ang nilalaman ng mga safety filter bago umabot sa modelo
-- **Soft Refusals**: Ang modelo ay sumasagot ng magagalang na pagtanggi tulad ng "Hindi ako makakatulong diyan" (pinakakaraniwan sa mga modernong modelo)
+- **Hard Blocks**: HTTP 400 errors kapag ang nilalaman ay na-block ng safety filters bago pa man umabot sa modelo
+- **Soft Refusals**: Ang modelo ay tumutugon nang magalang ng mga pagtanggi tulad ng "Hindi ako makakatulong diyan" (pinakakaraniwan sa modernong mga modelo)
 - **Ligtas na nilalaman** na nakakakuha ng normal na tugon
 
-Halimbawa ng output format:
+Halimbawa ng format ng output:
 ```
 === Responsible AI Safety Demonstration ===
 
@@ -113,66 +109,66 @@ Status: Response generated successfully
 ────────────────────────────────────────────────────────────
 ```
 
-**Tandaan**: Ang parehong hard blocks at soft refusals ay nagpapahiwatig na maayos na gumagana ang sistema ng kaligtasan.
+**Note**: Parehong hard blocks at soft refusals ang nagpapahiwatig na gumagana nang tama ang sistema ng kaligtasan.
 
 ## Best Practices for Responsible AI Development
 
-Kapag bumubuo ng AI na mga aplikasyon, sundin ang mga mahahalagang kasanayang ito:
+Kapag gumagawa ng AI applications, sundin ang mga mahahalagang gawain na ito:
 
-1. **Palaging hawakan nang maayos ang posibleng mga tugon mula sa safety filter**
-   - Magpatupad ng tamang error handling sa mga naharang na nilalaman
+1. **Laging hawakan nang maayos ang mga posibleng tugon mula sa safety filter**
+   - Ipatupad ang wastong error handling para sa na-block na nilalaman
    - Magbigay ng makabuluhang feedback sa mga gumagamit kapag na-filter ang nilalaman
 
-2. **Magpatupad ng sariling dagdag na content validation kung kinakailangan**
+2. **Magpatupad ng sarili mong karagdagang pagsusuri sa nilalaman kapag angkop**
    - Magdagdag ng domain-specific na safety checks
-   - Gumawa ng custom validation rules para sa iyong use case
+   - Gumawa ng mga custom validation rules para sa iyong paggamit
 
-3. **Turuan ang mga gumagamit tungkol sa responsableng paggamit ng AI**
-   - Magbigay ng malinaw na mga panuntunan sa katanggap-tanggap na paggamit
-   - Ipaliwanag kung bakit maaaring maharang ang ilang nilalaman
+3. **Turuan ang mga gumagamit tungkol sa responsable na paggamit ng AI**
+   - Magbigay ng malinaw na mga patnubay sa katanggap-tanggap na paggamit
+   - Ipaliwanag kung bakit maaaring ma-block ang ilang nilalaman
 
 4. **Subaybayan at i-log ang mga insidente ng kaligtasan para sa pagpapabuti**
-   - I-track ang mga pattern ng na-harang na nilalaman
-   - Patuloy na pagbutihin ang iyong mga hakbang sa kaligtasan
+   - Tuklasin ang mga pattern ng na-block na nilalaman
+   - Patuloy na pagbutihin ang iyong mga panukalang kaligtasan
 
-5. **Igalang ang mga patakaran sa nilalaman ng platform**
-   - Manatiling updated sa mga gabay ng platform
-   - Sundin ang mga terms of service at etikal na mga alituntunin
+5. **Igalang ang mga patakaran ng platform tungkol sa nilalaman**
+   - Manatiling updated sa mga patnubay ng platform
+   - Sundin ang terms of service at mga etikal na alituntunin
 
 ## Important Note
 
-Ang halimbawang ito ay gumagamit ng sinadyang problematikong mga prompt para lamang sa layunin ng edukasyon. Layunin nitong ipakita ang mga hakbang sa kaligtasan, hindi para lampasan ang mga ito. Palaging gamitin ang mga AI tools nang responsable at etikal.
+Ang halimbawang ito ay gumagamit ng sinadyang problemadong mga prompt para sa layuning pang-edukasyon lamang. Layunin nitong ipakita ang mga panukalang pangkaligtasan, hindi upang lampasan ang mga ito. Laging gamitin ang mga tool ng AI nang responsable at etikal.
 
 ## Summary
 
-**Binabati kita!** Matagumpay mong:
+**Binabati kita!** Matagumpay mong nagawa ang mga sumusunod:
 
-- **Naipatupad ang mga hakbang sa kaligtasan ng AI** kabilang ang content filtering at paghawak ng mga tugon sa kaligtasan
-- **Inilapat ang mga prinsipyo ng responsable AI** upang bumuo ng mga etikal at mapagkakatiwalaang AI system
-- **Nasubukan ang mga mekanismo ng kaligtasan** gamit ang built-in na kakayahan ng GitHub Models
-- **Natutunan ang mga pinakamahusay na kasanayan** para sa responsable na pag-unlad at deployment ng AI
+- **Naitakda ang mga panukalang pangkaligtasan ng AI** kabilang ang content filtering at safety response handling
+- **Naipapatupad ang mga prinsipyo ng responsable AI** para gumawa ng etikal at mapagkakatiwalaang AI systems
+- **Nasubukan ang mga mekanismo ng kaligtasan** gamit ang built-in na content safety capabilities ng Azure AI Foundry
+- **Natutunan ang mga pinakamahusay na gawain** para sa responsable na pag-develop at deployment ng AI
 
-**Mga Resources sa Responsable AI:**
-- [Microsoft Trust Center](https://www.microsoft.com/trust-center) - Alamin ang diskarte ng Microsoft sa seguridad, privacy, at pagsunod
-- [Microsoft Responsible AI](https://www.microsoft.com/ai/responsible-ai) - Tuklasin ang mga prinsipyo at kasanayan ng Microsoft para sa responsable na pag-unlad ng AI
+**Mga Resource para sa Responsable AI:**
+- [Microsoft Trust Center](https://www.microsoft.com/trust-center) - Alamin ang pananaw ng Microsoft tungkol sa seguridad, privacy, at pagsunod sa mga patakaran
+- [Microsoft Responsible AI](https://www.microsoft.com/ai/responsible-ai) - Tuklasin ang mga prinsipyo at gawain ng Microsoft para sa responsable na pag-develop ng AI
 
 ## Course Completion
 
-Binabati kita sa pagtatapos ng Generative AI for Beginners na kurso!
+Binabati kita sa pagtatapos ng kurso na Generative AI for Beginners!
 
 ![Course Completion](../../../translated_images/tl/image.73c7e2ff4a652e77.webp)
 
-**Mga nagawa mo:**
+**Mga natamo mo:**
 - Na-setup ang iyong development environment
-- Natutunan ang mga pangunahing teknik sa generative AI
-- Nasuri ang mga praktikal na aplikasyon ng AI
-- Naunawaan ang mga prinsipyo ng responsable AI
+- Natutunan ang mga pangunahing teknik ng generative AI
+- Nalaman ang tungkol sa praktikal na aplikasyon ng AI
+- Naunawaan ang mga prinsipyo ng responsable na AI
 
 ## Next Steps
 
-Ipagpatuloy ang iyong pag-aaral sa AI gamit ang mga sumusunod na karagdagang resources:
+Ipatuloy ang iyong paglalakbay sa pag-aaral ng AI gamit ang mga karagdagang resources na ito:
 
-**Karagdagang Learning Courses:**
+**Karagdagang Mga Kurso sa Pagkatuto:**
 - [AI Agents For Beginners](https://github.com/microsoft/ai-agents-for-beginners)
 - [Generative AI for Beginners using .NET](https://github.com/microsoft/Generative-AI-for-beginners-dotnet)
 - [Generative AI for Beginners using JavaScript](https://github.com/microsoft/generative-ai-with-javascript)
@@ -192,6 +188,6 @@ Ipagpatuloy ang iyong pag-aaral sa AI gamit ang mga sumusunod na karagdagang res
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Paunawa**:  
-Ang dokumentong ito ay isinalin gamit ang serbisyong pagsasalin ng AI na [Co-op Translator](https://github.com/Azure/co-op-translator). Bagama't nagsusumikap kami para sa katumpakan, pakatandaan na ang awtomatikong pagsasalin ay maaaring maglaman ng mga pagkakamali o di-tiyak na impormasyon. Ang orihinal na dokumento sa orihinal nitong wika ang dapat ituring na opisyal na sanggunian. Para sa mga mahahalagang impormasyon, inirerekumenda ang propesyonal na pagsasaling-tao. Hindi kami mananagot sa anumang hindi pagkakaunawaan o maling interpretasyon na maaaring bunga ng paggamit ng pagsasaling ito.
+**Pagtatanggi**:
+Ang dokumentong ito ay isinalin gamit ang serbisyo ng AI translation na [Co-op Translator](https://github.com/Azure/co-op-translator). Bagama't nagsusumikap kami para sa katumpakan, pakatandaan na ang awtomatikong pagsasalin ay maaaring maglaman ng mga pagkakamali o hindi pagkakatugma. Ang orihinal na dokumento sa orihinal nitong wika ang dapat ituring na pangunahing sanggunian. Para sa mahahalagang impormasyon, inirerekomenda ang propesyonal na pagsasalin ng tao. Hindi kami mananagot sa anumang maling pagkakaintindi o maling interpretasyon na nagmula sa paggamit ng pagsasaling ito.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->
