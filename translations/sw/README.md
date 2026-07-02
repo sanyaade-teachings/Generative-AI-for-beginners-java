@@ -1,29 +1,29 @@
-# AI Inayozalisha kwa Waanzishaji - Toleo la Java
+# AI Inazalisha kwa Waanzilishi - Toleo la Java
 [![Microsoft Foundry Discord](https://dcbadge.limes.pink/api/server/nTYy5BXMWG)](https://discord.gg/nTYy5BXMWG)
 
 ![Generative AI for Beginners - Java Edition](../../translated_images/sw/beg-genai-series.8b48be9951cc574c.webp)
 
-**Muda wa Kujitolea**: Warsha nzima inaweza kufanywa mtandaoni bila kusanidi eneo la kazi kwa mtu binafsi. Usanidi wa mazingira huchukua dakika 2, huku kuchunguza mifano kunahitaji masaa 1-3 kulingana na kina cha uchunguzi.
+**Muda wa Kujitolea**: Warsha yote inaweza kukamilishwa mtandaoni bila kusanidi kitu kwa mtaa. Usanidi wa mazingira unachukua dakika 2, huku kuchunguza sampuli kukihitaji saa 1-3 kulingana na kina cha uchunguzi.
 
 > **Anza Haraka**
 
-1. Fanya fork ya hifadhi hii kwenye akaunti yako ya GitHub
+1. Fanya fork ya hazina hii kwenye akaunti yako ya GitHub
 2. Bonyeza **Code** → kichupo cha **Codespaces** → **...** → **New with options...**
-3. Tumia mipangilio ya chaguo-msingi – hii itachagua kontena la Maendeleo lililoundwa kwa ajili ya kozi hii
+3. Tumia mipangilio ya msingi – hii itachagua kontena la Maendeleo lililoundwa kwa kozi hii
 4. Bonyeza **Create codespace**
-5. Subiri takriban dakika 2 kwa mazingira kuwa tayari
-6. Ruka moja kwa moja hadi [Mfano wa kwanza](./02-SetupDevEnvironment/README.md#step-2-create-a-github-personal-access-token)
+5. Subiri ~dakika 2 ili mazingira yawe tayari
+6. Nenda moja kwa moja kwenye [Mfano wa kwanza](./02-SetupDevEnvironment/README.md#step-2-create-a-github-personal-access-token)
 
-## Usaidizi wa Lugha Nyingi
+## Msaada wa Lugha Nyingi
 
-### Unaungwa Mkono kupitia GitHub Action (Moja kwa Moja & Daima Imeboreshwa)
+### Inasaidiwa kupitia Kitendo cha GitHub (Kiotomatiki & Kila Wakati Kinachofungwa na Sasisho)
 
 <!-- CO-OP TRANSLATOR LANGUAGES TABLE START -->
-[Arabic](../ar/README.md) | [Bengali](../bn/README.md) | [Bulgarian](../bg/README.md) | [Burmese (Myanmar)](../my/README.md) | [Chinese (Simplified)](../zh-CN/README.md) | [Chinese (Traditional, Hong Kong)](../zh-HK/README.md) | [Chinese (Traditional, Macau)](../zh-MO/README.md) | [Chinese (Traditional, Taiwan)](../zh-TW/README.md) | [Croatian](../hr/README.md) | [Czech](../cs/README.md) | [Danish](../da/README.md) | [Dutch](../nl/README.md) | [Estonian](../et/README.md) | [Finnish](../fi/README.md) | [French](../fr/README.md) | [German](../de/README.md) | [Greek](../el/README.md) | [Hebrew](../he/README.md) | [Hindi](../hi/README.md) | [Hungarian](../hu/README.md) | [Indonesian](../id/README.md) | [Italian](../it/README.md) | [Japanese](../ja/README.md) | [Kannada](../kn/README.md) | [Khmer](../km/README.md) | [Korean](../ko/README.md) | [Lithuanian](../lt/README.md) | [Malay](../ms/README.md) | [Malayalam](../ml/README.md) | [Marathi](../mr/README.md) | [Nepali](../ne/README.md) | [Nigerian Pidgin](../pcm/README.md) | [Norwegian](../no/README.md) | [Persian (Farsi)](../fa/README.md) | [Polish](../pl/README.md) | [Portuguese (Brazil)](../pt-BR/README.md) | [Portuguese (Portugal)](../pt-PT/README.md) | [Punjabi (Gurmukhi)](../pa/README.md) | [Romanian](../ro/README.md) | [Russian](../ru/README.md) | [Serbian (Cyrillic)](../sr/README.md) | [Slovak](../sk/README.md) | [Slovenian](../sl/README.md) | [Spanish](../es/README.md) | [Swahili](./README.md) | [Swedish](../sv/README.md) | [Tagalog (Filipino)](../tl/README.md) | [Tamil](../ta/README.md) | [Telugu](../te/README.md) | [Thai](../th/README.md) | [Turkish](../tr/README.md) | [Ukrainian](../uk/README.md) | [Urdu](../ur/README.md) | [Vietnamese](../vi/README.md)
+[Kiarabu](../ar/README.md) | [Kibengali](../bn/README.md) | [Kibulgaria](../bg/README.md) | [Kiburma (Myanmar)](../my/README.md) | [Kichina (Rahisi)](../zh-CN/README.md) | [Kichina (Asili, Hong Kong)](../zh-HK/README.md) | [Kichina (Asili, Macau)](../zh-MO/README.md) | [Kichina (Asili, Taiwan)](../zh-TW/README.md) | [Kikroeshia](../hr/README.md) | [Kicheki](../cs/README.md) | [Kidenmaki](../da/README.md) | [Kiholanzi](../nl/README.md) | [Kiestonia](../et/README.md) | [Kifini](../fi/README.md) | [Kifaransa](../fr/README.md) | [Kijerumani](../de/README.md) | [Kigreki](../el/README.md) | [Kiheberu](../he/README.md) | [Kihindi](../hi/README.md) | [Kihungari](../hu/README.md) | [Kiindonesia](../id/README.md) | [Kiitaliano](../it/README.md) | [Kijapani](../ja/README.md) | [Kikannada](../kn/README.md) | [Kikmeru](../km/README.md) | [Kikorea](../ko/README.md) | [Kilithuania](../lt/README.md) | [Kimelayu](../ms/README.md) | [Kimalayalam](../ml/README.md) | [Kimarathi](../mr/README.md) | [Kinepali](../ne/README.md) | [Nigerian Pidgin](../pcm/README.md) | [Kinorwe](../no/README.md) | [Kiajemi (Farsi)](../fa/README.md) | [Kilpolishi](../pl/README.md) | [Kireno (Brazil)](../pt-BR/README.md) | [Kireno (Portugal)](../pt-PT/README.md) | [Kipunjabi (Gurmukhi)](../pa/README.md) | [Kiromania](../ro/README.md) | [Kirusi](../ru/README.md) | [Kiserbia (Cyrillic)](../sr/README.md) | [Kislovakia](../sk/README.md) | [Kislovenia](../sl/README.md) | [Kihispania](../es/README.md) | [Kiswahili](./README.md) | [Kiswidi](../sv/README.md) | [Kitagalog (Kifilipino)](../tl/README.md) | [Kitamili](../ta/README.md) | [Kitelugu](../te/README.md) | [Kitailandi](../th/README.md) | [Kituruki](../tr/README.md) | [Kiukraini](../uk/README.md) | [Kiurdu](../ur/README.md) | [Kivietnam](../vi/README.md)
 
-> **Unapendelea Kufanya Clone Kwenye Kompyuta?**
+> **Ungependa Kuirejesha Kwenye Kompyuta?**
 >
-> Hifadhi hii ina tafsiri za lugha zaidi ya 50 ambazo huongeza ukubwa wa pakiti kwa kiasi kikubwa. Ili kufanya clone bila tafsiri, tumia sparse checkout:
+> Hii hazina ina tafsiri zaidi ya 50 za lugha tofauti ambazo huongeza ukubwa wa kupakua kwa kiasi kikubwa. Ili kuirejesha bila tafsiri, tumia sparse checkout:
 >
 > **Bash / macOS / Linux:**
 > ```bash
@@ -39,100 +39,99 @@
 > git sparse-checkout set --no-cone "/*" "!translations" "!translated_images"
 > ```
 >
-> Hii inakupa kila kitu unachohitaji kukamilisha kozi kwa upakuaji wa haraka zaidi.
+> Hii inakupa kila kitu unachohitaji kumaliza kozi hii kwa upakuaji wa haraka zaidi.
 <!-- CO-OP TRANSLATOR LANGUAGES TABLE END -->
 
 ## Muundo wa Kozi & Njia ya Kujifunza
 
-### **Sura ya 1: Utangulizi wa AI Inayozalisha**
-- **Misingi Muhimu**: Kuelewa Mifano Mikubwa ya Lugha, tokeni, embeddings, na uwezo wa AI
-- **Ekosistimu ya AI ya Java**: Muhtasari wa Spring AI na OpenAI SDKs
-- **Itifaki ya Muktadha wa Mfano**: Utangulizi wa MCP na jukumu lake katika mawasiliano ya mawakala wa AI
-- **Matumizi Halisi**: Mifano halisi ikiwa ni pamoja na chatbots na uzalishaji wa maudhui
+### **Sura 1: Utangulizi kwa AI Inazalisha**
+- **Mafundisho ya Msingi**: Kuelewa Modeli Kubwa za Lugha, tokeni, embeddings, na uwezo wa AI
+- **Mfumo wa AI wa Java**: Muhtasari wa Spring AI na OpenAI SDKs
+- **Itifaki ya Muktadha wa Modeli**: Utangulizi wa MCP na nafasi yake katika mawasiliano ya mawakala wa AI
+- **Matumizi ya Kivitendo**: Mifano halisi ikiwa ni pamoja na chatbots na utengenezaji wa maudhui
 - **[→ Anza Sura 1](./01-IntroToGenAI/README.md)**
 
-### **Sura ya 2: Usanidi wa Mazingira ya Maendeleo**
-- **Usanidi wa Watoa Huduma Wengi**: Sanidi GitHub Models, Azure OpenAI, na OpenAI Java SDK kuunganishwa
-- **Spring Boot + Spring AI**: Mbinu bora za maendeleo ya programu za AI za kampuni
-- **GitHub Models**: Upatikanaji wa bure wa modeli za AI kwa upigaji mfano na kujifunza (haufai kadi ya mkopo)
+### **Sura 2: Usanidi wa Mazingira ya Maendeleo**
+- **Azure AI Foundry**: Tengeneza uingizwaji wa modeli kama msimbo kwa kutumia Bicep na Azure Developer CLI (azd)
+- **Spring Boot + Spring AI**: Mazoezi bora kwa ajili ya maendeleo ya programu za AI za biashara
+- **Uthibitishaji Bila Funguo**: Unganisha kwa usalama na Microsoft Entra ID — hakuna funguo za API za kusimamia
 - **Zana za Maendeleo**: Kontena za Docker, VS Code, na usanidi wa GitHub Codespaces
 - **[→ Anza Sura 2](./02-SetupDevEnvironment/README.md)**
 
-### **Sura ya 3: Mbinu za Msingi za AI Inayozalisha**
+### **Sura 3: Mbinu za Msingi za AI Inazalisha**
 - **Uhandisi wa Prompt**: Mbinu za majibu bora kutoka kwa modeli za AI
-- **Embeddings & Operesheni za Vector**: Tekeleza utafutaji wa maana na ulinganishaji wa usawa
-- **Uzalishaji Ulioboreshwa kwa Urejeshaji (RAG)**: Changanya AI na vyanzo vyako vya data
-- **Kupiga Simu za Kazi**: Panua uwezo wa AI kwa kutumia zana na programu-jalizi maalum
+- **Embeddings & Operesheni za Vector**: Tekeleza utafutaji wa maana na upatanisho wa usawa
+- **Uzalishaji ulioboreshwa kwa Upataji (RAG)**: Changanya AI na vyanzo vyako vya data
+- **Kupiga Simu ya Kazi**: Panua uwezo wa AI kwa zana za desturi na plugins
 - **[→ Anza Sura 3](./03-CoreGenerativeAITechniques/README.md)**
 
-### **Sura ya 4: Matumizi na Miradi Halisi**
-- **Mtengenezaji wa Hadithi za Wanyama wa Kipepuo** (`petstory/`): Uzalishaji wa maudhui ya ubunifu kwa GitHub Models
-- **Onyesho la Foundry Local** (`foundrylocal/`): Uunganishaji wa mfano wa AI wa ndani na OpenAI Java SDK
-- **Huduma ya Kalkuleta ya MCP** (`calculator/`): Utekelezaji wa msingi wa Itifaki ya Muktadha wa Mfano na Spring AI
+### **Sura 4: Matumizi ya Kivitendo & Miradi**
+- **Mzalishaji wa Hadithi za Mifugo** (`petstory/`): Utengenezaji wa maudhui ya ubunifu kwa Azure AI Foundry
+- **Demo ya Foundry Local** (`foundrylocal/`): Muunganisho wa mfano wa AI wa mtaa kwa OpenAI Java SDK
+- **Huduma ya Khalikisho ya MCP** (`calculator/`): Utekelezaji wa msingi wa Itifaki ya Muktadha wa Modeli kwa Spring AI
 - **[→ Anza Sura 4](./04-PracticalSamples/README.md)**
 
-### **Sura ya 5: Maendeleo ya AI ya Kuwajibika**
-- **Usalama wa GitHub Models**: Jaribu uchujaji wa maudhui uliopo na mifumo ya usalama (vizuizi ngumu na kukataa laini)
-- **Onyesho la AI Inayojali**: Mfano wa vitendo unaoonyesha jinsi mifumo ya usalama ya AI ya kisasa inavyofanya kazi kwa vitendo
-- **Mbinu Bora**: Miongozo muhimu kwa maendeleo na utekelezaji wa AI yenye maadili
+### **Sura 5: Maendeleo ya AI Kwa Uwajibikaji**
+- **Usalama wa Maudhui wa Azure AI Foundry**: Jaribu kuchuja maudhui na mifumo ya usalama iliyojengwa (vizuizi vikali na kukataa laini)
+- **Demo ya AI ya Uwajibikaji**: Mfano wa hatua kwa hatua unaoonyesha jinsi mifumo ya usalama wa AI ya kisasa inavyofanya kazi
+- **Mazoezi Bora**: Miongozo muhimu kwa maendeleo ya AI ya maadili na uenezaji
 - **[→ Anza Sura 5](./05-ResponsibleGenAI/README.md)**
 
 ## Rasilimali Zaidi
 
 <!-- CO-OP TRANSLATOR OTHER COURSES START -->
 ### LangChain
-[![LangChain4j for Beginners](https://img.shields.io/badge/LangChain4j%20for%20Beginners-22C55E?style=for-the-badge&&labelColor=E5E7EB&color=0553D6)](https://aka.ms/langchain4j-for-beginners)
-[![LangChain.js for Beginners](https://img.shields.io/badge/LangChain.js%20for%20Beginners-22C55E?style=for-the-badge&labelColor=E5E7EB&color=0553D6)](https://aka.ms/langchainjs-for-beginners?WT.mc_id=m365-94501-dwahlin)
-[![LangChain for Beginners](https://img.shields.io/badge/LangChain%20for%20Beginners-22C55E?style=for-the-badge&labelColor=E5E7EB&color=0553D6)](https://github.com/microsoft/langchain-for-beginners?WT.mc_id=m365-94501-dwahlin)
+[![LangChain4j kwa Waanzilishi](https://img.shields.io/badge/LangChain4j%20for%20Beginners-22C55E?style=for-the-badge&&labelColor=E5E7EB&color=0553D6)](https://aka.ms/langchain4j-for-beginners)
+[![LangChain.js kwa Waanzilishi](https://img.shields.io/badge/LangChain.js%20for%20Beginners-22C55E?style=for-the-badge&labelColor=E5E7EB&color=0553D6)](https://aka.ms/langchainjs-for-beginners?WT.mc_id=m365-94501-dwahlin)
+[![LangChain kwa Waanzilishi](https://img.shields.io/badge/LangChain%20for%20Beginners-22C55E?style=for-the-badge&labelColor=E5E7EB&color=0553D6)](https://github.com/microsoft/langchain-for-beginners?WT.mc_id=m365-94501-dwahlin)
 ---
 
-### Azure / Edge / MCP / Wakala
-[![AZD for Beginners](https://img.shields.io/badge/AZD%20for%20Beginners-0078D4?style=for-the-badge&labelColor=E5E7EB&color=0078D4)](https://github.com/microsoft/AZD-for-beginners?WT.mc_id=academic-105485-koreyst)
-[![Edge AI for Beginners](https://img.shields.io/badge/Edge%20AI%20for%20Beginners-00B8E4?style=for-the-badge&labelColor=E5E7EB&color=00B8E4)](https://github.com/microsoft/edgeai-for-beginners?WT.mc_id=academic-105485-koreyst)
-[![MCP for Beginners](https://img.shields.io/badge/MCP%20for%20Beginners-009688?style=for-the-badge&labelColor=E5E7EB&color=009688)](https://github.com/microsoft/mcp-for-beginners?WT.mc_id=academic-105485-koreyst)
-[![AI Agents for Beginners](https://img.shields.io/badge/AI%20Agents%20for%20Beginners-00C49A?style=for-the-badge&labelColor=E5E7EB&color=00C49A)](https://github.com/microsoft/ai-agents-for-beginners?WT.mc_id=academic-105485-koreyst)
-
----
- 
-### Mfululizo wa AI Inayozalisha
-[![Generative AI for Beginners](https://img.shields.io/badge/Generative%20AI%20for%20Beginners-8B5CF6?style=for-the-badge&labelColor=E5E7EB&color=8B5CF6)](https://github.com/microsoft/generative-ai-for-beginners?WT.mc_id=academic-105485-koreyst)
-[![Generative AI (.NET)](https://img.shields.io/badge/Generative%20AI%20(.NET)-9333EA?style=for-the-badge&labelColor=E5E7EB&color=9333EA)](https://github.com/microsoft/Generative-AI-for-beginners-dotnet?WT.mc_id=academic-105485-koreyst)
-[![Generative AI (Java)](https://img.shields.io/badge/Generative%20AI%20(Java)-C084FC?style=for-the-badge&labelColor=E5E7EB&color=C084FC)](https://github.com/microsoft/generative-ai-for-beginners-java?WT.mc_id=academic-105485-koreyst)
-[![Generative AI (JavaScript)](https://img.shields.io/badge/Generative%20AI%20(JavaScript)-E879F9?style=for-the-badge&labelColor=E5E7EB&color=E879F9)](https://github.com/microsoft/generative-ai-with-javascript?WT.mc_id=academic-105485-koreyst)
+### Azure / Edge / MCP / Mawakala
+[![AZD kwa Waanzilishi](https://img.shields.io/badge/AZD%20for%20Beginners-0078D4?style=for-the-badge&labelColor=E5E7EB&color=0078D4)](https://github.com/microsoft/AZD-for-beginners?WT.mc_id=academic-105485-koreyst)
+[![Edge AI kwa Waanzilishi](https://img.shields.io/badge/Edge%20AI%20for%20Beginners-00B8E4?style=for-the-badge&labelColor=E5E7EB&color=00B8E4)](https://github.com/microsoft/edgeai-for-beginners?WT.mc_id=academic-105485-koreyst)
+[![MCP kwa Waanzilishi](https://img.shields.io/badge/MCP%20for%20Beginners-009688?style=for-the-badge&labelColor=E5E7EB&color=009688)](https://github.com/microsoft/mcp-for-beginners?WT.mc_id=academic-105485-koreyst)
+[![Makala ya AI kwa Waanzilishi](https://img.shields.io/badge/AI%20Agents%20for%20Beginners-00C49A?style=for-the-badge&labelColor=E5E7EB&color=00C49A)](https://github.com/microsoft/ai-agents-for-beginners?WT.mc_id=academic-105485-koreyst)
 
 ---
  
-### Kujifunza Kwemsingi
-[![ML for Beginners](https://img.shields.io/badge/ML%20for%20Beginners-22C55E?style=for-the-badge&labelColor=E5E7EB&color=22C55E)](https://aka.ms/ml-beginners?WT.mc_id=academic-105485-koreyst)
-[![Data Science for Beginners](https://img.shields.io/badge/Data%20Science%20for%20Beginners-84CC16?style=for-the-badge&labelColor=E5E7EB&color=84CC16)](https://aka.ms/datascience-beginners?WT.mc_id=academic-105485-koreyst)
-[![AI for Beginners](https://img.shields.io/badge/AI%20for%20Beginners-A3E635?style=for-the-badge&labelColor=E5E7EB&color=A3E635)](https://aka.ms/ai-beginners?WT.mc_id=academic-105485-koreyst)
-[![Cybersecurity for Beginners](https://img.shields.io/badge/Cybersecurity%20for%20Beginners-F97316?style=for-the-badge&labelColor=E5E7EB&color=F97316)](https://github.com/microsoft/Security-101?WT.mc_id=academic-96948-sayoung)
+### Mfululizo wa AI Inazalisha
+[![AI Inazalisha kwa Waanzilishi](https://img.shields.io/badge/Generative%20AI%20for%20Beginners-8B5CF6?style=for-the-badge&labelColor=E5E7EB&color=8B5CF6)](https://github.com/microsoft/generative-ai-for-beginners?WT.mc_id=academic-105485-koreyst)
+[![AI Inazalisha (.NET)](https://img.shields.io/badge/Generative%20AI%20(.NET)-9333EA?style=for-the-badge&labelColor=E5E7EB&color=9333EA)](https://github.com/microsoft/Generative-AI-for-beginners-dotnet?WT.mc_id=academic-105485-koreyst)
+[![AI Inazalisha (Java)](https://img.shields.io/badge/Generative%20AI%20(Java)-C084FC?style=for-the-badge&labelColor=E5E7EB&color=C084FC)](https://github.com/microsoft/generative-ai-for-beginners-java?WT.mc_id=academic-105485-koreyst)
+[![AI Inazalisha (JavaScript)](https://img.shields.io/badge/Generative%20AI%20(JavaScript)-E879F9?style=for-the-badge&labelColor=E5E7EB&color=E879F9)](https://github.com/microsoft/generative-ai-with-javascript?WT.mc_id=academic-105485-koreyst)
 
-[![Web Dev for Beginners](https://img.shields.io/badge/Web%20Dev%20for%20Beginners-EC4899?style=for-the-badge&labelColor=E5E7EB&color=EC4899)](https://aka.ms/webdev-beginners?WT.mc_id=academic-105485-koreyst)
-[![IoT for Beginners](https://img.shields.io/badge/IoT%20for%20Beginners-14B8A6?style=for-the-badge&labelColor=E5E7EB&color=14B8A6)](https://aka.ms/iot-beginners?WT.mc_id=academic-105485-koreyst)
-[![XR Development for Beginners](https://img.shields.io/badge/XR%20Development%20for%20Beginners-38BDF8?style=for-the-badge&labelColor=E5E7EB&color=38BDF8)](https://github.com/microsoft/xr-development-for-beginners?WT.mc_id=academic-105485-koreyst)
+---
+ 
+### Kujifunza Msingi
+[![ML kwa Waanzilishi](https://img.shields.io/badge/ML%20for%20Beginners-22C55E?style=for-the-badge&labelColor=E5E7EB&color=22C55E)](https://aka.ms/ml-beginners?WT.mc_id=academic-105485-koreyst)
+[![Sayansi ya Data kwa Waanzilishi](https://img.shields.io/badge/Data%20Science%20for%20Beginners-84CC16?style=for-the-badge&labelColor=E5E7EB&color=84CC16)](https://aka.ms/datascience-beginners?WT.mc_id=academic-105485-koreyst)
+[![AI kwa Waanzilishi](https://img.shields.io/badge/AI%20for%20Beginners-A3E635?style=for-the-badge&labelColor=E5E7EB&color=A3E635)](https://aka.ms/ai-beginners?WT.mc_id=academic-105485-koreyst)
+[![Usalama wa Mtandao kwa Waanzilishi](https://img.shields.io/badge/Cybersecurity%20for%20Beginners-F97316?style=for-the-badge&labelColor=E5E7EB&color=F97316)](https://github.com/microsoft/Security-101?WT.mc_id=academic-96948-sayoung)
+[![Mageuzi ya Wavuti kwa Waanzilishi](https://img.shields.io/badge/Web%20Dev%20for%20Beginners-EC4899?style=for-the-badge&labelColor=E5E7EB&color=EC4899)](https://aka.ms/webdev-beginners?WT.mc_id=academic-105485-koreyst)
+[![IoT kwa Waanzilishi](https://img.shields.io/badge/IoT%20for%20Beginners-14B8A6?style=for-the-badge&labelColor=E5E7EB&color=14B8A6)](https://aka.ms/iot-beginners?WT.mc_id=academic-105485-koreyst)
+[![Maendeleo ya XR kwa Waanzilishi](https://img.shields.io/badge/XR%20Development%20for%20Beginners-38BDF8?style=for-the-badge&labelColor=E5E7EB&color=38BDF8)](https://github.com/microsoft/xr-development-for-beginners?WT.mc_id=academic-105485-koreyst)
 
 ---
  
 ### Mfululizo wa Copilot
-[![Copilot for AI Paired Programming](https://img.shields.io/badge/Copilot%20for%20AI%20Paired%20Programming-FACC15?style=for-the-badge&labelColor=E5E7EB&color=FACC15)](https://aka.ms/GitHubCopilotAI?WT.mc_id=academic-105485-koreyst)
-[![Copilot for C#/.NET](https://img.shields.io/badge/Copilot%20for%20C%23/.NET-FBBF24?style=for-the-badge&labelColor=E5E7EB&color=FBBF24)](https://github.com/microsoft/mastering-github-copilot-for-dotnet-csharp-developers?WT.mc_id=academic-105485-koreyst)
-[![Copilot Adventure](https://img.shields.io/badge/Copilot%20Adventure-FDE68A?style=for-the-badge&labelColor=E5E7EB&color=FDE68A)](https://github.com/microsoft/CopilotAdventures?WT.mc_id=academic-105485-koreyst)
+[![Copilot kwa Uandishi wa Programu Pamoja na AI](https://img.shields.io/badge/Copilot%20for%20AI%20Paired%20Programming-FACC15?style=for-the-badge&labelColor=E5E7EB&color=FACC15)](https://aka.ms/GitHubCopilotAI?WT.mc_id=academic-105485-koreyst)
+[![Copilot kwa C#/.NET](https://img.shields.io/badge/Copilot%20for%20C%23/.NET-FBBF24?style=for-the-badge&labelColor=E5E7EB&color=FBBF24)](https://github.com/microsoft/mastering-github-copilot-for-dotnet-csharp-developers?WT.mc_id=academic-105485-koreyst)
+[![Safari ya Copilot](https://img.shields.io/badge/Copilot%20Adventure-FDE68A?style=for-the-badge&labelColor=E5E7EB&color=FDE68A)](https://github.com/microsoft/CopilotAdventures?WT.mc_id=academic-105485-koreyst)
 <!-- CO-OP TRANSLATOR OTHER COURSES END -->
 
 ## Kupata Msaada
 
-Ikiwa unakwama au una maswali yoyote kuhusu kujenga programu za AI. Jiunge na wageni wa kujifunza na waendelezaji wenye uzoefu katika mijadala kuhusu MCP. Ni jamii inayounga mkono ambapo maswali yanakaribishwa na maarifa hushirikiwa kwa uhuru.
+Ikiwa utakwama au una maswali yoyote kuhusu kujenga programu za AI. Jiunge na wanafunzi wenzako na watengenezaji wenye uzoefu katika mijadala kuhusu MCP. Ni jamii ambayo inasaidia ambapo maswali yanakaribishwa na maarifa hushirikiwa kwa huru.
 
 [![Microsoft Foundry Discord](https://dcbadge.limes.pink/api/server/nTYy5BXMWG)](https://discord.gg/nTYy5BXMWG)
 
-Ikiwa una maoni kuhusu bidhaa au makosa wakati wa kujenga tembelea:
+Ikiwa una maoni au makosa kuhusu bidhaa wakati wa kujenga tembelea:
 
-[![Microsoft Foundry Developer Forum](https://img.shields.io/badge/GitHub-Microsoft_Foundry_Developer_Forum-blue?style=for-the-badge&logo=github&color=000000&logoColor=fff)](https://aka.ms/foundry/forum)
+[![Jukwaa la Watengenezaji wa Microsoft Foundry](https://img.shields.io/badge/GitHub-Microsoft_Foundry_Developer_Forum-blue?style=for-the-badge&logo=github&color=000000&logoColor=fff)](https://aka.ms/foundry/forum)
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Kumbusho**:  
-Hati hii imetatuliwa kwa kutumia huduma ya kutafsiri AI [Co-op Translator](https://github.com/Azure/co-op-translator). Wakati tunajitahidi kwa usahihi, tafadhali fahamu kwamba tafsiri za kiotomatiki zinaweza kuwa na makosa au upungufu. Hati ya asili katika lugha yake ya asili inapaswa kuchukuliwa kama chanzo cha kuaminika. Kwa taarifa muhimu, inashauriwa kutumia utafsiri wa kitaalamu wa binadamu. Hatuna dhamana kwa maelewano au tafsiri potofu zinazotokana na matumizi ya tafsiri hii.
+**Kionyozo**:
+Hati hii imetafsiriwa kwa kutumia huduma ya tafsiri ya AI [Co-op Translator](https://github.com/Azure/co-op-translator). Ingawa tunajitahidi kupata usahihi, tafadhali fahamu kwamba tafsiri za kiotomatiki zinaweza kuwa na makosa au upungufu wa usahihi. Hati ya asili katika lugha yake halisi inapaswa kuchukuliwa kama chanzo cha mamlaka. Kwa taarifa muhimu, tafsiri ya kitaalamu inayofanywa na binadamu inapendekezwa. Hatutojibu kwa kuelewa vibaya au tafsiri potofu zinazotokea kutokana na matumizi ya tafsiri hii.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

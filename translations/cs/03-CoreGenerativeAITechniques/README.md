@@ -1,20 +1,16 @@
-# Základní techniky generativní AI - tutoriál
-
-[![Core Generative AI Techniques](https://img.youtube.com/vi/ZUgN6gTjlPE/0.jpg)](https://www.youtube.com/watch?v=ZUgN6gTjlPE "Core Generative AI Techniques")
-
-> **Přehled videa:** [Sledujte "Core Generative AI Techniques" na YouTube](https://www.youtube.com/watch?v=ZUgN6gTjlPE), nebo klikněte na náhled výše.
+# Základní tutoriál o generativních AI technikách
 
 ## Obsah
 
-- [Požadavky](#požadavky)
+- [Předpoklady](#předpoklady)
 - [Začínáme](#začínáme)
-  - [Krok 1: Nastavte svou proměnnou prostředí](#krok-1-nastavte-svou-proměnnou-prostředí)
-  - [Krok 2: Přejděte do adresáře příkladů](#krok-2-přejděte-do-adresáře-příkladů)
+  - [Krok 1: Nakonfigurujte svůj Foundry Endpoint](#krok-1-nakonfigurujte-svůj-foundry-endpoint)
+  - [Krok 2: Přesuňte se do adresáře s příklady](#krok-2-přesuňte-se-do-adresáře-s-příklady)
 - [Průvodce výběrem modelu](#průvodce-výběrem-modelu)
-- [Tutoriál 1: Doplňování a chat s LLM](#tutoriál-1-doplňování-a-chat-s-llm)
+- [Tutoriál 1: Dokončování LLM a chat](#tutoriál-1-dokončování-llm-a-chat)
 - [Tutoriál 2: Volání funkcí](#tutoriál-2-volání-funkcí)
-- [Tutoriál 3: RAG (Retrieval-Augmented Generation)](#tutoriál-3-rag-retrieval-augmented-generation)
-- [Tutoriál 4: Zodpovědná AI](#tutoriál-4-zodpovědná-ai)
+- [Tutoriál 3: RAG (Generování doplněné vyhledáváním)](#tutoriál-3-rag-generování-doplněné-vyhledáváním)
+- [Tutoriál 4: Odpovědná AI](#tutoriál-4-odpovědná-ai)
 - [Běžné vzory napříč příklady](#běžné-vzory-napříč-příklady)
 - [Další kroky](#další-kroky)
 - [Řešení problémů](#řešení-problémů)
@@ -23,37 +19,44 @@
 
 ## Přehled
 
-Tento tutoriál poskytuje praktické příklady základních technik generativní AI pomocí Javy a GitHub modelů. Naučíte se, jak komunikovat s velkými jazykovými modely (LLM), implementovat volání funkcí, použít retrieval-augmented generation (RAG) a aplikovat zásady zodpovědné AI.
+Tento tutoriál poskytuje praktické příklady základních generativních AI technik pomocí Javy a Azure AI Foundry. Naučíte se, jak komunikovat s Velkými jazykovými modely (LLM), implementovat volání funkcí, používat generování doplněné vyhledáváním (RAG) a aplikovat zásady odpovědné AI.
 
-## Požadavky
+## Předpoklady
 
-Než začnete, ujistěte se, že máte:
+Před zahájením se ujistěte, že máte:
 - Nainstalovanou Javu 21 nebo vyšší
 - Maven pro správu závislostí
-- Účet na GitHubu s osobním přístupovým tokenem (PAT)
+- Nasazení modelu v Azure AI Foundry (zprovozněte ho pomocí `azd up` — viz [Kapitola 2](../02-SetupDevEnvironment/getting-started-azure-openai.md))
+- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), přihlášené pomocí `az login` (autentizace bez klíče)
 
 ## Začínáme
 
-### Krok 1: Nastavte svou proměnnou prostředí
+> **Nejrychlejší způsob — spusťte ve VS Code (F5):** Po `azd up` (Kapitola 2) a `az login` otevřete **Run and Debug** (`Ctrl+Shift+D`), vyberte konfiguraci například **Ch03: LLM Completions & Chat** a stiskněte **F5**. Endpoint se načte automaticky z `.env` vytvořeného `azd up` — takže můžete přeskočit krok 1 níže. Pro interaktivní chat pište do terminálu a zadejte `exit` pro ukončení. Konfigurace pro spuštění jsou v [`.vscode/launch.json`](../../../.vscode/launch.json).
+>
+> Preferujete příkazovou řádku? Postupujte podle kroků 1 a 2 níže.
 
-Nejprve musíte nastavit svůj GitHub token jako proměnnou prostředí. Tento token vám umožní zdarma přístup k GitHub modelům.
+### Krok 1: Nakonfigurujte svůj Foundry Endpoint
+
+Tyto příklady se autentizují k Azure AI Foundry pomocí **autentizace bez klíče** (Microsoft Entra ID). Přihlaste se pomocí `az login` a poté nastavte svůj Foundry endpoint jako proměnnou prostředí. Pokud jste zprovoznili pomocí `azd up`, získejte hodnotu pomocí `azd env get-value AZURE_OPENAI_ENDPOINT`.
 
 **Windows (Příkazový řádek):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-### Krok 2: Přejděte do adresáře příkladů
+> Příklady implicitně používají nasazení `gpt-4o-mini`. Přepište jej pomocí proměnné prostředí `AZURE_OPENAI_DEPLOYMENT`.
+
+### Krok 2: Přesuňte se do adresáře s příklady
 
 ```bash
 cd 03-CoreGenerativeAITechniques/examples/
@@ -61,45 +64,40 @@ cd 03-CoreGenerativeAITechniques/examples/
 
 ## Průvodce výběrem modelu
 
-Tyto příklady používají různé modely optimalizované pro konkrétní použití:
+Všechny tyto příklady používají nasazení **`gpt-4o-mini`**, které bylo zprovozněno v [Kapitole 2](../02-SetupDevEnvironment/getting-started-azure-openai.md):
 
-**GPT-4.1-nano** (příklad doplňování):
-- Extrémně rychlý a velmi levný
-- Ideální pro základní doplňování textu a chat
-- Perfektní pro naučení se základních vzorů interakce s LLM
-
-**GPT-4o-mini** (příklady funkcí, RAG a zodpovědné AI):
-- Malý, ale plně vybavený „všestranný pracovní kůň“ model
-- Spolehlivě podporuje pokročilé funkce u různých dodavatelů:
-  - Zpracování vidění
-  - JSON/strukturované výstupy
+**GPT-4o-mini:**
+- Malý, ale plně vybavený "všestranný pracant"
+- Spolehlivě podporuje pokročilé schopnosti:
+  - Zpracování obrazu
+  - Výstupy JSON/strukturovaná data
   - Volání nástrojů/funkcí
-- Více funkcí než nano, zajišťuje konzistentní fungování příkladů
+- Rychlý a nákladově efektivní, přitom poskytuje funkce potřebné v těchto tutoriálech
 
-> **Proč je to důležité**: Zatímco modely „nano“ jsou skvělé pro rychlost a cenu, modely „mini“ jsou bezpečnější volbou, pokud potřebujete spolehlivý přístup k pokročilým funkcím, jako je volání funkcí, které nemusí být u všech hostingových poskytovatelů u nano variant plně dostupné.
+> **Tip**: Název nasazení se čte z proměnné prostředí `AZURE_OPENAI_DEPLOYMENT` (výchozí `gpt-4o-mini`), takže můžete příklady směrovat na jiné nasazení bez změny kódu.
 
-## Tutoriál 1: Doplňování a chat s LLM
+## Tutoriál 1: Dokončování LLM a chat
 
 **Soubor:** `src/main/java/com/example/genai/techniques/completions/LLMCompletionsApp.java`
 
-### Co vás tento příklad naučí
+### Co se tento příklad naučí
 
-Tento příklad ukazuje základní mechaniku interakce s velkým jazykovým modelem (LLM) přes OpenAI API, včetně inicializace klienta s GitHub modely, vzorů struktury zpráv pro systémové a uživatelské výzvy, správy konverzačního stavu pomocí kumulace historie zpráv a ladění parametrů pro kontrolu délky a kreativity odpovědí.
+Tento příklad demonstruje základní mechanismy interakce s Velkým jazykovým modelem (LLM) přes API Azure OpenAI, včetně bezklíčové inicializace klienta s Azure AI Foundry, vzorů struktury zpráv pro systémové a uživatelské výzvy, správy stavu konverzace akumulací historie zpráv a ladění parametrů pro ovládání délky odpovědi a úrovně kreativity.
 
-### Klíčové koncepty v kódu
+### Klíčové koncepty kódu
 
 #### 1. Nastavení klienta
 ```java
-// Vytvořte AI klienta
+// Vytvořte AI klienta pomocí autentizace bez klíče (Microsoft Entra ID)
 OpenAIClient client = new OpenAIClientBuilder()
-    .endpoint("https://models.inference.ai.azure.com")
-    .credential(new StaticTokenCredential(pat))
+    .endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"))
+    .credential(new DefaultAzureCredentialBuilder().build())
     .buildClient();
 ```
 
-Toto vytvoří spojení s GitHub modely pomocí vašeho tokenu.
+Toto vytvoří připojení k Azure AI Foundry pomocí přihlašovacích údajů z `az login` — není potřeba API klíč.
 
-#### 2. Jednoduché doplnění
+#### 2. Jednoduché dokončení
 ```java
 List<ChatRequestMessage> messages = List.of(
     // Systémová zpráva nastavuje chování AI
@@ -109,7 +107,7 @@ List<ChatRequestMessage> messages = List.of(
 );
 
 ChatCompletionsOptions options = new ChatCompletionsOptions(messages)
-    .setModel("gpt-4.1-nano")  // Rychlý, nákladově efektivní model pro základní doplnění
+    .setModel("gpt-4o-mini")   // Název vaší instalace Foundry
     .setMaxTokens(200)         // Omezit délku odpovědi
     .setTemperature(0.7);      // Ovládat kreativitu (0.0-1.0)
 ```
@@ -121,32 +119,32 @@ messages.add(new ChatRequestAssistantMessage(aiResponse));
 messages.add(new ChatRequestUserMessage("Follow-up question"));
 ```
 
-AI si pamatuje předchozí zprávy pouze pokud je zahrnete do následujících požadavků.
+AI si pamatuje předchozí zprávy pouze pokud je zahrnete do následných požadavků.
 
-### Spuštění příkladu
+### Spusťte příklad
 ```bash
 mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.completions.LLMCompletionsApp"
 ```
 
-### Co se stane při spuštění
+### Co se stane, když ho spustíte
 
-1. **Jednoduché doplnění:** AI odpoví na otázku ohledně Javy s pomocí systémové výzvy
-2. **Víceotázekový chat:** AI udržuje kontext napříč více otázkami
-3. **Interaktivní chat:** Můžete vést skutečný rozhovor s AI
+1. **Jednoduché dokončení**: AI odpoví na otázku o Javě se systémovou instrukcí
+2. **Vícekolový chat**: AI udržuje kontext přes více otázek
+3. **Interaktivní chat**: Můžete vést skutečný rozhovor s AI
 
 ## Tutoriál 2: Volání funkcí
 
 **Soubor:** `src/main/java/com/example/genai/techniques/functions/FunctionsApp.java`
 
-### Co vás tento příklad naučí
+### Co se tento příklad naučí
 
-Volání funkcí umožňuje AI modelům požadovat spuštění externích nástrojů a API přes strukturovaný protokol, kde model analyzuje přirozené jazykové požadavky, určuje potřebná volání funkcí s odpovídajícími parametry pomocí definic JSON Schema a zpracovává vrácené výsledky k vytvoření kontextových odpovědí, zatímco skutečné spuštění funkcí zůstává pod kontrolou vývojáře z důvodu bezpečnosti a spolehlivosti.
+Volání funkcí umožňuje AI modelům požadovat spuštění externích nástrojů a API pomocí strukturovaného protokolu, kde model analyzuje požadavky v přirozeném jazyce, určuje potřebné volání funkcí s vhodnými parametry podle definic JSON Schema a zpracovává vrácené výsledky pro generování kontextových odpovědí, přičemž samotné spuštění funkcí zůstává pod kontrolou vývojáře z důvodů bezpečnosti a spolehlivosti.
 
-> **Poznámka:** Tento příklad používá `gpt-4o-mini`, protože volání funkcí vyžaduje spolehlivé možnosti volání nástrojů, které nemusí být u nano modelů na všech hostingových platformách plně dostupné.
+> **Poznámka**: Tento příklad používá `gpt-4o-mini`, protože volání funkcí vyžaduje spolehlivé možnosti volání nástrojů, které nemusí být zcela dostupné v nano modelech na všech hostingových platformách.
 
-### Klíčové koncepty v kódu
+### Klíčové koncepty kódu
 
-#### 1. Definice funkcí
+#### 1. Definice funkce
 ```java
 ChatCompletionsFunctionToolDefinitionFunction weatherFunction = 
     new ChatCompletionsFunctionToolDefinitionFunction("get_weather");
@@ -167,15 +165,15 @@ weatherFunction.setParameters(BinaryData.fromString("""
     """));
 ```
 
-Tímto informujete AI, jaké funkce jsou dostupné a jak je používat.
+To říká AI, jaké funkce jsou dostupné a jak je používat.
 
-#### 2. Tok vykonání funkcí
+#### 2. Průběh volání funkce
 ```java
 // 1. AI požaduje volání funkce
 if (choice.getFinishReason() == CompletionsFinishReason.TOOL_CALLS) {
     ChatCompletionsFunctionToolCall functionCall = ...;
     
-    // 2. Spustíte funkci
+    // 2. Vy provedete funkci
     String result = simulateWeatherFunction(functionCall.getFunction().getArguments());
     
     // 3. Vrátíte výsledek zpět AI
@@ -186,10 +184,10 @@ if (choice.getFinishReason() == CompletionsFinishReason.TOOL_CALLS) {
 }
 ```
 
-#### 3. Implementace funkcí
+#### 3. Implementace funkce
 ```java
 private static String simulateWeatherFunction(String arguments) {
-    // Analyzujte argumenty a zavolejte skutečné API počasí
+    // Analyzovat argumenty a zavolat skutečné API počasí
     // Pro demo vracíme falešná data
     return """
         {
@@ -201,35 +199,35 @@ private static String simulateWeatherFunction(String arguments) {
 }
 ```
 
-### Spuštění příkladu
+### Spusťte příklad
 ```bash
 mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.functions.FunctionsApp"
 ```
 
-### Co se stane při spuštění
+### Co se stane, když ho spustíte
 
-1. **Funkce počasí:** AI požádá o počasí pro Seattle, vy ho poskytnete, AI vytvoří odpověď
-2. **Funkce kalkulačky:** AI požádá o výpočet (15 % ze 240), vy ho provedete, AI vysvětlí výsledek
+1. **Funkce počasí**: AI požádá o údaje o počasí v Seattlu, vy je poskytnete, AI formátuje odpověď
+2. **Funkce kalkulačky**: AI požádá o výpočet (15 % z 240), vy ho provedete, AI vysvětlí výsledek
 
-## Tutoriál 3: RAG (Retrieval-Augmented Generation)
+## Tutoriál 3: RAG (Generování doplněné vyhledáváním)
 
 **Soubor:** `src/main/java/com/example/genai/techniques/rag/SimpleReaderDemo.java`
 
-### Co vás tento příklad naučí
+### Co se tento příklad naučí
 
-Retrieval-Augmented Generation (RAG) kombinuje vyhledávání informací s generováním jazyka vkládáním kontextu externích dokumentů do AI podnětů, což umožňuje modelům poskytovat přesné odpovědi založené na konkrétních znalostních zdrojích místo potenciálně zastaralých nebo nepřesných tréninkových dat, přičemž udržuje jasné hranice mezi uživatelskými dotazy a autoritativními informačními zdroji díky strategickému navrhování promptů.
+Generování doplněné vyhledáváním (RAG) kombinuje vyhledávání informací s generováním jazyka vkládáním externího kontextu dokumentů do AI výzev, což modelům umožňuje poskytovat přesné odpovědi založené na specifických zdrojích znalostí namísto potencionálně zastaralých nebo nepřesných tréninkových dat, přičemž zachovává jasné hranice mezi uživatelskými dotazy a autoritativními zdroji informací pomocí strategického navrhování výzev.
 
-> **Poznámka:** Tento příklad používá `gpt-4o-mini` pro zajištění spolehlivého zpracování strukturovaných promptů a konzistentní práci s kontextem dokumentů, což je klíčové pro efektivní implementaci RAG.
+> **Poznámka**: Tento příklad používá `gpt-4o-mini` pro zajištění spolehlivého zpracování strukturovaných výzev a konzistentní práce s kontextem dokumentů, což je klíčové pro efektivní implementace RAG.
 
-### Klíčové koncepty v kódu
+### Klíčové koncepty kódu
 
-#### 1. Načtení dokumentu
+#### 1. Načítání dokumentu
 ```java
 // Načtěte svůj zdroj znalostí
 String doc = Files.readString(Paths.get("document.txt"));
 ```
 
-#### 2. Injektáž kontextu
+#### 2. Vkládání kontextu
 ```java
 List<ChatRequestMessage> messages = List.of(
     new ChatRequestSystemMessage(
@@ -241,9 +239,9 @@ List<ChatRequestMessage> messages = List.of(
 );
 ```
 
-Trojnásobné uvozovky pomáhají AI rozlišit mezi kontextem a otázkou.
+Trojité uvozovky pomáhají AI rozlišit mezi kontextem a otázkou.
 
-#### 3. Bezpečné zpracování odpovědi
+#### 3. Bezpečné zpracování odpovědí
 ```java
 if (response != null && response.getChoices() != null && !response.getChoices().isEmpty()) {
     String answer = response.getChoices().get(0).getMessage().getContent();
@@ -253,42 +251,42 @@ if (response != null && response.getChoices() != null && !response.getChoices().
 }
 ```
 
-Vždy validujte odpovědi API, aby nedošlo k pádům.
+Vždy validujte odpovědi API, aby nedocházelo k chybám.
 
-### Spuštění příkladu
+### Spusťte příklad
 ```bash
 mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.rag.SimpleReaderDemo"
 ```
 
-### Co se stane při spuštění
+### Co se stane, když ho spustíte
 
-1. Program načte `document.txt` (obsahuje informace o GitHub modelech)
-2. Položíte otázku týkající se dokumentu
-3. AI odpoví pouze na základě obsahu dokumentu, nikoli svých obecných znalostí
+1. Program načte `document.txt` (obsahuje informace o Azure AI Foundry)
+2. Položíte otázku ohledně dokumentu
+3. AI odpoví pouze na základě obsahu dokumentu, nikoliv své obecné znalosti
 
-Zkuste se zeptat: "Co jsou GitHub Models?" vs "Jaké je počasí?"
+Zkuste se zeptat: "Co je Azure AI Foundry?" versus "Jaké je počasí?"
 
-## Tutoriál 4: Zodpovědná AI
+## Tutoriál 4: Odpovědná AI
 
-**Soubor:** `src/main/java/com/example/genai/techniques/responsibleai/ResponsibleGithubModels.java`
+**Soubor:** `src/main/java/com/example/genai/techniques/responsibleai/ResponsibleAIDemo.java`
 
-### Co vás tento příklad naučí
+### Co se tento příklad naučí
 
-Příklad zodpovědné AI ukazuje důležitost implementace bezpečnostních opatření v AI aplikacích. Demonstruje, jak fungují moderní bezpečnostní systémy AI prostřednictvím dvou hlavních mechanismů: tvrdých blokací (HTTP 400 chyby ze bezpečnostních filtrů) a měkkých odmítnutí (zdvořilé odpovědi modelu typu „Nemohu s tím pomoci“). Tento příklad ukazuje, jak by produkční AI aplikace měly elegantně zpracovávat porušení pravidel obsahu prostřednictvím správné obsluhy výjimek, detekce odmítnutí, zpětné vazby uživateli a strategií alternativních odpovědí.
+Příklad odpovědné AI ukazuje důležitost implementace bezpečnostních opatření v AI aplikacích. Demonstruje, jak moderní bezpečnostní systémy AI fungují pomocí dvou hlavních mechanismů: tvrdé bloky (chyby HTTP 400 z bezpečnostních filtrů) a měkké odmítnutí (zdvořilé odpovědi typu "S tím nemohu pomoci" přímo od modelu). Příklad ukazuje, jak by produkční AI aplikace měly obratně zpracovávat porušení pravidel obsahu prostřednictvím správného zpracování výjimek, detekce odmítnutí, mechanismů zpětné vazby uživatele a variant záložních odpovědí.
 
-> **Poznámka:** Tento příklad používá `gpt-4o-mini`, protože poskytuje konzistentnější a spolehlivější bezpečnostní odpovědi na různé typy potenciálně škodlivého obsahu, což umožňuje správné předvedení bezpečnostních mechanismů.
+> **Poznámka**: Tento příklad používá `gpt-4o-mini`, protože poskytuje konzistentnější a spolehlivější bezpečnostní odpovědi napříč různými typy potenciálně škodlivého obsahu, čímž se správně demonstrují bezpečnostní mechanismy.
 
-### Klíčové koncepty v kódu
+### Klíčové koncepty kódu
 
-#### 1. Rámec pro testování bezpečnosti
+#### 1. Testovací rámec bezpečnosti
 ```java
 private void testPromptSafety(String prompt, String category) {
     try {
-        // Pokus o získání odpovědi AI
+        // Pokus o získání odpovědi od AI
         ChatCompletions response = client.getChatCompletions(modelId, options);
         String content = response.getChoices().get(0).getMessage().getContent();
         
-        // Zkontrolujte, zda model žádost odmítl (mírné odmítnutí)
+        // Zkontrolujte, zda model žádost odmítl (díky měkkému odmítnutí)
         if (isRefusalResponse(content)) {
             System.out.println("[REFUSED BY MODEL]");
             System.out.println("✓ This is GOOD - the AI refused to generate harmful content!");
@@ -325,24 +323,24 @@ private boolean isRefusalResponse(String response) {
 ```
 
 #### 2. Testované kategorie bezpečnosti
-- Návody na násilí/škodu
-- Nenávistné projevy
+- Návody na násilí/škody
+- Projevy nenávisti
 - Porušení soukromí
-- Lékařská dezinformace
-- Nelegální činnosti
+- Lékařské dezinformace
+- Nelegální aktivity
 
-### Spuštění příkladu
+### Spusťte příklad
 ```bash
-mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleGithubModels"
+mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleAIDemo"
 ```
 
-### Co se stane při spuštění
+### Co se stane, když ho spustíte
 
-Program testuje různé škodlivé výzvy a ukazuje, jak bezpečnostní systém AI funguje prostřednictvím dvou mechanismů:
+Program testuje různé škodlivé výzvy a ukazuje, jak bezpečnostní systém AI funguje pomocí dvou mechanismů:
 
-1. **Tvrdé blokace:** HTTP 400 chyby, když je obsah zablokován bezpečnostními filtry před dosažením modelu
-2. **Měkká odmítnutí:** Model odpovídá zdvořilými odmítnutími typu „Nemohu s tím pomoci“ (nejběžnější u moderních modelů)
-3. **Bezpečný obsah:** Umožňuje generovat legitimní požadavky normálně
+1. **Tvrdé bloky**: chyby HTTP 400, když bezpečnostní filtry zablokují obsah ještě před dosažením modelu
+2. **Měkká odmítnutí**: model reaguje zdvořilými odmítnutími jako "S tím nemohu pomoci" (nejběžnější u moderních modelů)
+3. **Bezpečný obsah**: umožňuje běžné generování legitimních požadavků
 
 Očekávaný výstup pro škodlivé výzvy:
 ```
@@ -353,34 +351,32 @@ Status: [REFUSED BY MODEL]
 ✓ This is GOOD - the AI refused to generate harmful content!
 ```
 
-To demonstruje, že **tvrdé blokace i měkká odmítnutí signalizují správnou funkčnost bezpečnostního systému**.
+To demonstruje, že **tvrdé bloky i měkká odmítnutí znamenají, že bezpečnostní systém správně funguje**.
 
 ## Běžné vzory napříč příklady
 
-### Vzor autentizace
-Všechny příklady používají tento vzor pro autentizaci s GitHub modely:
+### Vzory autentizace
+Všechny příklady používají tuto bezklíčovou autentizaci k Azure AI Foundry:
 
 ```java
-String pat = System.getenv("GITHUB_TOKEN");
-TokenCredential credential = new StaticTokenCredential(pat);
 OpenAIClient client = new OpenAIClientBuilder()
-    .endpoint("https://models.inference.ai.azure.com")
-    .credential(credential)
+    .endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"))
+    .credential(new DefaultAzureCredentialBuilder().build())
     .buildClient();
 ```
 
-### Vzor pro zpracování chyb
+### Vzory zpracování chyb
 ```java
 try {
     // Provoz AI
 } catch (HttpResponseException e) {
-    // Zpracování chyb API (limity rychlosti, bezpečnostní filtry)
+    // Zpracování chyb API (omezení rychlosti, bezpečnostní filtry)
 } catch (Exception e) {
-    // Zpracování obecných chyb (síť, zpracování dat)
+    // Zpracování obecných chyb (síť, analýza)
 }
 ```
 
-### Vzor struktury zpráv
+### Vzory struktury zpráv
 ```java
 List<ChatRequestMessage> messages = List.of(
     new ChatRequestSystemMessage("Set AI behavior"),
@@ -390,30 +386,30 @@ List<ChatRequestMessage> messages = List.of(
 
 ## Další kroky
 
-Připraven začít tyto techniky využívat? Pojďme vytvořit nějaké skutečné aplikace!
+Jste připraveni aplikovat tyto techniky? Pojďme vytvořit skutečné aplikace!
 
-[Kapitol 04: Praktické příklady](../04-PracticalSamples/README.md)
+[Kapitola 04: Praktické ukázky](../04-PracticalSamples/README.md)
 
 ## Řešení problémů
 
 ### Běžné problémy
 
-**„GITHUB_TOKEN není nastaven“**
-- Ujistěte se, že jste nastavili proměnnou prostředí
-- Ověřte, že váš token má oprávnění `models:read`
+**"AZURE_OPENAI_ENDPOINT není nastaven"**
+- Ujistěte se, že nastavujete proměnnou prostředí
+- Proveďte `az login` — autentizace je bez klíče (Microsoft Entra ID)
 
-**„Žádná odpověď z API“**
-- Zkontrolujte připojení k internetu
-- Ověřte, že váš token je platný
-- Zjistěte, zda jste nepřekročili limity požadavků
+**"Žádná odpověď z API" / 401 / 403**
+- Zkontrolujte internetové připojení
+- Ujistěte se, že jste přihlášeni přes `az login` a máte roli Cognitive Services OpenAI User
+- Zkontrolujte, zda jste nepřekročili limity kvóty nasazení
 
-**Chyby kompilace v Maven**
+**Chyby kompilace v Mavenu**
 - Ujistěte se, že máte Javu 21 nebo vyšší
-- Spusťte `mvn clean compile` pro obnovení závislostí
+- Spusťte `mvn clean compile` pro obnovu závislostí
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Zřeknutí se odpovědnosti**:  
-Tento dokument byl přeložen pomocí AI překladatelské služby [Co-op Translator](https://github.com/Azure/co-op-translator). I když usilujeme o přesnost, mějte prosím na paměti, že automatické překlady mohou obsahovat chyby nebo nepřesnosti. Původní dokument v jeho mateřském jazyce by měl být považován za autoritativní zdroj. Pro kritické informace se doporučuje profesionální lidský překlad. Nejsme odpovědní za žádná nedorozumění nebo nesprávné výklady vyplývající z použití tohoto překladu.
+**Prohlášení o omezení odpovědnosti**:
+Tento dokument byl přeložen pomocí AI překladatelské služby [Co-op Translator](https://github.com/Azure/co-op-translator). Přestože usilujeme o co největší přesnost, mějte prosím na paměti, že automatizované překlady mohou obsahovat chyby nebo nepřesnosti. Originální dokument v jeho mateřském jazyce by měl být považován za autoritativní zdroj. Pro kritické informace se doporučuje profesionální lidský překlad. Nejsme odpovědní za jakékoli nedorozumění nebo nesprávné interpretace vzniklé použitím tohoto překladu.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

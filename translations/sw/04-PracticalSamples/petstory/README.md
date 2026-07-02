@@ -1,31 +1,31 @@
-# Mafunzo ya Jenereta ya Hadithi za Wanyama kwa Anayeanza
+# Mafunzo ya Mkuzaji wa Hadithi za Wanyama wa Kifugo kwa Waanzilishi
 
-## Jedwali la Maudhui
+## Jedwali la Yaliyomo
 
-- [Mahitaji ya Awali](../../../../04-PracticalSamples/petstory)
-- [Kuelewa Muundo wa Mradi](../../../../04-PracticalSamples/petstory)
-- [Vipengele Muhimu Vilivyoelezwa](../../../../04-PracticalSamples/petstory)
-  - [1. Programu Kuu](../../../../04-PracticalSamples/petstory)
-  - [2. Kidhibiti cha Wavuti](../../../../04-PracticalSamples/petstory)
-  - [3. Huduma ya Hadithi](../../../../04-PracticalSamples/petstory)
-  - [4. Violezo vya Wavuti](../../../../04-PracticalSamples/petstory)
-  - [5. Usanidi](../../../../04-PracticalSamples/petstory)
-- [Kuendesha Programu](../../../../04-PracticalSamples/petstory)
-- [Jinsi Vyote Vinavyofanya Kazi Pamoja](../../../../04-PracticalSamples/petstory)
-- [Kuelewa Muunganisho wa AI](../../../../04-PracticalSamples/petstory)
-- [Hatua Zifuatazo](../../../../04-PracticalSamples/petstory)
+- [Mambo Yanayohitajika](#mambo-yanayohitajika)
+- [Kuelewa Muundo wa Mradi](#kuelewa-muundo-wa-mradi)
+- [Vipengele Vikuu Vimefafanuliwa](#vipengele-vikuu-vimefafanuliwa)
+  - [1. Programu Kuu](#1-programu-kuu)
+  - [2. Kidhibiti Mtandao](#2-kidhibiti-mtandao)
+  - [3. Huduma ya Hadithi](#3-huduma-ya-hadithi)
+  - [4. Miongozo ya Mtandao](#4-miongozo-ya-mtandao)
+  - [5. Usanidi](#5-usanidi)
+- [Kukimbia Programu](#kukimbia-programu)
+- [Jinsi Kila Kipengele Kinavyofanya Kazi Pamoja](#jinsi-kila-kipengele-kinavyofanya-kazi-pamoja)
+- [Kuelewa Uingizaji wa AI](#kuelewa-uingizaji-wa-ai)
+- [Hatua Zinazo Fuata](#hatua-zinazo-fuata)
 
-## Mahitaji ya Awali
+## Mambo Yanayohitajika
 
 Kabla ya kuanza, hakikisha una:
-- Java 21 au toleo la juu zaidi limewekwa
+- Java 21 au juu zaidi imewekwa
 - Maven kwa usimamizi wa utegemezi
-- Akaunti ya GitHub yenye tokeni ya ufikiaji wa kibinafsi (PAT) yenye ruhusa ya `models:read`
-- Uelewa wa msingi wa Java, Spring Boot, na maendeleo ya wavuti
+- Utekelezaji wa mfano wa Azure AI Foundry (uishe na `azd up` — ona [Sura 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md)), umeingia kwa kutumia `az login` (uthibitishaji bila funguo)
+- Uelewa wa msingi wa Java, Spring Boot, na maendeleo ya mtandao
 
 ## Kuelewa Muundo wa Mradi
 
-Mradi wa hadithi za wanyama una faili kadhaa muhimu:
+Mradi wa hadithi za wanyama wa kufugo una faili kadhaa muhimu:
 
 ```
 petstory/
@@ -42,13 +42,13 @@ petstory/
 └── pom.xml                           # Maven dependencies
 ```
 
-## Vipengele Muhimu Vilivyoelezwa
+## Vipengele Vikuu Vimefafanuliwa
 
 ### 1. Programu Kuu
 
 **Faili:** `PetStoryApplication.java`
 
-Hii ni sehemu ya kuanzia kwa programu yetu ya Spring Boot:
+Hii ni njia ya kuingia kwa programu yetu ya Spring Boot:
 
 ```java
 @SpringBootApplication
@@ -59,16 +59,16 @@ public class PetStoryApplication {
 }
 ```
 
-**Kazi yake:**
-- Anotesheni ya `@SpringBootApplication` inawezesha usanidi wa kiotomatiki na uchanganuzi wa vipengele
-- Inaendesha seva ya wavuti iliyojengwa ndani (Tomcat) kwenye bandari 8080
-- Inaunda maharagwe na huduma zote muhimu za Spring kiotomatiki
+**Hii hufanya nini:**
+- Kielezi cha `@SpringBootApplication` kinawezesha usanidi wa moja kwa moja na skanning ya vipengele
+- Inaendesha seva ya mtandao iliyojumuishwa (Tomcat) kwenye bandari 8080
+- Huunda viumbe vyote vya Spring na huduma moja kwa moja
 
-### 2. Kidhibiti cha Wavuti
+### 2. Kidhibiti Mtandao
 
 **Faili:** `PetController.java`
 
-Hii inashughulikia maombi yote ya wavuti na mwingiliano wa mtumiaji:
+Hii inashughulikia maombi yote ya mtandao na mwingiliano wa mtumiaji:
 
 ```java
 @Controller
@@ -82,7 +82,7 @@ public class PetController {
     
     @GetMapping("/")
     public String index() {
-        return "index";  // Returns index.html template
+        return "index";  // Hurejesha kiolezo cha index.html
     }
     
     @PostMapping("/generate-story")
@@ -90,24 +90,24 @@ public class PetController {
                                Model model, 
                                RedirectAttributes redirectAttributes) {
         
-        // Input validation
+        // Uthibitishaji wa ingizo
         if (description.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please provide a description.");
             return "redirect:/";
         }
         
-        // Sanitize input for security
+        // Safisha ingizo kwa usalama
         String sanitizedDescription = sanitizeInput(description);
         
-        // Generate story with error handling
+        // Tengeneza hadithi na kushughulikia makosa
         try {
             String story = storyService.generateStory(sanitizedDescription);
             model.addAttribute("caption", sanitizedDescription);
             model.addAttribute("story", story);
-            return "result";  // Returns result.html template
+            return "result";  // Hurejesha kiolezo cha result.html
             
         } catch (Exception e) {
-            // Use fallback story if AI fails
+            // Tumia hadithi mbadala ikiwa AI itashindwa
             String fallbackStory = generateFallbackStory(sanitizedDescription);
             model.addAttribute("story", fallbackStory);
             return "result";
@@ -117,21 +117,21 @@ public class PetController {
     private String sanitizeInput(String input) {
         return input.replaceAll("[<>\"'&]", "")  // Remove dangerous characters
                    .trim()
-                   .substring(0, Math.min(input.length(), 500));  // Limit length
+                   .substring(0, Math.min(input.length(), 500));  // Kizuizi cha urefu
     }
 }
 ```
 
-**Vipengele Muhimu:**
+**Vipengele muhimu:**
 
-1. **Ushughulikiaji wa Njia**: `@GetMapping("/")` inaonyesha fomu ya kupakia, `@PostMapping("/generate-story")` inashughulikia mawasilisho
-2. **Uthibitishaji wa Ingizo**: Hukagua maelezo tupu na mipaka ya urefu
-3. **Usalama**: Husafisha ingizo la mtumiaji ili kuzuia mashambulizi ya XSS
-4. **Ushughulikiaji wa Makosa**: Hutoa hadithi za akiba wakati huduma ya AI inashindwa
-5. **Ufungaji wa Mfano**: Inapitisha data kwa violezo vya HTML kwa kutumia `Model` ya Spring
+1. **Shughulikia Njia**: `@GetMapping("/")` inaonyesha fomu ya kupakia, `@PostMapping("/generate-story")` inashughulikia maombi
+2. **Uhakiki wa Ingizo**: Hukagua maelezo yaliyo tupu na mpaka wa urefu
+3. **Usalama**: Hufuta vipengele hatari katika ingizo la mtumiaji kuzuia mashambulizi ya XSS
+4. **Udhibiti wa Makosa**: Hutoa hadithi mbadala wakati huduma ya AI inashindwa
+5. **Ufungaji wa Mfano**: Hupitisha data kwa templates za HTML kwa kutumia `Model` ya Spring
 
-**Mfumo wa Akiba:**
-Kidhibiti kinajumuisha violezo vya hadithi vilivyoandikwa awali ambavyo hutumika wakati huduma ya AI haipatikani:
+**Mfumo wa Kurejesha:**
+Kidhibiti kina templates za hadithi zilizotangulia ambazo hutumika wakati huduma ya AI haipo:
 
 ```java
 private String generateFallbackStory(String description) {
@@ -141,7 +141,7 @@ private String generateFallbackStory(String description) {
         "In a cozy home filled with love, there lived an extraordinary pet..."
     };
     
-    // Use description hash for consistent responses
+    // Tumia kryptografia ya maelezo kwa majibu thabiti
     int index = Math.abs(description.hashCode() % storyTemplates.length);
     return storyTemplates[index];
 }
@@ -151,7 +151,7 @@ private String generateFallbackStory(String description) {
 
 **Faili:** `StoryService.java`
 
-Huduma hii inaunganishwa na GitHub Models ili kuunda hadithi:
+Huduma hii huwasiliana na Azure AI Foundry kuunda hadithi kwa kutumia uthibitishaji bila funguo:
 
 ```java
 @Service
@@ -160,18 +160,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // Kituo cha OpenAI kinacholingana cha Foundry kiko chini ya /openai/v1/
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // Uthibitishaji bila ufunguo kwa Microsoft Entra ID (hakuna ufunguo wa API)
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -182,16 +186,16 @@ public class StoryService {
         
         String userPrompt = "Write a fun short story about a pet described as: " + description;
         
-        // Configure the AI request
+        // Sanidi ombi la AI
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(modelName)
                 .addSystemMessage(systemPrompt)
                 .addUserMessage(userPrompt)
-                .maxCompletionTokens(500)  // Limit response length
-                .temperature(0.8)          // Control creativity (0.0-1.0)
+                .maxCompletionTokens(500)  // Punguza urefu wa jibu
+                .temperature(0.8)          // Dhibiti ubunifu (0.0-1.0)
                 .build();
         
-        // Send request and get response
+        // Tuma ombi na upate jibu
         ChatCompletion response = openAIClient.chat().completions().create(params);
         
         return response.choices().get(0).message().content().orElse("");
@@ -199,19 +203,19 @@ public class StoryService {
 }
 ```
 
-**Vipengele Muhimu:**
+**Vipengele vikuu:**
 
-1. **Mteja wa OpenAI**: Hutumia SDK rasmi ya Java ya OpenAI iliyosanidiwa kwa GitHub Models
-2. **Mwongozo wa Mfumo**: Huanzisha tabia ya AI kuandika hadithi za wanyama zinazofaa kwa familia
-3. **Mwongozo wa Mtumiaji**: Huambia AI ni hadithi gani ya kuandika kulingana na maelezo
-4. **Vigezo**: Hudhibiti urefu wa hadithi na kiwango cha ubunifu
-5. **Ushughulikiaji wa Makosa**: Hutupa makosa ambayo kidhibiti kinashika na kushughulikia
+1. **Mteja wa OpenAI**: Inatumia SDK rasmi ya OpenAI ya Java imewekwa kwa Azure AI Foundry (bila funguo)
+2. **Amri ya Mfumo**: Hua na tabia ya AI kuandika hadithi za wanyama wa kufugo zinazofaa familia
+3. **Amri ya Mtumiaji**: Hueleza AI hadithi gani kuandika kulingana na maelezo
+4. **Vigezo**: Hukagua urefu na kiwango cha ubunifu wa hadithi
+5. **Udhibiti wa Makosa**: Hutupa makosa ambayo kidhibiti hupokea na kushughulikia
 
-### 4. Violezo vya Wavuti
+### 4. Miongozo ya Mtandao
 
 **Faili:** `index.html` (Fomu ya Kupakia)
 
-Ukurasa kuu ambapo watumiaji huelezea wanyama wao:
+Ukurasa mkuu ambapo watumiaji huelezea wanyama wao:
 
 ```html
 <!DOCTYPE html>
@@ -260,7 +264,7 @@ Ukurasa kuu ambapo watumiaji huelezea wanyama wao:
 
 **Faili:** `result.html` (Onyesho la Hadithi)
 
-Inaonyesha hadithi iliyotengenezwa:
+Inaonyesha hadithi iliyozalishwa:
 
 ```html
 <!DOCTYPE html>
@@ -293,18 +297,18 @@ Inaonyesha hadithi iliyotengenezwa:
 </html>
 ```
 
-**Vipengele vya Kiolezo:**
+**Vipengele vya Miongozo:**
 
-1. **Muunganisho wa Thymeleaf**: Hutumia sifa za `th:` kwa maudhui ya nguvu
-2. **Muundo wa Kujibika**: Usanifu wa CSS kwa simu na kompyuta
-3. **Ushughulikiaji wa Makosa**: Huonyesha makosa ya uthibitishaji kwa watumiaji
-4. **Usindikaji wa Upande wa Mteja**: JavaScript kwa uchambuzi wa picha (kwa kutumia Transformers.js)
+1. **Uunganisho wa Thymeleaf**: Inatumia sifa za `th:` kwa maudhui yanayobadilika
+2. **Muundo Unaojibua**: Uwekaji mtindo wa CSS kwa simu na mezani
+3. **Udhibiti wa Makosa**: Inaonyesha makosa ya uhakiki kwa watumiaji
+4. **Usindikaji Kando ya Mteja**: JavaScript kwa uchambuzi wa picha (kutumia Transformers.js)
 
 ### 5. Usanidi
 
 **Faili:** `application.properties`
 
-Mipangilio ya usanidi wa programu:
+Mipangilio ya usanidi kwa programu:
 
 ```properties
 spring.application.name=pet-story-app
@@ -316,45 +320,48 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
-**Usanidi Umeelezwa:**
+**Maelezo ya usanidi:**
 
-1. **Upakiaji wa Faili**: Inaruhusu picha hadi 10MB
-2. **Kumbukumbu**: Hudhibiti ni taarifa gani zinakumbukwa wakati wa utekelezaji
-3. **GitHub Models**: Hueleza ni modeli gani ya AI na njia ya mwisho ya kutumia
-4. **Usalama**: Usanidi wa ushughulikiaji wa makosa ili kuepuka kufichua taarifa nyeti
+1. **Kupakia Faili**: Ruhusu picha hadi ukubwa wa 10MB
+2. **Ufuatiliaji**: Hukagua taarifa gani zinaandikwa wakati wa utekelezaji
+3. **Azure AI Foundry**: Inaeleza kiungo na utekelezaji wa mfano (uthibitishaji bila funguo)
+4. **Usalama**: Usanidi wa udhibiti wa makosa ili kuepuka kufichua maelezo muhimu
 
-## Kuendesha Programu
+## Kukimbia Programu
 
-### Hatua ya 1: Weka Tokeni Yako ya GitHub
+### Hatua ya 1: Ingia na Weka Kiungo Chako
 
-Kwanza, unahitaji kuweka tokeni yako ya GitHub kama kigezo cha mazingira:
+Uthibitishaji ni wa bila funguo (Microsoft Entra ID), hivyo haina funguo ya API. Ingia na weka kiungo cha Foundry:
 
 **Windows (Command Prompt):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Kwa nini hii inahitajika:**
-- GitHub Models inahitaji uthibitishaji ili kufikia modeli za AI
-- Kutumia vigezo vya mazingira kunahifadhi tokeni nyeti nje ya msimbo wa chanzo
-- Ruhusa ya `models:read` inatoa ufikiaji wa inferensi ya AI
+- Azure AI Foundry hutumia Microsoft Entra ID kuidhinisha maombi ya inference
+- Uthibitishaji bila funguo hamaanishi hakuna siri katika msimbo wako au mazingira
+- Akaunti yako inahitaji nafasi ya **Cognitive Services OpenAI User** kwenye rasilimali
 
-### Hatua ya 2: Jenga na Endesha
+### Hatua ya 2: Jenga na Kimbia
 
 Nenda kwenye saraka ya mradi:
 ```bash
@@ -371,51 +378,53 @@ Anzisha seva:
 mvn spring-boot:run
 ```
 
-Programu itaanza kwenye `http://localhost:8080`.
+Programu itaanzishwa kwenye `http://localhost:8080`.
 
 ### Hatua ya 3: Jaribu Programu
 
 1. **Fungua** `http://localhost:8080` kwenye kivinjari chako
-2. **Elezea** mnyama wako kwenye eneo la maandishi (mfano, "Retriever wa dhahabu mchangamfu anayependa kuleta vitu")
-3. **Bonyeza** "Tengeneza Hadithi" ili kupata hadithi iliyotengenezwa na AI
-4. **Vinginevyo**, pakia picha ya mnyama ili kuunda maelezo kiotomatiki
-5. **Tazama** hadithi ya ubunifu kulingana na maelezo ya mnyama wako
+2. **Eleza** mnyama wako kwenye sehemu ya maandishi (mfano, "Mbwa wa rangi ya dhahabu mwenye kucheza sana anayeipenda kubeba vitu")
+3. **Bofya** "Generate Story" kupata hadithi iliyotengenezwa na AI
+4. **Mbali na hilo**, pakia picha ya mnyama kupata maelezo moja kwa moja
+5. **Tazama** hadithi za ubunifu kulingana na maelezo ya mnyama wako
 
-## Jinsi Vyote Vinavyofanya Kazi Pamoja
+## Jinsi Kila Kipengele Kinavyofanya Kazi Pamoja
 
-Hivi ndivyo mtiririko mzima unavyokuwa unapogenerate hadithi ya mnyama:
+Hapa ni mtiririko kamili unapotengeneza hadithi za wanyama wa kufugo:
 
-1. **Ingizo la Mtumiaji**: Unamwelezea mnyama wako kwenye fomu ya wavuti
-2. **Mwasilisho la Fomu**: Kivinjari kinatuma ombi la POST kwa `/generate-story`
-3. **Usindikaji wa Kidhibiti**: `PetController` inathibitisha na kusafisha ingizo
-4. **Mwito wa Huduma ya AI**: `StoryService` inatuma ombi kwa API ya GitHub Models
-5. **Uundaji wa Hadithi**: AI inatengeneza hadithi ya ubunifu kulingana na maelezo
-6. **Ushughulikiaji wa Majibu**: Kidhibiti kinapokea hadithi na kuiongeza kwenye mfano
-7. **Utoaji wa Kiolezo**: Thymeleaf inatoa `result.html` na hadithi
-8. **Onyesho**: Mtumiaji anaona hadithi iliyotengenezwa kwenye kivinjari chao
+1. **Ingizo la Mtumiaji**: Unamwelezea mnyama wako kwenye fomu ya mtandao
+2. **Uwasilishaji wa Fomu**: Kivinjari kinatuma ombi la POST kwa `/generate-story`
+3. **Usindikaji wa Kidhibiti**: `PetController` huhakiki na kusafisha ingizo
+4. **Mawasiliano na Huduma ya AI**: `StoryService` hutuma ombi kwa mfano wa Azure AI Foundry
+5. **Uundaji wa Hadithi**: AI huunda hadithi ya ubunifu kulingana na maelezo
+6. **Udhibiti wa Majibu**: Kidhibiti hupokea hadithi na kuiweka kwenye mfano
+7. **Uwasilishaji wa Miongozo**: Thymeleaf huonyesha `result.html` na hadithi
+8. **Onyesho**: Mtumiaji anaona hadithi iliyozalishwa kwenye kivinjari
 
-**Mtiririko wa Ushughulikiaji wa Makosa:**
+**Mtiririko wa Udhibiti wa Makosa:**
 Ikiwa huduma ya AI inashindwa:
-1. Kidhibiti kinashika kosa
-2. Kinazalisha hadithi ya akiba kwa kutumia violezo vilivyoandikwa awali
-3. Kinaonyesha hadithi ya akiba na maelezo kuhusu kutopatikana kwa AI
+1. Kidhibiti hukamata kosa
+2. Hutengeneza hadithi mbadala kwa kutumia templates zilizotanguliwa
+3. Inaonyesha hadithi mbadala na ujumbe kuhusu upatikanaji wa AI
 4. Mtumiaji bado anapata hadithi, kuhakikisha uzoefu mzuri wa mtumiaji
 
-## Kuelewa Muunganisho wa AI
+## Kuelewa Uingizaji wa AI
 
-### API ya GitHub Models
-Programu inatumia GitHub Models, ambayo inatoa ufikiaji wa bure kwa modeli mbalimbali za AI:
+### Azure AI Foundry (bila funguo)
+Programu hii inatumia Azure AI Foundry kwa uthibitishaji bila funguo (Microsoft Entra ID):
 
 ```java
-// Authentication with GitHub token
+// Uthibitisho bila ufunguo - hakuna ufunguo wa API
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
-### Uhandisi wa Mwongozo
-Huduma hutumia miongozo iliyoundwa kwa uangalifu ili kupata matokeo mazuri:
+### Uhandisi wa Amri (Prompt Engineering)
+Huduma hutumia maelekezo kwa makini kupata matokeo mazuri:
 
 ```java
 String systemPrompt = "You are a creative storyteller who writes fun, " +
@@ -424,16 +433,20 @@ String systemPrompt = "You are a creative storyteller who writes fun, " +
 ```
 
 ### Usindikaji wa Majibu
-Majibu ya AI yanatolewa na kuthibitishwa:
+Jibu la AI huchujwa na kuhakikiwa:
 
 ```java
 ChatCompletion response = openAIClient.chat().completions().create(params);
 String story = response.choices().get(0).message().content().orElse("");
 ```
 
-## Hatua Zifuatazo
+## Hatua Zinazo Fuata
 
-Kwa mifano zaidi, angalia [Sura ya 04: Sampuli za vitendo](../README.md)
+Kwa mifano zaidi, angalia [Sura 04: Sampuli za vitendo](../README.md)
 
-**Kanusho**:  
-Hati hii imetafsiriwa kwa kutumia huduma ya tafsiri ya AI [Co-op Translator](https://github.com/Azure/co-op-translator). Ingawa tunajitahidi kuhakikisha usahihi, tafadhali fahamu kuwa tafsiri za kiotomatiki zinaweza kuwa na makosa au kutokuwa sahihi. Hati ya asili katika lugha yake ya awali inapaswa kuzingatiwa kama chanzo cha mamlaka. Kwa taarifa muhimu, tafsiri ya kitaalamu ya binadamu inapendekezwa. Hatutawajibika kwa kutoelewana au tafsiri zisizo sahihi zinazotokana na matumizi ya tafsiri hii.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Kionyozo**:
+Hati hii imetafsiriwa kwa kutumia huduma ya tafsiri ya AI [Co-op Translator](https://github.com/Azure/co-op-translator). Ingawa tunajitahidi kupata usahihi, tafadhali fahamu kwamba tafsiri za kiotomatiki zinaweza kuwa na makosa au upungufu wa usahihi. Hati ya asili katika lugha yake halisi inapaswa kuchukuliwa kama chanzo cha mamlaka. Kwa taarifa muhimu, tafsiri ya kitaalamu inayofanywa na binadamu inapendekezwa. Hatutojibu kwa kuelewa vibaya au tafsiri potofu zinazotokea kutokana na matumizi ya tafsiri hii.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

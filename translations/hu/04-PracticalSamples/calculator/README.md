@@ -1,39 +1,40 @@
-# MCP Kalkulátor Útmutató Kezdőknek
+# MCP Számológép Oktatóanyag Kezdőknek
 
 ## Tartalomjegyzék
 
-- [Mit fogsz megtanulni](../../../../04-PracticalSamples/calculator)
-- [Előfeltételek](../../../../04-PracticalSamples/calculator)
-- [A projekt struktúrájának megértése](../../../../04-PracticalSamples/calculator)
-- [Főbb komponensek magyarázata](../../../../04-PracticalSamples/calculator)
-  - [1. Fő alkalmazás](../../../../04-PracticalSamples/calculator)
-  - [2. Kalkulátor szolgáltatás](../../../../04-PracticalSamples/calculator)
-  - [3. Közvetlen MCP kliens](../../../../04-PracticalSamples/calculator)
-  - [4. AI-alapú kliens](../../../../04-PracticalSamples/calculator)
-- [Példák futtatása](../../../../04-PracticalSamples/calculator)
-- [Hogyan működik együtt minden](../../../../04-PracticalSamples/calculator)
-- [Következő lépések](../../../../04-PracticalSamples/calculator)
+- [Mit fogsz megtanulni](#mit-fogsz-megtanulni)
+- [Előfeltételek](#előfeltételek)
+- [A projekt struktúrájának megértése](#a-projekt-struktúrájának-megértése)
+- [A fő komponensek magyarázata](#a-fő-komponensek-magyarázata)
+  - [1. Fő alkalmazás](#1-fő-alkalmazás)
+  - [2. Számológép szolgáltatás](#2-számológép-szolgáltatás)
+  - [3. Közvetlen MCP kliens](#3-közvetlen-mcp-kliens)
+  - [4. Mesterséges intelligencia által vezérelt kliens](#4-mesterséges-intelligencia-által-vezérelt-kliens)
+- [A példák futtatása](#a-példák-futtatása)
+- [Hogyan működik az egész együtt](#hogyan-működik-az-egész-együtt)
+- [Következő lépések](#következő-lépések)
 
 ## Mit fogsz megtanulni
 
-Ez az útmutató bemutatja, hogyan építsünk kalkulátor szolgáltatást a Model Context Protocol (MCP) segítségével. Megérted:
+Ez az oktatóanyag elmagyarázza, hogyan építsünk egy számológép szolgáltatást a Model Context Protocol (MCP) használatával. Meg fogod érteni:
 
-- Hogyan hozz létre egy szolgáltatást, amelyet az AI eszközként használhat
-- Hogyan állítsd be a közvetlen kommunikációt MCP szolgáltatásokkal
-- Hogyan választhatnak az AI modellek automatikusan eszközöket
-- A közvetlen protokollhívások és az AI által segített interakciók közötti különbséget
+- Hogyan készíts szolgáltatást, amelyet a MI eszközként használhat
+- Hogyan állíts be közvetlen kommunikációt az MCP szolgáltatásokkal
+- Hogyan választhatnak automatikusan a MI modellek eszközöket
+- A közvetlen protokollhívások és a MI által segített interakciók közötti különbséget
 
 ## Előfeltételek
 
-Mielőtt elkezdenéd, győződj meg róla, hogy rendelkezel az alábbiakkal:
-- Telepített Java 21 vagy újabb verzió
+Mielőtt elkezdenéd, győződj meg róla, hogy:
+- Telepítve van Java 21 vagy újabb verzió
 - Maven a függőségkezeléshez
-- GitHub fiók személyes hozzáférési tokennel (PAT)
-- Alapvető Java és Spring Boot ismeretek
+- Egy Azure AI Foundry modell telepítése (állítsd be az `azd up` paranccsal — lásd [2. fejezet](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
+- Az [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) telepítve, bejelentkezve `az login` parancssal (kulcs nélküli hitelesítés)
+- Alapismeretek Java és Spring Boot témakörben
 
 ## A projekt struktúrájának megértése
 
-A kalkulátor projekt több fontos fájlt tartalmaz:
+A számológép projekt több fontos fájlt tartalmaz:
 
 ```
 calculator/
@@ -46,13 +47,13 @@ calculator/
     └── Bot.java                          # Simple chat interface
 ```
 
-## Főbb komponensek magyarázata
+## A fő komponensek magyarázata
 
 ### 1. Fő alkalmazás
 
 **Fájl:** `McpServerApplication.java`
 
-Ez a kalkulátor szolgáltatás belépési pontja. Egy standard Spring Boot alkalmazás, egy különleges kiegészítéssel:
+Ez a belépési pontja a számológép szolgáltatásunknak. Egy szokásos Spring Boot alkalmazás egy különleges kiegészítéssel:
 
 ```java
 @SpringBootApplication
@@ -69,16 +70,16 @@ public class McpServerApplication {
 }
 ```
 
-**Mit csinál:**
-- Elindít egy Spring Boot webkiszolgálót a 8080-as porton
-- Létrehoz egy `ToolCallbackProvider`-t, amely elérhetővé teszi a kalkulátor metódusait MCP eszközökként
-- Az `@Bean` annotáció jelzi a Spring számára, hogy ezt komponensként kezelje, amelyet más részek használhatnak
+**Mit csinál ez:**
+- Egy Spring Boot web szervert indít a 8080-as porton
+- Létrehoz egy `ToolCallbackProvider`-t, amely elérhetővé teszi számológép metódusainkat MCP eszközként
+- Az `@Bean` annotáció arra utasítja a Springet, hogy ezt egy olyan komponensként kezelje, amelyet más részek is használhatnak
 
-### 2. Kalkulátor szolgáltatás
+### 2. Számológép szolgáltatás
 
 **Fájl:** `CalculatorService.java`
 
-Itt történik minden matematikai művelet. Minden metódus `@Tool` annotációval van ellátva, hogy MCP-n keresztül elérhető legyen:
+Itt történik az összes matematikai művelet. Minden metódus `@Tool`-lal van megjelölve, hogy elérhető legyen MCP-n keresztül:
 
 ```java
 @Service
@@ -96,7 +97,7 @@ public class CalculatorService {
         return formatResult(a, "-", b, result);
     }
     
-    // More calculator operations...
+    // További számológép műveletek...
     
     private String formatResult(double a, String operator, double b, double result) {
         return String.format("%.2f %s %.2f = %.2f", a, operator, b, result);
@@ -104,29 +105,29 @@ public class CalculatorService {
 }
 ```
 
-**Főbb jellemzők:**
+**Fő jellemzők:**
 
-1. **`@Tool` Annotáció**: Ez jelzi az MCP-nek, hogy a metódus külső kliensek által hívható
-2. **Egyértelmű leírások**: Minden eszköz rendelkezik egy leírással, amely segíti az AI modelleket annak megértésében, mikor használják
-3. **Konzisztens visszatérési formátum**: Minden művelet ember által olvasható szöveget ad vissza, például "5.00 + 3.00 = 8.00"
-4. **Hibakezelés**: Nullával való osztás és negatív négyzetgyök esetén hibaüzeneteket ad vissza
+1. **`@Tool` annotáció**: Ez jelzi az MCP-nek, hogy ezt a metódust külső kliensek hívhatják meg
+2. **Világos leírások**: Minden eszköz tartalmaz leírást, ami segíti a MI modelleket annak megértésében, mikor használják azt
+3. **Egységes visszatérési formátum**: Minden művelet ember által olvasható stringet ad vissza, például "5.00 + 3.00 = 8.00"
+4. **Hibakezelés**: Nullával való osztás és negatív gyök szintén hibajelzést ad vissza
 
 **Elérhető műveletek:**
 - `add(a, b)` - Két szám összeadása
-- `subtract(a, b)` - Második szám kivonása az elsőből
-- `multiply(a, b)` - Két szám szorzása
-- `divide(a, b)` - Első szám osztása a másodikkal (nulla ellenőrzéssel)
-- `power(base, exponent)` - Alap kitevőre emelése
+- `subtract(a, b)` - Kivonja a másodikat az elsőből
+- `multiply(a, b)` - Két szám összeszorzása
+- `divide(a, b)` - Osztja az elsőt a másodikkal (nulla ellenőrzéssel)
+- `power(base, exponent)` - A bázist hatványra emeli
 - `squareRoot(number)` - Négyzetgyök számítása (negatív ellenőrzéssel)
-- `modulus(a, b)` - Osztás maradékának visszaadása
+- `modulus(a, b)` - Maradékos osztás eredménye
 - `absolute(number)` - Abszolút érték visszaadása
-- `help()` - Információ visszaadása az összes műveletről
+- `help()` - Információk az összes műveletről
 
 ### 3. Közvetlen MCP kliens
 
 **Fájl:** `SDKClient.java`
 
-Ez a kliens közvetlenül kommunikál az MCP szerverrel AI használata nélkül. Manuálisan hívja meg a kalkulátor funkcióit:
+Ez a kliens közvetlenül az MCP szerverrel kommunikál AI nélkül. Kézzel hív meg konkrét számológép funkciókat:
 
 ```java
 public class SDKClient {
@@ -142,11 +143,11 @@ public class SDKClient {
         var client = McpClient.sync(this.transport).build();
         client.initialize();
         
-        // List available tools
+        // Elérhető eszközök listázása
         ListToolsResult toolsList = client.listTools();
         System.out.println("Available Tools = " + toolsList);
         
-        // Call specific calculator functions
+        // Meghatározott számológép funkciók hívása
         CallToolResult resultAdd = client.callTool(
             new CallToolRequest("add", Map.of("a", 5.0, "b", 3.0))
         );
@@ -162,37 +163,42 @@ public class SDKClient {
 }
 ```
 
-**Mit csinál:**
-1. **Kapcsolódik** a kalkulátor szerverhez a `http://localhost:8080` címen a builder mintázat segítségével
-2. **Listázza** az összes elérhető eszközt (a kalkulátor funkcióinkat)
-3. **Hívja** meg a konkrét funkciókat pontos paraméterekkel
-4. **Közvetlenül kiírja** az eredményeket
+**Mit csinál ez:**
+1. **Csatlakozik** a számológép szerverhez a `http://localhost:8080` címen a builder mintával
+2. **Felsorolja** az összes elérhető eszközt (számológép funkcióinkat)
+3. **Hív** konkrét funkciókat pontos paraméterekkel
+4. **Kiírja** az eredményeket közvetlenül
 
-**Megjegyzés:** Ez a példa a Spring AI 1.1.0-SNAPSHOT függőséget használja, amely bevezette a builder mintázatot a `WebFluxSseClientTransport`-hoz. Ha régebbi stabil verziót használsz, lehet, hogy közvetlen konstruktort kell használnod.
+**Megjegyzés:** Ez a példa a Spring AI 1.1.0-SNAPSHOT függőséget használja, amely bevezette a builder mintát a `WebFluxSseClientTransport`-hoz. Ha régebbi stabil verziót használsz, lehet, hogy a közvetlen konstruktort kell használnod.
 
-**Mikor használd:** Ha pontosan tudod, milyen számítást szeretnél elvégezni, és programozottan akarod meghívni.
+**Mikor használd:** Amikor pontosan tudod, milyen számítást akarsz végezni, és programozottan akarod hívni.
 
-### 4. AI-alapú kliens
+### 4. Mesterséges intelligencia által vezérelt kliens
 
 **Fájl:** `LangChain4jClient.java`
 
-Ez a kliens egy AI modellt (GPT-4o-mini) használ, amely automatikusan eldönti, mely kalkulátor eszközöket használja:
+Ez a kliens egy MI modellt használ (GPT-4o-mini), amely automatikusan eldönti, melyik számológép eszközöket használja:
 
 ```java
 public class LangChain4jClient {
     
     public static void main(String[] args) throws Exception {
-        // Set up the AI model (using GitHub Models)
+        // Állítsa be az MI modellt (Azure AI Foundry, kulcs nélküli hitelesítés a Microsoft Entra ID-n keresztül)
+        String endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1";
+        String token = new DefaultAzureCredentialBuilder().build()
+                .getToken(new TokenRequestContext().addScopes("https://ai.azure.com/.default"))
+                .block().getToken();
         ChatLanguageModel model = OpenAiOfficialChatModel.builder()
-                .isGitHubModels(true)
-                .apiKey(System.getenv("GITHUB_TOKEN"))
+                .baseUrl(baseUrl)
+                .apiKey(token)
                 .modelName("gpt-4o-mini")
                 .build();
 
-        // Connect to our calculator MCP server
+        // Csatlakozás a számológép MCP szerverünkhöz
         McpTransport transport = new HttpMcpTransport.Builder()
                 .sseUrl("http://localhost:8080/sse")
-                .logRequests(true)  // Shows what the AI is doing
+                .logRequests(true)  // Megmutatja, mit csinál az MI
                 .logResponses(true)
                 .build();
 
@@ -200,18 +206,18 @@ public class LangChain4jClient {
                 .transport(transport)
                 .build();
 
-        // Give the AI access to our calculator tools
+        // Adjon hozzáférést az MI-nek a számológép eszközeinkhez
         ToolProvider toolProvider = McpToolProvider.builder()
                 .mcpClients(List.of(mcpClient))
                 .build();
 
-        // Create an AI bot that can use our calculator
+        // Hozzon létre egy MI botot, amely használhatja a számológépünket
         Bot bot = AiServices.builder(Bot.class)
                 .chatLanguageModel(model)
                 .toolProvider(toolProvider)
                 .build();
 
-        // Now we can ask the AI to do calculations in natural language
+        // Most már megkérhetjük az MI-t, hogy természetes nyelven végezzen számításokat
         String response = bot.chat("Calculate the sum of 24.5 and 17.3 using the calculator service");
         System.out.println(response);
 
@@ -221,32 +227,34 @@ public class LangChain4jClient {
 }
 ```
 
-**Mit csinál:**
-1. **Létrehoz** egy AI modellkapcsolatot a GitHub tokened segítségével
-2. **Kapcsolódik** az AI a kalkulátor MCP szerverhez
-3. **Hozzáférést biztosít** az AI-nak az összes kalkulátor eszközhöz
-4. **Lehetővé teszi** a természetes nyelvű kéréseket, például "Számold ki 24.5 és 17.3 összegét"
+**Mit csinál ez:**
+1. **Létrehoz** egy MI modell kapcsolatot a GitHub tokeneddel
+2. **Csatlakoztatja** az MI-t a számológép MCP szerverhez
+3. **Hozzáférést ad** az MI-nek az összes számológép eszközünkhöz
+4. **Engedélyezi** a természetes nyelvű kéréseket, például "Számold ki 24,5 és 17,3 összegét"
 
-**Az AI automatikusan:**
+**Az MI automatikusan:**
 - Megérti, hogy összeadást szeretnél
 - Kiválasztja az `add` eszközt
-- Meghívja az `add(24.5, 17.3)` metódust
-- Természetes válaszban adja vissza az eredményt
+- Meghívja az `add(24.5, 17.3)`-at
+- Visszaadja az eredményt természetes válasz formátumban
 
-## Példák futtatása
+## A példák futtatása
 
-### 1. lépés: Kalkulátor szerver indítása
+### 1. lépés: Indítsd el a számológép szervert
 
-Először állítsd be a GitHub tokened (szükséges az AI klienshez):
+Először jelentkezz be és állítsd be az Azure AI Foundry végpontodat (szükséges az MI klienshez — kulcs nélküli hitelesítés, nincs API kulcs):
 
 **Windows:**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 Indítsd el a szervert:
@@ -255,60 +263,62 @@ cd 04-PracticalSamples/calculator
 mvn clean spring-boot:run
 ```
 
-A szerver elindul a `http://localhost:8080` címen. Ezt kell látnod:
+A szerver a `http://localhost:8080` címen fog futni. Ezt kell látnod:
 ```
 Started McpServerApplication in X.XXX seconds
 ```
 
-### 2. lépés: Tesztelés közvetlen klienssel
+### 2. lépés: Teszteld a közvetlen klienst
 
-Egy **ÚJ** terminálban, miközben a szerver még fut, futtasd a közvetlen MCP klienst:
+Egy **ÚJ** terminálablakban, miközben a szerver fut, indítsd el a közvetlen MCP klienst:
 ```bash
 cd 04-PracticalSamples/calculator
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient" -Dexec.classpathScope=test
 ```
 
-Ezt fogod látni:
+Ilyen kimenetet fogsz látni:
 ```
 Available Tools = [add, subtract, multiply, divide, power, squareRoot, modulus, absolute, help]
 Add Result = 5.00 + 3.00 = 8.00
 Square Root Result = √16.00 = 4.00
 ```
 
-### 3. lépés: Tesztelés AI klienssel
+### 3. lépés: Teszteld az MI klienst
 
 ```bash
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient" -Dexec.classpathScope=test
 ```
 
-Látni fogod, hogy az AI automatikusan használja az eszközöket:
+Látni fogod, hogy az MI automatikusan használ eszközöket:
 ```
 The sum of 24.5 and 17.3 is 41.8.
 The square root of 144 is 12.
 ```
 
-### 4. lépés: MCP szerver leállítása
+### 4. lépés: Állítsd le az MCP szervert
 
-Ha befejezted a tesztelést, az AI klienst leállíthatod a `Ctrl+C` megnyomásával a termináljában. Az MCP szerver tovább fut, amíg le nem állítod.
-A szerver leállításához nyomd meg a `Ctrl+C`-t abban a terminálban, ahol fut.
+Ha végeztél a teszteléssel, leállíthatod az MI klienst a `Ctrl+C` billentyűkombinációval a terminálban. Az MCP szerver futni fog, amíg te le nem állítod.
+A szerver leállításához nyomd meg a `Ctrl+C`-t abban a terminálablakban, ahol fut.
 
-## Hogyan működik együtt minden
+## Hogyan működik az egész együtt
 
-Így néz ki a teljes folyamat, amikor az AI-tól megkérdezed: "Mennyi 5 + 3?":
+Íme a teljes folyamat, amikor megkérdezed az MI-től: „Mi az 5 + 3?”:
 
-1. **Te** természetes nyelven kérdezed az AI-t
-2. **AI** elemzi a kérésedet, és rájön, hogy összeadást szeretnél
-3. **AI** meghívja az MCP szervert: `add(5.0, 3.0)`
-4. **Kalkulátor szolgáltatás** elvégzi: `5.0 + 3.0 = 8.0`
-5. **Kalkulátor szolgáltatás** visszaadja: `"5.00 + 3.00 = 8.00"`
-6. **AI** megkapja az eredményt, és természetes válaszban formázza
-7. **Te** megkapod: "Az 5 és 3 összege 8"
+1. **Te** természetes nyelven kérdezel az MI-től
+2. **Az MI** elemzi a kérésed és felismeri, hogy összeadást akarsz
+3. **Az MI** meghívja az MCP szervert: `add(5.0, 3.0)`
+4. **A számológép szolgáltatás** végrehajtja: `5.0 + 3.0 = 8.0`
+5. **A számológép szolgáltatás** visszaadja: `"5.00 + 3.00 = 8.00"`
+6. **Az MI** megkapja az eredményt és természetes válaszzá alakítja
+7. **Te** ezt kapod: "Az 5 és 3 összege 8"
 
 ## Következő lépések
 
-További példákért lásd: [4. fejezet: Gyakorlati minták](../README.md)
+További példákért lásd a [4. fejezet: Gyakorlati példák](../README.md)-t
 
 ---
 
-**Felelősség kizárása**:  
-Ez a dokumentum az AI fordítási szolgáltatás [Co-op Translator](https://github.com/Azure/co-op-translator) segítségével lett lefordítva. Bár törekszünk a pontosságra, kérjük, vegye figyelembe, hogy az automatikus fordítások hibákat vagy pontatlanságokat tartalmazhatnak. Az eredeti dokumentum az eredeti nyelvén tekintendő hiteles forrásnak. Kritikus információk esetén javasolt professzionális emberi fordítást igénybe venni. Nem vállalunk felelősséget semmilyen félreértésért vagy téves értelmezésért, amely a fordítás használatából eredhet.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Jogi nyilatkozat**:
+Ez a dokumentum az AI fordítási szolgáltatás, a [Co-op Translator](https://github.com/Azure/co-op-translator) segítségével készült. Bár az pontosságra törekszünk, kérjük, vegye figyelembe, hogy az automatikus fordítások hibákat vagy pontatlanságokat tartalmazhatnak. Az eredeti dokumentum az anyanyelvén tekintendő hiteles forrásnak. Fontos információk esetén professzionális emberi fordítást javasolunk. Nem vállalunk felelősséget semmilyen félreértésért vagy téves értelmezésért, amely ebből a fordításból ered.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

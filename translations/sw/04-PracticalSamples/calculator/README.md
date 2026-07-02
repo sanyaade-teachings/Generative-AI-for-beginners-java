@@ -1,39 +1,40 @@
-# Mafunzo ya MCP Calculator kwa Anayeanza
+# MCP Calculator Tutorial kwa Waanzilishi
 
-## Jedwali la Yaliyomo
+## Meza ya Yaliyomo
 
-- [Unachojifunza](../../../../04-PracticalSamples/calculator)
-- [Mahitaji ya Awali](../../../../04-PracticalSamples/calculator)
-- [Kuelewa Muundo wa Mradi](../../../../04-PracticalSamples/calculator)
-- [Vipengele Muhimu Vilivyoelezwa](../../../../04-PracticalSamples/calculator)
-  - [1. Programu Kuu](../../../../04-PracticalSamples/calculator)
-  - [2. Huduma ya Calculator](../../../../04-PracticalSamples/calculator)
-  - [3. Mteja wa MCP wa Moja kwa Moja](../../../../04-PracticalSamples/calculator)
-  - [4. Mteja Anayetumia AI](../../../../04-PracticalSamples/calculator)
-- [Kuendesha Mifano](../../../../04-PracticalSamples/calculator)
-- [Jinsi Vyote Vinavyofanya Kazi Pamoja](../../../../04-PracticalSamples/calculator)
-- [Hatua Zifuatazo](../../../../04-PracticalSamples/calculator)
+- [Unachojifunza](#unachojifunza)
+- [Mahitaji ya Awali](#mahitaji-ya-awali)
+- [Kuelewa Muundo wa Mradi](#kuelewa-muundo-wa-mradi)
+- [Vipengele Muhimu Vilivyoelezewa](#vipengele-muhimu-vilivyoelezewa)
+  - [1. Programu Kuu](#1-programu-kuu)
+  - [2. Huduma ya Kihesabu](#2-huduma-ya-kihesabu)
+  - [3. Mteja wa MCP Mtandaoni](#3-mteja-wa-mcp-mtandaoni)
+  - [4. Mteja Aliyetumia AI](#4-mteja-aliyetumia-ai)
+- [Kukimbia Mifano](#kukimbia-mifano)
+- [Jinsi Yote Hufanya Kazi Pamoja](#jinsi-yote-hufanya-kazi-pamoja)
+- [Hatua Zinazofuata](#hatua-zinazofuata)
 
 ## Unachojifunza
 
-Mafunzo haya yanaelezea jinsi ya kujenga huduma ya calculator kwa kutumia Model Context Protocol (MCP). Utajifunza:
+Mafunzo haya yanaeleza jinsi ya kujenga huduma ya kihesabu kwa kutumia Model Context Protocol (MCP). Utaunda uelewa wa:
 
-- Jinsi ya kuunda huduma ambayo AI inaweza kutumia kama zana
+- Jinsi ya kuunda huduma ambayo AI inaweza kuitumia kama chombo
 - Jinsi ya kuanzisha mawasiliano ya moja kwa moja na huduma za MCP
-- Jinsi mifano ya AI inaweza kuchagua zana za kutumia kiotomatiki
-- Tofauti kati ya miito ya moja kwa moja ya itifaki na mwingiliano unaosaidiwa na AI
+- Jinsi mifano ya AI inaweza kuchagua moja kwa moja ni vifaa gani vitumike
+- Tofauti kati ya simu za moja kwa moja za itifaki na mwingiliano wenye msaada wa AI
 
 ## Mahitaji ya Awali
 
 Kabla ya kuanza, hakikisha una:
-- Java 21 au toleo la juu zaidi lililowekwa
+- Java 21 au zaidi imewekwa
 - Maven kwa usimamizi wa utegemezi
-- Akaunti ya GitHub yenye tokeni ya ufikiaji binafsi (PAT)
+- Uwekaji wa mfano wa Azure AI Foundry (uwekee kwa `azd up` — angalia [Sura ya 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
+- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), umeingia kwa `az login` (uthibitisho bila funguo)
 - Uelewa wa msingi wa Java na Spring Boot
 
 ## Kuelewa Muundo wa Mradi
 
-Mradi wa calculator una faili kadhaa muhimu:
+Mradi wa kihesabu una faili kadhaa muhimu:
 
 ```
 calculator/
@@ -46,13 +47,13 @@ calculator/
     └── Bot.java                          # Simple chat interface
 ```
 
-## Vipengele Muhimu Vilivyoelezwa
+## Vipengele Muhimu Vilivyoelezewa
 
 ### 1. Programu Kuu
 
 **Faili:** `McpServerApplication.java`
 
-Hii ni sehemu ya kuanzia ya huduma yetu ya calculator. Ni programu ya kawaida ya Spring Boot yenye nyongeza moja maalum:
+Huu ni mlango wa kuingilia wa huduma yetu ya kihesabu. Ni programu ya kawaida ya Spring Boot yenye nyongeza moja maalum:
 
 ```java
 @SpringBootApplication
@@ -69,16 +70,16 @@ public class McpServerApplication {
 }
 ```
 
-**Inachofanya:**
+**Hii hufanya nini:**
 - Inaendesha seva ya wavuti ya Spring Boot kwenye bandari 8080
-- Inaunda `ToolCallbackProvider` inayofanya mbinu za calculator zetu zipatikane kama zana za MCP
-- Anotesheni ya `@Bean` inaambia Spring kusimamia hii kama sehemu ambayo sehemu nyingine zinaweza kutumia
+- Inaunda `ToolCallbackProvider` inayofanya mbinu zetu za kihesabu zipatikane kama zana za MCP
+- Kielezi `@Bean` kinaambia Spring kusimamia kama sehemu ambayo sehemu zingine zinaweza kuitumia
 
-### 2. Huduma ya Calculator
+### 2. Huduma ya Kihesabu
 
 **Faili:** `CalculatorService.java`
 
-Hapa ndipo hesabu zote zinapofanyika. Kila mbinu imewekwa alama na `@Tool` ili iweze kupatikana kupitia MCP:
+Hapa ndipo hesabu zote hufanyika. Kila njia imeandikwa kwa `@Tool` ili iweze kupatikana kupitia MCP:
 
 ```java
 @Service
@@ -96,7 +97,7 @@ public class CalculatorService {
         return formatResult(a, "-", b, result);
     }
     
-    // More calculator operations...
+    // Operesheni zaidi za kalkuleta...
     
     private String formatResult(double a, String operator, double b, double result) {
         return String.format("%.2f %s %.2f = %.2f", a, operator, b, result);
@@ -104,29 +105,29 @@ public class CalculatorService {
 }
 ```
 
-**Vipengele Muhimu:**
+**Sifa kuu:**
 
-1. **Anotesheni ya `@Tool`**: Hii inaambia MCP kwamba mbinu hii inaweza kuitwa na wateja wa nje
-2. **Maelezo Wazi**: Kila zana ina maelezo yanayosaidia mifano ya AI kuelewa wakati wa kuitumia
-3. **Muundo wa Matokeo Thabiti**: Operesheni zote zinarudisha maandishi yanayosomeka kama "5.00 + 3.00 = 8.00"
-4. **Ushughulikiaji wa Makosa**: Mgawanyiko kwa sifuri na mizizi ya mraba hasi hurudisha ujumbe wa makosa
+1. **Kielezi cha `@Tool`**: Kinaonyesha MCP kwamba njia hii inaweza kuitwa na wateja wa nje
+2. **Maelezo ya Wazi**: Kila chombo kinaelezo kinachosaidia mifano ya AI kuelewa lini kiitumie
+3. **Muundo Thabiti wa Kurudisha**: Operesheni zote hurudisha mistari inayoweza kusomwa binadamu kama "5.00 + 3.00 = 8.00"
+4. **Shughulikiaji la Makosa**: Kugawanya kwa sifuri na mizizi hasi hurudisha ujumbe wa kosa
 
 **Operesheni Zinazopatikana:**
-- `add(a, b)` - Huongeza namba mbili
-- `subtract(a, b)` - Hutoa ya pili kutoka ya kwanza
-- `multiply(a, b)` - Huzidisha namba mbili
-- `divide(a, b)` - Hugawa ya kwanza kwa ya pili (na ukaguzi wa sifuri)
+- `add(a, b)` - Huongeza nambari mbili
+- `subtract(a, b)` - Hukata nambari ya pili kutoka ya kwanza
+- `multiply(a, b)` - Huzidisha nambari mbili
+- `divide(a, b)` - Hugaisha ya kwanza kwa ya pili (kwa ukaguzi wa sifuri)
 - `power(base, exponent)` - Huinua msingi kwa nguvu ya exponent
-- `squareRoot(number)` - Hukokotoa mizizi ya mraba (na ukaguzi wa hasi)
-- `modulus(a, b)` - Hutoa baki ya mgawanyiko
-- `absolute(number)` - Hutoa thamani kamili
-- `help()` - Hutoa taarifa kuhusu operesheni zote
+- `squareRoot(number)` - Hukokotoa mzizi wa mraba (kwa ukaguzi hasi)
+- `modulus(a, b)` - Hurudisha jinsi ya kuachwa kwa mgawanyo
+- `absolute(number)` - Hurudisha thamani kamili
+- `help()` - Hurudisha habari kuhusu operesheni zote
 
-### 3. Mteja wa MCP wa Moja kwa Moja
+### 3. Mteja wa MCP Mtandaoni
 
 **Faili:** `SDKClient.java`
 
-Mteja huyu huzungumza moja kwa moja na seva ya MCP bila kutumia AI. Unaita mbinu maalum za calculator kwa mikono:
+Mteja huyu husalimiana moja kwa moja na seva ya MCP bila kutumia AI. Huitisha kazi maalum za kihesabu kwa mikono:
 
 ```java
 public class SDKClient {
@@ -142,11 +143,11 @@ public class SDKClient {
         var client = McpClient.sync(this.transport).build();
         client.initialize();
         
-        // List available tools
+        // Orodhesha zana zinazopatikana
         ListToolsResult toolsList = client.listTools();
         System.out.println("Available Tools = " + toolsList);
         
-        // Call specific calculator functions
+        // Piga simu kwa kazi maalum za kifaa cha kuhesabu
         CallToolResult resultAdd = client.callTool(
             new CallToolRequest("add", Map.of("a", 5.0, "b", 3.0))
         );
@@ -162,37 +163,42 @@ public class SDKClient {
 }
 ```
 
-**Inachofanya:**
-1. **Inaunganisha** na seva ya calculator kwenye `http://localhost:8080` kwa kutumia muundo wa builder
-2. **Inaorodhesha** zana zote zinazopatikana (mbinu za calculator zetu)
-3. **Inaita** mbinu maalum na vigezo sahihi
+**Hii hufanya nini:**
+1. **Inaunganisha** na seva ya kihesabu kwenye `http://localhost:8080` kwa kutumia muundo wa builder
+2. **Inaorodhesha** zana zote zinazopatikana (kazi zetu za kihesabu)
+3. **Huitisha** kazi maalum kwa vigezo halisi
 4. **Inachapisha** matokeo moja kwa moja
 
-**Kumbuka:** Mfano huu unatumia utegemezi wa Spring AI 1.1.0-SNAPSHOT, ambao ulianzisha muundo wa builder kwa `WebFluxSseClientTransport`. Ikiwa unatumia toleo la zamani, unaweza kuhitaji kutumia constructor ya moja kwa moja badala yake.
+**Kumbuka:** Mfano huu hutumia utegemezi wa Spring AI 1.1.0-SNAPSHOT, ulioweka muundo wa builder kwa `WebFluxSseClientTransport`. Ikiwa unatumia toleo la zamani linalo thibitishwa, unaweza kuhitaji kutumia muundaji wa moja kwa moja badala yake.
 
-**Wakati wa kutumia hii:** Wakati unajua hasa hesabu unayotaka kufanya na unataka kuifanya kwa programu.
+**Lini kutumia hii:** Unapojua hasa hesabu unayotaka kufanya na unataka kuitisha programmatically.
 
-### 4. Mteja Anayetumia AI
+### 4. Mteja Aliyetumia AI
 
 **Faili:** `LangChain4jClient.java`
 
-Mteja huyu hutumia mfano wa AI (GPT-4o-mini) ambao unaweza kuamua kiotomatiki zana za calculator za kutumia:
+Mteja huyu hutumia mfano wa AI (GPT-4o-mini) ambaye anaweza moja kwa moja kuamua ni zana gani za kihesabu zitumike:
 
 ```java
 public class LangChain4jClient {
     
     public static void main(String[] args) throws Exception {
-        // Set up the AI model (using GitHub Models)
+        // Weka mfano wa AI (Azure AI Foundry, uthibitishaji bila funguo kupitia Microsoft Entra ID)
+        String endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1";
+        String token = new DefaultAzureCredentialBuilder().build()
+                .getToken(new TokenRequestContext().addScopes("https://ai.azure.com/.default"))
+                .block().getToken();
         ChatLanguageModel model = OpenAiOfficialChatModel.builder()
-                .isGitHubModels(true)
-                .apiKey(System.getenv("GITHUB_TOKEN"))
+                .baseUrl(baseUrl)
+                .apiKey(token)
                 .modelName("gpt-4o-mini")
                 .build();
 
-        // Connect to our calculator MCP server
+        // Unganisha na seva yetu ya kipimo MCP
         McpTransport transport = new HttpMcpTransport.Builder()
                 .sseUrl("http://localhost:8080/sse")
-                .logRequests(true)  // Shows what the AI is doing
+                .logRequests(true)  // Inaonyesha kile AI inachofanya
                 .logResponses(true)
                 .build();
 
@@ -200,18 +206,18 @@ public class LangChain4jClient {
                 .transport(transport)
                 .build();
 
-        // Give the AI access to our calculator tools
+        // Mpa AI ufikiaji wa zana zetu za kipimo
         ToolProvider toolProvider = McpToolProvider.builder()
                 .mcpClients(List.of(mcpClient))
                 .build();
 
-        // Create an AI bot that can use our calculator
+        // Unda roboti ya AI inayoweza kutumia kipimo chetu
         Bot bot = AiServices.builder(Bot.class)
                 .chatLanguageModel(model)
                 .toolProvider(toolProvider)
                 .build();
 
-        // Now we can ask the AI to do calculations in natural language
+        // Sasa tunaweza kumuomba AI kufanya mahesabu kwa lugha asilia
         String response = bot.chat("Calculate the sum of 24.5 and 17.3 using the calculator service");
         System.out.println(response);
 
@@ -221,32 +227,34 @@ public class LangChain4jClient {
 }
 ```
 
-**Inachofanya:**
-1. **Inaunda** muunganisho wa mfano wa AI kwa kutumia tokeni yako ya GitHub
-2. **Inaunganisha** AI na seva yetu ya calculator MCP
-3. **Inatoa** AI ufikiaji wa zana zote za calculator zetu
-4. **Inaruhusu** maombi ya lugha ya kawaida kama "Hesabu jumla ya 24.5 na 17.3"
+**Hii hufanya nini:**
+1. **Hutangaza** muunganiko wa mfano wa AI kwa kutumia tokeni yako ya GitHub
+2. **Inaunganisha** AI na seva yetu ya MCP ya kihesabu
+3. **Inampa** AI ufikiaji wa zana zote za kihesabu zetu
+4. **Inaruhusu** maombi kwa lugha ya asili kama "Hesabu jumla ya 24.5 na 17.3"
 
-**AI kiotomatiki:**
-- Inaelewa unataka kuongeza namba
-- Inachagua zana ya `add`
-- Inaita `add(24.5, 17.3)`
-- Inarudisha matokeo kwa majibu ya kawaida
+**AI hufanya moja kwa moja:**
+- Huelewa unataka kuongeza nambari
+- Huchagua chombo cha `add`
+- Huitisha `add(24.5, 17.3)`
+- Hurudisha matokeo kama jibu la asili
 
-## Kuendesha Mifano
+## Kukimbia Mifano
 
-### Hatua ya 1: Anzisha Seva ya Calculator
+### Hatua ya 1: Anzisha Seva ya Kihesabu
 
-Kwanza, weka tokeni yako ya GitHub (inayohitajika kwa mteja wa AI):
+Kwanza, ingia na weka anwani yako ya Azure AI Foundry (inahitajika kwa mteja wa AI — uthibitisho bila funguo, hakuna funguo za API):
 
 **Windows:**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 Anzisha seva:
@@ -255,33 +263,33 @@ cd 04-PracticalSamples/calculator
 mvn clean spring-boot:run
 ```
 
-Seva itaanza kwenye `http://localhost:8080`. Unapaswa kuona:
+Seva itaanza kwenye `http://localhost:8080`. Utauona:
 ```
 Started McpServerApplication in X.XXX seconds
 ```
 
-### Hatua ya 2: Jaribu na Mteja wa Moja kwa Moja
+### Hatua ya 2: Jaribu kwa Mteja wa Moja kwa Moja
 
-Katika **TERMINAL MPYA** huku Seva ikiwa bado inaendesha, endesha mteja wa MCP wa moja kwa moja:
+Katika terminal **MPYA** na Seva bado ikiwa inakimbia, endesha mteja wa MCP wa moja kwa moja:
 ```bash
 cd 04-PracticalSamples/calculator
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient" -Dexec.classpathScope=test
 ```
 
-Utaona matokeo kama:
+Utaona output kama:
 ```
 Available Tools = [add, subtract, multiply, divide, power, squareRoot, modulus, absolute, help]
 Add Result = 5.00 + 3.00 = 8.00
 Square Root Result = √16.00 = 4.00
 ```
 
-### Hatua ya 3: Jaribu na Mteja wa AI
+### Hatua ya 3: Jaribu kwa Mteja wa AI
 
 ```bash
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient" -Dexec.classpathScope=test
 ```
 
-Utaona AI ikitumia zana kiotomatiki:
+Utaona AI ikitumia zana moja kwa moja:
 ```
 The sum of 24.5 and 17.3 is 41.8.
 The square root of 144 is 12.
@@ -289,26 +297,28 @@ The square root of 144 is 12.
 
 ### Hatua ya 4: Funga Seva ya MCP
 
-Ukimaliza kujaribu, unaweza kusimamisha mteja wa AI kwa kubonyeza `Ctrl+C` kwenye terminal yake. Seva ya MCP itaendelea kuendesha hadi uisimamishe.
-Ili kusimamisha seva, bonyeza `Ctrl+C` kwenye terminal ambapo inaendesha.
+Unapomaliza kujaribu, unaweza kusitisha mteja wa AI kwa kubonyeza `Ctrl+C` kwenye terminal yake. Seva ya MCP itaendelea kazi mpaka usitishe wewe.
+Kusitisha seva, bonyeza `Ctrl+C` kwenye terminal inayoendesha.
 
-## Jinsi Vyote Vinavyofanya Kazi Pamoja
+## Jinsi Yote Hufanya Kazi Pamoja
 
-Hapa kuna mtiririko kamili unapouliza AI "Je, 5 + 3 ni ngapi?":
+Hii ni mfululizo kamili unapomuuliza AI "Ni 5 + 3 gani?":
 
-1. **Wewe** unauliza AI kwa lugha ya kawaida
+1. **Wewe** unauliza AI kwa lugha ya asili
 2. **AI** inachambua ombi lako na kugundua unataka kuongeza
-3. **AI** inaita seva ya MCP: `add(5.0, 3.0)`
-4. **Huduma ya Calculator** inafanya: `5.0 + 3.0 = 8.0`
-5. **Huduma ya Calculator** inarudisha: `"5.00 + 3.00 = 8.00"`
-6. **AI** inapokea matokeo na kuunda majibu ya kawaida
+3. **AI** huita seva ya MCP: `add(5.0, 3.0)`
+4. **Huduma ya Kihesabu** hufanya: `5.0 + 3.0 = 8.0`
+5. **Huduma ya Kihesabu** hurudisha: `"5.00 + 3.00 = 8.00"`
+6. **AI** hupokea matokeo na kutengeneza jibu la kawaida
 7. **Wewe** unapata: "Jumla ya 5 na 3 ni 8"
 
-## Hatua Zifuatazo
+## Hatua Zinazofuata
 
-Kwa mifano zaidi, angalia [Sura ya 04: Sampuli za vitendo](../README.md)
+Kwa mifano zaidi, angalia [Sura 04: Sampuli za Vitendo](../README.md)
 
 ---
 
-**Kanusho**:  
-Hati hii imetafsiriwa kwa kutumia huduma ya kutafsiri ya AI [Co-op Translator](https://github.com/Azure/co-op-translator). Ingawa tunajitahidi kuhakikisha usahihi, tafadhali fahamu kuwa tafsiri za kiotomatiki zinaweza kuwa na makosa au kutokuwa sahihi. Hati ya asili katika lugha yake ya awali inapaswa kuzingatiwa kama chanzo cha mamlaka. Kwa taarifa muhimu, tafsiri ya kitaalamu ya binadamu inapendekezwa. Hatutawajibika kwa kutoelewana au tafsiri zisizo sahihi zinazotokana na matumizi ya tafsiri hii.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Kionyozo**:
+Hati hii imetafsiriwa kwa kutumia huduma ya tafsiri ya AI [Co-op Translator](https://github.com/Azure/co-op-translator). Ingawa tunajitahidi kupata usahihi, tafadhali fahamu kwamba tafsiri za kiotomatiki zinaweza kuwa na makosa au upungufu wa usahihi. Hati ya asili katika lugha yake halisi inapaswa kuchukuliwa kama chanzo cha mamlaka. Kwa taarifa muhimu, tafsiri ya kitaalamu inayofanywa na binadamu inapendekezwa. Hatutojibu kwa kuelewa vibaya au tafsiri potofu zinazotokea kutokana na matumizi ya tafsiri hii.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

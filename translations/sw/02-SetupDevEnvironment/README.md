@@ -1,251 +1,224 @@
-# Kuweka Mazingira ya Maendeleo kwa AI ya Kizazi kwa Java
+# Kuweka Mazingira ya Maendeleo kwa AI ya Uzalishaji kwa Java
 
-> **Anza Haraka**: Andika Msimbo Katika Cloud kwa Dakika 2 - Ruka kwa [Mpangilio wa GitHub Codespaces](../../../02-SetupDevEnvironment) - hakuna usakinishaji wa ndani unahitajika na hutumia mifano ya github!
-
-> **Una nia ya Azure OpenAI?**, ona [Mwongozo wetu wa Mpangilio wa Azure OpenAI](getting-started-azure-openai.md) na hatua za kuunda rasilimali mpya ya Azure OpenAI.
+> **Mwanzoni Haraka:** Tumia mifano yako ya AI kwenye **Azure AI Foundry** kama msimbo kwa Bicep + `azd` kwa dakika chache — ona [Mwongozo wa Kuweka Azure AI Foundry](getting-started-azure-openai.md). Uthibitishaji ni **bila funguo** (Microsoft Entra ID), hivyo hakuna funguo za API za kusimamia.
 
 ## Utajifunza Nini
 
-- Weka mazingira ya maendeleo ya Java kwa programu za AI
-- Chagua na sanifu mazingira yako ya maendeleo unayopendelea (cloud-first na Codespaces, kontena la maendeleo la ndani, au mpangilio kamili wa ndani)
-- Jaribu mpangilio wako kwa kuunganishwa na Mifano ya GitHub
+- Kuandaa mazingira ya maendeleo ya Java kwa programu za AI
+- Kuchagua na kusanidi mazingira yako unayopendelea ya maendeleo (awali wingu kwa Codespaces, kontena ya maendeleo ya ndani, au usanidi kamili wa ndani)
+- Kuangalia usanidi wako kwa kuungana na mfano wa Azure AI Foundry
 
 ## Jedwali la Maudhui
 
-- [Utajifunza Nini](../../../02-SetupDevEnvironment)
-- [Utangulizi](../../../02-SetupDevEnvironment)
-- [Hatua ya 1: Weka Mazingira Yako ya Maendeleo](../../../02-SetupDevEnvironment)
-  - [Chaguo A: GitHub Codespaces (Inapendekezwa)](../../../02-SetupDevEnvironment)
-  - [Chaguo B: Kontena la Maendeleo la Ndani](../../../02-SetupDevEnvironment)
-  - [Chaguo C: Tumia Usakinishaji Wako wa Ndani Ulio Tayari](../../../02-SetupDevEnvironment)
-- [Hatua ya 2: Tengeneza Token ya Ufikiaji wa Binafsi GitHub](../../../02-SetupDevEnvironment)
-- [Hatua ya 3: Jaribu Mpangilio Wako](../../../02-SetupDevEnvironment)
-- [Kutatua Matatizo](../../../02-SetupDevEnvironment)
-- [Muhtasari](../../../02-SetupDevEnvironment)
-- [Hatua Zifuatazo](../../../02-SetupDevEnvironment)
+- [Utajifunza Nini](#utajifunza-nini)
+- [Utangulizi](#utangulizi)
+- [Hatua ya 1: Andaa Mazingira Yako ya Maendeleo](#hatua-1-andaa-mazingira-yako-ya-maendeleo)
+  - [Chaguo A: GitHub Codespaces (Inapendekezwa)](#chaguo-a-github-codespaces-inapendekezwa)
+  - [Chaguo B: Kontena ya Maendeleo ya Ndani](#chaguo-b-kontena-ya-maendeleo-ya-ndani)
+  - [Chaguo C: Tumia Usanidi Wako wa Ndani Uliopo](#chaguo-c-tumia-usanidi-wako-wa-ndani-uliopo)
+- [Hatua ya 2: Tumia Azure AI Foundry](#hatua-2-tumia-azure-ai-foundry)
+- [Hatua ya 3: Jaribu Usanidi Wako](#hatua-3-jaribu-usanidi-wako)
+- [Matatizo na Suluhisho](#matatizo-na-suluhisho)
+- [Muhtasari](#muhtasari)
+- [Hatua Zifuatazo](#hatua-zifuatazo)
 
 ## Utangulizi
 
-Sura hii itakuongoza kupitia kuanzisha mazingira ya maendeleo. Tutatumia **Mifano ya GitHub** kama mfano wetu kuu kwa sababu ni bure, rahisi kuanzisha kwa akaunti ya GitHub tu, haina haja ya kadi ya mkopo, na inatoa ufikiaji wa mifano mingi kwa majaribio.
+Sura hii itakuongoza kupitia kuandaa mazingira ya maendeleo. Tutatumia **Azure AI Foundry** kwa mifano yote katika kozi hii. Unatuma mifano kama msimbo kwa Bicep na Azure Developer CLI (`azd`), kisha unajiunga kwa **uthibitishaji bila funguo** (Microsoft Entra ID) — hakuna funguo za API za kunakili au kuvuja.
 
-**Hakuna usakinishaji wa ndani unahitajika!** Unaweza kuanza kuandika msimbo mara moja ukitumia GitHub Codespaces, inayotoa mazingira kamili ya maendeleo kwenye kivinjari chako.
+**Hakuna usanidi wa ndani unaohitajika!** Unaweza kutumia GitHub Codespaces, ambayo hutoa mazingira kamili ya maendeleo kwenye kivinjari chako, na kuitumia Foundry kutoka hapo.
 
-<img src="../../../translated_images/sw/models.cb07f8af0d724e4d.webp" alt="Picha ya skrini: Mifano ya GitHub" width="50%">
+Tunatumia **Azure AI Foundry** kwa kozi hii kwa sababu ni:
+- **Iliyopangwa kama msimbo** — `azd up` moja hutoa akaunti na uenezaji wa mifano
+- **Bila funguo** — thibitisha kwa kuingia kwako kwa Azure au utambulisho uliosimamiwa
+- **Tayari kwa uzalishaji** — msimbo ule ule unafanya kazi ndani na Azure
+- **Rahisi kubadilisha** — badilisha mifano kwa kubadilisha jina la uenezaji, si msimbo wako
 
-Tunapendekeza kutumia [**Mifano ya GitHub**](https://github.com/marketplace?type=models) kwa kozi hii kwa sababu ni:
-- **Bure** kuanza
-- **Rahisi** kuanzisha kwa akaunti ya GitHub tu
-- **Hakuna kadi ya mkopo** inahitajika
-- **Mifano mingi** inapatikana kwa majaribio
+> **Kumbuka**: Uenezaji wa Azure AI Foundry unalipishwa kwa tokeni (lipa unapotumia). Angalia [mwongozo wa kuanzisha Azure AI Foundry](getting-started-azure-openai.md) kwa maelezo ya utoaji, eneo, na gharama.
 
-> **Kumbuka**: Mifano ya GitHub inayotumiwa katika mafunzo haya ina mipaka hii ya bure:
-> - Maombi 15 kwa dakika (150 kwa siku)
-> - ~maneno 8,000 ya kuingiza, ~maneno 4,000 ya kutolewa kwa kila ombi
-> - Maombi 5 yanayofanya kazi kwa wakati mmoja
-> 
-> Kwa matumizi ya uzalishaji, boresha hadi Azure AI Foundry Models kwa akaunti yako ya Azure. Msimbo wako hauhitaji kubadilika. Angalia [nyaraka za Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/quickstart-github-models).
 
-## Hatua ya 1: Weka Mazingira Yako ya Maendeleo
+## Hatua 1: Andaa Mazingira Yako ya Maendeleo
 
 <a name="quick-start-cloud"></a>
 
-Tumetengeneza kontena la maendeleo lililosanifiwa tayari kupunguza muda wa kuanzisha na kuhakikisha una vifaa vyote muhimu kwa kozi hii ya AI ya Kizazi kwa Java. Chagua njia ya maendeleo unayopendelea:
+Tumetengeneza kontena la maendeleo lililosanidiwa tayari ili kupunguza muda wa kuanzisha na kuhakikisha una zana zote zinazohitajika kwa kozi hii ya AI ya Uzalishaji kwa Java. Chagua njia unayopendelea ya maendeleo:
 
-### Chaguzi za Mpangilio wa Mazingira:
+### Chaguzi za Kuandaa Mazingira:
 
 #### Chaguo A: GitHub Codespaces (Inapendekezwa)
 
-**Anza kuandika msimbo ndani ya dakika 2 - hakuna usakinishaji wa ndani unahitajika!**
+**Anza kuandika msimbo kwa dakika 2 - hakuna usanidi wa ndani unaohitajika!**
 
-1. Fanya fork ya hazina hii kwenye akaunti yako ya GitHub
-   > **Kumbuka**: Ikiwa unataka kuhariri usanidi msingi tafadhali angalia [Mpangilio wa Kontena ya Maendeleo](../../../.devcontainer/devcontainer.json)
-2. Bonyeza **Code** → kichupo cha **Codespaces** → **...** → **New with options...**
-3. Tumia chaguo-msingi – hii itachagua **Mpangilio wa kontena la maendeleo**: **Maz環ira ya Maendeleo ya AI ya Java ya Kizazi** devcontainer maalum iliyotengenezwa kwa kozi hii
-4. Bonyeza **Create codespace**
-5. Subiri takriban dakika 2 mpaka mazingira yako yatakapokuwa tayari
-6. Endelea kwa [Hatua ya 2: Tengeneza Token ya GitHub](../../../02-SetupDevEnvironment)
+1. Toa nakala ya hifadhi hii kwenye akaunti yako ya GitHub
+   > **Kumbuka**: Ikiwa unataka kuhariri usanidi wa msingi tafadhali angalia [Sanidi la Kontena la Maendeleo](../../../.devcontainer/devcontainer.json)
+2. Bofya **Code** → tabua **Codespaces** → **...** → **New with options...**
+3. Tumia chaguo za kawaida – hii itachagua **usanii wa kontena la maendeleo**: **Mazenviro ya Maendeleo ya AI ya Uzalishaji kwa Java** iliyotengenezwa maalum kwa kozi hii
+4. Bofya **Create codespace**
+5. Subiri takriban dakika 2 hadi mazingira yawe tayari
+6. Endelea na [Hatua ya 2: Tumia Azure AI Foundry](#hatua-2-tumia-azure-ai-foundry)
 
-<img src="../../../translated_images/sw/codespaces.9945ded8ceb431a5.webp" alt="Picha ya skrini: Orodha ndogo ya Codespaces" width="50%">
+<img src="../../../translated_images/sw/codespaces.9945ded8ceb431a5.webp" alt="Screenshot: Codespaces submenu" width="50%">
 
-<img src="../../../translated_images/sw/image.833552b62eee7766.webp" alt="Picha ya skrini: New with options" width="50%">
+<img src="../../../translated_images/sw/image.833552b62eee7766.webp" alt="Screenshot: New with options" width="50%">
 
-<img src="../../../translated_images/sw/codespaces-create.b44a36f728660ab7.webp" alt="Picha ya skrini: Chaguzi za kuunda codespace" width="50%">
+<img src="../../../translated_images/sw/codespaces-create.b44a36f728660ab7.webp" alt="Screenshot: Create codespace options" width="50%">
 
-> **Manufaa ya Codespaces**:
-> - Hakuna usakinishaji wa ndani unahitajika
-> - Inafanya kazi kwenye kifaa chochote chenye kivinjari
-> - Imesanifiwa kabla na zana na utegemezi zote
+
+> **Faida za Codespaces**:
+> - Hakuna usanidi wa ndani unaohitajika
+> - Hufanya kazi kwenye kifaa chochote chenye kivinjari
+> - Imesanidiwa kabla na zana zote na utegemezi
 > - Saa 60 za bure kwa mwezi kwa akaunti binafsi
-> - Mazingira thabiti kwa wanafunzi wote
+> - Mazingira thabiti kwa wote wanaojifunza
 
-#### Chaguo B: Kontena la Maendeleo la Ndani
+#### Chaguo B: Kontena ya Maendeleo ya Ndani
 
-**Kwa waendelezaji wanaopendelea maendeleo ya ndani kwa Docker**
+**Kwa waendelezaji wanaopendelea maendeleo ya ndani kwa kutumia Docker**
 
-1. Fanya fork na kloni hazina hii kwenye mashine yako ya ndani
-   > **Kumbuka**: Ikiwa unataka kuhariri usanidi msingi tafadhali angalia [Mpangilio wa Kontena ya Maendeleo](../../../.devcontainer/devcontainer.json)
+1. Toa nakala na uweke hifadhi hii kwenye mashine yako ya ndani
+   > **Kumbuka**: Ikiwa unataka kuhariri usanidi wa msingi tafadhali angalia [Sanidi la Kontena la Maendeleo](../../../.devcontainer/devcontainer.json)
 2. Sakinisha [Docker Desktop](https://www.docker.com/products/docker-desktop/) na [VS Code](https://code.visualstudio.com/)
-3. Sakinisha kiendelezi cha [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) katika VS Code
-4. Fungua folda ya hazina katika VS Code
-5. Ukipata arifa, bonyeza **Reopen in Container** (au tumia `Ctrl+Shift+P` → "Dev Containers: Reopen in Container")
-6. Subiri kontena lijenge na kuanza
-7. Endelea kwa [Hatua ya 2: Tengeneza Token ya GitHub](../../../02-SetupDevEnvironment)
+3. Sakinisha [kiendelezi cha Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) katika VS Code
+4. Fungua folda ya hifadhi katika VS Code
+5. Unapoulizwa, bofya **Reopen in Container** (au tumia `Ctrl+Shift+P` → "Dev Containers: Reopen in Container")
+6. Subiri kontena lijenge na kuanzisha
+7. Endelea na [Hatua ya 2: Tumia Azure AI Foundry](#hatua-2-tumia-azure-ai-foundry)
 
-<img src="../../../translated_images/sw/devcontainer.21126c9d6de64494.webp" alt="Picha ya skrini: Mpangilio wa kontena la maendeleo" width="50%">
+<img src="../../../translated_images/sw/devcontainer.21126c9d6de64494.webp" alt="Screenshot: Dev container setup" width="50%">
 
-<img src="../../../translated_images/sw/image-3.bf93d533bbc84268.webp" alt="Picha ya skrini: Ujenzi wa kontena la maendeleo umekamilika" width="50%">
+<img src="../../../translated_images/sw/image-3.bf93d533bbc84268.webp" alt="Screenshot: Dev container build complete" width="50%">
 
-#### Chaguo C: Tumia Usakinishaji Wako wa Ndani Ulio Tayari
+#### Chaguo C: Tumia Usanidi Wako wa Ndani Uliopo
 
-**Kwa waendelezaji wenye mazingira ya Java tayari**
+**Kwa waendelezaji wenye mazingira ya Java waliowekeza tayari**
 
-Mahitaji:
-- [Java 21+](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html) 
+Mambo yanayohitajika:
+- [Java 21+](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html)
 - [Maven 3.9+](https://maven.apache.org/download.cgi)
 - [VS Code](https://code.visualstudio.com) au IDE unayopendelea
 
 Hatua:
-1. Kloni hazina hii kwenye mashine yako ya ndani
-2. Fungua mradi kwenye IDE yako
-3. Endelea kwa [Hatua ya 2: Tengeneza Token ya GitHub](../../../02-SetupDevEnvironment)
+1. Nakili hifadhi hii kwenye mashine yako ya ndani
+2. Fungua mradi katika IDE yako
+3. Endelea na [Hatua ya 2: Tumia Azure AI Foundry](#hatua-2-tumia-azure-ai-foundry)
 
-> **Ushauri wa Pro**: Kama una mashine yenye sifa za chini lakini unataka kutumia VS Code ndani ya ndani, tumia GitHub Codespaces! Unaweza kuunganisha VS Code yako ya ndani na Codespace iliyohifadhiwa kwenye wingu kwa ubora bora wa pande zote mbili.
+> **Vidokezo vya Mtaalamu**: Kama una mashine yenye uwezo mdogo lakini unahitaji VS Code kwa ndani, tumia GitHub Codespaces! Unaweza kuunganisha VS Code yako ya ndani na Codespace iliyopo kwenye wingu kwa faida za pande zote mbili.
 
-<img src="../../../translated_images/sw/image-2.fc0da29a6e4d2aff.webp" alt="Picha ya skrini: tifauti ya mfano wa devcontainer wa ndani" width="50%">
+<img src="../../../translated_images/sw/image-2.fc0da29a6e4d2aff.webp" alt="Screenshot: created local devcontainer instance" width="50%">
 
-## Hatua ya 2: Tengeneza Token ya Ufikiaji wa Binafsi wa GitHub
 
-1. Nenda kwenye [Mipangilio ya GitHub](https://github.com/settings/profile) na chagua **Settings** kutoka kwenye menyu yako ya wasifu.
-2. Kwenye upau wa kushoto, bonyeza **Developer settings** (kawaida iko chini).
-3. Chini ya **Personal access tokens**, bonyeza **Fine-grained tokens** (au fuata hii kiungo moja kwa moja [link](https://github.com/settings/personal-access-tokens)).
-4. Bonyeza **Generate new token**.
-5. Chini ya "Token name", toa jina linaloelezea (mfano: `GenAI-Java-Course-Token`).
-6. Weka tarehe ya kumalizika (inapendekezwa: siku 7 kwa mbinu bora za usalama).
-7. Chini ya "Resource owner", chagua akaunti yako ya mtumiaji.
-8. Chini ya "Repository access", chagua repositori unazotaka kutumia na Mifano ya GitHub (au "All repositories" ikiwa ni lazima).
-9. Chini ya "Account permissions", tafuta **Models** na iweze kwa **Read-only**.
-10. Bonyeza **Generate token**.
-11. **Nakili na uhifadhi token yako sasa** – hautaiwona tena!
+## Hatua 2: Tumia Azure AI Foundry
 
-> **Ushauri wa Usalama**: Tumia wigo mdogo unaohitajika na muda mfupi wa kumalizika kwa token zako za ufikiaji.
+Tuma mifano ya AI ya kozi kwenye Azure AI Foundry kama msimbo. Kutoka kwenye mzizi wa hifadhi:
 
-## Hatua ya 3: Jaribu Mpangilio Wako kwa Mfano wa Mifano ya GitHub
+```bash
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
+```
 
-Mara mazingira yako ya maendeleo yatakapokuwa tayari, hebu jaribu ushirikiano wa Mifano ya GitHub na mfano wetu wa programu katika [`02-SetupDevEnvironment/examples/github-models`](../../../02-SetupDevEnvironment/examples/github-models).
+`azd` linauliza jina la mazingira na eneo, linatuma akaunti ya Azure AI Foundry yenye uenezaji wa `gpt-4o-mini` na `text-embedding-3-small`, na linaandika kiunganishi kwenye `.env` ya mfano — yote kwa uthibitishaji wa **bila funguo** (hakuna funguo za API).
+
+> **Mwongozo kamili:** Angalia [Mwongozo wa Kuweka Azure AI Foundry](getting-started-azure-openai.md) kwa mahitaji, mbadala ya mkono (portal), mwongozo wa eneo, na maelezo ya gharama/usafishaji.
+
+## Hatua 3: Jaribu Usanidi Wako
+
+Mara mifano yako ya Foundry itakapowekwa, jaribu muunganisho kwa programu ya mfano katika [`02-SetupDevEnvironment/examples/basic-chat-azure`](../../../02-SetupDevEnvironment/examples/basic-chat-azure).
 
 1. Fungua terminal katika mazingira yako ya maendeleo.
-2. Nenda kwenye mfano wa Mifano ya GitHub:
+2. Elekea kwenye mfano:
    ```bash
-   cd 02-SetupDevEnvironment/examples/github-models
+   cd 02-SetupDevEnvironment/examples/basic-chat-azure
    ```
-3. Weka token yako ya GitHub kama mazingira ya mazingira:
+3. Hakikisha umeingia (uthibitishaji bila funguo unahitaji tokeni):
    ```bash
-   # macOS/Linux
-   export GITHUB_TOKEN=your_token_here
-   
-   # Windows (Kiprompti cha Amri)
-   set GITHUB_TOKEN=your_token_here
-   
-   # Windows (PowerShell)
-   $env:GITHUB_TOKEN="your_token_here"
+   az login
    ```
-
+   > Ikiwa ulifanya `azd up`, faili `.env` yenye kiunganishi tayari imeandikwa.
 4. Endesha programu:
    ```bash
-   mvn compile exec:java -Dexec.mainClass="com.example.githubmodels.App"
+   mvn clean spring-boot:run
    ```
 
-Unapaswa kuona matokeo yanayofanana na:
-```text
-Using model: gpt-4.1-nano
-Sending request to GitHub Models...
-Response: Hello World!
-```
+Unapaswa kuona majibu kutoka kwenye mfano wa `gpt-4o-mini`.
 
 ### Kuelewa Msimbo wa Mfano
 
-Kwanza, tuelewe tulichofanya. Mfano chini ya `examples/github-models` unatumia OpenAI Java SDK kuungana na Mifano ya GitHub:
+Mfano chini ya `examples/basic-chat-azure` ni programu ya Spring Boot inayotumia **Spring AI** kuungana na Azure AI Foundry kwa uthibitishaji bila funguo.
 
-**Msimbo huu unafanya:**
-- **Kuungana** na Mifano ya GitHub ukitumia token yako ya ufikiaji binafsi
-- **Kutuma** ujumbe rahisi "Say Hello World!" kwa mfano wa AI
-- **Kupokea** na kuonyeshea majibu ya AI
-- **Kuhakikisha** mpangilio wako unafanya kazi vizuri
+**Msimbo huu hufanya:**
+- **Kuunganisha** na Azure AI Foundry kwa kutumia kuingia kwako Azure (Microsoft Entra ID) — hakuna funguo za API
+- **Kutuma** ombi kwa mfano wa `gpt-4o-mini`
+- **Kupokea** na kuonyesha jibu la AI
+- **Kukagua** kuwa usanidi wako unafanya kazi sawa
 
-**Tegemezi Muhimu** (katika `pom.xml`):
+**Tegemezi Mwaka** (katika `pom.xml`):
 ```xml
 <dependency>
-    <groupId>com.openai</groupId>
-    <artifactId>openai-java</artifactId>
-    <version>2.12.0</version>
+    <groupId>org.springframework.ai</groupId>
+    <artifactId>spring-ai-starter-model-azure-openai</artifactId>
 </dependency>
 ```
 
-**Msimbo Mkuu** (`App.java`):
-```java
-// Unganisha na Modeli za GitHub kwa kutumia OpenAI Java SDK
-OpenAIClient client = OpenAIOkHttpClient.builder()
-    .apiKey(pat)
-    .baseUrl("https://models.inference.ai.azure.com")
-    .build();
-
-// Unda ombi la kukamilisha mazungumzo
-ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
-    .model(modelId)
-    .addSystemMessage("You are a concise assistant.")
-    .addUserMessage("Say Hello World!")
-    .build();
-
-// Pata jibu la AI
-ChatCompletion response = client.chat().completions().create(params);
-System.out.println("Response: " + response.choices().get(0).message().content().orElse("No response content"));
+**Usanidi** (`application.yml`):
+```yaml
+spring:
+  ai:
+    azure:
+      openai:
+        # Endpoint only - no api-key. Spring AI uses DefaultAzureCredential (keyless).
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 ## Muhtasari
 
-Nzuri! Sasa una kila kitu kimewekwa:
+Vizuri! Sasa una kila kitu kimesanidiwa:
 
-- Umetengeneza Token ya Ufikiaji wa Binafsi wa GitHub yenye ruhusa sahihi kwa ufikiaji wa mfano wa AI
-- Umeendesha mazingira yako ya maendeleo ya Java (iwe Codespaces, kontena la maendeleo, au ndani ya mashine)
-- Umeungana na Mifano ya GitHub ukitumia OpenAI Java SDK kwa maendeleo ya bure ya AI
-- Umejaribu kila kitu kinavyofanya kazi na mfano rahisi unaozungumza na mifano ya AI
+- Mifano ya Azure AI Foundry tumeituma kama msimbo kwa Bicep + `azd`
+- Mazingira yako ya maendeleo ya Java yanaendesha (iwe ni Codespaces, kontena za maendeleo, au ndani)
+- Umeunganisha na Azure AI Foundry kwa uthibitishaji bila funguo (Microsoft Entra ID) — hakuna funguo za API
+- Umejaribu kila kitu kinafanya kazi kwa mfano rahisi unaozungumza na mfano wako
 
 ## Hatua Zifuatazo
 
-[Sura ya 3: Mbinu za Msingi za AI ya Kizazi](../03-CoreGenerativeAITechniques/README.md)
+[Sura ya 3: Mbinu za Msingi za AI ya Uzalishaji](../03-CoreGenerativeAITechniques/README.md)
 
-## Kutatua Matatizo
+## Matatizo na Suluhisho
 
 Una matatizo? Hapa kuna matatizo ya kawaida na suluhisho:
 
-- **Token haifanyi kazi?** 
-  - Hakikisha ume nakili token yote bila nafasi za ziada
-  - Hakiki token ime wekwa vizuri kama mazingira ya mazingira
-  - Hakikisha token yako ina ruhusa sahihi (Models: Read-only)
+- **Uthibitishaji unaoshindwa (401/403)?** 
+  - Endesha `az login` — uthibitishaji ni bila funguo, hivyo lazima uingie
+  - Hakikisha akaunti yako ina jukumu la **Cognitive Services OpenAI User** kwenye rasilimali
+  - Ikiwa umeanza tu, subiri dakika ili usambazaji wa jukumu ufanyike
 
-- **Maven haipatikani?** 
-  - Ikiwa unatumia dev containers/Codespaces, Maven inapaswa kuwa imewekwa kabla
-  - Kwa mpangilio wa ndani, hakikisha Java 21+ na Maven 3.9+ vimesakinishwa
+- **Maven haioniwi?** 
+  - Ikiwa unatumia kontena za maendeleo/Codespaces, Maven inapaswa kuwa imewekwa
+  - Kwa usanidi wa ndani, hakikisha Java 21+ na Maven 3.9+ zimesakinishwa
   - Jaribu `mvn --version` kuthibitisha usakinishaji
 
-- **Masuala ya muunganisho?** 
-  - Hakiki muunganisho wako wa intaneti
-  - Hakikisha GitHub inapatikana kutoka mtandao wako
-  - Hakikisha hauko nyuma ya firewall inayozuia mhimili wa Mifano ya GitHub
+- **`azd` haioniwi au uteuzi unashindwa?** 
+  - Sakinisha [Azure Developer CLI](https://aka.ms/azure-dev/install) na endesha `azd auth login`
+  - Chagua eneo ambapo `gpt-4o-mini` ipo (k.m. `eastus2`)
+  - Angalia [mwongozo wa kuanzisha Azure AI Foundry](getting-started-azure-openai.md) kwa maelezo
 
-- **Kontena la maendeleo halianzi?** 
-  - Hakikisha Docker Desktop inaendesha (kwa maendeleo ya ndani)
+- **Kontena ya maendeleo haianzi?** 
+  - Hakikisha Docker Desktop inaendeshwa (kwa maendeleo ya ndani)
   - Jaribu kujenga upya kontena: `Ctrl+Shift+P` → "Dev Containers: Rebuild Container"
 
-- **Makosa ya uundaji wa programu?**
-  - Hakikisha uko kwenye saraka sahihi: `02-SetupDevEnvironment/examples/github-models`
-  - Jaribu safisha na uunde tena: `mvn clean compile`
+- **Makosa ya kukusanya programu?**
+  - Hakikisha uko katika folda sahihi: `02-SetupDevEnvironment/examples/basic-chat-azure`
+  - Jaribu kusafisha na kujenga tena: `mvn clean compile`
 
-> **Unahitaji msaada?**: Bado una matatizo? Fungua issue kwenye hazina na tutakusaidia.
+> **Unahitaji msaada?**: Bado unapata matatizo? Fungua tatizo kwenye hifadhi tutakusaidia.
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Hati ya Kutolewa Majukumu**:
-Hati hii imetafsiriwa kwa kutumia huduma ya tafsiri ya AI [Co-op Translator](https://github.com/Azure/co-op-translator). Ingawa tunajitahidi kupata usahihi, tafadhali fahamu kwamba tafsiri za kiotomatiki zinaweza kuwa na makosa au kutoeleweka kwa usahihi. Hati ya asili katika lugha yake halali inapaswa kuchukuliwa kama chanzo cha mamlaka. Kwa taarifa muhimu, tafsiri ya mtaalamu wa kibinadamu inapendekezwa. Hatuzuiliwi kwa kutoelewana au tafsiri potofu zitokanazo na matumizi ya tafsiri hii.
+**Kionyozo**:
+Hati hii imetafsiriwa kwa kutumia huduma ya tafsiri ya AI [Co-op Translator](https://github.com/Azure/co-op-translator). Ingawa tunajitahidi kupata usahihi, tafadhali fahamu kwamba tafsiri za kiotomatiki zinaweza kuwa na makosa au upungufu wa usahihi. Hati ya asili katika lugha yake halisi inapaswa kuchukuliwa kama chanzo cha mamlaka. Kwa taarifa muhimu, tafsiri ya kitaalamu inayofanywa na binadamu inapendekezwa. Hatutojibu kwa kuelewa vibaya au tafsiri potofu zinazotokea kutokana na matumizi ya tafsiri hii.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

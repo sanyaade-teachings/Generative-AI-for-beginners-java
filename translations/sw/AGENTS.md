@@ -2,7 +2,7 @@
 
 ## Muhtasari wa Mradi
 
-Hii ni hifadhi ya kielimu kwa ajili ya kujifunza maendeleo ya Generative AI kwa kutumia Java. Inatoa kozi ya vitendo inayoshughulikia Large Language Models (LLMs), uhandisi wa maelekezo, embeddings, RAG (Retrieval-Augmented Generation), na Model Context Protocol (MCP).
+Hii ni hazina ya elimu kwa kujifunza maendeleo ya AI Inayozalisha kwa kutumia Java. Inatoa kozi kamili ya vitendo inayojumuisha Modeli Kubwa za Lugha (LLMs), uhandisi wa prompti, uingizaji data, RAG (Retrieval-Augmented Generation), na Itifaki ya Muktadha wa Modeli (MCP).
 
 **Teknolojia Muhimu:**
 - Java 21
@@ -10,66 +10,69 @@ Hii ni hifadhi ya kielimu kwa ajili ya kujifunza maendeleo ya Generative AI kwa 
 - Spring AI 1.1.x
 - Maven
 - LangChain4j
-- GitHub Models, Azure OpenAI, na OpenAI SDKs
+- Azure AI Foundry, Azure OpenAI, na OpenAI SDKs
 
-**Muundo wa Kijarida:**
-- Programu nyingi za Spring Boot zinazojitegemea zimepangwa kwa sura
-- Miradi ya mfano inayoonyesha mifumo tofauti ya AI
-- Tayari kwa GitHub Codespaces na kontena za maendeleo zilizosanidiwa awali
+**Mimknimu:**
+- Programu nyingi za Spring Boot za kujitegemea zilizopangwa kwa sura
+- Miradi ya sampuli inaonyesha mifumo tofauti ya AI
+- Tayari kwa GitHub Codespaces na kontena za maendeleo zilizopangwa awali
 
 ## Amri za Usanidi
 
-### Mahitaji ya Awali
-- Java 21 au zaidi
+### Mahitaji Kabla
+- Java 21 au juu
 - Maven 3.x
-- Token ya ufikiaji wa kibinafsi ya GitHub (kwa GitHub Models)
-- Hiari: Hati za Azure OpenAI
+- Uanachama wa Azure na uanzishaji wa mfano wa Azure AI Foundry (patanisha na `azd up`)
+- Azure CLI (`az`) na Azure Developer CLI (`azd`), umeingia kwa uthibitisho usio na funguo
 
 ### Usanidi wa Mazingira
 
-**Chaguo 1: GitHub Codespaces (Inapendekezwa)**
+**Chaguo 1: GitHub Codespaces (Inayopendekezwa)**
 ```bash
-# Fork the repository and create a codespace from GitHub UI
-# The dev container will automatically install all dependencies
-# Wait ~2 minutes for environment setup
+# Tenganisha hazina na unda nafasi ya msimbo kutoka UI ya GitHub
+# Kontena la maendeleo litaweka kiotomatiki utegemezi wote
+# Subiri takriban dakika 2 kwa ajili ya usanidi wa mazingira
 ```
 
-**Chaguo 2: Kontena ya Maendeleo ya Kwenye Kompyuta**
+**Chaguo 2: Kontena ya Maendeleo ya Mbali**
 ```bash
-# Clone repository
+# Nakili hazina
 git clone https://github.com/microsoft/Generative-AI-for-beginners-java.git
 cd Generative-AI-for-beginners-java
 
-# Open in VS Code with Dev Containers extension
-# Reopen in Container when prompted
+# Fungua katika VS Code kwa nyongeza ya Dev Containers
+# Fungua tena ndani ya Kontena wakati unapoulizwa
 ```
 
-**Chaguo 3: Usanidi wa Kwenye Kompyuta**
+**Chaguo 3: Usanidi wa Mbali**
 ```bash
-# Install dependencies
+# Sakinisha utegemezi
 sudo apt-get update
 sudo apt-get install -y maven openjdk-21-jdk
 
-# Verify installation
+# Thibitisha ufungaji
 java -version
 mvn -version
 ```
 
 ### Usanidi
 
-**Usanidi wa Token ya GitHub:**
+**Usanidi wa Azure AI Foundry (bila funguo, unaopendekezwa):**
 ```bash
-# Create a GitHub Personal Access Token
-# Set environment variable
-export GITHUB_TOKEN="your-token-here"
+# Toa akaunti ya Foundry + usambazaji wa modeli kama msimbo
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
+# azd inaandika examples/basic-chat-azure/.env na kiunganishi chako (bila funguo)
 ```
 
-**Usanidi wa Azure OpenAI (Hiari):**
+**Usanidi wa mwisho kwa mwisho kwa mkono:**
 ```bash
-# For examples using Azure OpenAI
+# Ikiwa hukutumia azd, weka sehemu ya mwisho mwenyewe (uthibitishaji unabaki bila kufungua funguo kupitia az login)
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# Hariri .env: AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com/
 ```
 
 ## Mtiririko wa Maendeleo
@@ -107,34 +110,34 @@ mvn clean install
 ```bash
 cd 04-PracticalSamples/calculator
 mvn spring-boot:run
-# Server runs on http://localhost:8080
+# Seva inaendesha kwenye http://localhost:8080
 ```
 
-**Kuendesha Mifano ya Wateja:**
+**Kuendesha Mifano ya Mteja:**
 ```bash
-# After starting the server in another terminal
+# Baada ya kuanzisha seva kwenye terminali nyingine
 cd 04-PracticalSamples/calculator
 
-# Direct MCP client
+# Mteja wa MCP wa moja kwa moja
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient"
 
-# AI-powered client (requires GITHUB_TOKEN)
+# Mteja aliyewezeshwa na AI (inahitaji AZURE_OPENAI_ENDPOINT + az login)
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient"
 
-# Interactive bot
+# Roboti ya ushirikiano
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.Bot"
 ```
 
-### Upakiaji wa Haraka
-Spring Boot DevTools imejumuishwa katika miradi inayounga mkono upakiaji wa haraka:
+### Ufrishaji wa Haraka (Hot Reload)
+Spring Boot DevTools imejumuishwa katika miradi inayounga mkono ufrishaji wa haraka:
 ```bash
-# Changes to Java files will automatically reload when saved
+# Mabadiliko kwenye faili za Java yatajirudisha moja kwa moja mara tu yanapohifadhiwa
 mvn spring-boot:run
 ```
 
-## Maelekezo ya Kupima
+## Maelekezo ya Upimaji
 
-### Kuendesha Majaribio
+### Kuendesha Jaribio
 
 **Endesha majaribio yote katika mradi:**
 ```bash
@@ -142,50 +145,50 @@ cd [project-directory]
 mvn test
 ```
 
-**Endesha majaribio na matokeo ya kina:**
+**Endesha majaribio na maelezo ya kina:**
 ```bash
 mvn test -X
 ```
 
-**Endesha darasa maalum la majaribio:**
+**Endesha darasa la jaribio mahususi:**
 ```bash
 mvn test -Dtest=CalculatorServiceTest
 ```
 
-### Muundo wa Majaribio
+### Muundo wa Jaribio
 - Faili za majaribio zinatumia JUnit 5 (Jupiter)
-- Madarasa ya majaribio yapo katika `src/test/java/`
-- Mifano ya wateja katika mradi wa calculator ipo katika `src/test/java/com/microsoft/mcp/sample/client/`
+- Madarasa ya majaribio yanafanyika katika `src/test/java/`
+- Mifano ya wateja katika mradi wa kalkuleta iko katika `src/test/java/com/microsoft/mcp/sample/client/`
 
-### Kupima kwa Mkono
-Mifano mingi ni programu za maingiliano zinazohitaji kupimwa kwa mkono:
+### Upimaji wa Mkono
+Mifano mingi ni programu za kushirikiana zinazohitaji upimaji wa mkono:
 
 1. Anzisha programu kwa `mvn spring-boot:run`
-2. Pima sehemu za mwisho au fanya maingiliano na CLI
-3. Hakikisha tabia inayotarajiwa inalingana na nyaraka katika README.md ya kila mradi
+2. Jaribu vituo vya mwisho au shirikiana na CLI
+3. Thibitisha tabia inayotarajiwa inalingana na nyaraka katika README.md ya kila mradi
 
-### Kupima na GitHub Models
-- Kiwango cha bure: maombi 15 kwa dakika, 150 kwa siku
-- Maombi 5 yanayofanyika kwa wakati mmoja
-- Pima uchujaji wa maudhui kwa mifano ya AI inayowajibika
+### Upimaji kwa Azure AI Foundry
+- Ingia kwa `az login` kabla ya kuendesha mifano (uthibitisho usio na funguo)
+- Hakikisha akaunti yako ina sehemu ya Cognitive Services OpenAI User kwenye rasilimali
+- Jaribu uchujaji wa maudhui kwa mfano wa AI unaowajibika katika Sura ya 5
 
-## Miongozo ya Mtindo wa Nambari
+## Mwongozo wa Mtindo wa Msimbo
 
-### Mikataba ya Java
-- **Toleo la Java:** Java 21 na vipengele vya kisasa
-- **Mtindo:** Fuata mikataba ya kawaida ya Java
+### Miongozo ya Java
+- **Toleo la Java:** Java 21 na sifa za kisasa
+- **Mtindo:** Fuata kanuni za kawaida za Java
 - **Majina:** 
   - Madarasa: PascalCase
-  - Mbinu/variables: camelCase
-  - Constants: UPPER_SNAKE_CASE
-  - Majina ya pakiti: herufi ndogo
+  - Mbinu/mbadiliko: camelCase
+  - Miskani: UPPER_SNAKE_CASE
+  - Majina ya paket: herufi ndogo
 
 ### Mifumo ya Spring Boot
 - Tumia `@Service` kwa mantiki ya biashara
-- Tumia `@RestController` kwa sehemu za mwisho za REST
+- Tumia `@RestController` kwa vituo vya REST
 - Usanidi kupitia `application.yml` au `application.properties`
-- Vigezo vya mazingira vinapendekezwa badala ya maadili yaliyowekwa moja kwa moja
-- Tumia `@Tool` kwa mbinu zinazofichuliwa na MCP
+- Vigezo vya mazingira vinapendekezwa kwa juu ya thamani zilizowekwa
+- Tumia alama ya `@Tool` kwa njia zilizofunguliwa na MCP
 
 ### Mpangilio wa Faili
 ```
@@ -206,18 +209,18 @@ src/
         └── com/microsoft/[component]/
 ```
 
-### Utegemezi
-- Inasimamiwa kupitia Maven `pom.xml`
+### Mahitaji ya Kutegemea
+- Imesimamiwa kupitia Maven `pom.xml`
 - Spring AI BOM kwa usimamizi wa toleo
-- LangChain4j kwa ujumuishaji wa AI
-- Spring Boot starter parent kwa utegemezi wa Spring
+- LangChain4j kwa ushirikiano wa AI
+- Spring Boot starter parent kwa kutegemea za Spring
 
-### Maoni ya Nambari
+### Maelezo ya Msimbo
 - Ongeza JavaDoc kwa API za umma
-- Jumuisha maoni ya kuelezea kwa mwingiliano mgumu wa AI
+- Jumuisha maelezo ya kuelezea kwa mwingiliano tata wa AI
 - Andika maelezo ya zana za MCP kwa uwazi
 
-## Ujenzi na Uwekaji
+## Ujenzi na Upandikaji
 
 ### Kujenga Miradi
 
@@ -231,55 +234,59 @@ mvn clean install -DskipTests
 mvn clean install
 ```
 
-**Funga programu:**
+**Pakua programu:**
 ```bash
 mvn package
-# Creates JAR in target/ directory
+# Inaunda JAR katika saraka ya target/
 ```
 
-### Saraka za Matokeo
-- Madarasa yaliyosanikwa: `target/classes/`
+### Folda za Matokeo
+- Madarasa yaliyokusanywa: `target/classes/`
 - Madarasa ya majaribio: `target/test-classes/`
 - Faili za JAR: `target/*.jar`
 - Vifaa vya Maven: `target/`
 
-### Usanidi Maalum wa Mazingira
+### Usanidi wa Mazingira Maalum
 
 **Maendeleo:**
 ```yaml
-# application.yml
+# application.yml (keyless - no api-key; auth via DefaultAzureCredential)
 spring:
   ai:
-    openai:
-      api-key: ${GITHUB_TOKEN}
-      base-url: https://models.inference.ai.azure.com
+    azure:
+      openai:
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 **Uzalishaji:**
-- Tumia Azure AI Foundry Models badala ya GitHub Models
-- Sasisha base-url kwa sehemu ya mwisho ya Azure OpenAI
-- Simamia siri kupitia Azure Key Vault au vigezo vya mazingira
+- Tumia utambulisho ulio kusimamiwa badala ya `az login` kwa uthibitisho usio na funguo
+- Elekeza `AZURE_OPENAI_ENDPOINT` kwa rasilimali yako ya Foundry ya uzalishaji
+- Simamia usanidi kupitia vigezo vya mazingira au Azure Key Vault
 
-### Mazingatio ya Uwekaji
-- Hii ni hifadhi ya kielimu yenye programu za mfano
-- Haijasanidiwa kwa uwekaji wa uzalishaji kama ilivyo
-- Mifano inaonyesha mifumo ya kubadilishwa kwa matumizi ya uzalishaji
-- Tazama README za miradi binafsi kwa maelezo maalum ya uwekaji
+### Mambo ya Kuzingatia kwa Uwekaji
 
-## Vidokezo vya Ziada
+- Hii ni hazina ya elimu yenye programu za sampuli
+- Hairuhusiwi kwa usambazaji moja kwa moja kama ilivyo
+- Sampuli zinaonyesha mifumo ya kurekebisha kwa matumizi ya uzalishaji
+- Angalia README za miradi binafsi kwa maelezo maalum ya usambazaji
 
-### GitHub Models vs Azure OpenAI
-- **GitHub Models:** Kiwango cha bure kwa kujifunza, hakuna kadi ya mkopo inayohitajika
-- **Azure OpenAI:** Tayari kwa uzalishaji, inahitaji usajili wa Azure
-- Nambari inaoana kati ya zote - badilisha tu sehemu ya mwisho na API key
+## Vidokezo Zaidi
 
-### Kufanya Kazi na Miradi Mingi
-Kila mradi wa mfano unajitegemea:
+### Azure AI Foundry
+- **Uthibitishaji bila funguo:** ungana na Microsoft Entra ID — hakuna funguo za API za kusimamia
+- **Iliundwa kama msimbo:** Bicep + azd (`azd up`) hutoa akaunti na uanzishaji wa mifano
+- Msimbo uleule unaoendana na OpenAI unafanya kazi eneo la mtaa (`az login`) na Azure (utambulisho ulio simamiwa)
+
+### Kazi na Miradi Mingi
+Kila mradi wa mfano ni wa kujitegemea:
 ```bash
-# Navigate to specific project
+# Elekea kwenye mradi maalum
 cd 04-PracticalSamples/[project-name]
 
-# Each has its own pom.xml and can be built independently
+# Kila mmoja ana pom.xml yake na unaweza kujengwa kwa kujitegemea
 mvn clean install
 ```
 
@@ -287,70 +294,73 @@ mvn clean install
 
 **Kutofautiana kwa Toleo la Java:**
 ```bash
-# Verify Java 21
+# Thibitisha Java 21
 java -version
-# Update JAVA_HOME if needed
+# Sasisha JAVA_HOME ikiwa inahitajika
 export JAVA_HOME=/usr/lib/jvm/msopenjdk-current
 ```
 
-**Masuala ya Upakuaji wa Utegemezi:**
+**Matatizo ya Upakuaji wa Tegemezi:**
 ```bash
-# Clear Maven cache and retry
+# Futa cache ya Maven na jaribu tena
 rm -rf ~/.m2/repository
 mvn clean install
 ```
 
-**Token ya GitHub Haikupatikana:**
+**Vituo vya Mwisho au Kuingia Havipatikani:**
 ```bash
-# Set in current session
-export GITHUB_TOKEN="your-token-here"
+# Weka mwisho wa huduma katika kikao cha sasa na ingia (bila funguo)
+export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
+az login
 
-# Or use .env file in project directory
-echo "GITHUB_TOKEN=your-token-here" > .env
+# Au tumia faili la .env katika saraka ya mradi
+echo "AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/" > .env
 ```
 
-**Bandari Tayari Inatumika:**
+**Bandari Imekuwa Inatumiwa:**
 ```bash
-# Spring Boot uses port 8080 by default
-# Change in application.properties:
+# Spring Boot hutumia bandari 8080 kama chaguo-msingi
+# Badilisha katika application.properties:
 server.port=8081
 ```
 
-### Usaidizi wa Lugha Nyingi
-- Nyaraka zinapatikana kwa lugha zaidi ya 45 kupitia tafsiri ya kiotomatiki
-- Tafsiri zipo katika saraka ya `translations/`
+### Msaada wa Lugha Mbalimbali
+- Nyaraka zinapatikana katika lugha 45+ kwa tafsiri ya kiotomatiki
+- Tafsiri ziko katika saraka ya `translations/`
 - Tafsiri inasimamiwa na mtiririko wa kazi wa GitHub Actions
 
 ### Njia ya Kujifunza
 1. Anza na [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md)
 2. Fuata sura kwa mpangilio (01 → 05)
-3. Kamilisha mifano ya vitendo katika kila sura
-4. Chunguza miradi ya mfano katika Sura ya 4
-5. Jifunze mazoea ya AI inayowajibika katika Sura ya 5
+3. Kamili mifano ya vitendo katika kila sura
+4. Chunguza miradi ya sampuli katika Sura ya 4
+5. Jifunze mbinu za AI inayowajibika katika Sura ya 5
 
-### Kontena ya Maendeleo
-`.devcontainer/devcontainer.json` inasanidi:
+### Kontena la Maendeleo
+Faili `.devcontainer/devcontainer.json` hupanua:
 - Mazingira ya maendeleo ya Java 21
-- Maven imewekwa awali
-- Viendelezi vya Java vya VS Code
+- Maven imewekwa kabla
+- Virutubishi vya VS Code Java
 - Zana za Spring Boot
-- Ujumuishaji wa GitHub Copilot
-- Docker-in-Docker
+- Uchanganuzi wa GitHub Copilot
+- Msaada wa Docker-in-Docker
 - Azure CLI
 
-### Mazingatio ya Utendaji
-- Kiwango cha bure cha GitHub Models kina mipaka ya kiwango
-- Tumia saizi sahihi za kundi kwa embeddings
-- Fikiria kuhifadhi kwa maombi ya API yanayojirudia
-- Fuatilia matumizi ya token kwa uboreshaji wa gharama
+### Mambo ya Utendaji
+- Uanzishaji wa Azure AI Foundry una vikwazo vya tokeni/maombi kwa dakika
+- Tumia ukubwa unaofaa wa kundi kwa uingizaji data
+- Fikiria kuhifadhi cache kwa wito wa API unaojirudia
+- Angalia matumizi ya tokeni kwa kuboresha gharama
 
 ### Vidokezo vya Usalama
-- Usikubali faili za `.env` (tayari zipo kwenye `.gitignore`)
-- Tumia vigezo vya mazingira kwa API keys
-- Token za GitHub zinapaswa kuwa na ruhusa ndogo zinazohitajika
+- Kamwe usiweke faili za `.env` (zipo tayari `.gitignore`)
+- Pendekeza uthibitisho usio na funguo (Microsoft Entra ID) badala ya funguo za API
+- Tumia utambuzi ulio simamiwa katika Azure; `az login` kwa maendeleo ya ndani
 - Fuata miongozo ya AI inayowajibika katika Sura ya 5
 
 ---
 
-**Kanusho**:  
-Hati hii imetafsiriwa kwa kutumia huduma ya tafsiri ya AI [Co-op Translator](https://github.com/Azure/co-op-translator). Ingawa tunajitahidi kuhakikisha usahihi, tafadhali fahamu kuwa tafsiri za kiotomatiki zinaweza kuwa na makosa au kutokuwa sahihi. Hati ya asili katika lugha yake ya awali inapaswa kuzingatiwa kama chanzo cha mamlaka. Kwa taarifa muhimu, tafsiri ya kitaalamu ya binadamu inapendekezwa. Hatutawajibika kwa kutoelewana au tafsiri zisizo sahihi zinazotokana na matumizi ya tafsiri hii.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Kionyozo**:
+Hati hii imetafsiriwa kwa kutumia huduma ya tafsiri ya AI [Co-op Translator](https://github.com/Azure/co-op-translator). Ingawa tunajitahidi kupata usahihi, tafadhali fahamu kwamba tafsiri za kiotomatiki zinaweza kuwa na makosa au upungufu wa usahihi. Hati ya asili katika lugha yake halisi inapaswa kuchukuliwa kama chanzo cha mamlaka. Kwa taarifa muhimu, tafsiri ya kitaalamu inayofanywa na binadamu inapendekezwa. Hatutojibu kwa kuelewa vibaya au tafsiri potofu zinazotokea kutokana na matumizi ya tafsiri hii.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->
