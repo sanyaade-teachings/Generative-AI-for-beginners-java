@@ -1,80 +1,83 @@
 # AGENTS.md
 
-## ပရောဂျက်အကြောင်းအရာ
+## Project Overview
 
-ဒီဟာက Java နဲ့ Generative AI ဖွံ့ဖြိုးတိုးတက်မှုကို သင်ယူဖို့အတွက် ပညာရေးဆိုင်ရာ repository တစ်ခုဖြစ်ပါတယ်။ ဒါဟာ Large Language Models (LLMs), prompt engineering, embeddings, RAG (Retrieval-Augmented Generation), နဲ့ Model Context Protocol (MCP) တို့ကို အပြည့်အစုံ လက်တွေ့လုပ်ဆောင်နိုင်တဲ့ သင်တန်းတစ်ခုကို ပံ့ပိုးပေးပါတယ်။
+ဤသည်မှာ Java နှင့် Generative AI ဖြံ့ဖြိုးမှုကို သင်ယူရန် အသိပညာပေး repository ဖြစ်သည်။ ၎င်းသည် Large Language Models (LLMs), prompt engineering, embeddings, RAG (Retrieval-Augmented Generation), နှင့် Model Context Protocol (MCP) အပါအဝင် ကျယ်ပြန့်သော လက်တွေ့သင်တန်းကို ပေးစွမ်းသည်။
 
-**အဓိက နည်းပညာများ:**
+**အဓိကနည်းပညာများ:**
 - Java 21
 - Spring Boot 3.5.x
 - Spring AI 1.1.x
 - Maven
 - LangChain4j
-- GitHub Models, Azure OpenAI, နဲ့ OpenAI SDKs
+- Azure AI Foundry, Azure OpenAI, နှင့် OpenAI SDKs
 
-**Architecture:**
-- အခန်းအလိုက် စီစဉ်ထားတဲ့ standalone Spring Boot အက်ပလီကေးရှင်းများ
-- အမျိုးမျိုးသော AI ပုံစံများကို ပြသတဲ့ နမူနာပရောဂျက်များ
-- GitHub Codespaces-ready နဲ့ ကြိုတင်ပြင်ဆင်ထားတဲ့ dev containers
+**ဖွဲ့စည်းပုံ:**
+- အခန်းများအလိုက် စီစဉ်ထားသည့် မတူညီသော standalone Spring Boot applications များ
+- AI ပုံစံကွဲပြားမှုများကို ပြသသည့် နမူနာ projects များ
+- GitHub Codespaces-ready  ဖြစ်ပြီး dev containers များကို ကြိုတင် ဖွဲ့စည်းထားသည်
 
 ## Setup Commands
 
-### လိုအပ်ချက်များ
+### Prerequisites
 - Java 21 သို့မဟုတ် အထက်
 - Maven 3.x
-- GitHub personal access token (GitHub Models အတွက်)
-- အလိုအလျောက်: Azure OpenAI အချက်အလက်များ
+- Azure subscription နှင့် Azure AI Foundry model deployment (အတည်ပြုရန် `azd up` ဖြင့် provision)
+- Azure CLI (`az`) နှင့် Azure Developer CLI (`azd`), keyless auth အတွက် စာရင်းဝင်ထား
 
-### ပတ်ဝန်းကျင် ပြင်ဆင်မှု
+### Environment Setup
 
-**နည်းလမ်း ၁: GitHub Codespaces (အကြံပြုသည်)**
+**Option 1: GitHub Codespaces (အကြံပြု)**
 ```bash
-# Fork the repository and create a codespace from GitHub UI
-# The dev container will automatically install all dependencies
-# Wait ~2 minutes for environment setup
+# GitHub UI မှ repository ကို fork လုပ်ပြီး codespace တစ်ခု ဖန်တီးပါ
+# dev container သည် အလိုအလျောက် dependency အားလုံးကို 설치 လုပ်ပေးပါမည်
+# ပတ်ဝန်းကျင် သတ်မှတ်ခြင်းအတွက် ~2 မိနစ် ခန့် စောင့်ဆိုင်းပါ
 ```
 
-**နည်းလမ်း ၂: Local Dev Container**
+**Option 2: Local Dev Container**
 ```bash
-# Clone repository
+# စာကြည့်တိုက်ကို မိတ္တူယူပါ
 git clone https://github.com/microsoft/Generative-AI-for-beginners-java.git
 cd Generative-AI-for-beginners-java
 
-# Open in VS Code with Dev Containers extension
-# Reopen in Container when prompted
+# Dev Containers အပြင်အဆင်ဖြင့် VS Code တွင် ဖွင့်ပါ
+# အဆိုပြုသောအခါ Container ထဲတွင် ထပ်မံဖွင့်ပါ
 ```
 
-**နည်းလမ်း ၃: Local Setup**
+**Option 3: Local Setup**
 ```bash
-# Install dependencies
+# ကြိုတင်လိုအပ်ချက်များ ထည့်သွင်းပါ
 sudo apt-get update
 sudo apt-get install -y maven openjdk-21-jdk
 
-# Verify installation
+# ထည့်သွင်းမှုကို အတည်ပြုပါ
 java -version
 mvn -version
 ```
 
 ### Configuration
 
-**GitHub Token Setup:**
+**Azure AI Foundry Setup (keyless, အကြံပြု):**
 ```bash
-# Create a GitHub Personal Access Token
-# Set environment variable
-export GITHUB_TOKEN="your-token-here"
+# Foundry အကောင့်နှင့်မော်ဒယ်တင်သွင်းမှုများကို ကုဒ်အနေနှင့် ပြုလုပ်ပါ
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
+# azd သည် သင့် endpoint ဖြင့် examples/basic-chat-azure/.env ကို ရေးသားသည် (key မပါ)
 ```
 
-**Azure OpenAI Setup (အလိုအလျောက်):**
+**Manual endpoint config:**
 ```bash
-# For examples using Azure OpenAI
+# သင် azd ကို မအသုံးပြုခဲ့ပါက endpoint ကို ကိုယ်ပိုင်သတ်မှတ်ပါ (auth သည် az login မှတဆင့် keyless ဖြစ်နေပါသည်)
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# .env ကို တည်းဖြတ်ပါ: AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com/
 ```
 
-## ဖွံ့ဖြိုးတိုးတက်မှု လုပ်ငန်းစဉ်
+## Development Workflow
 
-### ပရောဂျက်ဖွဲ့စည်းမှု
+### Project Structure
 ```
 /
 ├── 01-IntroToGenAI/              # Chapter 1: Introduction
@@ -89,105 +92,105 @@ cp .env.example .env
 └── translations/                # Multi-language support
 ```
 
-### အက်ပလီကေးရှင်းများကို အလုပ်လုပ်စေခြင်း
+### Running Applications
 
-**Spring Boot အက်ပလီကေးရှင်းတစ်ခုကို အလုပ်လုပ်စေခြင်း:**
+**Spring Boot application တစ်ခု ထည့်မောင်းခြင်း:**
 ```bash
 cd [project-directory]
 mvn spring-boot:run
 ```
 
-**ပရောဂျက်တစ်ခုကို Build လုပ်ခြင်း:**
+**Project တစ်ခု တည်ဆောက်ခြင်း:**
 ```bash
 cd [project-directory]
 mvn clean install
 ```
 
-**MCP Calculator Server ကို စတင်ခြင်း:**
+**MCP Calculator Server စတင်ခြင်း:**
 ```bash
 cd 04-PracticalSamples/calculator
 mvn spring-boot:run
-# Server runs on http://localhost:8080
+# ဆာဗာကို http://localhost:8080 မှာ အလုပ်လုပ်နေသည်။
 ```
 
-**Client နမူနာများကို အလုပ်လုပ်စေခြင်း:**
+**Client ဥပမာများ မောင်းနှင်ခြင်း:**
 ```bash
-# After starting the server in another terminal
+# အခြား terminal တစ်ခုတွင် server ကို စတင်ပြီးနောက်
 cd 04-PracticalSamples/calculator
 
-# Direct MCP client
+# တိုက်ရိုက် MCP client
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient"
 
-# AI-powered client (requires GITHUB_TOKEN)
+# AI မောင်းနှင်ထားသော client (AZURE_OPENAI_ENDPOINT နှင့် az login လိုအပ်သည်)
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient"
 
-# Interactive bot
+# အပြန်အလှန်ဆက်သွယ်နိုင်သော bot
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.Bot"
 ```
 
 ### Hot Reload
-Spring Boot DevTools ကို hot reload ကို ပံ့ပိုးတဲ့ ပရောဂျက်များတွင် ထည့်သွင်းထားသည်:
+Spring Boot DevTools သည် hot reload ကို ထောက်ပံ့သော projects များတွင် ပါဝင်သည်။
 ```bash
-# Changes to Java files will automatically reload when saved
+# Java ဖိုင်များကို ပြင်ဆင်ပြီး သိမ်းဆည်းသောအခါ အလိုအလျောက် ပြန်လည်လုပ်ဆောင်ပါမည်
 mvn spring-boot:run
 ```
 
-## စမ်းသပ်မှု လမ်းညွှန်ချက်များ
+## Testing Instructions
 
-### စမ်းသပ်မှုများကို အလုပ်လုပ်စေခြင်း
+### Running Tests
 
-**ပရောဂျက်တစ်ခုအတွင်းရှိ စမ်းသပ်မှုအားလုံးကို အလုပ်လုပ်စေခြင်း:**
+**Project တစ်ခုအတွင်း စမ်းသပ်ချက်အားလုံး အပြေး:**
 ```bash
 cd [project-directory]
 mvn test
 ```
 
-**အသေးစိတ် output ဖြင့် စမ်းသပ်မှုများကို အလုပ်လုပ်စေခြင်း:**
+**Verbose output ဖြင့် စမ်းသပ်ချက်များ လည်ပတ်ခြင်း:**
 ```bash
 mvn test -X
 ```
 
-**သတ်မှတ်ထားသော စမ်းသပ်မှုအတန်းတစ်ခုကို အလုပ်လုပ်စေခြင်း:**
+**သတ်မှတ်ထားသည့် test class ကို တစ်ခုချင်း run ပြုလုပ်ခြင်း:**
 ```bash
 mvn test -Dtest=CalculatorServiceTest
 ```
 
-### စမ်းသပ်မှုဖွဲ့စည်းမှု
-- စမ်းသပ်မှုဖိုင်များသည် JUnit 5 (Jupiter) ကို အသုံးပြုသည်
-- စမ်းသပ်မှုအတန်းများကို `src/test/java/` တွင် တွေ့နိုင်သည်
-- calculator ပရောဂျက်အတွင်းရှိ client နမူနာများကို `src/test/java/com/microsoft/mcp/sample/client/` တွင် တွေ့နိုင်သည်
+### Test Structure
+- စမ်းသပ်ဖိုင်များတွင် JUnit 5 (Jupiter) အသုံးပြုသည်
+- စမ်းသပ် class များကို `src/test/java/` တွင် တည်ရှိသည်
+- calculator project မှ client ဥပမာများကို `src/test/java/com/microsoft/mcp/sample/client/` တွင် ရှာနိုင်သည်
 
-### လက်ဖြင့် စမ်းသပ်ခြင်း
-နမူနာများအများစုသည် လက်တွေ့အက်ပလီကေးရှင်းများဖြစ်ပြီး လက်ဖြင့် စမ်းသပ်ရန် လိုအပ်သည်:
+### Manual Testing
+အများစုသော ဥပမာများသည် ဆက်သွယ်သုံးစွဲရသော applications ဖြစ်၍ manual testing လိုအပ်သည်။
 
-1. `mvn spring-boot:run` ဖြင့် အက်ပလီကေးရှင်းကို စတင်ပါ
-2. Endpoints ကို စမ်းသပ်ပါ သို့မဟုတ် CLI နှင့် အပြန်အလှန်လုပ်ဆောင်ပါ
-3. မျှော်မှန်းထားသော အပြုအမူသည် တစ်ခုချင်း README.md တွင် ဖော်ပြထားသော အချက်အလက်နှင့် ကိုက်ညီမှုရှိကြောင်း အတည်ပြုပါ
+1. `mvn spring-boot:run` ဖြင့် application ကို စတင်ပါ
+2. endpoint များကို စမ်းသပ်ရန် သို့မဟုတ် CLI နှင့် ဆက်သွယ်ရန်
+3. ယူဆထားသောအပြုအမူသည် တခြား project များ၏ README.md တွင် ဖော်ပြထားသည့် လက်တွေ့အချက်အလက်နှင့် ကိုက်ညီမှု သေချာစစ်ဆေးပါ
 
-### GitHub Models ဖြင့် စမ်းသပ်ခြင်း
-- အခမဲ့အဆင့်ကန့်သတ်ချက်များ: ၁၅ တောင်းဆိုမှု/မိနစ်, ၁၅၀/နေ့
-- တစ်ချိန်တည်းတွင် ၅ တောင်းဆိုမှုအများဆုံး
-- တာဝန်ရှိသော AI နမူနာများဖြင့် အကြောင်းအရာစစ်ထုတ်မှုကို စမ်းသပ်ပါ
+### Testing with Azure AI Foundry
+- ဥပမာများ run မည်မှာ `az login` ဖြင့် စာရင်းဝင်ထားရန် (keyless auth)
+- သင်၏ အကောင့်တွင် Cognitive Services OpenAI User အခန်းကဏ္ဍ ရှိမှုရှိရန် အာမခံပါ
+- Chapter 5 တွင် ပါဝင်သည့် 책임있는 AI ဥပမာဖြင့် content filtering စမ်းသပ်မှု ပြုလုပ်နိုင်သည်
 
-## ကုဒ်စတိုင် လမ်းညွှန်ချက်များ
+## Code Style Guidelines
 
-### Java စံသတ်မှတ်များ
-- **Java ဗားရှင်း:** Java 21 နှင့် ခေတ်မီအင်္ဂါရပ်များ
-- **စတိုင်:** စံ Java စံသတ်မှတ်များကို လိုက်နာပါ
-- **အမည်ပေးခြင်း:**
+### Java Conventions
+- **Java Version:** Java 21 နှင့် အဆင့်မြင့် function များ
+- **Style:** Java စံပြ သတ်မှတ်ချက်များကို လိုက်နာပါ
+- **Naming:**
   - Classes: PascalCase
   - Methods/variables: camelCase
   - Constants: UPPER_SNAKE_CASE
   - Package names: lowercase
 
-### Spring Boot ပုံစံများ
-- `@Service` ကို စီးပွားရေးလောကအတွက် အသုံးပြုပါ
-- `@RestController` ကို REST endpoints အတွက် အသုံးပြုပါ
-- `application.yml` သို့မဟုတ် `application.properties` မှတစ်ဆင့် configuration ပြုလုပ်ပါ
-- hard-coded တန်ဖိုးများထက် ပတ်ဝန်းကျင်အပြောင်းအလဲများကို အသုံးပြုပါ
-- MCP ဖြင့် ဖော်ပြထားသော နည်းလမ်းများအတွက် `@Tool` annotation ကို အသုံးပြုပါ
+### Spring Boot Patterns
+- နယ်ပယ် logic အတွက် `@Service` ကို အသုံးပြုပါ
+- REST endpoints အတွက် `@RestController` ကို အသုံးပြုပါ
+- `application.yml` သို့မဟုတ် `application.properties` ဖြင့် ပြင်ဆင်မှု စီမံပါ
+- ပြောင်းလဲမှုများအတွက် Environment variables များကို ဦးစားပေးအသုံးပြုပါ
+- MCP method များအတွက် `@Tool` annotation ကို အသုံးပြုပါ
 
-### ဖိုင်စီစဉ်မှု
+### File Organization
 ```
 src/
 ├── main/
@@ -206,151 +209,157 @@ src/
         └── com/microsoft/[component]/
 ```
 
-### အခြားလိုအပ်ချက်များ
-- Maven `pom.xml` မှတစ်ဆင့် စီမံပါ
-- Spring AI BOM ကို ဗားရှင်းစီမံခန့်ခွဲမှုအတွက် အသုံးပြုပါ
-- LangChain4j ကို AI ပေါင်းစည်းမှုများအတွက် အသုံးပြုပါ
-- Spring Boot starter parent ကို Spring အခြေခံလိုအပ်ချက်များအတွက် အသုံးပြုပါ
+### Dependencies
+- Maven `pom.xml` ဖြင့် စီမံခန့်ခွဲသည်
+- Spring AI BOM version စီမံကိန်း
+- LangChain4j ဖြင့် AI အပြင်အဆင်များ ပံ့ပိုးမှု
+- Spring Boot starter parent ကို Spring နည်းပညာများအတွက် အသုံးပြုသည်
 
-### ကုဒ်မှတ်ချက်များ
-- Public APIs အတွက် JavaDoc ထည့်ပါ
-- AI အပြုအမူများအတွက် ရှင်းလင်းချက်မှတ်ချက်များ ထည့်ပါ
-- MCP tool ဖော်ပြချက်များကို ရှင်းလင်းစွာ မှတ်သားပါ
+### Code Comments
+- အများပြည်သူ API များအတွက် JavaDoc ထည့်ပါ
+- ခက်ခဲသော AI လုပ်ဆောင်ချက်များအတွက် ရှင်းပြချက်များ ထည့်သွင်းပါ
+- MCP tool အသုံးပြုပုံ အကြောင်းအရာများကို သေချာဖော်ပြပါ
 
-## Build နှင့် Deployment
+## Build and Deployment
 
-### ပရောဂျက်များကို Build လုပ်ခြင်း
+### Building Projects
 
-**စမ်းသပ်မှုမပါဘဲ Build လုပ်ခြင်း:**
+**စမ်းသပ်မပါဘဲ build လုပ်ခြင်း:**
 ```bash
 mvn clean install -DskipTests
 ```
 
-**အားလုံးစစ်ဆေးမှုများနှင့်အတူ Build လုပ်ခြင်း:**
+**စစ်ဆေးမှုအားလုံးပါဝင်သော build:**
 ```bash
 mvn clean install
 ```
 
-**အက်ပလီကေးရှင်းကို Package လုပ်ခြင်း:**
+**Application package ပြုလုပ်ခြင်း:**
 ```bash
 mvn package
-# Creates JAR in target/ directory
+# target/ ဖိုလ်ဒါတွင် JAR ဖိုင်ကို ဖန်တီးသည်။
 ```
 
 ### Output Directories
-- Compile လုပ်ထားသော classes: `target/classes/`
-- စမ်းသပ်မှု classes: `target/test-classes/`
+- ပြုပြင်ပြီးသော classes: `target/classes/`
+- စမ်းသပ် classes: `target/test-classes/`
 - JAR ဖိုင်များ: `target/*.jar`
 - Maven artifacts: `target/`
 
-### ပတ်ဝန်းကျင်အလိုက် Configuration
+### Environment-Specific Configuration
 
-**ဖွံ့ဖြိုးတိုးတက်မှု:**
+**ဖွံ့ဖြိုးရေး:**
 ```yaml
-# application.yml
+# application.yml (keyless - no api-key; auth via DefaultAzureCredential)
 spring:
   ai:
-    openai:
-      api-key: ${GITHUB_TOKEN}
-      base-url: https://models.inference.ai.azure.com
+    azure:
+      openai:
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
-**ထုတ်လုပ်မှု:**
-- GitHub Models အစား Azure AI Foundry Models ကို အသုံးပြုပါ
-- base-url ကို Azure OpenAI endpoint သို့ ပြောင်းပါ
-- အချက်အလက်များကို Azure Key Vault သို့မဟုတ် ပတ်ဝန်းကျင်အပြောင်းအလဲများမှတစ်ဆင့် စီမံပါ
+**ထုတ်လုပ်ရေး:**
+- keyless auth အတွက် `az login` မသုံးဘဲ managed identity ကို အသုံးပြုပါ
+- `AZURE_OPENAI_ENDPOINT` ကို ထုတ်လုပ်ရေး Foundry resource အတိုင်း ချိန်ညှိပါ
+- configuration တွေကို environment variables သို့မဟုတ် Azure Key Vault ဖြင့် စီမံပါ
 
-### Deployment အတွေးအခေါ်များ
-- ဒီဟာက ပညာရေးဆိုင်ရာ repository ဖြစ်ပြီး နမူနာအက်ပလီကေးရှင်းများပါဝင်သည်
-- အစီအစဉ်အတိုင်း ထုတ်လုပ်မှုအတွက် မထုတ်လုပ်ထားပါ
-- နမူနာများသည် ထုတ်လုပ်မှုအတွက် ပြောင်းလဲအသုံးပြုနိုင်သော ပုံစံများကို ပြသသည်
-- တစ်ခုချင်း README.md တွင် သီးခြား Deployment မှတ်ချက်များကို ကြည့်ပါ
+### Deployment Considerations
+- ဤသည်မှာ နည်းပညာပညာရေး repository ဖြစ်ပြီး နမူနာ application များ ပါဝင်သည်
+- မျက်မှောက်အနေဖြင့် ထုတ်လုပ်ရေး deployment မဟုတ်ပါ
+- နမူနာများတွင် ထုတ်လုပ်ရေးအတွက် ထပ်ဆင့်ဖွဲ့စည်းမှုများ ကို ပုံပြင်ထားပါသည်
+- အသေးစိတ် deployment မှတ်ချက်များအတွက် တစ်ခုချင်း project ရဲ့ README များကို ကြည့်ပါ
 
-## အပိုဆောင်း မှတ်ချက်များ
+## Additional Notes
 
-### GitHub Models နှင့် Azure OpenAI
-- **GitHub Models:** သင်ယူရန် အခမဲ့အဆင့်၊ ကတ်မလိုအပ်
-- **Azure OpenAI:** ထုတ်လုပ်မှုအဆင့်၊ Azure subscription လိုအပ်
-- Code သည် နှစ်ခုလုံးနှင့် ကိုက်ညီသည် - endpoint နဲ့ API key ကိုသာ ပြောင်းပါ
+### Azure AI Foundry
+- **Keyless auth:** Microsoft Entra ID နှင့် ချိတ်ဆက်သည် — API key မလိုအပ်ပါ
+- **Provisioned as code:** Bicep + azd (`azd up`) ဖြင့် အကောင့်နှင့် model deployment များဖန်တီးသည်
+- ထို OpenAI-compatible code သည် မိမိ ဒေသတွင် (အသုံးပြုရန် `az login`) နှင့် Azure (managed identity) တွင်လည်း အလုပ်လုပ်သည်
 
-### ပရောဂျက်များစွာနှင့် အလုပ်လုပ်ခြင်း
-နမူနာပရောဂျက်တစ်ခုချင်းစီသည် standalone ဖြစ်သည်:
+### Working with Multiple Projects
+နမူနာ project တစ်ခုချင်းစီ သည် standalone ဖြစ်ပါသည်။
 ```bash
-# Navigate to specific project
+# သတ်မှတ်ထားသော ပရောဂျက်သို့ သွားပါ
 cd 04-PracticalSamples/[project-name]
 
-# Each has its own pom.xml and can be built independently
+# တစ်ခုချင်းစီမှာ ကိုယ်ပိုင် pom.xml ရှိပြီး အလိုအလျောက် တည်ဆောက်နိုင်ပါသည်
 mvn clean install
 ```
 
-### ရှိနိုင်သော ပြဿနာများ
+### Common Issues
 
-**Java ဗားရှင်း မကိုက်ညီမှု:**
+**Java Version မကိုက်ညီမှု:**
 ```bash
-# Verify Java 21
+# Java 21 ကို အတည်ပြုပါ
 java -version
-# Update JAVA_HOME if needed
+# လိုအပ်လျှင် JAVA_HOME ကို အပ်ဒိတ်လုပ်ပါ။
 export JAVA_HOME=/usr/lib/jvm/msopenjdk-current
 ```
 
-**အခြေခံလိုအပ်ချက်များ ဒေါင်းလုဒ်မရ:**
+**Dependency ဒေါင်းလုပ် လုပ်ရာ ပြဿနာ:**
 ```bash
-# Clear Maven cache and retry
+# Maven cache ကို ရှင်းလင်းပြီး ထပ်မံကြိုးစားပါ။
 rm -rf ~/.m2/repository
 mvn clean install
 ```
 
-**GitHub Token မတွေ့ရှိ:**
+**Endpoint သို့မဟုတ် Sign-in မတွေ့ရှိနိုင်ခြင်း:**
 ```bash
-# Set in current session
-export GITHUB_TOKEN="your-token-here"
+# လတ်တလော အစည်းအဝေးတွင် အဆုံးအမှတ်ကို သတ်မှတ်ပြီး လော့ဂ်အင်ရယူပါ(သော့ချက်မလိုဘဲ)
+export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
+az login
 
-# Or use .env file in project directory
-echo "GITHUB_TOKEN=your-token-here" > .env
+# ဒါမှမဟုတ် project ဖိုလ်ဒါအတွင်းရှိ .env ဖိုင်ကို အသုံးပြုပါ
+echo "AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/" > .env
 ```
 
-**Port သုံးပြီးသား:**
+**Port သုံးပြီးသား ဖြစ်နေခြင်း:**
 ```bash
-# Spring Boot uses port 8080 by default
-# Change in application.properties:
+# Spring Boot သည် ပုံမှန်အားဖြင့် port 8080 ကိုအသုံးပြုသည်
+# application.properties တွင် ပြောင်းလဲရန်:
 server.port=8081
 ```
 
-### ဘာသာစကားများစွာကို ပံ့ပိုးမှု
-- စာရွက်စာတမ်းများကို အလိုအလျောက် ဘာသာပြန်ခြင်းဖြင့် ၄၅+ ဘာသာစကားများတွင် ရရှိနိုင်သည်
-- `translations/` ဖိုဒါတွင် ဘာသာပြန်ထားသော ဖိုင်များ
-- Translation ကို GitHub Actions workflow ဖြင့် စီမံသည်
+### Multi-Language Support
+- ၄၅ ကျော်ဘာသာစကားများတွင် automated ဘာသာပြန် စနစ်ဖြင့် သက်ဆိုင်ရာစာရွက်စာတမ်း ရရှိနိုင်သည်
+- ဘာသာပြန်များကို `translations/` ဖိုလ်ဒါတွင် သိမ်းဆည်းထားသည်
+- ဘာသာပြန်လုပ်ငန်းကို GitHub Actions workflow ဖြင့် စီမံသည်
 
-### သင်ကြားမှု လမ်းကြောင်း
-1. [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md) ဖြင့် စတင်ပါ
-2. အခန်းအလိုက် အစဉ်လိုက်လိုက်ပါ (01 → 05)
-3. အခန်းတစ်ခုချင်းစီတွင် လက်တွေ့နမူနာများကို ပြီးမြောက်ပါ
-4. အခန်း ၄ တွင် နမူနာပရောဂျက်များကို စူးစမ်းပါ
-5. အခန်း ၅ တွင် တာဝန်ရှိသော AI လုပ်ငန်းစဉ်များကို သင်ယူပါ
+### Learning Path
+1. [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md) မှ စတင်ပါ
+2. အခန်းများနည်းလမ်းစဉ်အတိုင်း လိုက်နာခြင်း (01 → 05)
+3. အခန်းတိုင်းတွင် လက်တွေ့ စမ်းသပ်မှုများ ပြည့်စုံအောင် လုပ်ဆောင်ပါ
+4. Chapter 4 တွင် နမူနာ projects များကို လေ့လာပါ
+5. Chapter 5 တွင် တာဝန်ရှိသော AI လေ့လာမှုများ လုပ်ဆောင်ပါ
 
 ### Development Container
-`.devcontainer/devcontainer.json` သည် အောက်ပါအရာများကို ပြင်ဆင်ထားသည်:
-- Java 21 ဖွံ့ဖြိုးတိုးတက်မှု ပတ်ဝန်းကျင်
-- Maven ကြိုတင်တပ်ဆင်ထားသည်
-- VS Code Java extensions
-- Spring Boot tools
-- GitHub Copilot ပေါင်းစည်းမှု
-- Docker-in-Docker ပံ့ပိုးမှု
+`.devcontainer/devcontainer.json` တွင် ထည့်သွင်းထားသော configuration များမှာ:
+- Java 21 ဖွံ့ဖြိုးရေးပတ်ဝန်းက်
+- Maven ကြိုတင် ထည့်သွင်းထားခြင်း
+- VS Code Java extensions များ
+- Spring Boot tools များ
+- GitHub Copilot integration
+- Docker-in-Docker ထောက်ပံ့မှု
 - Azure CLI
 
-### စွမ်းဆောင်ရည် အတွေးအခေါ်များ
-- GitHub Models အခမဲ့အဆင့်တွင် ကန့်သတ်ချက်များရှိသည်
-- Embeddings အတွက် သင့်တော်သော batch အရွယ်အစားများကို အသုံးပြုပါ
-- API တောင်းဆိုမှုများကို ထပ်ခါတလဲလဲ မလုပ်ရန် caching ကို စဉ်းစားပါ
-- ကုန်ကျစရိတ် အထိရောက်မှုအတွက် token အသုံးပြုမှုကို စောင့်ကြည့်ပါ
+### Performance Considerations
+- Azure AI Foundry deployments များတွင် တစ်မိနစ်စီ token/request အရေအတွက် ကန့်သတ်ထားသည်
+- embeddings များအတွက် အထူးသင့်လျော်သော batch size ကို သုံးပါ
+- API call များ အကြိမ်များပြန် အသုံးပြုပါက caching ကို စဉ်းစားပါ
+- သုံးစွဲ token အရေအတွက်ကို စောင့်ကြည့်ကာ ကုန်ကျစရိတ် သက်သာစေပါ
 
-### လုံခြုံရေး မှတ်ချက်များ
-- `.env` ဖိုင်များကို ဘယ်တော့မှ commit မလုပ်ပါ (ပြီးသား `.gitignore` တွင် ပါဝင်သည်)
-- API key များအတွက် ပတ်ဝန်းကျင်အပြောင်းအလဲများကို အသုံးပြုပါ
-- GitHub tokens တွင် လိုအပ်သော scope များသာ ပါဝင်စေရန် သေချာပါ
-- အခန်း ၅ တွင် တာဝန်ရှိသော AI လမ်းညွှန်ချက်များကို လိုက်နာပါ
+### Security Notes
+- `.env` ဖိုင်များကို ဘယ်တော့မှ commit မလုပ်ပါ (အပြင် `.gitignore` တွင် ပါဝင်သည်)
+- API key များထက် keyless auth (Microsoft Entra ID) ကို ဦးစားပေး အသုံးပြုပါ
+- Azure တွင် managed identities အသုံးပြုသည်၊ ဒေသတွင်းဖွံ့ဖြိုးရေးအတွက် `az login` ကို သုံးပါ
+- Chapter 5 တွင် ပါ ်သော တာဝန်ရှိသော AI လမ်းညွှန်ချက်များကို လိုက်နာပါ
 
 ---
 
-**အကြောင်းကြားချက်**:  
-ဤစာရွက်စာတမ်းကို AI ဘာသာပြန်ဝန်ဆောင်မှု [Co-op Translator](https://github.com/Azure/co-op-translator) ကို အသုံးပြု၍ ဘာသာပြန်ထားပါသည်။ ကျွန်ုပ်တို့သည် တိကျမှုအတွက် ကြိုးစားနေသော်လည်း၊ အလိုအလျောက် ဘာသာပြန်မှုများတွင် အမှားများ သို့မဟုတ် မမှန်ကန်မှုများ ပါဝင်နိုင်သည်ကို သတိပြုပါ။ မူရင်းဘာသာစကားဖြင့် ရေးသားထားသော စာရွက်စာတမ်းကို အာဏာတရ အရင်းအမြစ်အဖြစ် သတ်မှတ်သင့်ပါသည်။ အရေးကြီးသော အချက်အလက်များအတွက် လူက ဘာသာပြန်မှုကို အသုံးပြုရန် အကြံပြုပါသည်။ ဤဘာသာပြန်မှုကို အသုံးပြုခြင်းမှ ဖြစ်ပေါ်လာသော အလွဲအလွတ်များ သို့မဟုတ် အနားယူမှုများအတွက် ကျွန်ုပ်တို့သည် တာဝန်မယူပါ။
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**ပြောကြားချက်**
+ဤစာတမ်းကို AI ဘာသာပြန်ဝန်ဆောင်မှု [Co-op Translator](https://github.com/Azure/co-op-translator) အသုံးပြု၍ ဘာသာပြန်ထားပါသည်။ ကျွန်ုပ်တို့သည် တိကျမှန်ကန်မှုအတွက် ကြိုးပမ်းနေသော်လည်း၊ စက်ကိရိယာဘာသာပြန်ခြင်းများတွင် အမှားများ သို့မဟုတ် မှားယွင်းချက်များ ပါဝင်နိုင်ကြောင်း သတိပြုပါရန် လိုအပ်ပါသည်။ မူလစာတမ်းကို မူရင်းဘာသာဖြင့်သာ ယုံကြည်စိတ်ချရသော အချက်အလက်အဖြစ် သတ်မှတ်သင့်သည်။ အရေးကြီးသည့် သတင်းအချက်အလက်များအတွက် ပရော်ဖက်ရှင်နယ် လူသားဘာသာပြန်သူဝန်ဆောင်မှုကို အကြံပြုပါသည်။ ဤဘာသာပြန်ချက်ကို အသုံးပြုခြင်းမှ ဖြစ်ပေါ်လာသော နားလည်မှုကွာခြားမှုများ သို့မဟုတ် မမှန်ကန်သော အသုံးပြုမှုများအတွက် ကျွန်ုပ်တို့ တာဝန်မခံပါ။
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

@@ -1,31 +1,31 @@
-# Посібник для початківців зі створення генератора історій про домашніх улюбленців
+# Навчальний посібник зі створення історій про тварин для початківців
 
 ## Зміст
 
-- [Попередні вимоги](../../../../04-PracticalSamples/petstory)
-- [Розуміння структури проєкту](../../../../04-PracticalSamples/petstory)
-- [Пояснення основних компонентів](../../../../04-PracticalSamples/petstory)
-  - [1. Головний додаток](../../../../04-PracticalSamples/petstory)
-  - [2. Веб-контролер](../../../../04-PracticalSamples/petstory)
-  - [3. Сервіс історій](../../../../04-PracticalSamples/petstory)
-  - [4. Веб-шаблони](../../../../04-PracticalSamples/petstory)
-  - [5. Конфігурація](../../../../04-PracticalSamples/petstory)
-- [Запуск додатка](../../../../04-PracticalSamples/petstory)
-- [Як усе працює разом](../../../../04-PracticalSamples/petstory)
-- [Розуміння інтеграції з AI](../../../../04-PracticalSamples/petstory)
-- [Наступні кроки](../../../../04-PracticalSamples/petstory)
+- [Вимоги](#вимоги)
+- [Розуміння структури проєкту](#розуміння-структури-проєкту)
+- [Пояснення основних компонентів](#пояснення-основних-компонентів)
+  - [1. Головний додаток](#1-головний-додаток)
+  - [2. Веб-контролер](#2-веб-контролер)
+  - [3. Сервіс історій](#3-сервіс-історій)
+  - [4. Веб-шаблони](#4-веб-шаблони)
+  - [5. Налаштування](#5-налаштування)
+- [Запуск додатку](#запуск-додатку)
+- [Як це все працює разом](#як-це-все-працює-разом)
+- [Розуміння інтеграції зі ШІ](#розуміння-інтеграції-зі-ші)
+- [Наступні кроки](#наступні-кроки)
 
-## Попередні вимоги
+## Вимоги
 
-Перед початком переконайтеся, що у вас є:
-- Встановлений Java 21 або новіший
-- Maven для управління залежностями
-- Обліковий запис GitHub із персональним токеном доступу (PAT) зі сферою `models:read`
+Перед початком переконайтеся, що у вас встановлено:
+- Java 21 або вище
+- Maven для керування залежностями
+- Розгортання моделі Azure AI Foundry (підготуйте за допомогою `azd up` — див. [Розділ 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md)), увійшли у систему за допомогою `az login` (авторизація без ключа)
 - Базове розуміння Java, Spring Boot та веб-розробки
 
 ## Розуміння структури проєкту
 
-Проєкт генератора історій про домашніх улюбленців містить кілька важливих файлів:
+Проєкт для створення історій про тварин має кілька важливих файлів:
 
 ```
 petstory/
@@ -48,7 +48,7 @@ petstory/
 
 **Файл:** `PetStoryApplication.java`
 
-Це точка входу для нашого додатка Spring Boot:
+Це точка входу для нашого додатку Spring Boot:
 
 ```java
 @SpringBootApplication
@@ -60,15 +60,15 @@ public class PetStoryApplication {
 ```
 
 **Що це робить:**
-- Анотація `@SpringBootApplication` активує автоматичну конфігурацію та сканування компонентів
+- Анотація `@SpringBootApplication` включає автоматичне налаштування та сканування компонентів
 - Запускає вбудований веб-сервер (Tomcat) на порту 8080
-- Автоматично створює всі необхідні Spring-біни та сервіси
+- Автоматично створює всі необхідні Spring бени та сервіси
 
 ### 2. Веб-контролер
 
 **Файл:** `PetController.java`
 
-Цей компонент обробляє всі веб-запити та взаємодію з користувачами:
+Він опрацьовує всі веб-запити та взаємодії користувача:
 
 ```java
 @Controller
@@ -82,7 +82,7 @@ public class PetController {
     
     @GetMapping("/")
     public String index() {
-        return "index";  // Returns index.html template
+        return "index";  // Повертає шаблон index.html
     }
     
     @PostMapping("/generate-story")
@@ -90,24 +90,24 @@ public class PetController {
                                Model model, 
                                RedirectAttributes redirectAttributes) {
         
-        // Input validation
+        // Перевірка введених даних
         if (description.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please provide a description.");
             return "redirect:/";
         }
         
-        // Sanitize input for security
+        // Очищення введених даних для безпеки
         String sanitizedDescription = sanitizeInput(description);
         
-        // Generate story with error handling
+        // Генерація історії з обробкою помилок
         try {
             String story = storyService.generateStory(sanitizedDescription);
             model.addAttribute("caption", sanitizedDescription);
             model.addAttribute("story", story);
-            return "result";  // Returns result.html template
+            return "result";  // Повертає шаблон result.html
             
         } catch (Exception e) {
-            // Use fallback story if AI fails
+            // Використовувати запасну історію, якщо ШІ не вдається
             String fallbackStory = generateFallbackStory(sanitizedDescription);
             model.addAttribute("story", fallbackStory);
             return "result";
@@ -117,21 +117,21 @@ public class PetController {
     private String sanitizeInput(String input) {
         return input.replaceAll("[<>\"'&]", "")  // Remove dangerous characters
                    .trim()
-                   .substring(0, Math.min(input.length(), 500));  // Limit length
+                   .substring(0, Math.min(input.length(), 500));  // Обмежити довжину
     }
 }
 ```
 
-**Ключові особливості:**
+**Основні можливості:**
 
-1. **Обробка маршрутів**: `@GetMapping("/")` показує форму завантаження, `@PostMapping("/generate-story")` обробляє відправлення даних
-2. **Валідація вводу**: Перевіряє порожні описи та обмеження довжини
-3. **Безпека**: Очищає введені дані, щоб запобігти XSS-атакам
-4. **Обробка помилок**: Надає резервні історії, якщо сервіс AI недоступний
-5. **Прив’язка моделі**: Передає дані до HTML-шаблонів за допомогою Spring `Model`
+1. **Обробка маршрутів**: `@GetMapping("/")` показує форму завантаження, `@PostMapping("/generate-story")` опрацьовує відправлені дані
+2. **Перевірка введення**: Перевіряє порожні описи і обмеження довжини
+3. **Безпека**: Очищає введені дані для запобігання XSS-атакам
+4. **Обробка помилок**: Надає запасні історії, якщо сервіс ШІ не працює
+5. **Зв’язок з моделлю**: Передає дані у HTML-шаблони за допомогою Spring `Model`
 
-**Резервна система:**
-Контролер включає заздалегідь написані шаблони історій, які використовуються, коли сервіс AI недоступний:
+**Система запасних варіантів:**
+Контролер містить заздалегідь написані шаблони історій, які використовуються, коли сервіс ШІ недоступний:
 
 ```java
 private String generateFallbackStory(String description) {
@@ -141,7 +141,7 @@ private String generateFallbackStory(String description) {
         "In a cozy home filled with love, there lived an extraordinary pet..."
     };
     
-    // Use description hash for consistent responses
+    // Використовуйте хеш опису для послідовних відповідей
     int index = Math.abs(description.hashCode() % storyTemplates.length);
     return storyTemplates[index];
 }
@@ -151,7 +151,7 @@ private String generateFallbackStory(String description) {
 
 **Файл:** `StoryService.java`
 
-Цей сервіс взаємодіє з GitHub Models для генерації історій:
+Цей сервіс спілкується з Azure AI Foundry для генерації історій з ключовою аутентифікацією без застосування API-ключа:
 
 ```java
 @Service
@@ -160,18 +160,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // Сумісна з OpenAI кінцева точка Foundry розташована під /openai/v1/
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // Безключова автентифікація з Microsoft Entra ID (без ключа API)
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -182,16 +186,16 @@ public class StoryService {
         
         String userPrompt = "Write a fun short story about a pet described as: " + description;
         
-        // Configure the AI request
+        // Налаштувати запит до ШІ
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(modelName)
                 .addSystemMessage(systemPrompt)
                 .addUserMessage(userPrompt)
-                .maxCompletionTokens(500)  // Limit response length
-                .temperature(0.8)          // Control creativity (0.0-1.0)
+                .maxCompletionTokens(500)  // Обмежити довжину відповіді
+                .temperature(0.8)          // Контролювати креативність (0.0-1.0)
                 .build();
         
-        // Send request and get response
+        // Надіслати запит і отримати відповідь
         ChatCompletion response = openAIClient.chat().completions().create(params);
         
         return response.choices().get(0).message().content().orElse("");
@@ -201,17 +205,17 @@ public class StoryService {
 
 **Ключові компоненти:**
 
-1. **Клієнт OpenAI**: Використовує офіційний Java SDK OpenAI, налаштований для GitHub Models
-2. **Системний запит**: Встановлює поведінку AI для написання сімейних історій про домашніх улюбленців
-3. **Користувацький запит**: Вказує AI, яку саме історію написати на основі опису
-4. **Параметри**: Контролює довжину історії та рівень креативності
-5. **Обробка помилок**: Генерує винятки, які обробляє контролер
+1. **OpenAI клієнт**: Використовує офіційний OpenAI Java SDK, налаштований для Azure AI Foundry (авторизація без ключа)
+2. **Системний запит**: Встановлює поведінку ШІ — написання сімейних історій про тварин
+3. **Запит користувача**: Чітко вказує ШІ, яку історію написати на основі опису
+4. **Параметри**: Керує довжиною історії та рівнем креативності
+5. **Обробка помилок**: Генерує виключення, які контролер ловить і обробляє
 
 ### 4. Веб-шаблони
 
 **Файл:** `index.html` (Форма завантаження)
 
-Головна сторінка, де користувачі описують своїх улюбленців:
+Головна сторінка, де користувачі описують своїх тварин:
 
 ```html
 <!DOCTYPE html>
@@ -293,18 +297,18 @@ public class StoryService {
 </html>
 ```
 
-**Особливості шаблонів:**
+**Особливості шаблону:**
 
-1. **Інтеграція Thymeleaf**: Використовує атрибути `th:` для динамічного контенту
-2. **Адаптивний дизайн**: CSS-стилі для мобільних пристроїв і настільних комп’ютерів
-3. **Обробка помилок**: Відображає помилки валідації користувачам
-4. **Клієнтська обробка**: JavaScript для аналізу зображень (з використанням Transformers.js)
+1. **Інтеграція Thymeleaf**: Використання атрибутів `th:` для динамічного контенту
+2. **Адаптивний дизайн**: CSS-стилі для мобільних та десктопних пристроїв
+3. **Обробка помилок**: Відображає повідомлення про помилки для користувачів
+4. **Обробка на клієнті**: JavaScript для аналізу зображень (з використанням Transformers.js)
 
-### 5. Конфігурація
+### 5. Налаштування
 
 **Файл:** `application.properties`
 
-Налаштування конфігурації для додатка:
+Налаштування додатку:
 
 ```properties
 spring.application.name=pet-story-app
@@ -316,52 +320,55 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 **Пояснення конфігурації:**
 
-1. **Завантаження файлів**: Дозволяє завантажувати зображення до 10 МБ
-2. **Логування**: Контролює, яка інформація записується під час виконання
-3. **GitHub Models**: Вказує, яку AI-модель і кінцеву точку використовувати
-4. **Безпека**: Налаштування обробки помилок, щоб уникнути розкриття конфіденційної інформації
+1. **Завантаження файлів**: Дозволено завантаження зображень до 10 МБ
+2. **Логування**: Керує інформацією, яка логуватиметься під час виконання
+3. **Azure AI Foundry**: Вказує точку доступу та розгортання моделі для використання (авторизація без ключа)
+4. **Безпека**: Налаштування обробки помилок, щоб не розкривати конфіденційні дані
 
-## Запуск додатка
+## Запуск додатку
 
-### Крок 1: Встановіть GitHub Token
+### Крок 1: Увійдіть і встановіть свою точку доступу
 
-Спочатку потрібно встановити GitHub-токен як змінну середовища:
+Авторизація — без ключа (Microsoft Entra ID), тому немає API-ключа. Увійдіть у систему та встановіть свою точку доступу Foundry:
 
-**Windows (Command Prompt):**
+**Windows (Командний рядок):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Чому це потрібно:**
-- GitHub Models вимагає автентифікації для доступу до AI-моделей
-- Використання змінних середовища дозволяє зберігати токени поза вихідним кодом
-- Сфера `models:read` надає доступ до AI-інференції
+- Azure AI Foundry використовує Microsoft Entra ID для аутентифікації запитів на висновки
+- Авторизація без ключа означає, що у вашому коді чи середовищі немає секретів
+- Ваш обліковий запис повинен мати роль **Cognitive Services OpenAI User** на ресурсі
 
-### Крок 2: Збірка та запуск
+### Крок 2: Побудуйте та запустіть додаток
 
-Перейдіть до каталогу проєкту:
+Перейдіть у каталог проєкту:
 ```bash
 cd 04-PracticalSamples/petstory
 ```
 
-Зберіть додаток:
+Побудуйте додаток:
 ```bash
 mvn clean compile
 ```
@@ -371,51 +378,53 @@ mvn clean compile
 mvn spring-boot:run
 ```
 
-Додаток запуститься на `http://localhost:8080`.
+Додаток буде запущений на `http://localhost:8080`.
 
-### Крок 3: Тестування додатка
+### Крок 3: Тестування додатку
 
-1. **Відкрийте** `http://localhost:8080` у вашому браузері
-2. **Опишіть** свого улюбленця в текстовому полі (наприклад, "Грайливий золотистий ретривер, який любить приносити м’яч")
-3. **Натисніть** "Згенерувати історію", щоб отримати історію, створену AI
-4. **Або** завантажте зображення улюбленця, щоб автоматично створити опис
-5. **Перегляньте** креативну історію, засновану на описі вашого улюбленця
+1. **Відкрийте** `http://localhost:8080` у браузері
+2. **Опишіть** свого улюбленця в текстовому полі (наприклад, «Жвавий золотистий ретрівер, який любить приносити м’ячик»)
+3. **Натисніть** "Generate Story" для отримання історії, створеної ШІ
+4. **Або** завантажте зображення тварини для автоматичного створення опису
+5. **Перегляньте** креативну історію, створену на основі опису вашого улюбленця
 
-## Як усе працює разом
+## Як це все працює разом
 
-Ось повний процес створення історії про домашнього улюбленця:
+Ось повний процес створення історії про тварину:
 
-1. **Ввід користувача**: Ви описуєте свого улюбленця у веб-формі
+1. **Введення користувачем**: Ви описуєте свого улюбленця у веб-формі
 2. **Відправлення форми**: Браузер надсилає POST-запит на `/generate-story`
-3. **Обробка контролером**: `PetController` перевіряє та очищає введені дані
-4. **Виклик AI-сервісу**: `StoryService` надсилає запит до API GitHub Models
-5. **Генерація історії**: AI створює креативну історію на основі опису
-6. **Обробка відповіді**: Контролер отримує історію та додає її до моделі
-7. **Рендеринг шаблону**: Thymeleaf рендерить `result.html` з історією
-8. **Відображення**: Користувач бачить згенеровану історію у своєму браузері
+3. **Обробка контролером**: `PetController` перевіряє та очищує введені дані
+4. **Виклик сервісу ШІ**: `StoryService` надсилає запит до моделі Azure AI Foundry
+5. **Генерація історії**: ШІ створює креативну історію на основі опису
+6. **Обробка відповіді**: Контролер отримує історію та додає її у модель
+7. **Рендеринг шаблону**: Thymeleaf відображає `result.html` з історією
+8. **Відображення**: Користувач бачить згенеровану історію у браузері
 
-**Процес обробки помилок:**
-Якщо сервіс AI недоступний:
-1. Контролер перехоплює виняток
-2. Генерує резервну історію за допомогою заздалегідь написаних шаблонів
-3. Відображає резервну історію з приміткою про недоступність AI
-4. Користувач все одно отримує історію, забезпечуючи позитивний досвід
+**Обробка помилок:**
+Якщо сервіс ШІ не працює:
+1. Контролер ловить виключення
+2. Генерує запасну історію заздалегідь підготовленими шаблонами
+3. Відображає запасну історію з повідомленням про недоступність ШІ
+4. Користувач все одно отримує історію, що забезпечує хороший досвід
 
-## Розуміння інтеграції з AI
+## Розуміння інтеграції зі ШІ
 
-### API GitHub Models
-Додаток використовує GitHub Models, який надає безкоштовний доступ до різних AI-моделей:
+### Azure AI Foundry (авторизація без ключа)
+Додаток використовує Azure AI Foundry з авторизацією без ключа (Microsoft Entra ID):
 
 ```java
-// Authentication with GitHub token
+// Аутентифікація без ключа - без API ключа
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
-### Інженерія запитів
-Сервіс використовує ретельно створені запити для отримання якісних результатів:
+### Проектування запитів
+Сервіс використовує ретельно створені запити для отримання хороших результатів:
 
 ```java
 String systemPrompt = "You are a creative storyteller who writes fun, " +
@@ -424,7 +433,7 @@ String systemPrompt = "You are a creative storyteller who writes fun, " +
 ```
 
 ### Обробка відповіді
-Відповідь AI витягується та перевіряється:
+Відповідь ШІ витягується і перевіряється:
 
 ```java
 ChatCompletion response = openAIClient.chat().completions().create(params);
@@ -433,7 +442,11 @@ String story = response.choices().get(0).message().content().orElse("");
 
 ## Наступні кроки
 
-Для отримання додаткових прикладів дивіться [Розділ 04: Практичні приклади](../README.md)
+Для більшої кількості прикладів дивіться [Розділ 04: Практичні приклади](../README.md)
 
-**Відмова від відповідальності**:  
-Цей документ було перекладено за допомогою сервісу автоматичного перекладу [Co-op Translator](https://github.com/Azure/co-op-translator). Хоча ми прагнемо до точності, звертаємо вашу увагу, що автоматичні переклади можуть містити помилки або неточності. Оригінальний документ на його рідній мові слід вважати авторитетним джерелом. Для критично важливої інформації рекомендується професійний людський переклад. Ми не несемо відповідальності за будь-які непорозуміння або неправильні тлумачення, що виникли внаслідок використання цього перекладу.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Відмова від відповідальності**:
+Цей документ було перекладено за допомогою сервісу штучного інтелекту для перекладу [Co-op Translator](https://github.com/Azure/co-op-translator). Хоча ми прагнемо до точності, будь ласка, майте на увазі, що автоматичні переклади можуть містити помилки або неточності. Оригінальний документ рідною мовою слід вважати авторитетним джерелом. Для критично важливої інформації рекомендується професійний людський переклад. Ми не несемо відповідальності за будь-які непорозуміння або неправильні тлумачення, що виникли внаслідок використання цього перекладу.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

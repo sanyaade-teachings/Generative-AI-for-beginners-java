@@ -1,64 +1,60 @@
-# Practical Applications & Projects
+# လက်တွေ့ အသုံးပြုမှုများနှင့် ပရောဂျက်များ
 
-[![Practical Applications & Projects](https://img.youtube.com/vi/01vJsYei3H0/0.jpg)](https://www.youtube.com/watch?v=01vJsYei3H0 "Practical Applications & Projects")
+## သင်ယူမည့်အကြောင်းအရာများ
+ဤအခန်းတွင် Java ဖြင့် generative AI ဖွံ့ဖြိုးတိုးတက်မှု နမူနာအား အသုံးပြု၍ ရှုမြင်နိုင်သော လက်တွေ့ အသုံးပြုမှုသုံးခုကို ပြသပါမည်။
+- စက်ဝိုင်းဖက် နှင့် ဆာဗာဖက် AI တွေကို ပေါင်းစပ်ထားသော multi-modal အမျိုးအစား Pet Story Generator ဖန်တီးခြင်း
+- Foundry Local Spring Boot ဒေမိုဖြင့် ဒေသတွင်း AI မော်ဒယ် ပေါင်းစည်းခြင်း ကို အသုံးပြုခြင်း
+- Calculator နမူနာဖြင့် Model Context Protocol (MCP) ဝန်ဆောင်မှု တီထွင်ရေး
 
-> **Video overview:** [Watch "Practical Applications & Projects" on YouTube](https://www.youtube.com/watch?v=01vJsYei3H0).
+## အကြောင်းအရာဇယား
 
-## What You'll Learn
-In this section we'll demo three practical applications that showcase generative AI development patterns with Java:
-- Create a multi-modal Pet Story Generator combining client-side and server-side AI
-- Implement local AI model integration with the Foundry Local Spring Boot demo
-- Develop a Model Context Protocol (MCP) service with the Calculator example
-
-## Table of Contents
-
-- [Introduction](#introduction)
+- [နိဒါန်း](#နိဒါန်း)
   - [Foundry Local Spring Boot Demo](#foundry-local-spring-boot-demo)
   - [Pet Story Generator](#pet-story-generator)
   - [MCP Calculator Service (Beginner-Friendly MCP Demo)](#mcp-calculator-service-beginner-friendly-mcp-demo)
-- [Learning Progression](#learning-progression)
-- [Summary](#summary)
-- [Next Steps](#next-steps)
+- [သင်ယူမှု အဆင့်ဆင့်](#သင်ယူမှု-အဆင့်ဆင့်)
+- [အနှစ်ချုပ်](#အနှစ်ချုပ်)
+- [နောက်တစ်ဆင့်များ](#နောက်တစ်ဆင့်များ)
 
-## Introduction
+## နိဒါန်း
 
-This chapter showcases **sample projects** that demonstrate generative AI development patterns with Java. Each project is fully functional and demonstrates specific AI technologies, architectural patterns, and best practices that you can adapt for your own applications.
+ဤအခန်းတွင် Java ဖြင့် generative AI ဖွံ့ဖြိုးတိုးတက်မှု နမူနာများ ဖြစ်သော **နမူနာပရောဂျက်များ** ကို ပြသပါသည်။ ပရောဂျက်တစ်ခုစီသည် လုံးလုံးလက်လက် အလုပ်လုပ်နိုင်ပြီး သင်၏ ကိုယ့်ပရောဂျက်များအတွက် ကိုက်ညီစွာ သုံးနိုင်မည့် AI နည်းပညာများ၊ ဖွဲ့စည်းမှု များ၊ နှင့် ပဋိညာဉ်များကို ဖော်ပြပါသည်။
 
 ### Foundry Local Spring Boot Demo
 
-The **[Foundry Local Spring Boot Demo](foundrylocal/README.md)** demonstrates how to integrate with local AI models using the **OpenAI Java SDK**. It showcases connecting to models running on Foundry Local (e.g., **Phi-4-mini**), with automatic model detection, allowing you to run AI applications without relying on cloud services.
+**[Foundry Local Spring Boot Demo](foundrylocal/README.md)** သည် **OpenAI Java SDK** ကို အသုံးပြုပြီး ဒေသတွင်း AI မော်ဒယ်များနှင့် ပေါင်းစည်းခြင်းနည်းလမ်းကို ပြသပါသည်။ Foundry Local မှအလုပ်လုပ်နေသည့် မော်ဒယ်များ (ဥပမာ၊ **Phi-4-mini**) နှင့် အသုံးပြု၍ မော်ဒယ်များကို အလိုအလျောက် ရှာဖွေခြင်း၊ cloud ဝန်ဆောင်မှုများမလိုဘဲ AI ဖြေရှင်းချက်များကို အသုံးပြုနိုင်ခြင်းကို ပြသသည်။
 
 ### Pet Story Generator
 
-The **[Pet Story Generator](petstory/README.md)** is an engaging Spring Boot web application that demonstrates **multi-modal AI processing** to generate creative pet stories. It combines client-side and server-side AI capabilities using transformer.js for browser-based AI interactions and the OpenAI SDK for server-side processing.
+**[Pet Story Generator](petstory/README.md)** သည် စိတ်ဝင်စားဖွယ်ရာ Spring Boot ဝက်ဘ်လ်အက်ပ်ဖြစ်ပြီး **multi-modal AI processing** ကို အသုံးပြုကာ ဖန်တီးမှုမြန်ဆန်ပြီး စိတ်ဝင်စားဖွယ် ကြောင်ဘယ်သူပုံပြင်များ ဖန်တီးပေးပါသည်။ client-side နှင့် server-side AI အာရုံစိုက်မှုများကို transformer.js အား ဖွင့်လှစ်ပါက browser တွင် AI နှင့် ဆက်ဆံနိုင်ခြင်းနှင့် OpenAI SDK ဖြင့် ဆာဗာရှိ AI ကို အတူတကွ အသုံးပြုထားသည်။
 
 ### MCP Calculator Service (Beginner-Friendly MCP Demo)
 
-The **[MCP Calculator Service](calculator/README.md)** is a simple demonstration of the **Model Context Protocol (MCP)** using Spring AI. It provides a beginner-friendly introduction to MCP concepts, showing how to create a basic MCP Server that interacts with MCP clients.
+**[MCP Calculator Service](calculator/README.md)** သည် Spring AI အသုံးပြု၍ **Model Context Protocol (MCP)** ကို လှုပ်ရှားမှုရိုးရှင်းကာ MCP ၏ အခြေခံများကို လေ့လာရန် ပေါ့ပေါ့ပါးပါး တည်ဆောက်ထားသော ဒေမို ဖြစ်သည်။ MCP client များနှင့် ဆက်သွယ်သည့် MCP Server ကို ဘယ်လိုဖန်တီးရမည်ကို ပြသပါသည်။
 
-## Learning Progression
+## သင်ယူမှု အဆင့်ဆင့်
 
-These projects are designed to build upon concepts from previous chapters:
+ဤပရောဂျက်များသည် ယခင်အခန်းများမှ သင်ယူထားသည့် အယူအဆများအပေါ် အခြေခံ၍ ဖန်တီးထားပါသည်။
 
-1. **Start Simple**: Begin with the Foundry Local Spring Boot Demo to understand basic AI integration with local models
-2. **Add Interactivity**: Progress to the Pet Story Generator for multi-modal AI and web-based interactions
-3. **Learn MCP Basics**: Try the MCP Calculator Service to understand Model Context Protocol fundamentals
+1. **ရိုးရှင်းစွာ စတင်ခြင်း**: Foundry Local Spring Boot ဒေမိုဖြင့် ဒေသတွင်း AI မော်ဒယ်များနှင့် ပေါင်းစည်းခြင်း အကြောင်းကို နားလည်ရန် စတင်ပါ။
+2. **အပြန်အလှန်ဆက်ဆံရေး ပေါင်းထည့်ခြင်း**: multi-modal AI နှင့် ဝက်ဘ်အပလီကေးရှင်း တို့ကို ပိုမိုနားလည်ရန် Pet Story Generator သို့ တက်ကြွပါ။
+3. **MCP အခြေခံများ လေ့လာခြင်း**: Model Context Protocol ၏ အခြေခံ ကို ဉပမာများဖြင့် MCP Calculator Service ဖြင့် နားလည်ခြင်း။
 
-## Summary
+## အနှစ်ချုပ်
 
-Nice work! You've now explored some real applications:
+ကောင်းမွန်ပါတယ်! သင်သည် အောက်ပါ ထူးခြားသော အသုံးပြုမှုများကို ရှာဖွေကြည့်ပြီးဖြစ်ပါသည်။ 
 
-- Multi-modal AI experiences that work both in the browser and on the server
-- Local AI model integration using modern Java frameworks and SDKs
-- Your first Model Context Protocol service to see how tools integrate with AI
+- browser နှင့် server နှစ်ဖက်လုံးတွင် လုပ်ဆောင်နိုင်သော multi-modal AI အတွေ့အကြုံများ
+- အဆန်းကြီးသော Java ဖ্ৰိမ်ဝါ့ခ်များ နှင့် SDK များဖြင့် ဒေသတွင်း AI မော်ဒယ် ပေါင်းစည်းမှု
+- Tools များကို AI နှင့် ပေါင်းစည်းစေသော Model Context Protocol ဝန်ဆောင်မှု ပထမဆုံး အကြောင်းသိရှိခြင်း
 
-## Next Steps
+## နောက်တစ်ဆင့်များ
 
-[Chapter 5: Responsible Generative AI](../05-ResponsibleGenAI/README.md)
+[အခန်း ၅: တာဝန်ရှိသော Generative AI](../05-ResponsibleGenAI/README.md)
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**အကြောင်းကြားချက်**  
-ဤစာတမ်းကို AI ဘာသာပြန်ဝန်ဆောင်မှု [Co-op Translator](https://github.com/Azure/co-op-translator) အသုံးပြု၍ ဘာသာပြန်ထားပါသည်။ ကျနော်တို့သည် တိကျမှုအတွက် ကြိုးစားသော်လည်း အလိုအလျောက်ဘာသာပြန်မှုတွင် အမှားများ သို့မဟုတ် မှားယွင်းမှုများ ဖြစ်ပေါ်နိုင်ကြောင်း သတိပြု فرمای ပါသည်။ မူရင်းစာတမ်းကို မိဘဘာသာဖြင့်သာ လက်မှတ်ရှိသော အချက်အလက် အဖြစ် သတ်မှတ်သင့်ပါသည်။ အရေးကြီးသော အချက်အလက်များအတွက် နိုင်ငံ့အတည်ပြု လူမှုဘာသာပြန်တစ်ဦး၏ ဝန်ဆောင်မှု အသုံးပြုရန် အကြံပြုပါသည်။ ဤဘာသာပြန်ချက်ကို အသုံးပြုမှုနှင့် ပတ်သက်၍ ဖြစ်ပေါ်လာနိုင်သည့် နားလည်မှုမှားယွင်းမှုများအတွက် ကျွန်ုပ်တို့မှာ တာဝန်မရှိပါ။
+**ပြောကြားချက်**
+ဤစာတမ်းကို AI ဘာသာပြန်ဝန်ဆောင်မှု [Co-op Translator](https://github.com/Azure/co-op-translator) အသုံးပြု၍ ဘာသာပြန်ထားပါသည်။ ကျွန်ုပ်တို့သည် တိကျမှန်ကန်မှုအတွက် ကြိုးပမ်းနေသော်လည်း၊ စက်ကိရိယာဘာသာပြန်ခြင်းများတွင် အမှားများ သို့မဟုတ် မှားယွင်းချက်များ ပါဝင်နိုင်ကြောင်း သတိပြုပါရန် လိုအပ်ပါသည်။ မူလစာတမ်းကို မူရင်းဘာသာဖြင့်သာ ယုံကြည်စိတ်ချရသော အချက်အလက်အဖြစ် သတ်မှတ်သင့်သည်။ အရေးကြီးသည့် သတင်းအချက်အလက်များအတွက် ပရော်ဖက်ရှင်နယ် လူသားဘာသာပြန်သူဝန်ဆောင်မှုကို အကြံပြုပါသည်။ ဤဘာသာပြန်ချက်ကို အသုံးပြုခြင်းမှ ဖြစ်ပေါ်လာသော နားလည်မှုကွာခြားမှုများ သို့မဟုတ် မမှန်ကန်သော အသုံးပြုမှုများအတွက် ကျွန်ုပ်တို့ တာဝန်မခံပါ။
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

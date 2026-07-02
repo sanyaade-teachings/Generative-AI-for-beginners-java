@@ -1,111 +1,106 @@
-# Įvadas į generatyviąją dirbtinį intelektą – Java leidimas
+# Įvadas į Generatyvinį DI – Java leidimas
 
-[![Įvadas į generatyviąją dirbtinį intelektą](https://img.youtube.com/vi/XH46tGp_eSw/0.jpg)](https://www.youtube.com/watch?v=XH46tGp_eSw "Įvadas į generatyviąją dirbtinį intelektą")
+## Ko Išmoksite
 
-> **Vaizdo įrašas**: [Peržiūrėkite šios pamokos vaizdo įrašo apžvalgą YouTube.](https://www.youtube.com/watch?v=XH46tGp_eSw) Taip pat galite spustelėti aukščiau esantį miniatiūros vaizdą.
-
-## Ko išmoksite
-
-- **Generatyviosios DI pagrindai**, įskaitant LMM, užklausų inžineriją, žetonus, įterpimus ir vektorių duomenų bazes
-- **Sulyginkite Java DI kūrimo įrankius**, įskaitant Azure OpenAI SDK, Spring AI ir OpenAI Java SDK
-- **Sužinokite apie Modelio konteksto protokolą** ir jo vaidmenį DI agentų komunikacijoje
+- **Generatyvinio DI pagrindai**, įskaitant LLM, užklausų inžineriją, žetonus, įterpimus ir vektorių duomenų bazes
+- **Palyginkite Java DI kūrimo įrankius**, įskaitant Azure OpenAI SDK, Spring AI ir OpenAI Java SDK
+- **Sužinokite apie Modelio Konteksto Protokolą** ir jo vaidmenį DI agentų komunikacijoje
 
 ## Turinys
 
 - [Įvadas](#įvadas)
-- [Greitas priminimas apie generatyviosios DI sąvokas](#greitas-priminimas-apie-generatyviosios-di-sąvokas)
+- [Greitas generatyvinio DI konceptų priminimas](#greitas-generatyvinio-di-konceptų-priminimas)
 - [Užklausų inžinerijos apžvalga](#užklausų-inžinerijos-apžvalga)
 - [Žetonai, įterpimai ir agentai](#žetonai-įterpimai-ir-agentai)
-- [DI kūrimo įrankiai ir bibliotekos Java](#di-kūrimo-įrankiai-ir-bibliotekos-java)
+- [DI Kūrimo Įrankiai ir Bibliotekos Java kalbai](#di-kūrimo-įrankiai-ir-bibliotekos-java-kalbai)
   - [OpenAI Java SDK](#openai-java-sdk)
   - [Spring AI](#spring-ai)
   - [Azure OpenAI Java SDK](#azure-openai-java-sdk)
 - [Santrauka](#santrauka)
-- [Tolimesni veiksmai](#tolimesni-veiksmai)
+- [Kiti Žingsniai](#kiti-žingsniai)
 
 ## Įvadas
 
-Sveiki atvykę į pirmąją generatyviosios DI pradedantiesiems – Java leidimas – pamoką! Ši bazinė pamoka supažindina jus su pagrindinėmis generatyviosios DI sąvokomis ir kaip su jomis dirbti naudojant Java. Išmoksite apie esminius DI taikomųjų programų statybinius blokelius, įskaitant didelius kalbos modelius (LMM), žetonus, įterpimus ir DI agentus. Taip pat išnagrinėsime pagrindinius Java įrankius, kuriuos naudosite viso kurso metu.
+Sveiki atvykę į pirmąją generatyvinio DI pradedantiesiems – Java leidimo – pamoką! Ši pagrindinė pamoka supažindins jus su pagrindinėmis generatyvinio DI sąvokomis ir kaip jas naudoti su Java. Išmoksite apie svarbiausius DI programų statybinius blokus, įskaitant Didelius Kalbos Modelius (LLM), žetonus, įterpimus ir DI agentus. Taip pat apžvelgsime pagrindinius Java įrankius, kuriuos naudosite viso kurso metu.
 
-### Greitas priminimas apie generatyviosios DI sąvokas
+### Greitas generatyvinio DI konceptų priminimas
 
-Generatyvioji DI yra dirbtinio intelekto rūšis, kuri kuria naują turinį, tokią kaip tekstai, vaizdai ar kodas, remdamasi duomenų įsisavintais šablonais ir ryšiais. Generatyviosios DI modeliai gali generuoti žmogaus kalbos atsakymus, suprasti kontekstą ir kartais net kurti turinį, kuris atrodo kaip sukurtas žmogaus.
+Generatyvinis DI yra dirbtinio intelekto tipas, kuris kuria naują turinį, pavyzdžiui, tekstą, vaizdus ar kodą, remdamasis išmoktomais duomenų modeliais ir ryšiais. Generatyviniai DI modeliai sugeba generuoti žmogaus panašias atsakymus, suprasti kontekstą ir kartais net kurti turinį, kuris atrodo kaip žmogaus sukurtas.
 
-Kurdami savo Java DI taikomąsias programas, dirbsite su **generatyviosiomis DI modeliais** kuriant turinį. Kai kurios generatyviosios DI modelių galimybės apima:
+Kurdami savo Java DI programas, dirbsite su **generatyviniais DI modeliais** kurdami turinį. Kai kurios generatyvinių DI modelių galimybės apima:
 
-- **Teksto generavimas**: Žmogaus kalbos tekstų kūrimas pokalbių robotams, turiniui ir teksto baigimui.
-- **Vaizdo generavimas ir analizė**: Realistiškų vaizdų kūrimas, nuotraukų pagerinimas ir objektų atpažinimas.
-- **Kodo generavimas**: Kodo fragmentų ar scenarijų rašymas.
+- **Teksto Generavimas**: Žmogaus kalbai panašaus teksto kūrimas pokalbiams, turiniui ir teksto užbaigimui.
+- **Vaizdų Generavimas ir Analizė**: Tikroviškų vaizdų kūrimas, nuotraukų gerinimas ir objektų atpažinimas.
+- **Kodo Generavimas**: Kodo fragmentų ar scenarijų rašymas.
 
-Yra specifiniai modelių tipai, optimizuoti skirtingoms užduotims. Pavyzdžiui, tiek **Maži kalbos modeliai (SLM)**, tiek **Dideli kalbos modeliai (LMM)** gali būti naudojami teksto generavimui, o LMM paprastai pasižymi geresniu našumu sudėtingesnėse užduotyse. Vaizdų užduotims naudotumėte specializuotus regos modelius arba multimodalius modelius.
+Yra specifinių modelių tipų, optimizuotų skirtingoms užduotims. Pavyzdžiui, tiek **Maži Kalbos Modeliai (SLM)**, tiek **Dideli Kalbos Modeliai (LLM)** gali apdoroti teksto generavimą, kur LLM dažniausiai suteikia geresnį našumą sudėtingesnėms užduotims. Vaizdų užduotims naudotumėte specializuotus regos modelius arba daugiarūšius modelius.
 
-![Paveikslas: Generatyviosios DI modelių tipai ir naudojimo atvejai.](../../../translated_images/lt/llms.225ca2b8a0d34473.webp)
+![Figura: Generatyvinio DI modelių tipai ir naudojimo atvejai.](../../../translated_images/lt/llms.225ca2b8a0d34473.webp)
 
-Žinoma, šių modelių atsakymai ne visada tobuli. Tikriausiai esate girdėję apie modelių „haliucinacijas“ arba neteisingos informacijos autoritetingą generavimą. Tačiau galite padėti modeliui generuoti geresnius atsakymus, pateikdami aiškias instrukcijas ir kontekstą. Čia praverčia **užklausų inžinerija**.
+Žinoma, šių modelių atsakymai nėra tobuli visada. Tikriausiai esate girdėję apie modelių „haliucinacijas“ arba klaidingos informacijos generavimą įtikinamu būdu. Bet galite padėti modeliams generuoti geresnius atsakymus, pateikdami aiškias instrukcijas ir kontekstą. Čia praverčia **užklausų inžinerija**.
 
 #### Užklausų inžinerijos apžvalga
 
-Užklausų inžinerija – tai efektyvių įvedimų projektavimas, siekiant nukreipti DI modelius į pageidaujamus rezultatus. Tai apima:
+Užklausų inžinerija yra praktiką efektyviai kurti įvestis, vedančias DI modelius link norimų rezultatų. Ji apima:
 
-- **Aiškumą**: instrukcijų padarymą aiškiais ir neabiprasmiškais.
-- **Kontekstą**: reikalingos fono informacijos pateikimą.
-- **Apribojimus**: bet kokių ribojimų arba formatų nurodymą.
+- **Aiškumą**: Darant instrukcijas aiškias ir neambicingas.
+- **Kontekstą**: Pateikiant reikalingą foninę informaciją.
+- **Apribojimus**: Nurodant apribojimus ar formatus.
 
-Geriausios užklausų inžinerijos praktikos apima užklausų dizainą, aiškias instrukcijas, užduočių suskaidymą, vieno pavyzdžio ir kelių pavyzdžių mokymąsi bei užklausų derinimą. Būtina išbandyti skirtingas užklausas, kad rastumėte geriausiai jūsų atvejui tinkamą.
+Kai kurios geros užklausų inžinerijos praktikos apima užklausų dizainą, aiškias instrukcijas, užduočių suskaidymą, vienkartinį ir kelių pavyzdžių mokymąsi bei užklausų derinimą. Testuoti skirtingas užklausas yra būtina norint rasti geriausią sprendimą jūsų specifiniam atvejui.
 
-Kuriant programas dirbsite su skirtingų tipų užklausomis:
-- **Sistemos užklausos**: nustato pagrindines taisykles ir kontekstą modelio elgesiui
-- **Vartotojo užklausos**: įvesties duomenys iš jūsų programos vartotojų
-- **Asistento užklausos**: modelio atsakymai, pagrįsti sistemos ir vartotojo užklausomis
+Kurdami programas, dirbsite su skirtingų tipų užklausomis:
+- **Sistemos užklausos**: Nustato bazinius modelio elgesio taisykles ir kontekstą
+- **Vartotojo užklausos**: Įvesties duomenys iš jūsų programos naudotojų
+- **Asistentų užklausos**: Modelio atsakymai, paremti sisteminėmis ir vartotojo užklausomis
 
-> **Sužinokite daugiau**: Plačiau apie užklausų inžineriją skaitykite [Užklausų inžinerijos skyriuje GenAI pradedantiesiems kurse](https://github.com/microsoft/generative-ai-for-beginners/tree/main/04-prompt-engineering-fundamentals)
+> **Sužinokite daugiau**: Sužinokite daugiau apie užklausų inžineriją [Generatyvinio DI pradedantiesiems kurso Užklausų inžinerijos skyriuje](https://github.com/microsoft/generative-ai-for-beginners/tree/main/04-prompt-engineering-fundamentals)
 
 #### Žetonai, įterpimai ir agentai
 
-Dirbdami su generatyviosios DI modeliais susidursite su tokiais terminais kaip **žetonai**, **įterpimai**, **agentai** ir **Modelio konteksto protokolas (MCP)**. Štai išsamus šių sąvokų apžvalga:
+Dirbdami su generatyviniais DI modeliais, susidursite su terminais kaip **žetonai**, **įterpimai**, **agentai** ir **Modelio Konteksto Protokolas (MCP)**. Štai detali šių konceptų apžvalga:
 
-- **Žetonai**: žetonai yra mažiausia tekstinė teksto dalis modelyje. Jie gali būti žodžiai, simboliai arba dalys žodžių. Žetonai naudojami atstovauti tekstinius duomenis tokiu formatu, kurį modelis gali suprasti. Pavyzdžiui, sakinys „The quick brown fox jumped over the lazy dog“ gali būti suskaidytas į žetonus kaip ["The", " quick", " brown", " fox", " jumped", " over", " the", " lazy", " dog"] arba ["The", " qu", "ick", " br", "own", " fox", " jump", "ed", " over", " the", " la", "zy", " dog"] priklausomai nuo žetonizavimo strategijos.
+- **Žetonai**: Žetonai yra mažiausios teksto dalys modelyje. Tai gali būti žodžiai, simboliai ar žodžių dalys. Žetonai naudojami tekstui atvaizduoti formatu, kurį modelis gali suprasti. Pavyzdžiui, sakinys „The quick brown fox jumped over the lazy dog“ gali būti suskaidytas į žetonus kaip ["The", " quick", " brown", " fox", " jumped", " over", " the", " lazy", " dog"] arba ["The", " qu", "ick", " br", "own", " fox", " jump", "ed", " over", " the", " la", "zy", " dog"], priklausomai nuo žetonizacijos strategijos.
 
-![Paveikslas: Generatyviosios DI žetonų pavyzdys su žodžių skaidymu į žetonus](../../../translated_images/lt/tokens.6283ed277a2ffff4.webp)
+![Figura: Generatyvinio DI žetonų pavyzdys žodžių suskaidymui į žetonus](../../../translated_images/lt/tokens.6283ed277a2ffff4.webp)
 
-Žetonizavimas – tai procesas, kai tekstas suskaidomas į šias mažesnes dalis. Tai svarbu, nes modeliai veikia su žetonais, o ne su žaliu tekstu. Žetonų skaičius užklausoje veikia modelio atsakymo ilgį ir kokybę, nes modeliai turi žetonų limitą savo konteksto lange (pvz., 128 tūkst. žetonų iš viso konteksto GPT-4o, įskaitant įvestį ir išvestį).
+Žetonizacija yra tekstų suskaidymo į šiuos mažesnius vienetus procesas. Tai labai svarbu, nes modeliai veikia su žetonais, o ne žaliu tekstu. Žetonų skaičius užklausoje turi įtakos modelio atsakymo ilgiui ir kokybei, nes modeliai turi žetonų limitus savo konteksto lange (pvz., 128K žetonų GPT-4o bendram kontekstui, įskaitant tiek įvestį, tiek išvestį).
 
-  Java kalboje galite naudoti bibliotekas, tokias kaip OpenAI SDK, kurios automatizuotai atlieka žetonizavimą siunčiant užklausas DI modeliams.
+  Java kalba galite naudoti tokias bibliotekas kaip OpenAI SDK žetonizacijai automatizuoti siunčiant užklausas DI modeliams.
 
-- **Įterpimai**: įterpimai yra vektoriniai žetonų atvaizdai, kurie sugeneruoja semantinę prasmę. Tai skaitmeniniai atvaizdai (dažniausiai plūduriuojančio kablelio skaičių masyvai), leidžiantys modeliams suprasti žodžių santykius ir generuoti kontekstui tinkamus atsakymus. Panašios reikšmės žodžiai turi panašius įterpimus, leidžiančius modeliui suvokti sinonimus ir semantinius ryšius.
+- **Įterpimai**: Įterpimai yra vektoriniai žetonų atvaizdai, kurie užfiksuoja semantinę prasmę. Tai skaitinės reprezentacijos (dažniausiai plaukiojančio kablelio skaičių masyvai), kurios leidžia modeliams suprasti žodžių santykius ir generuoti kontekstualiai aktualius atsakymus. Panašūs žodžiai turi panašius įterpimus, leidžiančius modeliui suprasti sinonimus ir semantinius ryšius.
 
-![Paveikslas: Įterpimai](../../../translated_images/lt/embedding.398e50802c0037f9.webp)
+![Figura: Įterpimai](../../../translated_images/lt/embedding.398e50802c0037f9.webp)
 
-  Java kalboje galite generuoti įterpimus naudodami OpenAI SDK arba kitas bibliotekas, palaikančias įterpimų generavimą. Šie įterpimai yra būtini užduotims kaip semantinė paieška, kai norite rasti panašų turinį pagal prasmę, o ne pagal tikslius tekstinius atitikmenis.
+  Java kalboje galite generuoti įterpimus naudodami OpenAI SDK ar kitas įterpimų generavimą palaikančias bibliotekas. Šie įterpimai yra svarbūs užduotims, tokioms kaip semantinės paieškos, kai norite rasti panašų turinį pagal prasmę, o ne pagal tikslius teksto atitikmenis.
 
-- **Vektorių duomenų bazės**: vektorių duomenų bazės yra specializuotos saugojimo sistemos, optimizuotos įterpimams. Jos leidžia efektyvią panašumo paiešką ir yra svarbios Retrieval-Augmented Generation (RAG) šablonams, kai reikia rasti aktualią informaciją iš didelių duomenų rinkinių, remiantis semantiniu panašumu, o ne tiksliu tekstiniu atitikimu.
+- **Vektorinės duomenų bazės**: Vektorinės duomenų bazės yra specializuotos saugyklos, optimizuotos įterpimams. Jos leidžia efektyviai ieškoti panašumų ir yra svarbios Retrieval-Augmented Generation (RAG) modeliams, kai reikia rasti aktualią informaciją dideliuose duomenų rinkiniuose pagal semantinį panašumą, o ne tikslius atitikmenis.
 
-![Paveikslas: Vektorių duomenų bazės architektūra, rodanti kaip saugomi ir gaunami įterpimai panašumo paieškoms.](../../../translated_images/lt/vector.f12f114934e223df.webp)
+![Figura: Vektorinės duomenų bazės architektūra, rodanti, kaip įterpimai saugomi ir paimami panašumų paieškai.](../../../translated_images/lt/vector.f12f114934e223df.webp)
 
-> **Pastaba**: Šiame kurse nepateiksime vektorių duomenų bazių, tačiau verta paminėti, nes jos dažnai naudojamos realiose programose.
+> **Pastaba**: Šiame kurse neapžvelgsime vektorinių duomenų bazių, bet paminime jas, nes jos dažnai naudojamos realiose programose.
 
-- **Agentai ir MCP**: DI komponentai, kurie savarankiškai bendrauja su modeliais, įrankiais ir išorinėmis sistemomis. Modelio konteksto protokolas (MCP) suteikia standartizuotą būdą agentams saugiai prieiti prie išorinių duomenų šaltinių ir įrankių. Daugiau sužinokite mūsų [MCP pradedantiesiems](https://github.com/microsoft/mcp-for-beginners) kurse.
+- **Agentai ir MCP**: DI komponentai, kurie autonomiškai bendrauja su modeliais, įrankiais ir išorinėmis sistemomis. Modelio Konteksto Protokolas (MCP) suteikia standartizuotą būdą agentams saugiai naudotis išoriniais duomenų šaltiniais ir įrankiais. Sužinokite daugiau mūsų [MCP pradedantiesiems](https://github.com/microsoft/mcp-for-beginners) kurse.
 
-Java DI programose naudosite žetonus teksto apdorojimui, įterpimus semantinei paieškai ir RAG, vektorių duomenų bazes duomenų gavimui bei agentus su MCP protingoms sistemoms, naudojančioms įrankius, kurti.
+Java DI programose naudosite žetonus teksto apdorojimui, įterpimus semantinei paieškai ir RAG, vektorines duomenų bazes duomenų gavimui bei agentus su MCP kuriant išmanias sistemas, naudojančias įrankius.
 
-![Paveikslas: kaip užklausa virsta atsakymu—žetonai, vektoriai, neobligatinė RAG paieška, LMM mąstymas ir MCP agentas viename greitame sraute.](../../../translated_images/lt/flow.f4ef62c3052d12a8.webp)
+![Figura: kaip užklausa tampa atsakymu – žetonai, vektoriai, papildoma RAG paieška, LLM apdorojimas ir MCP agentas viename greitame sraute.](../../../translated_images/lt/flow.f4ef62c3052d12a8.webp)
 
-### DI kūrimo įrankiai ir bibliotekos Java
+### DI Kūrimo Įrankiai ir Bibliotekos Java kalbai
 
-Java suteikia puikių įrankių DI kūrimui. Yra trys pagrindinės bibliotekos, kurias nagrinėsime per visą šį kursą – OpenAI Java SDK, Azure OpenAI SDK ir Spring AI.
+Java siūlo puikius įrankius DI kūrimui. Yra trys pagrindinės bibliotekos, kurias nagrinėsime viso kurso metu – OpenAI Java SDK, Azure OpenAI SDK ir Spring AI.
 
-Čia pateikiama greita nuorodų lentelė, rodanti, kuris SDK naudojamas kiekvieno skyriaus pavyzdžiuose:
+Čia pateiktame greitojo orientavimo lentelėje parodyta, kuris SDK naudojamas kiekvieno skyriaus pavyzdžiuose:
 
 | Skyrius | Pavyzdys | SDK |
-|---------|----------|-----|
-| 02-SetupDevEnvironment | github-models | OpenAI Java SDK |
+|---------|--------|-----|
 | 02-SetupDevEnvironment | basic-chat-azure | Spring AI Azure OpenAI |
 | 03-CoreGenerativeAITechniques | examples | Azure OpenAI SDK |
 | 04-PracticalSamples | petstory | OpenAI Java SDK |
 | 04-PracticalSamples | foundrylocal | OpenAI Java SDK |
 | 04-PracticalSamples | calculator | Spring AI MCP SDK + LangChain4j |
 
-**SDK dokumentacijos nuorodos:**
+**SDK Dokumentacijos Nuorodos:**
 - [Azure OpenAI Java SDK](https://github.com/Azure/azure-sdk-for-java/tree/azure-ai-openai_1.0.0-beta.16/sdk/openai/azure-ai-openai)
 - [Spring AI](https://docs.spring.io/spring-ai/reference/)
 - [OpenAI Java SDK](https://github.com/openai/openai-java)
@@ -113,41 +108,41 @@ Java suteikia puikių įrankių DI kūrimui. Yra trys pagrindinės bibliotekos, 
 
 #### OpenAI Java SDK
 
-OpenAI SDK yra oficiali Java biblioteka OpenAI API. Ji suteikia paprastą ir nuoseklią sąsają darbui su OpenAI modeliais, palengvinanti DI galimybių integraciją į Java programas. 2 skyriaus GitHub modelių pavyzdys, 4 skyriaus Pet Story ir Foundry Local pavyzdžiai demonstruoja OpenAI SDK naudojimą.
+OpenAI SDK yra oficiali Java biblioteka OpenAI API. Ji suteikia paprastą ir nuoseklią sąsają darbui su OpenAI modeliais, leidžianti lengvai integruoti DI galimybes į Java programas. 4-ojo skyriaus „Pet Story“ programa ir „Foundry Local“ pavyzdys demonstruoja OpenAI SDK naudojimą kartu su Azure AI Foundry.
 
 #### Spring AI
 
-Spring AI yra išsamus karkasas, kuris suteikia DI galimybių Spring aplikacijoms, užtikrindamas nuoseklią abstrakcijos sluoksnį per skirtingus DI tiekėjus. Jis sklandžiai integruojasi su Spring ekosistema, todėl tai yra ideali pasirinktis įmonių Java programoms, kurioms reikia DI funkcionalumo.
+Spring AI yra išsamus karkasas, kuris suteikia DI galimybes Spring programoms, suteikdamas nuoseklų abstrakcijos sluoksnį skirtingų DI tiekėjų integracijai. Jis sklandžiai integruojasi į Spring ekosistemą, todėl yra idealus pasirinkimas įmonių Java programoms, kurioms reikia DI funkcijų.
 
-Spring AI stiprybė – sklandi integracija su Spring ekosistema, todėl lengva kurti gamybai paruoštas DI programas naudojant pažįstamus Spring modelius, tokius kaip priklausomybių injekcija, konfigūracijos valdymas ir testavimo karkasai. Naudosit Spring AI 2 ir 4 skyriuose kuriant programas, kurios naudoja tiek OpenAI, tiek Modelio konteksto protokolo (MCP) Spring AI bibliotekas.
+Spring AI stiprybė yra sklandi integracija į Spring ekosistemą, leidžianti lengvai kurti gamybinio lygio DI programas, naudojant pažįstamus Spring modelius, tokius kaip priklausomybių injekcija, konfigūracijos valdymas ir testavimo karkasai. Spring AI naudosite 2 ir 4 skyriuose kurdami programas, kurios naudoja tiek OpenAI, tiek Modelio Konteksto Protokolo (MCP) Spring AI bibliotekas.
 
-##### Modelio konteksto protokolas (MCP)
+##### Modelio Konteksto Protokolas (MCP)
 
-[Modelio konteksto protokolas (MCP)](https://modelcontextprotocol.io/) yra besiformuojantis standartas, leidžiantis DI programoms saugiai bendrauti su išoriniais duomenų šaltiniais ir įrankiais. MCP suteikia standartinį būdą DI modeliams prieiti prie kontekstinės informacijos ir vykdyti veiksmus jūsų programose.
+[Modelio Konteksto Protokolas (MCP)](https://modelcontextprotocol.io/) yra kylančios standartas, leidžiantis DI programoms saugiai bendrauti su išoriniais duomenų šaltiniais ir įrankiais. MCP suteikia standartizuotą būdą DI modeliams pasiekti kontekstinę informaciją ir vykdyti veiksmus jūsų programose.
 
-4 skyriuje sukursite paprastą MCP kalkuliatoriaus paslaugą, kuri demonstruos Modelio konteksto protokolo pagrindus su Spring AI, parodys, kaip kurti pagrindines įrankių integracijas ir paslaugų architektūras.
+4-ajame skyriuje sukursite paprastą MCP skaičiuoklės paslaugą, kuri parodys Modelio Konteksto Protokolo pagrindus su Spring AI, demonstruodama, kaip kurti bazines įrankių integracijas ir paslaugų architektūras.
 
 #### Azure OpenAI Java SDK
 
-Azure OpenAI klientų biblioteka Java kalbai yra OpenAI REST API adaptacija, kuri suteikia idiomatinę sąsają ir integraciją su visa Azure SDK ekosistema. 3 skyriuje kursite programas naudodami Azure OpenAI SDK, įskaitant pokalbių programas, funkcijų kvietimą ir RAG (Retrieval-Augmented Generation) modelius.
+Azure OpenAI klientų biblioteka Java kalbai yra OpenAI REST API adaptacija, teikianti idiomatišką sąsają ir integraciją su likusia Azure SDK ekosistema. 3-ajame skyriuje kursite programas naudodami Azure OpenAI SDK, įskaitant pokalbių programas, funkcijų kvietimą ir RAG (Retrieval-Augmented Generation) modelius.
 
-> Pastaba: Azure OpenAI SDK funkcionalumu atsilieka OpenAI Java SDK, taigi ateities projektams rekomenduojame naudoti OpenAI Java SDK.
+> Pastaba: Azure OpenAI SDK funkcionalumu atsilieka nuo OpenAI Java SDK, todėl būsimuose projektuose rekomenduojama naudoti OpenAI Java SDK.
 
 ## Santrauka
 
-Štai ir pagrindai! Dabar suprantate:
+Čia baigiame pagrindus! Dabar suprantate:
 
-- Pagrindines generatyviosios DI sąvokas – nuo LMM ir užklausų inžinerijos iki žetonų, įterpimų ir vektorių duomenų bazių
-- Savo įrankių komplekto galimybes Java DI kūrimui: Azure OpenAI SDK, Spring AI ir OpenAI Java SDK
-- Kas yra Modelio konteksto protokolas ir kaip jis leidžia DI agentams dirbti su išoriniais įrankiais
+- Pagrindines generatyvinio DI sąvokas – nuo LLM ir užklausų inžinerijos iki žetonų, įterpimų ir vektorinių duomenų bazių
+- Jūsų Java DI kūrimo įrankių pasirinkimus: Azure OpenAI SDK, Spring AI ir OpenAI Java SDK
+- Kas yra Modelio Konteksto Protokolas ir kaip jis leidžia DI agentams dirbti su išoriniais įrankiais
 
-## Tolimesni veiksmai
+## Kiti Žingsniai
 
-[2 skyrius: Kūrimo aplinkos nustatymas](../02-SetupDevEnvironment/README.md)
+[2 skyrius: Kūrimo Aplinkos Paruošimas](../02-SetupDevEnvironment/README.md)
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Atsakomybės apribojimas**:  
-Šis dokumentas buvo išverstas naudojant dirbtinio intelekto vertimo paslaugą [Co-op Translator](https://github.com/Azure/co-op-translator). Nors stengiamės užtikrinti tikslumą, prašome suprasti, kad automatiniai vertimai gali būti netikslūs arba klaidingi. Originalus dokumentas jo gimtąja kalba turėtų būti laikomas autoritetingu šaltiniu. Kritinei informacijai rekomenduojama naudoti profesionalų vertimą, atliekamą žmogaus. Mes neprisiimame atsakomybės už bet kokius nesusipratimus ar neteisingą interpretaciją, kylančią naudojant šį vertimą.
+**Atsakomybės apribojimas**:
+Šis dokumentas buvo išverstas naudojant dirbtinio intelekto vertimo paslaugą [Co-op Translator](https://github.com/Azure/co-op-translator). Nors siekiame tikslumo, prašome atkreipti dėmesį, kad automatiniai vertimai gali turėti klaidų ar netikslumų. Originalus dokumentas jo gimtąja kalba laikomas autoritetingu šaltiniu. Svarbiai informacijai rekomenduojama naudoti profesionalų žmogiškąjį vertimą. Mes neatsakome už jokius nesusipratimus ar neteisingą interpretaciją, kilusią naudojantis šiuo vertimu.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->
