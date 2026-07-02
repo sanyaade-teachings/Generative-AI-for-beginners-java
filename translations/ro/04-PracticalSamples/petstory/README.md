@@ -1,31 +1,31 @@
-# Tutorial pentru Generatorul de Povești cu Animale de Companie pentru Începători
+# Tutorial Generator de Povestiri pentru Animale de Companie pentru Începutori
 
 ## Cuprins
 
-- [Cerințe preliminare](../../../../04-PracticalSamples/petstory)
-- [Înțelegerea structurii proiectului](../../../../04-PracticalSamples/petstory)
-- [Explicația componentelor de bază](../../../../04-PracticalSamples/petstory)
-  - [1. Aplicația principală](../../../../04-PracticalSamples/petstory)
-  - [2. Controler web](../../../../04-PracticalSamples/petstory)
-  - [3. Serviciul de povești](../../../../04-PracticalSamples/petstory)
-  - [4. Șabloane web](../../../../04-PracticalSamples/petstory)
-  - [5. Configurare](../../../../04-PracticalSamples/petstory)
-- [Rularea aplicației](../../../../04-PracticalSamples/petstory)
-- [Cum funcționează totul împreună](../../../../04-PracticalSamples/petstory)
-- [Înțelegerea integrării AI](../../../../04-PracticalSamples/petstory)
-- [Pașii următori](../../../../04-PracticalSamples/petstory)
+- [Cerințe preliminare](#cerințe-preliminare)
+- [Înțelegerea structurii proiectului](#înțelegerea-structurii-proiectului)
+- [Componentele principale explicate](#componentele-principale-explicate)
+  - [1. Aplicația principală](#1-aplicația-principală)
+  - [2. Controller web](#2-controller-web)
+  - [3. Serviciul de povestiri](#3-serviciul-de-povestiri)
+  - [4. Șabloane web](#4-șabloane-web)
+  - [5. Configurare](#5-configurare)
+- [Rularea aplicației](#rularea-aplicației)
+- [Cum funcționează totul împreună](#cum-funcționează-totul-împreună)
+- [Înțelegerea integrării AI](#înțelegerea-integrării-ai)
+- [Pașii următori](#pașii-următori)
 
 ## Cerințe preliminare
 
-Înainte de a începe, asigură-te că ai:
-- Java 21 sau o versiune mai recentă instalată
+Înainte de a începe, asigurați-vă că aveți:
+- Java 21 sau o versiune superioară instalată
 - Maven pentru gestionarea dependențelor
-- Un cont GitHub cu un token de acces personal (PAT) cu permisiunea `models:read`
+- Un model Azure AI Foundry implementat (provisionați-l cu `azd up` — vedeți [Capitolul 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md)), autentificat cu `az login` (autentificare fără cheie)
 - Cunoștințe de bază despre Java, Spring Boot și dezvoltare web
 
 ## Înțelegerea structurii proiectului
 
-Proiectul pentru povești cu animale de companie conține mai multe fișiere importante:
+Proiectul de povestiri pentru animale de companie conține mai multe fișiere importante:
 
 ```
 petstory/
@@ -42,7 +42,7 @@ petstory/
 └── pom.xml                           # Maven dependencies
 ```
 
-## Explicația componentelor de bază
+## Componentele principale explicate
 
 ### 1. Aplicația principală
 
@@ -59,16 +59,16 @@ public class PetStoryApplication {
 }
 ```
 
-**Ce face:**
+**Ce face acest fișier:**
 - Anotarea `@SpringBootApplication` activează auto-configurarea și scanarea componentelor
-- Pornește un server web integrat (Tomcat) pe portul 8080
-- Creează automat toate bean-urile și serviciile necesare din Spring
+- Pornește un server web încorporat (Tomcat) pe portul 8080
+- Creează automat toate bean-urile și serviciile Spring necesare
 
-### 2. Controler web
+### 2. Controller web
 
 **Fișier:** `PetController.java`
 
-Acesta gestionează toate cererile web și interacțiunile utilizatorilor:
+Gestionează toate cererile web și interacțiunile utilizatorului:
 
 ```java
 @Controller
@@ -82,7 +82,7 @@ public class PetController {
     
     @GetMapping("/")
     public String index() {
-        return "index";  // Returns index.html template
+        return "index";  // Returnează șablonul index.html
     }
     
     @PostMapping("/generate-story")
@@ -90,24 +90,24 @@ public class PetController {
                                Model model, 
                                RedirectAttributes redirectAttributes) {
         
-        // Input validation
+        // Validarea datelor de intrare
         if (description.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please provide a description.");
             return "redirect:/";
         }
         
-        // Sanitize input for security
+        // Curățarea datelor de intrare pentru securitate
         String sanitizedDescription = sanitizeInput(description);
         
-        // Generate story with error handling
+        // Generează povestea cu gestionarea erorilor
         try {
             String story = storyService.generateStory(sanitizedDescription);
             model.addAttribute("caption", sanitizedDescription);
             model.addAttribute("story", story);
-            return "result";  // Returns result.html template
+            return "result";  // Returnează șablonul result.html
             
         } catch (Exception e) {
-            // Use fallback story if AI fails
+            // Folosește povestea de rezervă dacă AI-ul eșuează
             String fallbackStory = generateFallbackStory(sanitizedDescription);
             model.addAttribute("story", fallbackStory);
             return "result";
@@ -117,21 +117,21 @@ public class PetController {
     private String sanitizeInput(String input) {
         return input.replaceAll("[<>\"'&]", "")  // Remove dangerous characters
                    .trim()
-                   .substring(0, Math.min(input.length(), 500));  // Limit length
+                   .substring(0, Math.min(input.length(), 500));  // Limitează lungimea
     }
 }
 ```
 
 **Caracteristici cheie:**
 
-1. **Gestionarea rutelor**: `@GetMapping("/")` afișează formularul de încărcare, iar `@PostMapping("/generate-story")` procesează trimiterile
-2. **Validarea intrărilor**: Verifică descrierile goale și limitele de lungime
-3. **Securitate**: Sanitizează intrările utilizatorilor pentru a preveni atacurile XSS
-4. **Gestionarea erorilor**: Oferă povești de rezervă atunci când serviciul AI eșuează
+1. **Gestionarea rutelor**: `@GetMapping("/")` afișează formularul de upload, `@PostMapping("/generate-story")` procesează trimiterile
+2. **Validarea inputului**: Verifică descrierile goale și limitele de lungime
+3. **Securitate**: Curăță inputul utilizatorului pentru a preveni atacurile XSS
+4. **Gestionarea erorilor**: Oferă povestiri alternative când serviciul AI eșuează
 5. **Legarea modelului**: Transmite date către șabloanele HTML folosind `Model` din Spring
 
 **Sistem de rezervă:**
-Controlerul include șabloane de povești pre-scrise care sunt utilizate atunci când serviciul AI nu este disponibil:
+Controller-ul include șabloane predefinite de povestiri care sunt folosite când serviciul AI nu este disponibil:
 
 ```java
 private String generateFallbackStory(String description) {
@@ -141,17 +141,17 @@ private String generateFallbackStory(String description) {
         "In a cozy home filled with love, there lived an extraordinary pet..."
     };
     
-    // Use description hash for consistent responses
+    // Folosește hash-ul descrierii pentru răspunsuri consistente
     int index = Math.abs(description.hashCode() % storyTemplates.length);
     return storyTemplates[index];
 }
 ```
 
-### 3. Serviciul de povești
+### 3. Serviciul de povestiri
 
 **Fișier:** `StoryService.java`
 
-Acest serviciu comunică cu GitHub Models pentru a genera povești:
+Acest serviciu comunică cu Azure AI Foundry pentru a genera povestiri folosind autentificare fără cheie:
 
 ```java
 @Service
@@ -160,18 +160,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // Endpoint-ul compatibil cu OpenAI al Foundry se află sub /openai/v1/
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // Autentificare fără cheie cu Microsoft Entra ID (fără cheie API)
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -182,16 +186,16 @@ public class StoryService {
         
         String userPrompt = "Write a fun short story about a pet described as: " + description;
         
-        // Configure the AI request
+        // Configurează cererea AI
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(modelName)
                 .addSystemMessage(systemPrompt)
                 .addUserMessage(userPrompt)
-                .maxCompletionTokens(500)  // Limit response length
-                .temperature(0.8)          // Control creativity (0.0-1.0)
+                .maxCompletionTokens(500)  // Limitează lungimea răspunsului
+                .temperature(0.8)          // Controlează creativitatea (0.0-1.0)
                 .build();
         
-        // Send request and get response
+        // Trimite cererea și primește răspunsul
         ChatCompletion response = openAIClient.chat().completions().create(params);
         
         return response.choices().get(0).message().content().orElse("");
@@ -201,17 +205,17 @@ public class StoryService {
 
 **Componente cheie:**
 
-1. **Client OpenAI**: Utilizează SDK-ul oficial OpenAI Java configurat pentru GitHub Models
-2. **Prompt de sistem**: Setează comportamentul AI pentru a scrie povești prietenoase cu familia
-3. **Prompt pentru utilizator**: Indică AI-ului exact ce poveste să scrie pe baza descrierii
-4. **Parametri**: Controlează lungimea poveștii și nivelul de creativitate
-5. **Gestionarea erorilor**: Aruncă excepții pe care controlerul le prinde și le gestionează
+1. **Client OpenAI**: Folosește SDK-ul oficial OpenAI pentru Java configurat pentru Azure AI Foundry (fără cheie)
+2. **Prompt sistem**: Setează comportamentul AI pentru a scrie povestiri prietenoase pentru familie despre animale de companie
+3. **Prompt utilizator**: Indică AI-ului exact ce poveste să scrie pe baza descrierii
+4. **Parametri**: Controlează lungimea și nivelul de creativitate al poveștii
+5. **Gestionarea erorilor**: Aruncă excepții pe care controller-ul le prinde și gestionează
 
 ### 4. Șabloane web
 
-**Fișier:** `index.html` (Formular de încărcare)
+**Fișier:** `index.html` (formular de încărcare)
 
-Pagina principală unde utilizatorii descriu animalele lor de companie:
+Pagina principală unde utilizatorii își descriu animalele de companie:
 
 ```html
 <!DOCTYPE html>
@@ -258,7 +262,7 @@ Pagina principală unde utilizatorii descriu animalele lor de companie:
 </html>
 ```
 
-**Fișier:** `result.html` (Afișarea poveștii)
+**Fișier:** `result.html` (afișare poveste)
 
 Afișează povestea generată:
 
@@ -293,18 +297,18 @@ Afișează povestea generată:
 </html>
 ```
 
-**Caracteristici ale șabloanelor:**
+**Caracteristici ale șablonului:**
 
-1. **Integrare Thymeleaf**: Utilizează atribute `th:` pentru conținut dinamic
-2. **Design responsiv**: Stilizare CSS pentru mobil și desktop
-3. **Gestionarea erorilor**: Afișează erorile de validare utilizatorilor
-4. **Procesare pe partea clientului**: JavaScript pentru analiza imaginilor (folosind Transformers.js)
+1. **Integrare Thymeleaf**: Folosește atribute `th:` pentru conținut dinamic
+2. **Design responsiv**: Stiluri CSS pentru mobil și desktop
+3. **Gestionarea erorilor**: Arată erori de validare utilizatorilor
+4. **Procesare pe client**: JavaScript pentru analiză imagini (folosind Transformers.js)
 
 ### 5. Configurare
 
 **Fișier:** `application.properties`
 
-Setările de configurare ale aplicației:
+Setări de configurare pentru aplicație:
 
 ```properties
 spring.application.name=pet-story-app
@@ -316,106 +320,111 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
-**Explicația configurării:**
+**Configurare explicată:**
 
 1. **Încărcare fișiere**: Permite imagini de până la 10MB
-2. **Jurnalizare**: Controlează ce informații sunt înregistrate în timpul execuției
-3. **GitHub Models**: Specifică ce model AI și endpoint să fie utilizate
-4. **Securitate**: Configurarea gestionării erorilor pentru a evita expunerea informațiilor sensibile
+2. **Logare**: Controlează ce informații sunt înregistrate în timpul execuției
+3. **Azure AI Foundry**: Specifică endpoint-ul și modelul de implementat (autentificare fără cheie)
+4. **Securitate**: Configurare pentru gestionarea erorilor, evitând expunerea unor informații sensibile
 
 ## Rularea aplicației
 
-### Pasul 1: Setează token-ul GitHub
+### Pasul 1: Autentificare și setarea endpoint-ului
 
-Mai întâi, trebuie să setezi token-ul GitHub ca variabilă de mediu:
+Autentificarea este fără cheie (Microsoft Entra ID), deci nu există cheie API. Autentificați-vă și setați endpoint-ul Foundry:
 
 **Windows (Command Prompt):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-**De ce este necesar:**
-- GitHub Models necesită autentificare pentru a accesa modelele AI
-- Utilizarea variabilelor de mediu păstrează token-urile sensibile în afara codului sursă
-- Permisiunea `models:read` oferă acces la inferența AI
+**De ce este necesar acest pas:**
+- Azure AI Foundry folosește Microsoft Entra ID pentru autentificarea cererilor de inferență
+- Autentificarea fără cheie înseamnă că nu există secrete în codul sursă sau în mediul de rulare
+- Contul dvs. trebuie să aibă rolul **Cognitive Services OpenAI User** pe resursă
 
-### Pasul 2: Construiește și rulează
+### Pasul 2: Construirea și rularea
 
-Navighează la directorul proiectului:
+Navigați în directorul proiectului:
 ```bash
 cd 04-PracticalSamples/petstory
 ```
 
-Construiește aplicația:
+Construiți aplicația:
 ```bash
 mvn clean compile
 ```
 
-Pornește serverul:
+Porniți serverul:
 ```bash
 mvn spring-boot:run
 ```
 
-Aplicația va porni pe `http://localhost:8080`.
+Aplicația va porni la adresa `http://localhost:8080`.
 
-### Pasul 3: Testează aplicația
+### Pasul 3: Testați aplicația
 
-1. **Deschide** `http://localhost:8080` în browser
-2. **Descrie** animalul tău de companie în câmpul text (ex.: "Un golden retriever jucăuș care adoră să aducă mingea")
-3. **Apasă** "Generate Story" pentru a obține o poveste generată de AI
-4. **Alternativ**, încarcă o imagine a animalului tău pentru a genera automat o descriere
-5. **Vizualizează** povestea creativă bazată pe descrierea animalului tău
+1. **Deschideți** `http://localhost:8080` în browserul dvs.
+2. **Descrieți** animalul dvs. de companie în zona de text (de ex., „Un golden retriever jucăuș care iubește să aducă mingea”)
+3. **Apăsați** „Generate Story” pentru a primi o poveste generată de AI
+4. **Alternativ**, încărcați o imagine a animalului pentru a genera automat o descriere
+5. **Vizualizați** povestea creativă bazată pe descrierea oferită
 
 ## Cum funcționează totul împreună
 
-Iată fluxul complet atunci când generezi o poveste cu animale de companie:
+Iată fluxul complet când generați o poveste despre animale de companie:
 
-1. **Intrare utilizator**: Descrii animalul tău de companie în formularul web
-2. **Trimiterea formularului**: Browserul trimite o cerere POST către `/generate-story`
-3. **Procesarea controlerului**: `PetController` validează și sanitizează intrarea
-4. **Apelul serviciului AI**: `StoryService` trimite cererea către API-ul GitHub Models
-5. **Generarea poveștii**: AI generează o poveste creativă bazată pe descriere
-6. **Gestionarea răspunsului**: Controlerul primește povestea și o adaugă în model
-7. **Redarea șablonului**: Thymeleaf redă `result.html` cu povestea
+1. **Input utilizator**: Descrieți animalul dvs. pe formularul web
+2. **Trimitere formular**: Browserul trimite o cerere POST la `/generate-story`
+3. **Procesarea la controller**: `PetController` validează și curăță inputul
+4. **Apel serviciu AI**: `StoryService` trimite cererea către modelul Azure AI Foundry
+5. **Generare poveste**: AI generează o poveste creativă pe baza descrierii
+6. **Gestionare răspuns**: Controller-ul primește povestea și o adaugă în model
+7. **Randare șablon**: Thymeleaf generează `result.html` cu povestea
 8. **Afișare**: Utilizatorul vede povestea generată în browser
 
-**Fluxul de gestionare a erorilor:**
+**Flux de gestionare a erorilor:**
 Dacă serviciul AI eșuează:
-1. Controlerul prinde excepția
-2. Generează o poveste de rezervă folosind șabloane pre-scrise
-3. Afișează povestea de rezervă cu o notă despre indisponibilitatea AI
-4. Utilizatorul primește totuși o poveste, asigurând o experiență bună
+1. Controller-ul prinde excepția
+2. Generează o poveste rezervă folosind șabloane predefinite
+3. Afișează povestea de rezervă cu o mențiune despre indisponibilitatea AI-ului
+4. Utilizatorul primește în continuare o poveste, asigurând o experiență bună
 
 ## Înțelegerea integrării AI
 
-### API-ul GitHub Models
-Aplicația utilizează GitHub Models, care oferă acces gratuit la diverse modele AI:
+### Azure AI Foundry (fără cheie)
+Aplicația folosește Azure AI Foundry cu autentificare fără cheie (Microsoft Entra ID):
 
 ```java
-// Authentication with GitHub token
+// Autentificare fără cheie - fără cheie API
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
-### Ingineria prompturilor
-Serviciul folosește prompturi atent concepute pentru a obține rezultate bune:
+### Ingineria promptului
+Serviciul folosește prompturi atent construite pentru a obține rezultate bune:
 
 ```java
 String systemPrompt = "You are a creative storyteller who writes fun, " +
@@ -423,7 +432,7 @@ String systemPrompt = "You are a creative storyteller who writes fun, " +
                      "Keep stories under 500 words and appropriate for all ages.";
 ```
 
-### Procesarea răspunsurilor
+### Procesarea răspunsului
 Răspunsul AI este extras și validat:
 
 ```java
@@ -433,7 +442,11 @@ String story = response.choices().get(0).message().content().orElse("");
 
 ## Pașii următori
 
-Pentru mai multe exemple, vezi [Capitolul 04: Exemple practice](../README.md)
+Pentru mai multe exemple, vedeți [Capitolul 04: Exemple practice](../README.md)
 
-**Declinare de responsabilitate**:  
-Acest document a fost tradus folosind serviciul de traducere AI [Co-op Translator](https://github.com/Azure/co-op-translator). Deși ne străduim să asigurăm acuratețea, vă rugăm să fiți conștienți că traducerile automate pot conține erori sau inexactități. Documentul original în limba sa natală ar trebui considerat sursa autoritară. Pentru informații critice, se recomandă traducerea profesională realizată de un specialist uman. Nu ne asumăm responsabilitatea pentru eventualele neînțelegeri sau interpretări greșite care pot apărea din utilizarea acestei traduceri.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Declinare a responsabilității**:
+Acest document a fost tradus folosind serviciul de traducere AI [Co-op Translator](https://github.com/Azure/co-op-translator). În timp ce ne străduim pentru acuratețe, vă rugăm să rețineți că traducerile automate pot conține erori sau inexactități. Documentul original în limba sa nativă trebuie considerat sursa autorizată. Pentru informații critice, se recomandă traducerea profesională realizată de un om. Nu ne asumăm responsabilitatea pentru eventualele neînțelegeri sau interpretări greșite care decurg din utilizarea acestei traduceri.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

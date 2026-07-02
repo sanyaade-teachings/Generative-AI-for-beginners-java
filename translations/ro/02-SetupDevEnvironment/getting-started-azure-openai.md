@@ -1,138 +1,151 @@
-# Configurarea Mediului de Dezvoltare pentru Azure OpenAI
+# Configurarea Mediului de Dezvoltare pentru Azure AI Foundry
 
-> **Start Rapid**: Acest ghid este pentru configurarea Azure OpenAI. Pentru un început imediat cu modele gratuite, folosiți [Modele GitHub cu Codespaces](./README.md#quick-start-cloud).
+> Acest ghid configurează modelele **Azure AI Foundry** pentru aplicațiile Java AI din acest curs, folosind autentificare **fără chei** (Microsoft Entra ID) — fără chei API de gestionat. Ești nou cu această unealtă? Începe cu [ghidul mediului de dezvoltare](./README.md).
 
-Acest ghid vă va ajuta să configurați modelele Azure AI Foundry pentru aplicațiile Java AI din acest curs.
+Acest ghid configurează modelele **Azure AI Foundry** pentru aplicațiile Java AI din acest curs. Ai două opțiuni:
+
+- **Opțiunea A — Provisionare cu `azd` + Bicep (recomandat):** o singură comandă implementează contul Foundry și modelele ca cod. Fără clicuri în portal.
+- **Opțiunea B — Creează resursele manual** în portalul Azure AI Foundry.
+
+Ambele opțiuni folosesc **autentificare fără chei** (Microsoft Entra ID) — nu există chei API de copiat sau scurs accidental.
 
 ## Cuprins
 
-- [Prezentare Generală a Configurării Rapide](../../../02-SetupDevEnvironment)
-- [Pasul 1: Crearea Resurselor Azure AI Foundry](../../../02-SetupDevEnvironment)
-  - [Crearea unui Hub și Proiect](../../../02-SetupDevEnvironment)
-  - [Deplasarea Modelului GPT-4o-mini](../../../02-SetupDevEnvironment)
-- [Pasul 2: Crearea Codespace-ului](../../../02-SetupDevEnvironment)
-- [Pasul 3: Configurarea Mediului](../../../02-SetupDevEnvironment)
-- [Pasul 4: Testarea Configurării](../../../02-SetupDevEnvironment)
-- [Ce Urmează?](../../../02-SetupDevEnvironment)
-- [Resurse](../../../02-SetupDevEnvironment)
-- [Resurse Suplimentare](../../../02-SetupDevEnvironment)
+- [Ce se creează](#ce-se-creează)
+- [Precondiții](#precondiții)
+- [Opțiunea A: Provisionare cu azd + Bicep (Recomandat)](#option-a-provision-with-azd--bicep-recommended)
+- [Opțiunea B: Creare resurse manual](#opțiunea-b-creare-resurse-manual)
+- [Configurarea mediului](#configurarea-mediului)
+- [Testarea configurației](#testarea-configurației)
+- [Ce urmează?](#ce-urmează)
+- [Resurse](#resurse)
+- [Resurse suplimentare](#resurse-suplimentare)
 
-## Prezentare Generală a Configurării Rapide
+## Ce se creează
 
-1. Creați resurse Azure AI Foundry (Hub, Proiect, Model)
-2. Creați un Codespace cu container de dezvoltare Java
-3. Configurați fișierul `.env` cu acreditivele Azure OpenAI
-4. Testați configurarea cu proiectul exemplu
+Șabloanele Bicep din [`infra/`](../../../02-SetupDevEnvironment/infra) creează:
 
-## Pasul 1: Crearea Resurselor Azure AI Foundry
+- Un cont **Azure AI Foundry** (`Microsoft.CognitiveServices/accounts`, tip `AIServices`) cu un proiect
+- O implementare **chat** — `gpt-4o-mini`
+- O implementare **embedding** — `text-embedding-3-small` (folosită în capitolele ulterioare)
+- O **atribuire de rol fără cheie** (`Cognitive Services OpenAI User`) astfel încât să te poți autentifica cu `az login` în loc să gestionezi chei
 
-### Crearea unui Hub și Proiect
+## Precondiții
 
-1. Accesați [Portalul Azure AI Foundry](https://ai.azure.com/) și autentificați-vă
-2. Faceți clic pe **+ Create** → **New hub** (sau navigați la **Management** → **All hubs** → **+ New hub**)
-3. Configurați hub-ul:
-   - **Hub name**: de exemplu, "MyAIHub"
-   - **Subscription**: Selectați abonamentul Azure
-   - **Resource group**: Creați unul nou sau selectați unul existent
-   - **Location**: Alegeți locația cea mai apropiată
-   - **Storage account**: Folosiți implicit sau configurați personalizat
-   - **Key vault**: Folosiți implicit sau configurați personalizat
-   - Faceți clic pe **Next** → **Review + create** → **Create**
-4. După crearea hub-ului, faceți clic pe **+ New project** (sau **Create project** din pagina de prezentare a hub-ului)
-   - **Project name**: de exemplu, "GenAIJava"
-   - Faceți clic pe **Create**
+- Un [abonament Azure](https://azure.microsoft.com/free/)
+- [Azure Developer CLI (`azd`)](https://aka.ms/azure-dev/install)
+- [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli)
+- [Java 21+](https://learn.microsoft.com/java/openjdk/download) și [Maven 3.9+](https://maven.apache.org/download.cgi)
 
-### Deplasarea Modelului GPT-4o-mini
+## Opțiunea A: Provisionare cu azd + Bicep (Recomandat)
 
-1. În proiectul dvs., accesați **Model catalog** și căutați **gpt-4o-mini**
-   - *Alternativ: Accesați **Deployments** → **+ Create deployment***
-2. Faceți clic pe **Deploy** pe cardul modelului gpt-4o-mini
-3. Configurați implementarea:
-   - **Deployment name**: "gpt-4o-mini"
-   - **Model version**: Folosiți cea mai recentă versiune
-   - **Deployment type**: Standard
-4. Faceți clic pe **Deploy**
-5. După implementare, accesați fila **Deployments** și copiați aceste valori:
-   - **Deployment name** (de exemplu, "gpt-4o-mini")
-   - **Target URI** (de exemplu, `https://your-hub-name.openai.azure.com/`) 
-      > **Important**: Copiați doar URL-ul de bază (de exemplu, `https://myhub.openai.azure.com/`) nu calea completă a endpoint-ului.
-   - **Key** (din secțiunea Keys and Endpoint)
-
-> **Încă aveți probleme?** Vizitați documentația oficială [Azure AI Foundry Documentation](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project)
-
-## Pasul 2: Crearea Codespace-ului
-
-1. Faceți fork acestui depozit în contul dvs. GitHub
-   > **Notă**: Dacă doriți să editați configurația de bază, consultați [Configurarea Containerului de Dezvoltare](../../../.devcontainer/devcontainer.json)
-2. În depozitul fork-uit, faceți clic pe **Code** → fila **Codespaces**
-3. Faceți clic pe **...** → **New with options...**
-![crearea unui codespace cu opțiuni](../../../translated_images/ro/codespaces.9945ded8ceb431a5.webp)
-4. Selectați **Dev container configuration**: 
-   - **Generative AI Java Development Environment**
-5. Faceți clic pe **Create codespace**
-
-## Pasul 3: Configurarea Mediului
-
-După ce Codespace-ul este gata, configurați acreditivele Azure OpenAI:
-
-1. **Navigați la proiectul exemplu din rădăcina depozitului:**
-   ```bash
-   cd 02-SetupDevEnvironment/examples/basic-chat-azure
-   ```
-
-2. **Creați fișierul `.env`:**
-   ```bash
-   cp .env.example .env
-   ```
-
-3. **Editați fișierul `.env` cu acreditivele Azure OpenAI:**
-   ```bash
-   # Your Azure OpenAI API key (from Azure AI Foundry portal)
-   AZURE_AI_KEY=your-actual-api-key-here
-   
-   # Your Azure OpenAI endpoint URL (e.g., https://myhub.openai.azure.com/)
-   AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-   ```
-
-   > **Notă de Securitate**: 
-   > - Nu comiteți niciodată fișierul `.env` în controlul versiunilor
-   > - Fișierul `.env` este deja inclus în `.gitignore`
-   > - Păstrați cheile API în siguranță și rotiți-le regulat
-
-## Pasul 4: Testarea Configurării
-
-Rulați aplicația exemplu pentru a testa conexiunea Azure OpenAI:
+Din folderul `02-SetupDevEnvironment`:
 
 ```bash
+cd 02-SetupDevEnvironment
+
+# Autentificare (ambele unelte)
+azd auth login
+az login
+
+# Asigură contul Foundry + implementările modelelor
+azd up
+```
+
+`azd` solicită un **nume de mediu** (de exemplu `genai-java`) și o **regiune**. Alege o regiune unde `gpt-4o-mini` și `text-embedding-3-small` sunt disponibile — de exemplu `eastus2` sau `swedencentral`.
+
+Când provisioning-ul se termină, azd:
+
+1. Implementează tot ce este definit în [`infra/main.bicep`](../../../02-SetupDevEnvironment/infra/main.bicep).
+2. Rulează un hook post-provisionare care scrie [`examples/basic-chat-azure/.env`](../../../02-SetupDevEnvironment/examples/basic-chat-azure) cu endpoint-ul tău și numele implementărilor (fără secrete).
+
+> **Sfat:** Rulează din nou `azd up` oricând pentru a aplica modificări. Rulează `azd down` pentru a șterge totul și a opri acumularea costurilor.
+
+Pentru a vedea setările generate:
+
+```bash
+azd env get-values
+```
+
+Acum săriți la [Testarea configurației](#testarea-configurației).
+
+## Opțiunea B: Creare resurse manual
+
+Preferi portalul? Creează resursele manual:
+
+1. Accesează [portalul Azure AI Foundry](https://ai.azure.com/) și autentifică-te.
+2. **Creează un proiect** (acesta creează și o resursă AI Foundry). Dă-i un nume, de exemplu `GenAIJava`.
+3. În proiectul tău, deschide **Models + endpoints** → **Deploy model** → **Deploy base model**.
+4. Implementează **gpt-4o-mini** (numele implementării `gpt-4o-mini`). Repetă pentru **text-embedding-3-small** dacă dorești exemplele cu embedding.
+5. Din **Overview**, copiază **endpoint-ul** (de exemplu `https://<resource>.openai.azure.com/`).
+6. Acordă-ți acces fără cheie: pe resursă, deschide **Access control (IAM)** → **Add role assignment** → atribuie **Cognitive Services OpenAI User** contului tău.
+
+> **Încă ai probleme?** Vezi [documentația Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects).
+
+## Configurarea mediului
+
+**Dacă ai folosit Opțiunea A (`azd up`)**, fișierul tău de setări este deja scris — nu mai ai nimic de configurat. Sari la [Testarea configurației](#testarea-configurației).
+
+**Dacă ai folosit Opțiunea B (manual)**, creează tu fișierul `.env` al exemplului:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+cp .env.example .env
+```
+
+Editează `.env` cu endpoint-ul tău (fără cheie — autentificarea este fără chei):
+
+```bash
+AZURE_OPENAI_ENDPOINT=https://<your-resource>.openai.azure.com/
+AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini
+```
+
+> **Notă de securitate:** Nu există nici o cheie API de stocat. Te autentifici cu Microsoft Entra ID prin `az login` (local) sau o identitate gestionată (în Azure). Fișierul `.env` conține doar setări non-secrete și este deja inclus în `.gitignore`.
+
+## Testarea configurației
+
+Asigură-te că ești autentificat pentru ca autentificarea fără chei să poată obține un token, apoi rulează exemplul:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+
+az login          # dacă nu sunteți deja autentificat
 mvn clean spring-boot:run
 ```
 
-Ar trebui să vedeți un răspuns de la modelul GPT-4o-mini!
+Ar trebui să vezi un răspuns de la modelul `gpt-4o-mini`!
 
-> **Utilizatori VS Code**: Puteți apăsa `F5` în VS Code pentru a rula aplicația. Configurația de lansare este deja setată să încarce automat fișierul `.env`.
+> **Utilizatori VS Code:** Apasă `F5` pentru a rula. Aplicația încarcă automat fișierul tău `.env`.
 
-> **Exemplu complet**: Consultați [Exemplul End-to-End Azure OpenAI](./examples/basic-chat-azure/README.md) pentru instrucțiuni detaliate și depanare.
+> **Exemplu complet:** Vezi [exemplul Basic Chat cu Azure AI Foundry](./examples/basic-chat-azure/README.md) pentru detalii și depanare.
 
-## Ce Urmează?
+## Ce urmează?
 
-**Configurare Finalizată!** Acum aveți:
-- Azure OpenAI cu gpt-4o-mini implementat
-- Configurare locală `.env`
-- Mediu de dezvoltare Java pregătit
+**Configurarea este completă!** Acum ai:
+- Azure AI Foundry cu `gpt-4o-mini` și `text-embedding-3-small` implementate
+- Autentificare fără chei (Microsoft Entra ID) — fără chei de gestionat
+- Un `.env` local cu endpoint-ul și numele implementărilor tale
+- Un mediu de dezvoltare Java gata de folosit
 
-**Continuați cu** [Capitolul 3: Tehnici de Bază Generative AI](../03-CoreGenerativeAITechniques/README.md) pentru a începe să construiți aplicații AI!
+**Continuă cu** [Capitolul 3: Tehnici de bază în AI generativ](../03-CoreGenerativeAITechniques/README.md) pentru a începe să construiești aplicații AI!
 
 ## Resurse
 
-- [Documentația Azure AI Foundry](https://learn.microsoft.com/azure/ai-services/)
-- [Documentația Spring AI Azure OpenAI](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
-- [SDK Java Azure OpenAI](https://learn.microsoft.com/java/api/overview/azure/ai-openai-readme)
+- [Azure Developer CLI (azd)](https://aka.ms/azure-dev/install)
+- [Autentificare fără chei cu Microsoft Entra ID](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
+- [Documentație Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/)
+- [Documentație Spring AI Azure OpenAI](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
+- [SDK Azure OpenAI pentru Java](https://learn.microsoft.com/java/api/overview/azure/ai-openai-readme)
 
-## Resurse Suplimentare
+## Resurse suplimentare
 
-- [Descărcați VS Code](https://code.visualstudio.com/Download)
-- [Obțineți Docker Desktop](https://www.docker.com/products/docker-desktop)
-- [Configurarea Containerului de Dezvoltare](../../../.devcontainer/devcontainer.json)
+- [Descarcă VS Code](https://code.visualstudio.com/Download)
+- [Descarcă Docker Desktop](https://www.docker.com/products/docker-desktop)
+- [Configurare Dev Container](../../../.devcontainer/devcontainer.json)
 
-**Declinare de responsabilitate**:  
-Acest document a fost tradus folosind serviciul de traducere AI [Co-op Translator](https://github.com/Azure/co-op-translator). Deși ne străduim să asigurăm acuratețea, vă rugăm să fiți conștienți că traducerile automate pot conține erori sau inexactități. Documentul original în limba sa natală ar trebui considerat sursa autoritară. Pentru informații critice, se recomandă traducerea profesională realizată de un specialist uman. Nu ne asumăm responsabilitatea pentru eventualele neînțelegeri sau interpretări greșite care pot apărea din utilizarea acestei traduceri.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Declinare a responsabilității**:
+Acest document a fost tradus folosind serviciul de traducere AI [Co-op Translator](https://github.com/Azure/co-op-translator). În timp ce ne străduim pentru acuratețe, vă rugăm să rețineți că traducerile automate pot conține erori sau inexactități. Documentul original în limba sa nativă trebuie considerat sursa autorizată. Pentru informații critice, se recomandă traducerea profesională realizată de un om. Nu ne asumăm responsabilitatea pentru eventualele neînțelegeri sau interpretări greșite care decurg din utilizarea acestei traduceri.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

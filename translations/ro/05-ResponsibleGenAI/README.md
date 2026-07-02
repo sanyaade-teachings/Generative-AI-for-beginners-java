@@ -1,101 +1,97 @@
 # Inteligența Artificială Generativă Responsabilă
 
-[![Responsible Generative AI](https://img.youtube.com/vi/rF-b2BTSMQ4/0.jpg)](https://www.youtube.com/watch?v=rF-b2BTSMQ4 "Responsible Generative AI")
 
-> **Video**: [Urmărește prezentarea video pentru această lecție](https://www.youtube.com/watch?v=rF-b2BTSMQ4).
-> Poți de asemenea să faci clic pe imaginea miniaturală de mai sus pentru a deschide același video.
+## Ce vei învăța
 
-## Ce Vei Învăța
-
-- Învață considerațiile etice și cele mai bune practici importante pentru dezvoltarea AI
-- Construiește filtrarea conținutului și măsuri de siguranță în aplicațiile tale
-- Testează și gestionează răspunsurile legate de siguranța AI utilizând protecțiile încorporate ale GitHub Models
-- Aplică principiile AI responsabile pentru a crea sisteme AI sigure, etice
+- Vei afla considerațiile etice și cele mai bune practici importante pentru dezvoltarea AI
+- Vei integra filtre de conținut și măsuri de siguranță în aplicațiile tale
+- Vei testa și gestiona răspunsurile legate de siguranța AI folosind filtrarea de conținut încorporată în Azure AI Foundry
+- Vei aplica principii de AI responsabil pentru a crea sisteme AI sigure și etice
 
 ## Cuprins
 
 - [Introducere](#introducere)
-- [Siguranța Încorporată în GitHub Models](#siguranța-încorporată-în-github-models)
-- [Exemplu Practic: Demo de Siguranță AI Responsabil](#exemplu-practic-demo-de-siguranță-ai-responsabil)
-  - [Ce Arată Demo-ul](#ce-arată-demo-ul)
-  - [Instrucțiuni de Configurare](#instrucțiuni-de-configurare)
-  - [Rularea Demo-ului](#rularea-demo-ului)
-  - [Rezultatul Așteptat](#rezultatul-așteptat)
-- [Cele Mai Bune Practici pentru Dezvoltarea AI Responsabilă](#cele-mai-bune-practici-pentru-dezvoltarea-ai-responsabilă)
-- [Notă Importantă](#notă-importantă)
+- [Siguranța conținutului Azure AI Foundry](#siguranța-conținutului-azure-ai-foundry)
+- [Exemplu practic: demonstrație de siguranță AI responsabilă](#exemplu-practic-demonstrație-de-siguranță-ai-responsabilă)
+  - [Ce arată demonstrația](#ce-arată-demonstrația)
+  - [Instrucțiuni de configurare](#instrucțiuni-de-configurare)
+  - [Rularea demonstrației](#rularea-demonstrației)
+  - [Rezultatul așteptat](#rezultatul-așteptat)
+- [Cele mai bune practici pentru dezvoltarea AI responsabilă](#cele-mai-bune-practici-pentru-dezvoltarea-ai-responsabilă)
+- [Notă importantă](#notă-importantă)
 - [Rezumat](#rezumat)
-- [Finalizarea Cursului](#finalizarea-cursului)
-- [Pași Următori](#pași-următori)
+- [Finalizarea cursului](#finalizarea-cursului)
+- [Pași următori](#pași-următori)
 
 ## Introducere
 
-Acest capitol final se concentrează pe aspectele critice ale construirii aplicațiilor generative AI responsabile și etice. Vei învăța cum să implementezi măsuri de siguranță, să gestionezi filtrarea conținutului și să aplici cele mai bune practici pentru dezvoltarea AI responsabilă folosind uneltele și cadrele acoperite în capitolele anterioare. Înțelegerea acestor principii este esențială pentru a construi sisteme AI care nu sunt doar tehnic impresionante, ci și sigure, etice și de încredere.
+Acest capitol final se concentrează pe aspectele critice ale construirii aplicațiilor AI generative responsabile și etice. Vei învăța cum să implementezi măsuri de siguranță, să gestionezi filtrarea conținutului și să aplici cele mai bune practici pentru dezvoltarea AI responsabilă folosind instrumentele și cadrele acoperite în capitolele precedente. Înțelegerea acestor principii este esențială pentru construirea sistemelor AI care nu sunt doar tehnic impresionante, ci și sigure, etice și demne de încredere.
 
-## Siguranța Încorporată în GitHub Models
+## Siguranța conținutului Azure AI Foundry
 
-GitHub Models vine cu un filtru de conținut de bază gata de utilizare. E ca și cum ai avea un portar prietenos la clubul tău AI - nu cel mai sofisticat, dar își face treaba pentru scenarii de bază.
+Modelele Azure AI Foundry vin cu filtrare de conținut chiar din cutie, susținută de Azure AI Content Safety. Indicațiile și răspunsurile dăunătoare sunt verificate automat în mai multe categorii înainte să ajungă vreodată la — sau să părăsească — modelul.
 
-**Ce Protejează GitHub Models:**
-- **Conținut Dăunător**: Blochează conținut violent, sexual sau periculos evident
-- **Discurs Ura de Bază**: Filtrează limbajul discriminator clar
-- **Evadări Simple (Jailbreaks)**: Rezistă tentativelor de bază de a ocoli barierele de siguranță
+**Ce protejează Azure AI Foundry:**
+- **Conținut dăunător**: Blochează conținut violent, sexual, legat de auto-vătămare sau periculos
+- **Discursul de ură**: Filtrează limbajul discriminator
+- **Bypass-uri**: Detectează injecția de comenzi și încercările de a ocoli gardurile de siguranță
 
-## Exemplu Practic: Demo de Siguranță AI Responsabil
+## Exemplu practic: demonstrație de siguranță AI responsabilă
 
-Acest capitol include o demonstrație practică a modului în care GitHub Models implementează măsuri de siguranță AI responsabile testând prompturi care ar putea încălca potențial ghidurile de siguranță.
+Acest capitol include o demonstrație practică a modului în care Azure AI Foundry implementează măsuri de siguranță AI responsabilă prin testarea indicațiilor care ar putea încălca liniile directoare de siguranță.
 
-### Ce Arată Demo-ul
+### Ce arată demonstrația
 
-Clasa `ResponsibleGithubModels` urmează acest flux:
-1. Inițializează clientul GitHub Models cu autentificare
-2. Testează prompturi dăunătoare (violență, discurs de ură, dezinformare, conținut ilegal)
-3. Trimite fiecare prompt către API-ul GitHub Models
-4. Gestionează răspunsurile: blocări dure (erori HTTP), refuzuri politicoase („Nu pot ajuta cu asta”), sau generare normală de conținut
-5. Afișează rezultatele care arată ce conținut a fost blocat, refuzat sau permis
+Clasa `ResponsibleAIDemo` urmează acest flux:
+1. Inițializează clientul Azure AI Foundry cu autentificare fără cheie (Microsoft Entra ID)
+2. Testează indicații dăunătoare (violență, discurs de ură, dezinformare, conținut ilegal)
+3. Trimite fiecare indicație către modelul Azure AI Foundry
+4. Gestionează răspunsurile: blocări dure (erori HTTP), refuzuri politicoase („Nu pot să ajut cu asta”), sau generare normală de conținut
+5. Afișează rezultatele arătând ce conținut a fost blocat, refuzat sau permis
 6. Testează conținut sigur pentru comparație
 
 ![Responsible AI Safety Demo](../../../translated_images/ro/responsible.e4f51a917bafa4bf.webp)
 
-### Instrucțiuni de Configurare
+### Instrucțiuni de configurare
 
-1. **Setează token-ul tău GitHub Personal Access Token:**
+1. **Autentifică-te și setează endpointul Azure AI Foundry** (autentificare fără cheie — fără API key). Rulează mai întâi `az login`, apoi:
    
    Pe Windows (Command Prompt):
    ```cmd
-   set GITHUB_TOKEN=your_github_token_here
+   set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    ```
    
    Pe Windows (PowerShell):
    ```powershell
-   $env:GITHUB_TOKEN="your_github_token_here"
+   $env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
    ```
    
    Pe Linux/macOS:
    ```bash
-   export GITHUB_TOKEN=your_github_token_here
+   export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    ```   
 
-### Rularea Demo-ului
+### Rularea demonstrației
 
-1. **Navighează către directorul examples:**
+1. **Navighează în directorul examples:**
    ```bash
    cd 03-CoreGenerativeAITechniques/examples
    ```
 
-2. **Compilează și rulează demo-ul:**
+2. **Compilează și rulează demonstrația:**
    ```bash
-   mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleGithubModels"
+   mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleAIDemo"
    ```
 
-### Rezultatul Așteptat
+### Rezultatul așteptat
 
-Demo-ul va testa diferite tipuri de prompturi potențial dăunătoare și va arăta cum funcționează siguranța AI modernă prin două mecanisme:
+Demonstrația va testa diverse tipuri de indicații potențial dăunătoare și va arăta cum funcționează siguranța AI modernă prin două mecanisme:
 
-- **Blocări Dure**: Erori HTTP 400 când conținutul este blocat de filtrele de siguranță înainte să ajungă la model
-- **Refuzuri Politicoase**: Modelul răspunde cu refuzuri politicoase de genul „Nu pot asista cu asta” (cel mai frecvent la modelele moderne)
+- **Blocări dure**: erori HTTP 400 când conținutul este blocat de filtrele de siguranță înainte să ajungă la model
+- **Refuzuri politicoase**: modelul răspunde cu refuzuri politicoase ca „Nu pot să ajut cu asta” (cel mai frecvent la modelele moderne)
 - **Conținut sigur** care primește un răspuns normal
 
-Format exemplu de rezultat:
+Formatul exemplu al rezultatului:
 ```
 === Responsible AI Safety Demonstration ===
 
@@ -115,64 +111,64 @@ Status: Response generated successfully
 
 **Notă**: Atât blocările dure cât și refuzurile politicoase indică faptul că sistemul de siguranță funcționează corect.
 
-## Cele Mai Bune Practici pentru Dezvoltarea AI Responsabilă
+## Cele mai bune practici pentru dezvoltarea AI responsabilă
 
-Atunci când construiești aplicații AI, urmează aceste practici esențiale:
+Când construiești aplicații AI, urmează aceste practici esențiale:
 
-1. **Gestionează întotdeauna răspunsurile posibile ale filtrului de siguranță cu eleganță**
-   - Implementează o gestionare corectă a erorilor pentru conținutul blocat
+1. **Gestionează întotdeauna răspunsurile posibile ale filtrelor de siguranță cu grație**
+   - Implementează tratarea corectă a erorilor pentru conținut blocat
    - Oferă feedback semnificativ utilizatorilor când conținutul este filtrat
 
-2. **Implementează propria validare suplimentară a conținutului acolo unde este potrivită**
-   - Adaugă verificări de siguranță specifice domeniului tău
+2. **Implementează validarea suplimentară a conținutului acolo unde este cazul**
+   - Adaugă verificări de siguranță specifice domeniului
    - Creează reguli personalizate de validare pentru cazul tău de utilizare
 
 3. **Educa utilizatorii despre utilizarea responsabilă a AI**
-   - Oferă linii directoare clare privind utilizarea acceptabilă
-   - Explică de ce anumit conținut ar putea fi blocat
+   - Oferă ghiduri clare privind utilizarea acceptabilă
+   - Explică de ce anumite conținuturi pot fi blocate
 
 4. **Monitorizează și înregistrează incidentele de siguranță pentru îmbunătățire**
-   - Urmărește tiparele de conținut blocat
-   - Îmbunătățește continuu măsurile de siguranță
+   - Urmărește tiparele conținutului blocat
+   - Îmbunătățește continuu măsurile tale de siguranță
 
 5. **Respectă politicile de conținut ale platformei**
-   - Fii la curent cu regulile platformei
-   - Urmează termenii de serviciu și ghidurile etice
+   - Rămâi la curent cu ghidurile platformei
+   - Respectă termenii serviciului și ghidurile etice
 
-## Notă Importantă
+## Notă importantă
 
-Acest exemplu folosește intenționat prompturi problematice doar în scopuri educaționale. Scopul este să demonstreze măsurile de siguranță, nu să le ocolească. Folosește întotdeauna uneltele AI responsabil și etic.
+Acest exemplu folosește indicații intenționat problematice doar în scopuri educaționale. Scopul este de a demonstra măsurile de siguranță, nu de a le ocoli. Folosește întotdeauna instrumentele AI responsabil și etic.
 
 ## Rezumat
 
-**Felicitări!** Ai reușit cu succes să:
+**Felicitări!** Ai reușit să:
 
-- **Implementezi măsuri de siguranță AI** inclusiv filtrarea conținutului și gestionarea răspunsurilor legate de siguranță
-- **Aplici principiile AI responsabile** pentru a construi sisteme AI etice și demne de încredere
-- **Testezi mecanismele de siguranță** folosind capacitățile de protecție încorporate ale GitHub Models
-- **Învățături despre cele mai bune practici** pentru dezvoltarea și implementarea AI responsabile
+- **Implementezi măsuri de siguranță AI** inclusiv filtrarea conținutului și gestionarea răspunsurilor de siguranță
+- **Aplici principii AI responsabile** pentru a construi sisteme AI etice și de încredere
+- **Testezi mecanismele de siguranță** folosind capabilitățile încorporate de siguranță a conținutului Azure AI Foundry
+- **Învățăm cele mai bune practici** pentru dezvoltarea și implementarea AI responsabilă
 
-**Resurse AI Responsabile:**
+**Resurse pentru AI responsabil:**
 - [Microsoft Trust Center](https://www.microsoft.com/trust-center) - Află despre abordarea Microsoft privind securitatea, confidențialitatea și conformitatea
 - [Microsoft Responsible AI](https://www.microsoft.com/ai/responsible-ai) - Explorează principiile și practicile Microsoft pentru dezvoltarea AI responsabilă
 
-## Finalizarea Cursului
+## Finalizarea cursului
 
-Felicitări pentru finalizarea cursului Generative AI for Beginners!
+Felicitări pentru finalizarea cursului Inteligența Artificială Generativă pentru Începători!
 
 ![Course Completion](../../../translated_images/ro/image.73c7e2ff4a652e77.webp)
 
 **Ce ai realizat:**
-- Ai configurat mediul tău de dezvoltare
-- Ai învățat tehnicile de bază ale AI generative
-- Ai explorat aplicații practice ale AI
-- Ai înțeles principiile AI responsabile
+- Ți-ai configurat mediul de dezvoltare
+- Ai învățat tehnici esențiale de AI generativă
+- Ai explorat aplicații practice AI
+- Ai înțeles principiile AI responsabilă
 
-## Pași Următori
+## Pași următori
 
-Continuă-ți călătoria de învățare în AI cu aceste resurse adiționale:
+Continuă-ți călătoria în învățarea AI cu aceste resurse suplimentare:
 
-**Cursuri adiționale de învățare:**
+**Cursuri educaționale adiționale:**
 - [AI Agents For Beginners](https://github.com/microsoft/ai-agents-for-beginners)
 - [Generative AI for Beginners using .NET](https://github.com/microsoft/Generative-AI-for-beginners-dotnet)
 - [Generative AI for Beginners using JavaScript](https://github.com/microsoft/generative-ai-with-javascript)
@@ -192,6 +188,6 @@ Continuă-ți călătoria de învățare în AI cu aceste resurse adiționale:
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Disclaimer**:  
-Acest document a fost tradus folosind serviciul de traducere AI [Co-op Translator](https://github.com/Azure/co-op-translator). Deși ne străduim pentru acuratețe, vă rugăm să rețineți că traducerile automate pot conține erori sau inexactități. Documentul original în limba sa nativă trebuie considerat sursa autoritară. Pentru informații critice, se recomandă traducerea profesională realizată de un specialist uman. Nu ne asumăm responsabilitatea pentru eventuale neînțelegeri sau interpretări greșite rezultate din utilizarea acestei traduceri.
+**Declinare a responsabilității**:
+Acest document a fost tradus folosind serviciul de traducere AI [Co-op Translator](https://github.com/Azure/co-op-translator). În timp ce ne străduim pentru acuratețe, vă rugăm să rețineți că traducerile automate pot conține erori sau inexactități. Documentul original în limba sa nativă trebuie considerat sursa autorizată. Pentru informații critice, se recomandă traducerea profesională realizată de un om. Nu ne asumăm responsabilitatea pentru eventualele neînțelegeri sau interpretări greșite care decurg din utilizarea acestei traduceri.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

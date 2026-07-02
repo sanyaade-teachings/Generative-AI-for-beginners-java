@@ -1,56 +1,52 @@
 # Praktické aplikácie a projekty
 
-[![Praktické aplikácie a projekty](https://img.youtube.com/vi/01vJsYei3H0/0.jpg)](https://www.youtube.com/watch?v=01vJsYei3H0 "Praktické aplikácie a projekty")
-
-> **Prehľad videa:** [Pozrite si "Praktické aplikácie a projekty" na YouTube](https://www.youtube.com/watch?v=01vJsYei3H0).
-
 ## Čo sa naučíte
-V tejto časti predvedieme tri praktické aplikácie, ktoré ukazujú vzory vývoja generatívnej AI v Jave:
-- Vytvorte multimodálny generátor príbehov o domácich zvieratách kombinujúci klientskú a serverovú AI
-- Implementujte integráciu lokálneho AI modelu s demo aplikáciou Foundry Local Spring Boot
-- Vyvíjajte službu Model Context Protocol (MCP) na príklade kalkulačky
+V tejto časti si predvedieme tri praktické aplikácie, ktoré ukazujú vzory vývoja generatívnej AI v Jave:
+- Vytvorte multimodálny generátor príbehov o domácich miláčikoch kombinujúci klientskú a serverovú AI
+- Implementujte integráciu lokálneho AI modelu s ukážkou Foundry Local Spring Boot
+- Vyvinúť službu Model Context Protocol (MCP) s príkladom kalkulačky
 
 ## Obsah
 
 - [Úvod](#úvod)
-  - [Foundry Local Spring Boot Demo](#foundry-local-spring-boot-demo)
-  - [Generátor príbehov o domácich zvieratách](#generátor-príbehov-o-domácich-zvieratách)
-  - [Služba MCP kalkulačky (začiatočnícka demo MCP)](#služba-mcp-kalkulačky-začiatočnícka-demo-mcp)
-- [Postup učenia](#postup-účenia)
+  - [Foundry Local Spring Boot demo](#foundry-local-spring-boot-demo)
+  - [Generátor príbehov o domácich miláčikoch](#generátor-príbehov-o-domácich-miláčikoch)
+  - [MCP kalkulačková služba (začiatočnícka MCP ukážka)](#mcp-kalkulačková-služba-začiatočnícka-mcp-ukážka)
+- [Postup učenia](#postup-ucenia)
 - [Zhrnutie](#zhrnutie)
 - [Ďalšie kroky](#ďalšie-kroky)
 
 ## Úvod
 
-Táto kapitola predstavuje **ukážkové projekty**, ktoré demonštrujú vzory vývoja generatívnej AI v Jave. Každý projekt je plne funkčný a demonštruje konkrétne AI technológie, architektonické vzory a najlepšie praktiky, ktoré môžete prispôsobiť pre svoje vlastné aplikácie.
+Táto kapitola predstavuje **príkladové projekty**, ktoré demonštrujú vzory vývoja generatívnej AI v Jave. Každý projekt je plne funkčný a ukazuje konkrétne AI technológie, architektonické vzory a osvedčené postupy, ktoré môžete prispôsobiť pre svoje vlastné aplikácie.
 
-### Foundry Local Spring Boot Demo
+### Foundry Local Spring Boot demo
 
-**[Foundry Local Spring Boot Demo](foundrylocal/README.md)** ukazuje, ako sa integrovať s lokálnymi AI modelmi pomocou **OpenAI Java SDK**. Demonštruje pripojenie k modelom bežiacim na Foundry Local (napr. **Phi-4-mini**) s automatickou detekciou modelov, čo umožňuje spúšťať AI aplikácie bez závislosti na cloudových službách.
+**[Foundry Local Spring Boot demo](foundrylocal/README.md)** demonštruje, ako integrovať lokálne AI modely pomocou **OpenAI Java SDK**. Ukazuje pripojenie k modelom bežiacim na Foundry Local (napr. **Phi-4-mini**) s automatickou detekciou modelu, čo vám umožní spúšťať AI aplikácie bez nutnosti spoliehať sa na cloudové služby.
 
-### Generátor príbehov o domácich zvieratách
+### Generátor príbehov o domácich miláčikoch
 
-**[Generátor príbehov o domácich zvieratách](petstory/README.md)** je zábavná webová aplikácia Spring Boot, ktorá ukazuje **multimodálne spracovanie AI** na tvorbu kreatívnych príbehov o zvieratkách. Kombinuje schopnosti AI na strane klienta i servera použitím transformer.js pre AI interakcie v prehliadači a OpenAI SDK pre serverové spracovanie.
+**[Generátor príbehov o domácich miláčikoch](petstory/README.md)** je pútavá webová aplikácia Spring Boot, ktorá demonštruje **multimodálne spracovanie AI** pre generovanie kreatívnych príbehov o domácich miláčikoch. Kombinuje klientskú a serverovú AI schopnosť s využitím transformer.js pre AI interakcie v prehliadači a OpenAI SDK pre spracovanie na serveri.
 
-### Služba MCP kalkulačky (začiatočnícka demo MCP)
+### MCP kalkulačková služba (začiatočnícka MCP ukážka)
 
-**[Služba MCP kalkulačky](calculator/README.md)** je jednoduchá ukážka **Model Context Protocol (MCP)** pomocou Spring AI. Poskytuje úvod priateľský pre začiatočníkov do konceptov MCP, ukazujúc, ako vytvoriť základný MCP server, ktorý komunikuje s MCP klientmi.
+**[MCP kalkulačková služba](calculator/README.md)** je jednoduchou ukážkou **Model Context Protocol (MCP)** pomocou Spring AI. Poskytuje úvod pre začiatočníkov do konceptov MCP, ukazujúc, ako vytvoriť základný MCP server, ktorý komunikuje s MCP klientmi.
 
 ## Postup učenia
 
 Tieto projekty sú navrhnuté tak, aby nadväzovali na koncepty z predchádzajúcich kapitol:
 
-1. **Začnite jednoducho**: Začnite s Foundry Local Spring Boot Demo a pochopte základnú integráciu AI s lokálnymi modelmi
-2. **Pridajte interaktivitu**: Pokračujte k Generátoru príbehov o domácich zvieratách pre multimodálne AI a webové interakcie
-3. **Naučte sa základy MCP**: Vyskúšajte Službu MCP kalkulačky a pochopte základy Model Context Protocol
+1. **Začnite jednoducho**: Začnite s Foundry Local Spring Boot demo, aby ste pochopili základnú integráciu AI s lokálnymi modelmi
+2. **Pridajte interaktivitu**: Pokročte k generátoru príbehov o domácich miláčikoch pre multimodálnu AI a webové interakcie
+3. **Naučte sa základy MCP**: Vyskúšajte MCP kalkulačkovú službu, aby ste pochopili základy Model Context Protocol
 
 ## Zhrnutie
 
-Výborne! Práve ste preskúmali niektoré skutočné aplikácie:
+Dobrý výkon! Teraz ste preskúmali niekoľko reálnych aplikácií:
 
-- Multimodálne AI zážitky fungujúce v prehliadači aj na serveri
-- Integráciu lokálneho AI modelu pomocou moderných Java frameworkov a SDK
-- Vašu prvú službu Model Context Protocol, ako nástroj na integráciu s AI
+- Multimodálne AI zážitky, ktoré fungujú v prehliadači aj na serveri
+- Integráciu lokálneho AI modelu pomocou moderných Java rámcov a SDK
+- Vašu prvú službu Model Context Protocol na pochopenie, ako nástroje integrujú AI
 
 ## Ďalšie kroky
 
@@ -60,5 +56,5 @@ Výborne! Práve ste preskúmali niektoré skutočné aplikácie:
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
 **Vyhlásenie o zodpovednosti**:
-Tento dokument bol preložený pomocou AI prekladateľskej služby [Co-op Translator](https://github.com/Azure/co-op-translator). Hoci sa snažíme o presnosť, prosím berte na vedomie, že automatické preklady môžu obsahovať chyby alebo nepresnosti. Pôvodný dokument v jeho rodnom jazyku by mal byť považovaný za autoritatívny zdroj. Pre kritické informácie sa odporúča profesionálny ľudský preklad. Nie sme zodpovední za žiadne nedorozumenia alebo nesprávne interpretácie vyplývajúce z použitia tohto prekladu.
+Tento dokument bol preložený pomocou AI prekladateľskej služby [Co-op Translator](https://github.com/Azure/co-op-translator). Hoci sa snažíme o presnosť, vezmite prosím na vedomie, že automatické preklady môžu obsahovať chyby alebo nepresnosti. Pôvodný dokument v jeho natívnom jazyku by mal byť považovaný za autoritatívny zdroj. Pre kritické informácie sa odporúča profesionálny ľudský preklad. Nie sme zodpovední za žiadne nedorozumenia alebo nesprávne interpretácie vyplývajúce z použitia tohto prekladu.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

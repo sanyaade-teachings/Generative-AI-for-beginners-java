@@ -2,7 +2,7 @@
 
 ## Prehľad projektu
 
-Toto je vzdelávacie úložisko na učenie sa vývoja Generatívnej AI pomocou Javy. Poskytuje komplexný praktický kurz, ktorý pokrýva veľké jazykové modely (LLMs), návrh promptov, embeddings, RAG (Retrieval-Augmented Generation) a Model Context Protocol (MCP).
+Toto je vzdelávacie úložisko na učenie vývoja Generatívnej AI s Java. Poskytuje komplexný praktický kurz pokrývajúci Veľké jazykové modely (LLMs), prompt engineering, embeddingy, RAG (Retrieval-Augmented Generation) a Model Context Protocol (MCP).
 
 **Kľúčové technológie:**
 - Java 21
@@ -10,69 +10,72 @@ Toto je vzdelávacie úložisko na učenie sa vývoja Generatívnej AI pomocou J
 - Spring AI 1.1.x
 - Maven
 - LangChain4j
-- GitHub Models, Azure OpenAI a OpenAI SDKs
+- Azure AI Foundry, Azure OpenAI a OpenAI SDK
 
 **Architektúra:**
-- Viacero samostatných Spring Boot aplikácií organizovaných podľa kapitol
+- Viacero samostatných aplikácií Spring Boot organizovaných podľa kapitol
 - Ukážkové projekty demonštrujúce rôzne AI vzory
-- Pripravené na GitHub Codespaces s predkonfigurovanými vývojovými kontajnermi
+- Pripravené na GitHub Codespaces s predkonfigurovanými vývojárskymi kontajnermi
 
 ## Príkazy na nastavenie
 
-### Predpoklady
-- Java 21 alebo vyššia
+### Požiadavky
+- Java 21 alebo novšia
 - Maven 3.x
-- Osobný prístupový token GitHub (pre GitHub Models)
-- Voliteľné: Azure OpenAI prihlasovacie údaje
+- Predplatné Azure s nasadením modelu Azure AI Foundry (provízia pomocou `azd up`)
+- Azure CLI (`az`) a Azure Developer CLI (`azd`), prihlásené pre bezkľúčovú autentifikáciu
 
 ### Nastavenie prostredia
 
-**Možnosť 1: GitHub Codespaces (Odporúčané)**
+**Možnosť 1: GitHub Codespaces (odporúčané)**
 ```bash
-# Fork the repository and create a codespace from GitHub UI
-# The dev container will automatically install all dependencies
-# Wait ~2 minutes for environment setup
+# Vytvorte fork úložiska a vytvorte codespace z používateľského rozhrania GitHub
+# Vývojové kontajner automaticky nainštaluje všetky závislosti
+# Počkajte približne 2 minúty na nastavenie prostredia
 ```
 
-**Možnosť 2: Lokálny vývojový kontajner**
+**Možnosť 2: Lokálny vývojársky kontajner**
 ```bash
-# Clone repository
+# Klonovať úložisko
 git clone https://github.com/microsoft/Generative-AI-for-beginners-java.git
 cd Generative-AI-for-beginners-java
 
-# Open in VS Code with Dev Containers extension
-# Reopen in Container when prompted
+# Otvorte vo VS Code s rozšírením Dev Containers
+# Znova otvoriť v kontajneri, keď budete vyzvaní
 ```
 
 **Možnosť 3: Lokálne nastavenie**
 ```bash
-# Install dependencies
+# Nainštalujte závislosti
 sudo apt-get update
 sudo apt-get install -y maven openjdk-21-jdk
 
-# Verify installation
+# Overte inštaláciu
 java -version
 mvn -version
 ```
 
 ### Konfigurácia
 
-**Nastavenie GitHub tokenu:**
+**Nastavenie Azure AI Foundry (bezklúčové, odporúčané):**
 ```bash
-# Create a GitHub Personal Access Token
-# Set environment variable
-export GITHUB_TOKEN="your-token-here"
+# Poskytnite účet Foundry + nasadenia modelu ako kód
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
+# azd zapisuje examples/basic-chat-azure/.env s vaším koncovým bodom (bez kľúča)
 ```
 
-**Nastavenie Azure OpenAI (voliteľné):**
+**Manuálna konfigurácia endpointu:**
 ```bash
-# For examples using Azure OpenAI
+# Ak ste nepoužili azd, nastavte si koncový bod sami (autentifikácia zostáva bez kľúča cez az login)
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# Upravte .env: AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com/
 ```
 
-## Pracovný postup vývoja
+## Vývojový pracovný postup
 
 ### Štruktúra projektu
 ```
@@ -97,95 +100,95 @@ cd [project-directory]
 mvn spring-boot:run
 ```
 
-**Zostavenie projektu:**
+**Skompilovanie projektu:**
 ```bash
 cd [project-directory]
 mvn clean install
 ```
 
-**Spustenie MCP kalkulačného servera:**
+**Spustenie MCP Calculator Servera:**
 ```bash
 cd 04-PracticalSamples/calculator
 mvn spring-boot:run
-# Server runs on http://localhost:8080
+# Server beží na http://localhost:8080
 ```
 
-**Spustenie klientských príkladov:**
+**Spustenie ukážok klienta:**
 ```bash
-# After starting the server in another terminal
+# Po spustení servera v inom termináli
 cd 04-PracticalSamples/calculator
 
-# Direct MCP client
+# Priamy MCP klient
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient"
 
-# AI-powered client (requires GITHUB_TOKEN)
+# Klient poháňaný AI (vyžaduje AZURE_OPENAI_ENDPOINT + az prihlásenie)
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient"
 
-# Interactive bot
+# Interaktívny bot
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.Bot"
 ```
 
 ### Hot Reload
 Spring Boot DevTools je zahrnutý v projektoch, ktoré podporujú hot reload:
 ```bash
-# Changes to Java files will automatically reload when saved
+# Zmeny v súboroch Java sa automaticky znovu načítajú po uložení
 mvn spring-boot:run
 ```
 
 ## Pokyny na testovanie
 
-### Spúšťanie testov
+### Spustenie testov
 
-**Spustenie všetkých testov v projekte:**
+**Spustiť všetky testy v projekte:**
 ```bash
 cd [project-directory]
 mvn test
 ```
 
-**Spustenie testov s podrobným výstupom:**
+**Spustiť testy s podrobným výstupom:**
 ```bash
 mvn test -X
 ```
 
-**Spustenie konkrétnej testovacej triedy:**
+**Spustiť konkrétnu testovaciu triedu:**
 ```bash
 mvn test -Dtest=CalculatorServiceTest
 ```
 
 ### Štruktúra testov
 - Testovacie súbory používajú JUnit 5 (Jupiter)
-- Testovacie triedy sa nachádzajú v `src/test/java/`
-- Klientské príklady v kalkulačnom projekte sú v `src/test/java/com/microsoft/mcp/sample/client/`
+- Testovacie triedy sú umiestnené v `src/test/java/`
+- Ukážky klienta v projekte kalkulačky sú v `src/test/java/com/microsoft/mcp/sample/client/`
 
 ### Manuálne testovanie
-Mnohé príklady sú interaktívne aplikácie, ktoré vyžadujú manuálne testovanie:
+Mnohé príklady sú interaktívne aplikácie vyžadujúce manuálne testovanie:
 
 1. Spustite aplikáciu pomocou `mvn spring-boot:run`
 2. Testujte endpointy alebo interagujte s CLI
-3. Overte, či očakávané správanie zodpovedá dokumentácii v README.md každého projektu
+3. Overte, či sa očakávané správanie zhoduje s dokumentáciou v README.md každého projektu
 
-### Testovanie s GitHub Models
-- Obmedzenia bezplatného plánu: 15 požiadaviek/minúta, 150/deň
-- Maximálne 5 súbežných požiadaviek
-- Testujte filtrovanie obsahu s príkladmi zodpovednej AI
+### Testovanie s Azure AI Foundry
+- Prihláste sa pomocou `az login` pred spustením príkladov (bezklúčová autentifikácia)
+- Uistite sa, že váš účet má rolu Cognitive Services OpenAI User na zdroji
+- Otestujte filtrovanie obsahu pomocou príkladu zodpovednej AI v kapitole 5
 
-## Pokyny k štýlu kódu
+## Pokyny ku kódovaciemu štýlu
 
-### Konvencie pre Javu
-- **Verzia Javy:** Java 21 s modernými funkciami
-- **Štýl:** Dodržiavajte štandardné konvencie Javy
-- **Názvoslovie:** 
+### Java konvencie
+- **Verzia Java:** Java 21 s modernými funkciami
+- **Štýl:** Dodržiavajte štandardné Java konvencie
+- **Názvy:** 
   - Triedy: PascalCase
   - Metódy/premenné: camelCase
   - Konštanty: UPPER_SNAKE_CASE
   - Názvy balíkov: malé písmená
 
-### Vzory Spring Boot
-- Používajte `@Service` pre obchodnú logiku
+### Spring Boot vzory
+- Používajte `@Service` pre biznis logiku
 - Používajte `@RestController` pre REST endpointy
 - Konfigurácia cez `application.yml` alebo `application.properties`
-- Preferujte environmentálne premenné pred pevne zakódovanými hodnotami
-- Používajte anotáciu `@Tool` pre metódy vystavené MCP
+- Preferujte environmentálne premenné pred hardcoded hodnotami
+- Používajte anotáciu `@Tool` pre metódy sprístupnené MCP
 
 ### Organizácia súborov
 ```
@@ -208,149 +211,155 @@ src/
 
 ### Závislosti
 - Spravované cez Maven `pom.xml`
-- Spring AI BOM na správu verzií
+- Spring AI BOM pre správu verzií
 - LangChain4j pre AI integrácie
 - Spring Boot starter parent pre Spring závislosti
 
-### Komentáre kódu
-- Pridajte JavaDoc pre verejné API
-- Zahrňte vysvetľujúce komentáre pre komplexné AI interakcie
-- Jasne dokumentujte popisy nástrojov MCP
+### Komentáre v kóde
+- Pridávajte JavaDoc pre verejné API
+- Zahrňte vysvetľujúce komentáre pre zložité AI interakcie
+- Dokumentujte jasne popisy MCP nástrojov
 
-## Zostavenie a nasadenie
+## Kompilácia a nasadenie
 
-### Zostavenie projektov
+### Kompilácia projektov
 
-**Zostavenie bez testov:**
+**Kompilovať bez testov:**
 ```bash
 mvn clean install -DskipTests
 ```
 
-**Zostavenie so všetkými kontrolami:**
+**Kompilovať so všetkými kontrolami:**
 ```bash
 mvn clean install
 ```
 
-**Vytvorenie balíka aplikácie:**
+**Zabaliť aplikáciu:**
 ```bash
 mvn package
-# Creates JAR in target/ directory
+# Vytvára JAR v priečinku target/
 ```
 
 ### Výstupné adresáre
-- Kompilované triedy: `target/classes/`
+- Skopilované triedy: `target/classes/`
 - Testovacie triedy: `target/test-classes/`
 - JAR súbory: `target/*.jar`
 - Maven artefakty: `target/`
 
-### Konfigurácia špecifická pre prostredie
+### Konfigurácia podľa prostredia
 
 **Vývoj:**
 ```yaml
-# application.yml
+# application.yml (keyless - no api-key; auth via DefaultAzureCredential)
 spring:
   ai:
-    openai:
-      api-key: ${GITHUB_TOKEN}
-      base-url: https://models.inference.ai.azure.com
+    azure:
+      openai:
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 **Produkcia:**
-- Používajte Azure AI Foundry Models namiesto GitHub Models
-- Aktualizujte base-url na Azure OpenAI endpoint
-- Spravujte tajomstvá cez Azure Key Vault alebo environmentálne premenné
+- Použite spravovanú identitu namiesto `az login` pre bezkľúčovú autentifikáciu
+- Nasmerujte `AZURE_OPENAI_ENDPOINT` na váš produkčný Foundry zdroj
+- Spravujte konfiguráciu cez environmentálne premenne alebo Azure Key Vault
 
-### Úvahy o nasadení
+### Poznámky k nasadeniu
 - Toto je vzdelávacie úložisko s ukážkovými aplikáciami
-- Nie je navrhnuté na produkčné nasadenie ako také
-- Ukážky demonštrujú vzory na prispôsobenie pre produkčné použitie
-- Pozrite si README.md jednotlivých projektov pre konkrétne poznámky k nasadeniu
+- Nie je určené na priame nasadenie do produkcie
+- Ukážky demonštrujú vzory, ktoré je potrebné prispôsobiť pre produkčné použitie
+- Pozrite README každého projektu pre konkrétne poznámky k nasadeniu
 
 ## Ďalšie poznámky
 
-### GitHub Models vs Azure OpenAI
-- **GitHub Models:** Bezplatný plán na učenie, nie je potrebná kreditná karta
-- **Azure OpenAI:** Pripravené na produkciu, vyžaduje Azure predplatné
-- Kód je kompatibilný medzi oboma - stačí zmeniť endpoint a API kľúč
+### Azure AI Foundry
+- **Bezkľúčová autentifikácia:** pripojenie cez Microsoft Entra ID — žiadne API kľúče na spravovanie
+- **Provízia ako kód:** Bicep + azd (`azd up`) vytvoria účet a nasadenia modelov
+- Rovnaký kód kompatibilný s OpenAI beží lokálne (`az login`) aj v Azure (spravovaná identita)
 
 ### Práca s viacerými projektmi
 Každý ukážkový projekt je samostatný:
 ```bash
-# Navigate to specific project
+# Prejdite na konkrétny projekt
 cd 04-PracticalSamples/[project-name]
 
-# Each has its own pom.xml and can be built independently
+# Každý má svoj vlastný pom.xml a môže byť zostavený nezávisle
 mvn clean install
 ```
 
 ### Bežné problémy
 
-**Nesúlad verzie Javy:**
+**Nesúlad verzie Java:**
 ```bash
-# Verify Java 21
+# Overiť Java 21
 java -version
-# Update JAVA_HOME if needed
+# Aktualizovať JAVA_HOME, ak je potrebné
 export JAVA_HOME=/usr/lib/jvm/msopenjdk-current
 ```
 
 **Problémy so sťahovaním závislostí:**
 ```bash
-# Clear Maven cache and retry
+# Vymazať Maven cache a skúsiť znova
 rm -rf ~/.m2/repository
 mvn clean install
 ```
 
-**GitHub token nebol nájdený:**
+**Endpoint alebo prihlásenie nenájdené:**
 ```bash
-# Set in current session
-export GITHUB_TOKEN="your-token-here"
+# Nastavte koncový bod v aktuálnej relácii a prihláste sa (bez kľúča)
+export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
+az login
 
-# Or use .env file in project directory
-echo "GITHUB_TOKEN=your-token-here" > .env
+# Alebo použite súbor .env v adresári projektu
+echo "AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/" > .env
 ```
 
 **Port už používaný:**
 ```bash
-# Spring Boot uses port 8080 by default
-# Change in application.properties:
+# Spring Boot štandardne používa port 8080
+# Zmena v application.properties:
 server.port=8081
 ```
 
 ### Podpora viacerých jazykov
-- Dokumentácia dostupná vo viac ako 45 jazykoch cez automatizovaný preklad
+- Dokumentácia dostupná vo viac než 45 jazykoch cez automatizovaný preklad
 - Preklady v adresári `translations/`
-- Preklad spravovaný GitHub Actions workflow
+- Preklady riadené pomocou Github Actions workflow
 
-### Učebná cesta
+### Vzdelávacia cesta
 1. Začnite s [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md)
-2. Postupujte podľa kapitol v poradí (01 → 05)
+2. Nasledujte kapitoly v poradí (01 → 05)
 3. Dokončite praktické príklady v každej kapitole
 4. Preskúmajte ukážkové projekty v kapitole 4
-5. Naučte sa praktiky zodpovednej AI v kapitole 5
+5. Naučte sa zodpovedné AI praktiky v kapitole 5
 
-### Vývojový kontajner
-Konfigurácia `.devcontainer/devcontainer.json` obsahuje:
+### Vývojársky kontajner
+`.devcontainer/devcontainer.json` konfiguruje:
 - Vývojové prostredie Java 21
 - Predinštalovaný Maven
-- Rozšírenia Java pre VS Code
+- VS Code Java rozšírenia
 - Nástroje Spring Boot
 - Integráciu GitHub Copilot
 - Podporu Docker-in-Docker
 - Azure CLI
 
-### Úvahy o výkone
-- Bezplatný plán GitHub Models má obmedzenia rýchlosti
-- Používajte vhodné veľkosti dávok pre embeddings
-- Zvážte caching pre opakované API volania
-- Monitorujte používanie tokenov na optimalizáciu nákladov
+### Výkonové úvahy
+- Nasadenia Azure AI Foundry majú kvóty tokenov/požiadaviek za minútu
+- Používajte vhodné veľkosti dávok pre embeddingy
+- Zvážte cache pri opakovaných API volaniach
+- Sledujte využitie tokenov pre optimalizáciu nákladov
 
-### Poznámky k bezpečnosti
-- Nikdy nekomitujte súbory `.env` (už sú v `.gitignore`)
-- Používajte environmentálne premenné pre API kľúče
-- GitHub tokeny by mali mať minimálne požadované oprávnenia
-- Dodržiavajte pokyny zodpovednej AI v kapitole 5
+### Bezpečnostné poznámky
+- Nikdy neukladajte `.env` súbory do repozitára (sú v `.gitignore`)
+- Preferujte bezkľúčovú autentifikáciu (Microsoft Entra ID) namiesto API kľúčov
+- Používajte spravované identity v Azure; `az login` pre lokálny vývoj
+- Dodržiavajte zásady zodpovednej AI v kapitole 5
 
 ---
 
-**Upozornenie**:  
-Tento dokument bol preložený pomocou služby AI prekladu [Co-op Translator](https://github.com/Azure/co-op-translator). Hoci sa snažíme o presnosť, upozorňujeme, že automatizované preklady môžu obsahovať chyby alebo nepresnosti. Pôvodný dokument v jeho rodnom jazyku by mal byť považovaný za autoritatívny zdroj. Pre kritické informácie sa odporúča profesionálny ľudský preklad. Nenesieme zodpovednosť za akékoľvek nedorozumenia alebo nesprávne interpretácie vyplývajúce z použitia tohto prekladu.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Vyhlásenie o zodpovednosti**:
+Tento dokument bol preložený pomocou AI prekladateľskej služby [Co-op Translator](https://github.com/Azure/co-op-translator). Hoci sa snažíme o presnosť, vezmite prosím na vedomie, že automatické preklady môžu obsahovať chyby alebo nepresnosti. Pôvodný dokument v jeho natívnom jazyku by mal byť považovaný za autoritatívny zdroj. Pre kritické informácie sa odporúča profesionálny ľudský preklad. Nie sme zodpovední za žiadne nedorozumenia alebo nesprávne interpretácie vyplývajúce z použitia tohto prekladu.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->
