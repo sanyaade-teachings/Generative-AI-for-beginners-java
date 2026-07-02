@@ -1,25 +1,21 @@
-# IA Generativa Responsable
+# Inteligencia Artificial Generativa Responsable
 
-[![IA Generativa Responsable](https://img.youtube.com/vi/rF-b2BTSMQ4/0.jpg)](https://www.youtube.com/watch?v=rF-b2BTSMQ4 "IA Generativa Responsable")
-
-> **Video**: [Vea el video resumen de esta lección](https://www.youtube.com/watch?v=rF-b2BTSMQ4).
-> También puede hacer clic en la imagen en miniatura de arriba para abrir el mismo video.
 
 ## Qué Aprenderás
 
 - Conocer las consideraciones éticas y las mejores prácticas importantes para el desarrollo de IA
 - Integrar filtrado de contenido y medidas de seguridad en tus aplicaciones
-- Probar y manejar respuestas de seguridad de IA usando las protecciones integradas de GitHub Models
+- Probar y manejar las respuestas de seguridad de IA usando el filtrado de contenido incorporado de Azure AI Foundry
 - Aplicar principios de IA responsable para crear sistemas de IA seguros y éticos
 
 ## Tabla de Contenidos
 
 - [Introducción](#introducción)
-- [Seguridad Integrada en GitHub Models](#seguridad-integrada-en-github-models)
-- [Ejemplo Práctico: Demostración de Seguridad en IA Responsable](#ejemplo-práctico-demostración-de-seguridad-en-ia-responsable)
-  - [Qué Muestra la Demostración](#qué-muestra-la-demostración)
+- [Seguridad de Contenido de Azure AI Foundry](#seguridad-de-contenido-de-azure-ai-foundry)
+- [Ejemplo Práctico: Demostración de Seguridad de IA Responsable](#ejemplo-práctico-demostración-de-seguridad-de-ia-responsable)
+  - [Qué Muestra la Demo](#qué-muestra-la-demo)
   - [Instrucciones de Configuración](#instrucciones-de-configuración)
-  - [Ejecución de la Demostración](#ejecución-de-la-demostración)
+  - [Cómo Ejecutar la Demo](#cómo-ejecutar-la-demo)
   - [Salida Esperada](#salida-esperada)
 - [Mejores Prácticas para el Desarrollo Responsable de IA](#mejores-prácticas-para-el-desarrollo-responsable-de-ia)
 - [Nota Importante](#nota-importante)
@@ -29,70 +25,70 @@
 
 ## Introducción
 
-Este capítulo final se centra en los aspectos críticos de construir aplicaciones de IA generativa responsables y éticas. Aprenderás a implementar medidas de seguridad, manejar el filtrado de contenido y aplicar las mejores prácticas para el desarrollo responsable de IA usando las herramientas y marcos cubiertos en capítulos anteriores. Comprender estos principios es esencial para construir sistemas de IA que no solo sean técnicamente impresionantes, sino también seguros, éticos y confiables.
+Este último capítulo se centra en los aspectos críticos de construir aplicaciones generativas de IA responsables y éticas. Aprenderás a implementar medidas de seguridad, manejar el filtrado de contenido y aplicar las mejores prácticas para el desarrollo responsable de IA utilizando las herramientas y marcos cubiertos en capítulos anteriores. Entender estos principios es esencial para crear sistemas de IA que no solo sean técnicamente impresionantes, sino también seguros, éticos y confiables.
 
-## Seguridad Integrada en GitHub Models
+## Seguridad de Contenido de Azure AI Foundry
 
-GitHub Models incluye filtrado básico de contenido por defecto. Es como tener un portero amigable en tu club de IA: no el más sofisticado, pero que cumple con su función para escenarios básicos.
+Los modelos de Azure AI Foundry incluyen filtrado de contenido incorporado, potenciado por Azure AI Content Safety. Las indicaciones y respuestas dañinas son filtradas automáticamente en varias categorías antes de que lleguen — o salgan — del modelo.
 
-**Lo que GitHub Models Protege:**
-- **Contenido Nocivo**: Bloquea contenido evidente violento, sexual o peligroso
-- **Discurso de Odio Básico**: Filtra lenguaje claramente discriminatorio
-- **Evasiones Simples**: Resiste intentos básicos de saltarse las protecciones de seguridad
+**Contra qué Protege Azure AI Foundry:**
+- **Contenido Dañino**: Bloquea contenido violento, sexual, de autolesión o peligroso
+- **Discurso de Odio**: Filtra lenguaje discriminatorio
+- **Jailbreaks**: Detecta inyección de indicaciones y intentos de evadir las barreras de seguridad
 
-## Ejemplo Práctico: Demostración de Seguridad en IA Responsable
+## Ejemplo Práctico: Demostración de Seguridad de IA Responsable
 
-Este capítulo incluye una demostración práctica de cómo GitHub Models implementa medidas de seguridad responsables probando indicaciones que podrían violar las directrices de seguridad.
+Este capítulo incluye una demostración práctica de cómo Azure AI Foundry implementa medidas de seguridad responsables evaluando indicaciones que podrían violar las pautas de seguridad.
 
-### Qué Muestra la Demostración
+### Qué Muestra la Demo
 
-La clase `ResponsibleGithubModels` sigue este flujo:
-1. Inicializar el cliente de GitHub Models con autenticación
-2. Probar indicaciones nocivas (violencia, discurso de odio, desinformación, contenido ilegal)
-3. Enviar cada indicación a la API de GitHub Models
-4. Manejar las respuestas: bloqueos duros (errores HTTP), rechazos suaves (respuestas corteses de "no puedo ayudar"), o generación normal de contenido
+La clase `ResponsibleAIDemo` sigue este flujo:
+1. Inicializar el cliente de Azure AI Foundry con autenticación sin clave (Microsoft Entra ID)
+2. Probar indicaciones dañinas (violencia, discurso de odio, desinformación, contenido ilegal)
+3. Enviar cada indicación al modelo de Azure AI Foundry
+4. Manejar las respuestas: bloqueos duros (errores HTTP), rechazos suaves (respuestas corteses de "No puedo ayudar con eso"), o generación normal de contenido
 5. Mostrar resultados indicando qué contenido fue bloqueado, rechazado o permitido
 6. Probar contenido seguro para comparación
 
-![Demostración de Seguridad en IA Responsable](../../../translated_images/es/responsible.e4f51a917bafa4bf.webp)
+![Responsible AI Safety Demo](../../../translated_images/es/responsible.e4f51a917bafa4bf.webp)
 
 ### Instrucciones de Configuración
 
-1. **Configure su Token de Acceso Personal de GitHub:**
+1. **Inicia sesión y configura tu endpoint de Azure AI Foundry** (autenticación sin clave — sin llave API). Ejecuta primero `az login`, luego:
    
    En Windows (símbolo del sistema):
    ```cmd
-   set GITHUB_TOKEN=your_github_token_here
+   set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    ```
    
    En Windows (PowerShell):
    ```powershell
-   $env:GITHUB_TOKEN="your_github_token_here"
+   $env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
    ```
    
    En Linux/macOS:
    ```bash
-   export GITHUB_TOKEN=your_github_token_here
+   export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    ```   
 
-### Ejecución de la Demostración
+### Cómo Ejecutar la Demo
 
-1. **Navegue al directorio de ejemplos:**
+1. **Navega al directorio de ejemplos:**
    ```bash
    cd 03-CoreGenerativeAITechniques/examples
    ```
 
-2. **Compile y ejecute la demostración:**
+2. **Compila y ejecuta la demo:**
    ```bash
-   mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleGithubModels"
+   mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleAIDemo"
    ```
 
 ### Salida Esperada
 
-La demostración probará varios tipos de indicaciones potencialmente nocivas y mostrará cómo funciona la seguridad moderna en IA mediante dos mecanismos:
+La demo probará varios tipos de indicaciones potencialmente dañinas y mostrará cómo funciona la seguridad moderna de IA a través de dos mecanismos:
 
-- **Bloqueos Duros**: errores HTTP 400 cuando el contenido es bloqueado por los filtros de seguridad antes de llegar al modelo
-- **Rechazos Suaves**: el modelo responde con rechazos educados como "No puedo ayudar con eso" (lo más común con modelos modernos)
+- **Bloqueos Duros**: Errores HTTP 400 cuando el contenido es bloqueado por filtros de seguridad antes de llegar al modelo
+- **Rechazos Suaves**: El modelo responde con rechazos corteses como "No puedo ayudar con eso" (lo más común con modelos modernos)
 - **Contenido seguro** que recibe una respuesta normal
 
 Formato de salida de ejemplo:
@@ -119,58 +115,58 @@ Status: Response generated successfully
 
 Al construir aplicaciones de IA, sigue estas prácticas esenciales:
 
-1. **Siempre maneja las posibles respuestas de los filtros de seguridad con elegancia**
-   - Implementa un manejo adecuado de errores para contenido bloqueado
-   - Ofrece retroalimentación significativa a los usuarios cuando el contenido es filtrado
+1. **Siempre maneja las posibles respuestas de los filtros de seguridad con gracia**
+   - Implementa manejo adecuado de errores para contenido bloqueado
+   - Proporciona retroalimentación significativa a los usuarios cuando el contenido es filtrado
 
-2. **Implementa validaciones adicionales de contenido donde sea apropiado**
-   - Añade controles de seguridad específicos del dominio
+2. **Implementa tu propia validación adicional de contenido cuando sea apropiado**
+   - Añade verificaciones de seguridad específicas del dominio
    - Crea reglas de validación personalizadas para tu caso de uso
 
-3. **Educa a los usuarios sobre el uso responsable de la IA**
-   - Proporciona directrices claras sobre el uso aceptable
+3. **Educa a los usuarios sobre el uso responsable de IA**
+   - Proporciona directrices claras sobre uso aceptable
    - Explica por qué cierto contenido podría ser bloqueado
 
-4. **Monitorea y registra incidentes de seguridad para mejora continua**
+4. **Monitorea y registra incidentes de seguridad para mejorar**
    - Rastrea patrones de contenido bloqueado
    - Mejora continuamente tus medidas de seguridad
 
 5. **Respeta las políticas de contenido de la plataforma**
    - Mantente actualizado con las directrices de la plataforma
-   - Sigue los términos de servicio y las guías éticas
+   - Sigue los términos de servicio y las pautas éticas
 
 ## Nota Importante
 
-Este ejemplo usa indicaciones intencionadamente problemáticas solo con fines educativos. El objetivo es demostrar medidas de seguridad, no evadirlas. Usa las herramientas de IA de manera responsable y ética.
+Este ejemplo usa intencionalmente indicaciones problemáticas solo con fines educativos. El objetivo es demostrar medidas de seguridad, no evadirlas. Usa siempre las herramientas de IA de forma responsable y ética.
 
 ## Resumen
 
-**¡Felicidades!** Has logrado con éxito:
+**¡Felicidades!** Has logrado exitosamente:
 
-- **Implementar medidas de seguridad en IA**, incluyendo filtrado de contenido y manejo de respuestas de seguridad
+- **Implementar medidas de seguridad de IA** incluyendo filtrado de contenido y manejo de respuestas de seguridad
 - **Aplicar principios de IA responsable** para construir sistemas de IA éticos y confiables
-- **Probar mecanismos de seguridad** usando las capacidades de protección integradas de GitHub Models
+- **Probar mecanismos de seguridad** usando las capacidades integradas de seguridad de contenido de Azure AI Foundry
 - **Aprender las mejores prácticas** para el desarrollo y despliegue responsable de IA
 
-**Recursos para IA Responsable:**
-- [Microsoft Trust Center](https://www.microsoft.com/trust-center) - Conozca el enfoque de Microsoft respecto a seguridad, privacidad y cumplimiento
-- [Microsoft Responsible AI](https://www.microsoft.com/ai/responsible-ai) - Explore los principios y prácticas de Microsoft para el desarrollo responsable de IA
+**Recursos de IA Responsable:**
+- [Microsoft Trust Center](https://www.microsoft.com/trust-center) - Conoce el enfoque de Microsoft sobre seguridad, privacidad y cumplimiento
+- [Microsoft Responsible AI](https://www.microsoft.com/ai/responsible-ai) - Explora los principios y prácticas de Microsoft para el desarrollo responsable de IA
 
 ## Finalización del Curso
 
-¡Felicidades por completar el curso de IA Generativa para Principiantes!
+¡Felicitaciones por completar el curso de IA Generativa para Principiantes!
 
-![Finalización del Curso](../../../translated_images/es/image.73c7e2ff4a652e77.webp)
+![Course Completion](../../../translated_images/es/image.73c7e2ff4a652e77.webp)
 
 **Lo que has logrado:**
-- Configurar tu entorno de desarrollo
-- Aprender técnicas básicas de IA generativa
-- Explorar aplicaciones prácticas de IA
-- Comprender principios de IA responsable
+- Configuraste tu entorno de desarrollo
+- Aprendiste técnicas centrales de IA generativa
+- Exploraste aplicaciones prácticas de IA
+- Comprendiste principios de IA responsable
 
 ## Próximos Pasos
 
-Continúa tu camino de aprendizaje en IA con estos recursos adicionales:
+Continúa tu aprendizaje en IA con estos recursos adicionales:
 
 **Cursos de Aprendizaje Adicional:**
 - [AI Agents For Beginners](https://github.com/microsoft/ai-agents-for-beginners)
@@ -192,6 +188,6 @@ Continúa tu camino de aprendizaje en IA con estos recursos adicionales:
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Aviso**:  
-Este documento ha sido traducido utilizando el servicio de traducción automática [Co-op Translator](https://github.com/Azure/co-op-translator). Aunque nos esforzamos por la precisión, tenga en cuenta que las traducciones automáticas pueden contener errores o inexactitudes. El documento original en su idioma nativo debe considerarse la fuente autorizada. Para información crítica, se recomienda una traducción profesional realizada por humanos. No nos hacemos responsables de ningún malentendido o interpretación errónea que surja del uso de esta traducción.
+**Descargo de responsabilidad**:
+Este documento ha sido traducido utilizando el servicio de traducción automática [Co-op Translator](https://github.com/Azure/co-op-translator). Aunque nos esforzamos por la precisión, tenga en cuenta que las traducciones automatizadas pueden contener errores o inexactitudes. El documento original en su idioma nativo debe considerarse la fuente autorizada. Para información crítica, se recomienda una traducción profesional humana. No somos responsables de cualquier malentendido o interpretación errónea que surja del uso de esta traducción.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

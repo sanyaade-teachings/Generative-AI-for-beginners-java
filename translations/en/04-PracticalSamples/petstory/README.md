@@ -2,30 +2,30 @@
 
 ## Table of Contents
 
-- [Prerequisites](../../../../04-PracticalSamples/petstory)
-- [Understanding the Project Structure](../../../../04-PracticalSamples/petstory)
-- [Core Components Explained](../../../../04-PracticalSamples/petstory)
-  - [1. Main Application](../../../../04-PracticalSamples/petstory)
-  - [2. Web Controller](../../../../04-PracticalSamples/petstory)
-  - [3. Story Service](../../../../04-PracticalSamples/petstory)
-  - [4. Web Templates](../../../../04-PracticalSamples/petstory)
-  - [5. Configuration](../../../../04-PracticalSamples/petstory)
-- [Running the Application](../../../../04-PracticalSamples/petstory)
-- [How It All Works Together](../../../../04-PracticalSamples/petstory)
-- [Understanding the AI Integration](../../../../04-PracticalSamples/petstory)
-- [Next Steps](../../../../04-PracticalSamples/petstory)
+- [Prerequisites](#prerequisites)
+- [Understanding the Project Structure](#understanding-the-project-structure)
+- [Core Components Explained](#core-components-explained)
+  - [1. Main Application](#1-main-application)
+  - [2. Web Controller](#2-web-controller)
+  - [3. Story Service](#3-story-service)
+  - [4. Web Templates](#4-web-templates)
+  - [5. Configuration](#5-configuration)
+- [Running the Application](#running-the-application)
+- [How It All Works Together](#how-it-all-works-together)
+- [Understanding the AI Integration](#understanding-the-ai-integration)
+- [Next Steps](#next-steps)
 
 ## Prerequisites
 
-Before you begin, ensure you have the following:
-- Java 21 or later installed
-- Maven for managing dependencies
-- A GitHub account with a personal access token (PAT) that has the `models:read` scope
-- Basic knowledge of Java, Spring Boot, and web development
+Before starting, make sure you have:
+- Java 21 or higher installed
+- Maven for dependency management
+- An Azure AI Foundry model deployment (provision it with `azd up` — see [Chapter 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md)), signed in with `az login` (keyless auth)
+- Basic understanding of Java, Spring Boot, and web development
 
 ## Understanding the Project Structure
 
-The pet story project includes several key files:
+The pet story project has several important files:
 
 ```
 petstory/
@@ -48,7 +48,7 @@ petstory/
 
 **File:** `PetStoryApplication.java`
 
-This is the starting point of the Spring Boot application:
+This is the entry point for our Spring Boot application:
 
 ```java
 @SpringBootApplication
@@ -59,16 +59,16 @@ public class PetStoryApplication {
 }
 ```
 
-**What it does:**
-- The `@SpringBootApplication` annotation enables auto-configuration and component scanning
-- Launches an embedded web server (Tomcat) on port 8080
-- Automatically creates all required Spring beans and services
+**What this does:**
+- `@SpringBootApplication` annotation enables auto-configuration and component scanning
+- Starts an embedded web server (Tomcat) on port 8080
+- Creates all necessary Spring beans and services automatically
 
 ### 2. Web Controller
 
 **File:** `PetController.java`
 
-This component manages all web requests and user interactions:
+This handles all web requests and user interactions:
 
 ```java
 @Controller
@@ -124,14 +124,14 @@ public class PetController {
 
 **Key features:**
 
-1. **Route Handling**: `@GetMapping("/")` displays the upload form, while `@PostMapping("/generate-story")` processes submissions
-2. **Input Validation**: Ensures descriptions are not empty and meet length requirements
+1. **Route Handling**: `@GetMapping("/")` shows the upload form, `@PostMapping("/generate-story")` processes submissions
+2. **Input Validation**: Checks for empty descriptions and length limits
 3. **Security**: Sanitizes user input to prevent XSS attacks
-4. **Error Handling**: Provides fallback stories if the AI service is unavailable
+4. **Error Handling**: Provides fallback stories when AI service fails
 5. **Model Binding**: Passes data to HTML templates using Spring's `Model`
 
 **Fallback System:**
-The controller includes pre-written story templates that are used when the AI service is not accessible:
+The controller includes pre-written story templates that are used when the AI service is unavailable:
 
 ```java
 private String generateFallbackStory(String description) {
@@ -151,7 +151,7 @@ private String generateFallbackStory(String description) {
 
 **File:** `StoryService.java`
 
-This service interacts with GitHub Models to generate stories:
+This service communicates with Azure AI Foundry to generate stories using keyless authentication:
 
 ```java
 @Service
@@ -160,18 +160,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // Foundry's OpenAI-compatible endpoint lives under /openai/v1/
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // Keyless authentication with Microsoft Entra ID (no API key)
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -201,11 +205,11 @@ public class StoryService {
 
 **Key components:**
 
-1. **OpenAI Client**: Utilizes the official OpenAI Java SDK configured for GitHub Models
-2. **System Prompt**: Sets the AI's behavior to create family-friendly pet stories
-3. **User Prompt**: Provides the AI with specific instructions based on the pet description
-4. **Parameters**: Adjusts story length and creativity level
-5. **Error Handling**: Throws exceptions that the controller manages
+1. **OpenAI Client**: Uses the official OpenAI Java SDK configured for Azure AI Foundry (keyless)
+2. **System Prompt**: Sets the AI's behavior to write family-friendly pet stories
+3. **User Prompt**: Tells the AI exactly what story to write based on the description
+4. **Parameters**: Controls story length and creativity level
+5. **Error Handling**: Throws exceptions that the controller catches and handles
 
 ### 4. Web Templates
 
@@ -260,7 +264,7 @@ The main page where users describe their pets:
 
 **File:** `result.html` (Story Display)
 
-Displays the generated story:
+Shows the generated story:
 
 ```html
 <!DOCTYPE html>
@@ -296,15 +300,15 @@ Displays the generated story:
 **Template features:**
 
 1. **Thymeleaf Integration**: Uses `th:` attributes for dynamic content
-2. **Responsive Design**: CSS styling for both mobile and desktop devices
-3. **Error Handling**: Shows validation errors to users
+2. **Responsive Design**: CSS styling for mobile and desktop
+3. **Error Handling**: Displays validation errors to users
 4. **Client-side Processing**: JavaScript for image analysis (using Transformers.js)
 
 ### 5. Configuration
 
 **File:** `application.properties`
 
-Contains the application's configuration settings:
+Configuration settings for the application:
 
 ```properties
 spring.application.name=pet-story-app
@@ -316,43 +320,46 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 **Configuration explained:**
 
 1. **File Upload**: Allows images up to 10MB
-2. **Logging**: Manages what information is logged during execution
-3. **GitHub Models**: Specifies the AI model and endpoint to use
-4. **Security**: Configures error handling to avoid exposing sensitive information
+2. **Logging**: Controls what information is logged during execution
+3. **Azure AI Foundry**: Specifies the endpoint and model deployment to use (keyless auth)
+4. **Security**: Error handling configuration to avoid exposing sensitive information
 
 ## Running the Application
 
-### Step 1: Set Your GitHub Token
+### Step 1: Sign In and Set Your Endpoint
 
-First, set your GitHub token as an environment variable:
+Authentication is keyless (Microsoft Entra ID), so there's no API key. Sign in and set your Foundry endpoint:
 
 **Windows (Command Prompt):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Why this is needed:**
-- GitHub Models requires authentication to access AI models
-- Using environment variables keeps sensitive tokens out of the source code
-- The `models:read` scope grants access to AI inference
+- Azure AI Foundry uses Microsoft Entra ID to authenticate inference requests
+- Keyless auth means no secrets in your source code or environment
+- Your account needs the **Cognitive Services OpenAI User** role on the resource
 
 ### Step 2: Build and Run
 
@@ -371,51 +378,53 @@ Start the server:
 mvn spring-boot:run
 ```
 
-The application will be available at `http://localhost:8080`.
+The application will start on `http://localhost:8080`.
 
 ### Step 3: Test the Application
 
 1. **Open** `http://localhost:8080` in your browser
 2. **Describe** your pet in the text area (e.g., "A playful golden retriever who loves to fetch")
-3. **Click** "Generate Story" to receive an AI-generated story
+3. **Click** "Generate Story" to get an AI-generated story
 4. **Alternatively**, upload a pet image to automatically generate a description
 5. **View** the creative story based on your pet's description
 
 ## How It All Works Together
 
-Here’s the complete process for generating a pet story:
+Here's the complete flow when you generate a pet story:
 
 1. **User Input**: You describe your pet on the web form
-2. **Form Submission**: The browser sends a POST request to `/generate-story`
+2. **Form Submission**: Browser sends POST request to `/generate-story`
 3. **Controller Processing**: `PetController` validates and sanitizes the input
-4. **AI Service Call**: `StoryService` sends a request to the GitHub Models API
-5. **Story Generation**: The AI creates a story based on the description
-6. **Response Handling**: The controller receives the story and adds it to the model
+4. **AI Service Call**: `StoryService` sends request to the Azure AI Foundry model
+5. **Story Generation**: AI generates a creative story based on the description
+6. **Response Handling**: Controller receives the story and adds it to the model
 7. **Template Rendering**: Thymeleaf renders `result.html` with the story
-8. **Display**: The user sees the generated story in their browser
+8. **Display**: User sees the generated story in their browser
 
 **Error Handling Flow:**
 If the AI service fails:
-1. The controller catches the exception
-2. A fallback story is generated using pre-written templates
-3. The fallback story is displayed with a note about AI unavailability
-4. The user still receives a story, ensuring a positive experience
+1. Controller catches the exception
+2. Generates a fallback story using pre-written templates
+3. Displays the fallback story with a note about AI unavailability
+4. User still gets a story, ensuring good user experience
 
 ## Understanding the AI Integration
 
-### GitHub Models API
-The application uses GitHub Models, which provides free access to various AI models:
+### Azure AI Foundry (keyless)
+The application uses Azure AI Foundry with keyless authentication (Microsoft Entra ID):
 
 ```java
-// Authentication with GitHub token
+// Keyless authentication - no API key
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
 ### Prompt Engineering
-The service uses carefully designed prompts to achieve high-quality results:
+The service uses carefully crafted prompts to get good results:
 
 ```java
 String systemPrompt = "You are a creative storyteller who writes fun, " +
@@ -433,7 +442,11 @@ String story = response.choices().get(0).message().content().orElse("");
 
 ## Next Steps
 
-For more examples, refer to [Chapter 04: Practical samples](../README.md)
+For more examples, see [Chapter 04: Practical samples](../README.md)
 
-**Disclaimer**:  
-This document has been translated using the AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we aim for accuracy, please note that automated translations may include errors or inaccuracies. The original document in its native language should be regarded as the authoritative source. For critical information, professional human translation is advised. We are not responsible for any misunderstandings or misinterpretations resulting from the use of this translation.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Disclaimer**:
+This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->
