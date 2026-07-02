@@ -1,108 +1,63 @@
-# Osnovni Chat s Azure OpenAI - Primjer od početka do kraja
+# Osnovni chat s Azure AI Foundry - End-to-End primjer
 
-Ovaj primjer pokazuje kako napraviti jednostavnu Spring Boot aplikaciju koja se povezuje s Azure OpenAI i testira vašu konfiguraciju.
+Ovaj primjer je jednostavna Spring Boot aplikacija koja se povezuje s modelom **Azure AI Foundry** koristeći **autentifikaciju bez ključa** (Microsoft Entra ID) i testira vašu postavku. Koristi Spring AI `ChatClient`.
 
 ## Sadržaj
 
-- [Preduvjeti](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Brzi početak](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Opcije konfiguracije](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Opcija 1: Varijable okruženja (.env datoteka) - Preporučeno](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Opcija 2: GitHub Codespace Secrets](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Pokretanje aplikacije](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Korištenje Mavena](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Korištenje VS Code-a](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Očekivani izlaz](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Referenca konfiguracije](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Varijable okruženja](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Spring konfiguracija](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Rješavanje problema](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Uobičajeni problemi](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Način rada za otklanjanje grešaka](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Sljedeći koraci](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Resursi](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
+- [Preduvjeti](#preduvjeti)
+- [Brzi početak](#brzi-početak)
+- [Kako funkcionira autentifikacija](#kako-funkcionira-autentifikacija)
+- [Pokretanje aplikacije](#pokretanje-aplikacije)
+  - [Korištenje Maven-a](#korištenje-maven-a)
+  - [Korištenje VS Code-a](#korištenje-vs-code-a)
+  - [Očekivani ispis](#očekivani-ispis)
+- [Referenca konfiguracije](#referenca-konfiguracije)
+  - [Varijable okoline](#varijable-okoline)
+  - [Spring konfiguracija](#spring-konfiguracija)
+- [Rješavanje problema](#rješavanje-problema)
+  - [Česti problemi](#česti-problemi)
+  - [Debug način rada](#debug-način-rada)
+- [Sljedeći koraci](#sljedeći-koraci)
+- [Resursi](#resursi)
 
 ## Preduvjeti
 
-Prije pokretanja ovog primjera, osigurajte da imate:
+Prije pokretanja ovog primjera, provjerite imate li:
 
-- Dovršen [Azure OpenAI vodič za postavljanje](../../getting-started-azure-openai.md)  
-- Implementiran Azure OpenAI resurs (putem Azure AI Foundry portala)  
-- Implementiran gpt-4o-mini model (ili alternativni)  
-- API ključ i URL krajnje točke iz Azure  
+- Azure AI Foundry resurs s `gpt-4o-mini` implementacijom — osigurajte ga pomoću `azd up` ili ručno putem [Azure AI Foundry vodiča za postavljanje](../../getting-started-azure-openai.md)
+- Ulogu **Cognitive Services OpenAI User** na tom resursu (Bicep predlošci to dodjeljuju za vas)
+- [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli), prijavljeni s `az login`
+- Java 21+ i Maven 3.9+
+
+> **Nije potreban API ključ** — autentifikacija je bez ključa putem Microsoft Entra ID.
 
 ## Brzi početak
 
 ```bash
-# 1. Navigate to project
+# 1. Idite do projekta
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 
-# 2. Configure credentials
-cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# 2. Prijavite se kako bi keyless autentifikacija mogla dobiti token
+az login
 
-# 3. Run the application
+# 3. Konfigurirajte krajnju točku
+#    - Ako ste pokrenuli `azd up`, .env je napisan za vas (preskočite ovo).
+#    - Inače kopirajte predložak i postavite AZURE_OPENAI_ENDPOINT:
+cp .env.example .env
+
+# 4. Pokrenite aplikaciju
 mvn spring-boot:run
 ```
 
-## Opcije konfiguracije
+## Kako funkcionira autentifikacija
 
-### Opcija 1: Varijable okruženja (.env datoteka) - Preporučeno
+Ovaj primjer se autentificira pomoću **Microsoft Entra ID** — nema API ključa.
 
-**Korak 1: Kreirajte svoju konfiguracijsku datoteku**
-```bash
-cp .env.example .env
-```
-
-**Korak 2: Dodajte svoje Azure OpenAI vjerodajnice**
-```bash
-# Your Azure OpenAI API key (from Azure AI Foundry portal)
-AZURE_AI_KEY=your-actual-api-key-here
-
-# Your Azure OpenAI endpoint URL (e.g., https://your-hub-name.openai.azure.com/)
-AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-> **Sigurnosna napomena**: 
-> - Nikada ne dodajte `.env` datoteku u verzioniranje koda
-> - `.env` datoteka je već uključena u `.gitignore`
-> - Čuvajte svoje API ključeve sigurnima i redovito ih rotirajte
-
-### Opcija 2: GitHub Codespace Secrets
-
-Za GitHub Codespaces, postavite ove tajne u svom repozitoriju:
-- `AZURE_AI_KEY` - Vaš Azure OpenAI API ključ
-- `AZURE_AI_ENDPOINT` - Vaš Azure OpenAI URL krajnje točke
-
-Aplikacija automatski prepoznaje i koristi ove tajne.
-
-### Alternativa: Direktne varijable okruženja
-
-<details>
-<summary>Kliknite za prikaz platformskih naredbi</summary>
-
-**Linux/macOS (bash/zsh):**
-```bash
-export AZURE_AI_KEY=your-actual-api-key-here
-export AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (Command Prompt):**
-```cmd
-set AZURE_AI_KEY=your-actual-api-key-here
-set AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (PowerShell):**
-```powershell
-$env:AZURE_AI_KEY="your-actual-api-key-here"
-$env:AZURE_AI_ENDPOINT="https://your-hub-name.openai.azure.com/"
-```
-</details>
+Kada je postavljen samo `spring.ai.azure.openai.endpoint` (bez api-ključa), Spring AI gradi Azure OpenAI klijent s [`DefaultAzureCredential`](https://learn.microsoft.com/java/api/com.azure.identity.defaultazurecredential). Ta vjerodajnica automatski pronalazi token iz vaše lokalne `az login` sesije, ili iz upravljanog identiteta pri radu u Azure-u — tako isti kod radi na oba mjesta bez promjena.
 
 ## Pokretanje aplikacije
 
-### Korištenje Mavena
+### Korištenje Maven-a
 
 ```bash
 mvn spring-boot:run
@@ -112,11 +67,11 @@ mvn spring-boot:run
 
 1. Otvorite projekt u VS Code-u
 2. Pritisnite `F5` ili koristite panel "Run and Debug"
-3. Odaberite konfiguraciju "Spring Boot-BasicChatApplication"
+3. Izaberite konfiguraciju "Spring Boot-BasicChatApplication"
 
 > **Napomena**: VS Code konfiguracija automatski učitava vašu .env datoteku
 
-### Očekivani izlaz
+### Očekivani ispis
 
 ```
 Starting Basic Chat with Azure OpenAI...
@@ -134,63 +89,64 @@ Success! Azure OpenAI connection is working correctly.
 
 ## Referenca konfiguracije
 
-### Varijable okruženja
+### Varijable okoline
 
 | Varijabla | Opis | Obavezno | Primjer |
-|-----------|------|----------|---------|
-| `AZURE_AI_KEY` | Azure OpenAI API ključ | Da | `abc123...` |
-| `AZURE_AI_ENDPOINT` | Azure OpenAI URL krajnje točke | Da | `https://my-hub.openai.azure.com/` |
-| `AZURE_AI_MODEL_DEPLOYMENT` | Naziv implementacije modela | Ne | `gpt-4o-mini` (zadano) |
+|----------|-------------|----------|---------|
+| `AZURE_OPENAI_ENDPOINT` | Foundry (Azure OpenAI) URL krajnje točke | Da | `https://my-resource.openai.azure.com/` |
+| `AZURE_OPENAI_DEPLOYMENT` | Naziv implementacije chat modela | Ne | `gpt-4o-mini` (zadano) |
+
+> Ne postoji varijabla za API ključ — autentifikacija je bez ključa (Microsoft Entra ID putem `az login`).
 
 ### Spring konfiguracija
 
 Datoteka `application.yml` konfigurira:
-- **API ključ**: `${AZURE_AI_KEY}` - Iz varijable okruženja
-- **Krajnja točka**: `${AZURE_AI_ENDPOINT}` - Iz varijable okruženja  
-- **Model**: `${AZURE_AI_MODEL_DEPLOYMENT:gpt-4o-mini}` - Iz varijable okruženja s rezervnim vrijednostima
-- **Temperatura**: `0.7` - Kontrolira kreativnost (0.0 = deterministički, 1.0 = kreativno)
-- **Maksimalni broj tokena**: `500` - Maksimalna duljina odgovora
+- **Endpoint**: `${AZURE_OPENAI_ENDPOINT}` - iz varijable okoline
+- **Deployment**: `${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}` - iz varijable okoline sa zadanim vrijednostima
+- **Auth**: bez ključa — nije postavljen `api-key`, pa Spring AI koristi `DefaultAzureCredential`
+- **Temperature**: `0.7` - Kontrolira kreativnost (0.0 = deterministički, 1.0 = kreativan)
+- **Max Tokens**: `500` - Maksimalna duljina odgovora
 
 ## Rješavanje problema
 
-### Uobičajeni problemi
+### Česti problemi
 
 <details>
-<summary><strong>Greška: "API ključ nije valjan"</strong></summary>
+<summary><strong>Greška: 401 / "PermissionDenied" / pogreške tokena</strong></summary>
 
-- Provjerite je li vaš `AZURE_AI_KEY` ispravno postavljen u vašoj `.env` datoteci
-- Provjerite je li API ključ točno kopiran iz Azure AI Foundry portala
-- Osigurajte da nema dodatnih razmaka ili navodnika oko ključa
+- Pokrenite `az login` — autentifikacija bez ključa treba aktivnu prijavu da dobije token
+- Provjerite imate li ulogu **Cognitive Services OpenAI User** na resursu
+- Ako ste tek dodijelili ulogu, pričekajte minutu da se propagira
+- Potvrdite da ste u ispravnom tenantu/pretplati (`az account show`)
 </details>
 
 <details>
-<summary><strong>Greška: "Krajnja točka nije valjana"</strong></summary>
+<summary><strong>Greška: "The endpoint is not valid" / pogreške veze</strong></summary>
 
-- Osigurajte da vaš `AZURE_AI_ENDPOINT` uključuje puni URL (npr. `https://your-hub-name.openai.azure.com/`)
-- Provjerite dosljednost završne kose crte
-- Provjerite odgovara li krajnja točka vašoj Azure regiji implementacije
+- Provjerite je li `AZURE_OPENAI_ENDPOINT` potpuni osnovni URL (npr. `https://your-resource.openai.azure.com/`)
+- Provjerite dosljednost završnog kosa crta
+- Potvrdite da endpoint odgovara vašem osiguranom resursu (`azd env get-values`)
 </details>
 
 <details>
-<summary><strong>Greška: "Implementacija nije pronađena"</strong></summary>
+<summary><strong>Greška: "The deployment was not found"</strong></summary>
 
-- Provjerite odgovara li naziv implementacije modela točno onome što je implementirano u Azure
+- Provjerite da `AZURE_OPENAI_DEPLOYMENT` odgovara nazivu implementacije u Azure-u
 - Provjerite je li model uspješno implementiran i aktivan
-- Pokušajte koristiti zadani naziv implementacije: `gpt-4o-mini`
+- Zadani naziv implementacije je `gpt-4o-mini`
 </details>
 
 <details>
-<summary><strong>VS Code: Varijable okruženja se ne učitavaju</strong></summary>
+<summary><strong>VS Code: Varijable okoline se ne učitavaju</strong></summary>
 
-- Osigurajte da je vaša `.env` datoteka u korijenskom direktoriju projekta (na istoj razini kao `pom.xml`)
+- Provjerite je li vaša `.env` datoteka u korijenskom direktoriju projekta (na istoj razini kao `pom.xml`)
 - Pokušajte pokrenuti `mvn spring-boot:run` u integriranom terminalu VS Code-a
-- Provjerite je li VS Code Java ekstenzija ispravno instalirana
-- Provjerite ima li konfiguracija pokretanja `"envFile": "${workspaceFolder}/.env"`
+- Provjerite je li VS Code Java ekstenzija pravilno instalirana
 </details>
 
-### Način rada za otklanjanje grešaka
+### Debug način rada
 
-Za omogućavanje detaljnog zapisivanja, poništite komentare ovih linija u `application.yml`:
+Za omogućavanje detaljnog zapisivanja, uklonite komentar s ovih linija u `application.yml`:
 
 ```yaml
 logging:
@@ -201,16 +157,20 @@ logging:
 
 ## Sljedeći koraci
 
-**Postavljanje dovršeno!** Nastavite svoje učenje:
+**Setup dovršen!** Nastavite svoj put učenja:
 
-[3. poglavlje: Osnovne tehnike generativne umjetne inteligencije](../../../03-CoreGenerativeAITechniques/README.md)
+[3. Poglavlje: Osnovne tehnike generativne AI](../../../03-CoreGenerativeAITechniques/README.md)
 
 ## Resursi
 
-- [Spring AI Azure OpenAI Dokumentacija](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
-- [Azure OpenAI Servis Dokumentacija](https://learn.microsoft.com/azure/ai-services/openai/)
+- [Spring AI Azure OpenAI dokumentacija](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
+- [Autentifikacija bez ključa s Microsoft Entra ID](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
 - [Azure AI Foundry Portal](https://ai.azure.com/)
-- [Azure AI Foundry Dokumentacija](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project)
+- [Azure AI Foundry dokumentacija](https://learn.microsoft.com/azure/ai-foundry/)
 
-**Odricanje od odgovornosti**:  
-Ovaj dokument je preveden pomoću AI usluge za prevođenje [Co-op Translator](https://github.com/Azure/co-op-translator). Iako nastojimo osigurati točnost, imajte na umu da automatski prijevodi mogu sadržavati pogreške ili netočnosti. Izvorni dokument na izvornom jeziku treba smatrati autoritativnim izvorom. Za kritične informacije preporučuje se profesionalni prijevod od strane čovjeka. Ne preuzimamo odgovornost za nesporazume ili pogrešna tumačenja koja mogu proizaći iz korištenja ovog prijevoda.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Napomena**:
+Ovaj dokument je preveden korištenjem AI prevoditeljskog servisa [Co-op Translator](https://github.com/Azure/co-op-translator). Iako težimo točnosti, imajte na umu da automatski prijevodi mogu sadržavati greške ili netočnosti. Izvorni dokument na izvornom jeziku treba smatrati autoritativnim izvorom. Za važne informacije preporuča se profesionalni ljudski prijevod. Nismo odgovorni za bilo kakva nesporazumevanja ili pogrešne interpretacije koje proizlaze iz korištenja ovog prijevoda.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

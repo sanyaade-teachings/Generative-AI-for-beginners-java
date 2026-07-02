@@ -1,251 +1,226 @@
-# Подешавање развојног окружења за Генеративни AI за Јава
+# Постављање развојног окружења за генеративну вештачку интелигенцију за Јаву
 
-> **Брзи почетак**: Кодирајте у облаку за 2 минута - Пређите на [GitHub Codespaces подешавање](../../../02-SetupDevEnvironment) - није потребна локална инсталација и користи github моделе!
-
-> **Занимате се за Azure OpenAI?**, видите наш [Azure OpenAI водич за подешавање](getting-started-azure-openai.md) са корацима за креирање новог Azure OpenAI ресурса.
+> **Брзи почетак:** Обезбедите своје AI моделе на **Azure AI Foundry** као код помоћу Bicep + `azd` за неколико минута — погледајте [Azure AI Foundry Setup Guide](getting-started-azure-openai.md). Аутентификација је **без кључа** (Microsoft Entra ID), тако да нема потребе за управљањем API кључевима.
 
 ## Шта ћете научити
 
-- Подешавање развојног окружења за Java AI апликације
-- Избор и конфигурација омиљеног развојног окружења (cloud-first са Codespaces, локални дев контејнер или пуну локалну поставку)
-- Тестирање окружења повезивањем са GitHub моделима
+- Постављање развојног окружења за AI апликације у Јави
+- Избор и конфигурација жељеног развојног окружења (cloud-first са Codespaces, локални dev контејнер или потпуна локална конфигурација)
+- Тестирање поставке повезивањем са Azure AI Foundry моделом
 
-## Табела садржаја
+## Садржај
 
-- [Шта ћете научити](../../../02-SetupDevEnvironment)
-- [Увод](../../../02-SetupDevEnvironment)
-- [Корак 1: Подешавање развојног окружења](../../../02-SetupDevEnvironment)
-  - [Опција A: GitHub Codespaces (препоручено)](../../../02-SetupDevEnvironment)
-  - [Опција B: Локални дев контејнер](../../../02-SetupDevEnvironment)
-  - [Опција C: Користите постојећу локалну инсталацију](../../../02-SetupDevEnvironment)
-- [Корак 2: Креирање GitHub персоналног токена приступа](../../../02-SetupDevEnvironment)
-- [Корак 3: Тестирање окружења](../../../02-SetupDevEnvironment)
-- [Решавање проблема](../../../02-SetupDevEnvironment)
-- [Резиме](../../../02-SetupDevEnvironment)
-- [Следећи кораци](../../../02-SetupDevEnvironment)
+- [Шта ћете научити](#шта-ћете-научити)
+- [Увод](#увод)
+- [Корак 1: Поставите развојно окружење](#корак-1-поставите-развојно-окружење)
+  - [Опција А: GitHub Codespaces (пожељно)](#опција-а-github-codespaces-пожељно)
+  - [Опција Б: Локални Dev контејнер](#опција-б-локални-dev-контејнер)
+  - [Опција Ц: Користите своју постојећу локалну инсталацију](#опција-ц-користите-своју-постојећу-локалну-инсталацију)
+- [Корак 2: Постављање Azure AI Foundry](#корак-2-постављање-azure-ai-foundry)
+- [Корак 3: Тестирање](#корак-3-тестирајте-поставку)
+- [Решавање проблема](#решавање-проблема)
+- [Сажетак](#сажетак)
+- [Следећи кораци](#следећи-кораци)
 
 ## Увод
 
-У овом поглављу водићемо вас кроз процес подешавања развојног окружења. Користићемо **GitHub Models** као примарни пример јер су бесплатни, лаки за подешавање само са GitHub налогом, нису потребне кредитне картице, и пружају приступ више модела за експериментисање.
+Ово поглавље ће вас провести кроз постављање развојног окружења. Током курса користићемо **Azure AI Foundry** за моделе. Моделе обезбеђујете као код помоћу Bicep-a и Azure Developer CLI-а (`azd`), затим се повезујете са **аутентификацијом без кључа** (Microsoft Entra ID) — нема потребе да копирате или откривате API кључеве.
 
-**Није потребна локална инсталација!** Можете одмах почети са кодирањем користећи GitHub Codespaces, који пружа цело развојно окружење у вашем прегледачу.
+**Локална конфигурација није потребна!** Можете користити GitHub Codespaces, који пружа потпуно развојно окружење у вашем прегледачу и поставити Foundry одатле.
 
-<img src="../../../translated_images/sr/models.cb07f8af0d724e4d.webp" alt="Снимак екрана: GitHub Models" width="50%">
+Користимо **Azure AI Foundry** у овом курсу јер је:
+- **Обезбеђен као код** — један `azd up` покреће налог и моделско разврставање
+- **Без кључа** — аутентификујете се путем Azure пријаве или управљаног идентитета
+- **Спреман за продукцију** — исти код ради локално и у Azure-у
+- **Флексибилан** — мењајте моделе тако што мењате име разврставања, а не свој код
 
-Препоручујемо коришћење [**GitHub Models**](https://github.com/marketplace?type=models) за овај курс јер је:
-- **Бесплатно** за почетак
-- **Лако** за подешавање само са GitHub налогом
-- **Није потребна кредитна картица**
-- **Више модела** доступно за експериментисање
+> **Напомена**: Azure AI Foundry разврставања се наплаћују по броју токена (плаћање према коришћењу). Погледајте [Azure AI Foundry setup guide](getting-started-azure-openai.md) за детаље о постављању, регионима и трошковима.
 
-> **Напомена**: GitHub Models коришћени у овом тренингу имају следећа бесплатна ограничења:
-> - 15 захтева по минути (150 дневно)
-> - око 8,000 речи улазно, око 4,000 речи излазно по захтеву
-> - 5 паралелних захтева
-> 
-> За продукциону употребу, надоградите на Azure AI Foundry Models са својим Azure налогом. Ваш код не мора да се мења. Погледајте [Azure AI Foundry документацију](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/quickstart-github-models).
 
-## Корак 1: Подешавање развојног окружења
+## Корак 1: Поставите развојно окружење
 
 <a name="quick-start-cloud"></a>
 
-Креирали смо претходно конфигурисан дев контејнер како бисмо минимизирали време поставке и осигурали да имате све неопходне алате за овај курс Генеративног AI за Јава. Изаберите жељени приступ развоју:
+Креирали смо предконфигурисани развојни контејнер како бисмо смањили време поставке и обезбедили да имате све неопходне алате за овај курс генеративне AI за Јаву. Изаберите своју жељену развојну опцију:
 
-### Опције подешавања окружења:
+### Опције за постављање окружења:
 
-#### Опција A: GitHub Codespaces (препоручено)
+#### Опција А: GitHub Codespaces (пожељно)
 
-**Почните кодирање за 2 минута - није потребна локална инсталација!**
+**Почните са кодирањем за 2 минута – локална инсталација није потребна!**
 
-1. Форкујте овај репозиторијум на свој GitHub налог
-   > **Напомена**: Ако желите да уредите основну конфигурацију, погледајте [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
+1. Направите fork овог репозиторијума на свом GitHub налогу  
+   > **Напомена**: Ако желите да измените основну конфигурацију, погледајте [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
 2. Кликните **Code** → таб **Codespaces** → **...** → **New with options...**
-3. Користите подразумеване вредности – ово ће изабрати **Dev container configuration**: **Generative AI Java Development Environment** прилагођени дев контејнер креиран за овај курс
+3. Користите подразумеване поставке – одабраће се **Dev container конфигурација**: **Generative AI Java Development Environment** прилагођени devcontainer направљен за овај курс
 4. Кликните **Create codespace**
-5. Сачекајте око 2 минута док се окружење не припреми
-6. Наставите на [Корак 2: Креирање GitHub токена](../../../02-SetupDevEnvironment)
+5. Сачекајте око 2 минута да се окружење припреми
+6. Наставите на [Корак 2: Постављање Azure AI Foundry](#корак-2-постављање-azure-ai-foundry)
 
-<img src="../../../translated_images/sr/codespaces.9945ded8ceb431a5.webp" alt="Снимак екрана: Codespaces подмени" width="50%">
+<img src="../../../translated_images/sr/codespaces.9945ded8ceb431a5.webp" alt="Снимак екрана: Подмени за Codespaces" width="50%">
 
 <img src="../../../translated_images/sr/image.833552b62eee7766.webp" alt="Снимак екрана: New with options" width="50%">
 
-<img src="../../../translated_images/sr/codespaces-create.b44a36f728660ab7.webp" alt="Снимак екрана: опције за креирање codespace" width="50%">
+<img src="../../../translated_images/sr/codespaces-create.b44a36f728660ab7.webp" alt="Снимак екрана: Опције за креирање codespace-а" width="50%">
 
-> **Предности Codespaces-а**:
-> - Није потребна локална инсталација
-> - Ради на било ком уређају са прегледачем
-> - Предконфигурисан са свим алатима и зависностима
-> - Бесплатно 60 сати месечно за личне налоге
+
+> **Предности Codespaces-а**:  
+> - Нема потребе за локалном инсталацијом  
+> - Ради на било ком уређају са прегледачем  
+> - Предконфигурисано са свим алатима и зависностима  
+> - Бесплатно 60 сати месечно за личне налоге  
 > - Конзистентно окружење за све ученике
 
-#### Опција B: Локални дев контејнер
+#### Опција Б: Локални Dev контејнер
 
-**За програмере који преферирају локални развој са Docker-ом**
+**За програмере који више воле локални развој помоћу Docker-а**
 
-1. Форкујте и клонирајте овај репозиторијум на свој локални рачунар
-   > **Напомена**: Ако желите да уредите основну конфигурацију, погледајте [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
+1. Направите fork и клонирајте овај репозиторијум на свој локални рачунар  
+   > **Напомена**: Ако желите да измените основну конфигурацију, погледајте [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
 2. Инсталирајте [Docker Desktop](https://www.docker.com/products/docker-desktop/) и [VS Code](https://code.visualstudio.com/)
-3. Инсталирајте [Dev Containers проширење](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) у VS Code
-4. Отворите фасциклу репозиторијума у VS Code
-5. Када вам се понуди, кликните **Reopen in Container** (или користите `Ctrl+Shift+P` → "Dev Containers: Reopen in Container")
-6. Сачекајте да контејнер изгради и покрене се
-7. Наставите на [Корак 2: Креирање GitHub токена](../../../02-SetupDevEnvironment)
+3. Инсталирајте [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) у VS Code-у
+4. Отворите фасциклу репозиторијума у VS Code-у
+5. Када се појави упит, кликните **Reopen in Container** (или користите `Ctrl+Shift+P` → "Dev Containers: Reopen in Container")
+6. Сачекајте да се контејнер изгради и покрене
+7. Наставите на [Корак 2: Постављање Azure AI Foundry](#корак-2-постављање-azure-ai-foundry)
 
-<img src="../../../translated_images/sr/devcontainer.21126c9d6de64494.webp" alt="Снимак екрана: Подешавање дев контејнера" width="50%">
+<img src="../../../translated_images/sr/devcontainer.21126c9d6de64494.webp" alt="Снимак екрана: Подешавање Dev контејнера" width="50%">
 
-<img src="../../../translated_images/sr/image-3.bf93d533bbc84268.webp" alt="Снимак екрана: Дев контејнер изградња завршена" width="50%">
+<img src="../../../translated_images/sr/image-3.bf93d533bbc84268.webp" alt="Снимак екрана: Завршена изградња Dev контејнера" width="50%">
 
-#### Опција C: Користите постојећу локалну инсталацију
+#### Опција Ц: Користите своју постојећу локалну инсталацију
 
-**За програмере са постојећим Java окружењима**
+**За програмере са постојећим Java окружењем**
 
-Преуслови:
-- [Java 21+](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html) 
-- [Maven 3.9+](https://maven.apache.org/download.cgi)
-- [VS Code](https://code.visualstudio.com) или омиљени IDE
+Услови:
+- [Java 21+](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html)  
+- [Maven 3.9+](https://maven.apache.org/download.cgi)  
+- [VS Code](https://code.visualstudio.com) или ваш омиљени IDE
 
-Кораци:
-1. Клонирајте овај репозиторијум на свој локални рачунар
-2. Отворите пројекат у свом IDE-у
-3. Наставите на [Корак 2: Креирање GitHub токена](../../../02-SetupDevEnvironment)
+Кораци:  
+1. Клонирајте овај репозиторијум на свој локални рачунар  
+2. Отворите пројекат у свом IDE-ју  
+3. Наставите на [Корак 2: Постављање Azure AI Foundry](#корак-2-постављање-azure-ai-foundry)
 
-> **Трик за професионалце**: Ако имате рачунар са слабијим спецификацијама али желите VS Code локално, користите GitHub Codespaces! Можете повезати свој локални VS Code са cloud-hosted Codespace-ом за најбоље из оба света.
+> **Професионални савет**: Ако имате рачунар са слабим спецификацијама, али желите VS Code локално, користите GitHub Codespaces! Можете повезати локални VS Code са cloud-hosted Codespace-ом за најбоље из оба света.
 
-<img src="../../../translated_images/sr/image-2.fc0da29a6e4d2aff.webp" alt="Снимак екрана: креиран локални дев контејнер инстанца" width="50%">
+<img src="../../../translated_images/sr/image-2.fc0da29a6e4d2aff.webp" alt="Снимак екрана: креирани локални devcontainer примерак" width="50%">
 
-## Корак 2: Креирање GitHub персоналног токена приступа
 
-1. Идите на [GitHub Settings](https://github.com/settings/profile) и одаберите **Settings** из свог профил менија.
-2. У левом бочној траци кликните на **Developer settings** (обично на дну).
-3. Под **Personal access tokens**, кликните на **Fine-grained tokens** (или пратите овај директни [линк](https://github.com/settings/personal-access-tokens)).
-4. Кликните на **Generate new token**.
-5. Под "Token name", унесите описно име (нпр. `GenAI-Java-Course-Token`).
-6. Поставите датум истека (препоручено: 7 дана ради безбедности).
-7. Под "Resource owner", изаберите свој кориснички налог.
-8. Под "Repository access", изаберите репозиторијуме које желите користити са GitHub Models (или "All repositories" ако је потребно).
-9. Под "Account permissions", пронађите **Models** и поставите га на **Read-only**.
-10. Кликните **Generate token**.
-11. **Сада копирајте и сачувајте свој токен** – нећете га поново видети!
+## Корак 2: Постављање Azure AI Foundry
 
-> **Безбедносни савет**: Користите најмању потребну скалу и најкраћи практичан рок истека за ваше токене приступа.
+Деплојујте AI моделе курса на Azure AI Foundry као код. Из корена репозиторијума:
 
-## Корак 3: Тестирање окружења са примером GitHub Models
-
-Када је ваше развојно окружење спремно, тестирајмо GitHub Models интеграцију са нашим примером апликације у [`02-SetupDevEnvironment/examples/github-models`](../../../02-SetupDevEnvironment/examples/github-models).
-
-1. Отворите терминал у вашем развојном окружењу.
-2. Идите у фасциклу са примером GitHub Models:
-   ```bash
-   cd 02-SetupDevEnvironment/examples/github-models
-   ```
-3. Поставите свој GitHub токен као променљиву окружења:
-   ```bash
-   # macOS/Linux
-   export GITHUB_TOKEN=your_token_here
-   
-   # Windows (Командна линија)
-   set GITHUB_TOKEN=your_token_here
-   
-   # Windows (PowerShell)
-   $env:GITHUB_TOKEN="your_token_here"
-   ```
-
-4. Покрените апликацију:
-   ```bash
-   mvn compile exec:java -Dexec.mainClass="com.example.githubmodels.App"
-   ```
-
-Видећете сличан излаз као:
-```text
-Using model: gpt-4.1-nano
-Sending request to GitHub Models...
-Response: Hello World!
+```bash
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
 ```
+  
+`azd` ће тражити име окружења и регион, поставиће Azure AI Foundry налог са deployment-има `gpt-4o-mini` и `text-embedding-3-small`, и уписати endpoint у пример `.env` фајл — све са **аутентификацијом без кључа** (без API кључева).
+
+> **Потпун водич:** Погледајте [Azure AI Foundry Setup Guide](getting-started-azure-openai.md) за предуслове, алтернативу кроз портал, препоруке о региону и напомене о трошковима/чишћењу.
+
+## Корак 3: Тестирајте поставку
+
+Када ваши Foundry модели буду постављени, тестирате везу са пример апликацијом у [`02-SetupDevEnvironment/examples/basic-chat-azure`](../../../02-SetupDevEnvironment/examples/basic-chat-azure).
+
+1. Отворите терминал у свом развојном окружењу.  
+2. Идите у пример:  
+   ```bash
+   cd 02-SetupDevEnvironment/examples/basic-chat-azure
+   ```
+  
+3. Проверите да ли сте пријављени (аутентификација без кључа захтева токен):  
+   ```bash
+   az login
+   ```
+  
+   > Ако сте покренули `azd up`, `.env` фајл са вашим endpoint-ом је већ уписан за вас.  
+4. Покрените апликацију:  
+   ```bash
+   mvn clean spring-boot:run
+   ```
+  
+Требало би да видите одговор од `gpt-4o-mini` модела.
 
 ### Разумевање пример кода
 
-Прво, разумимо шта смо управо покренули. Пример у `examples/github-models` користи OpenAI Java SDK за повезивање са GitHub Models:
+Пример у `examples/basic-chat-azure` је Spring Boot апликација која користи **Spring AI** за повезивање са Azure AI Foundry уз аутентификацију без кључа.
 
-**Шта овај код ради:**
-- **Повезује се** са GitHub Models користећи ваш персонални токен приступа
-- **Шаље** једноставну поруку "Say Hello World!" AI моделу
-- **Прима** и приказује одговор AI-а
-- **Валидација** да ваше окружење исправно ради
+**Овај код ради следеће:**  
+- **Повезује се** са Azure AI Foundry користећи вашу Azure пријаву (Microsoft Entra ID) — без API кључа  
+- **Шаље** упит `gpt-4o-mini` моделу  
+- **Прима** и приказује одговор AI-а  
+- **Верификује** да је ваша поставка исправна
 
-**Кључна зависност** (у `pom.xml`):
+**Кључна зависност** (у `pom.xml`):  
 ```xml
 <dependency>
-    <groupId>com.openai</groupId>
-    <artifactId>openai-java</artifactId>
-    <version>2.12.0</version>
+    <groupId>org.springframework.ai</groupId>
+    <artifactId>spring-ai-starter-model-azure-openai</artifactId>
 </dependency>
 ```
-
-**Главни код** (`App.java`):
-```java
-// Повежите се са GitHub моделима користећи OpenAI Java SDK
-OpenAIClient client = OpenAIOkHttpClient.builder()
-    .apiKey(pat)
-    .baseUrl("https://models.inference.ai.azure.com")
-    .build();
-
-// Креирајте захтев за завршетак ћаскања
-ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
-    .model(modelId)
-    .addSystemMessage("You are a concise assistant.")
-    .addUserMessage("Say Hello World!")
-    .build();
-
-// Преузмите одговор вештачке интелигенције
-ChatCompletion response = client.chat().completions().create(params);
-System.out.println("Response: " + response.choices().get(0).message().content().orElse("No response content"));
+  
+**Конфигурација** (`application.yml`):  
+```yaml
+spring:
+  ai:
+    azure:
+      openai:
+        # Endpoint only - no api-key. Spring AI uses DefaultAzureCredential (keyless).
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
+  
+## Сажетак
 
-## Резиме
+Одлично! Сада имате све постављено:
 
-Сјајно! Сада имате све постављено:
-
-- Креирали сте GitHub персонални токен приступа са одговарајућим дозволама за приступ AI моделима
-- Покренули сте Java развојно окружење (било да користите Codespaces, дев контејнере или локално окружење)
-- Повезали сте се са GitHub Models користећи OpenAI Java SDK за бесплатни AI развој
-- Тестирали сте да све ради са једноставним примером који комуницира са AI моделима
+- Обезбеђени Azure AI Foundry модели као код помоћу Bicep + `azd`  
+- Покренуто ваше развојно окружење за Јаву (било да је то Codespaces, dev контејнери или локално)  
+- Повезано са Azure AI Foundry уз аутентификацију без кључа (Microsoft Entra ID) — без API кључева  
+- Тестирано све да ради са једноставним примером који комуницира са вашим моделом
 
 ## Следећи кораци
 
-[Поглавље 3: Основне технике генеративног AI-а](../03-CoreGenerativeAITechniques/README.md)
+[Поглавље 3: Основне технике генеративне AI](../03-CoreGenerativeAITechniques/README.md)
 
 ## Решавање проблема
 
 Имате проблема? Ево уобичајених проблема и решења:
 
-- **Токен не ради?** 
-  - Проверите да ли сте у потпуности копирали токен без додатних размака
-  - Проверите да ли је токен правилно постављен као променљива окружења
-  - Проверите да токен има исправне дозволе (Models: Read-only)
+- **Аутентификација не успева (401/403)?**  
+  - Покрените `az login` — аутентификација је без кључа, па морате бити пријављени  
+  - Проверите да ваш налог има **Cognitive Services OpenAI User** улогу на ресурсу  
+  - Ако сте управо поставили, сачекајте минут да улога буде примењена
 
-- **Maven није пронађен?** 
-  - Ако користите дев контејнере/Codespaces, Maven би требао бити претходно инсталиран
-  - За локално подешавање, обезбедите да имате Java 21+ и Maven 3.9+ инсталиране
-  - Покушајте `mvn --version` за верификацију инсталације
+- **Мaven није пронађен?**  
+  - Ако користите dev контејнере/Codespaces, Maven је већ инсталиран  
+  - За локалну поставку, обезбедите да имате инсталиран Java 21+ и Maven 3.9+  
+  - Покушајте `mvn --version` да проверите инсталацију
 
-- **Проблеми са везом?** 
-  - Проверите интернет конекцију
-  - Проверите да ли вам је GitHub доступан са ваше мреже
-  - Обезбедите да нисте иза заштитног зида који блокира крајњу тачку GitHub Models
+- **`azd` није пронађен или поставка не успева?**  
+  - Инсталирајте [Azure Developer CLI](https://aka.ms/azure-dev/install) и покрените `azd auth login`  
+  - Одаберите регион где је `gpt-4o-mini` доступан (нпр. `eastus2`)  
+  - Погледајте [Azure AI Foundry setup guide](getting-started-azure-openai.md) за детаље
 
-- **Дев контејнер се не покреће?** 
-  - Проверите да ли Docker Desktop ради (за локални развој)
-  - Покушајте поново да изградите контејнер: `Ctrl+Shift+P` → "Dev Containers: Rebuild Container"
+- **Dev контејнер се не покреће?**  
+  - Уверите се да је Docker Desktop покренут (за локални развој)  
+  - Покушајте поново изградити контејнер: `Ctrl+Shift+P` → "Dev Containers: Rebuild Container"
 
-- **Грешке приликом компилације апликације?**
-  - Проверите да ли сте у исправном директоријуму: `02-SetupDevEnvironment/examples/github-models`
-  - Покушајте да очистите и поново изграђујете: `mvn clean compile`
+- **Грешке приликом компилације апликације?**  
+  - Обавезно сте у исправном директоријуму: `02-SetupDevEnvironment/examples/basic-chat-azure`  
+  - Покушајте очистити и поново компајлирати: `mvn clean compile`
 
-> **Треба вам помоћ?**: Још увек имате проблема? Отворите issue у репозиторијуму и помоћи ћемо вам.
+> **Потребна помоћ?**: И даље имате проблема? Отворите issue у репозиторијуму и помоћи ћемо вам.
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Одрицање одговорности**:  
-Овај документ је преведен помоћу АИ сервиса за превођење [Co-op Translator](https://github.com/Azure/co-op-translator). Иако се трудимо да превод буде прецизан, молимо имајте у виду да аутоматски преводи могу садржати грешке или нетачности. Изворни документ на матерњем језику треба сматрати ауторитетним извором. За критичне информације препоручује се професионални превод од стране човека. Нисмо одговорни за било каква непоразумевања или погрешна тумачења настала коришћењем овог превода.
+**Изјава о одрицању одговорности**:
+Овај документ је преведен коришћењем услуге за аутоматски превод [Co-op Translator](https://github.com/Azure/co-op-translator). Иако тежимо тачности, имајте у виду да аутоматски преводи могу садржати грешке или нетачности. Оригинални документ на његовом изворном језику треба сматрати ауторитативним извором. За критичне информације препоручује се професионални људски превод. Нисмо одговорни за било каква неспоразума или погрешна тумачења која произилазе из коришћења овог превода.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

@@ -2,7 +2,7 @@
 
 ## Pregled projekta
 
-To je izobraževalno skladišče za učenje razvoja generativne umetne inteligence z uporabo Jave. Ponuja celovit praktični tečaj, ki zajema velike jezikovne modele (LLM), oblikovanje pozivov, vdelave, RAG (pridobivanje z obogateno generacijo) in protokol konteksta modela (MCP).
+To je izobraževalno repozitorij za učenje razvoja Generativne umetne inteligence z Javo. Ponuja obsežen praktični tečaj, ki pokriva velike jezikovne modele (LLM), inženiring pozivov, vdelave, RAG (Generiranje z nadgradnjo z iskanjem) in protokol Model Context (MCP).
 
 **Ključne tehnologije:**
 - Java 21
@@ -10,69 +10,72 @@ To je izobraževalno skladišče za učenje razvoja generativne umetne inteligen
 - Spring AI 1.1.x
 - Maven
 - LangChain4j
-- GitHub Models, Azure OpenAI in OpenAI SDK-ji
+- Azure AI Foundry, Azure OpenAI in OpenAI SDK-ji
 
 **Arhitektura:**
-- Več samostojnih aplikacij Spring Boot, organiziranih po poglavjih
-- Vzorčni projekti, ki prikazujejo različne vzorce umetne inteligence
-- Pripravljeno za GitHub Codespaces z vnaprej konfiguriranimi razvojnimi vsebniki
+- Več samostojnih aplikacij Spring Boot organiziranih po poglavjih
+- Primeri projektov, ki prikazujejo različne vzorce AI
+- Pripravljeno za GitHub Codespaces z vnaprej konfiguriranimi razvojnimi okolji
 
 ## Ukazi za nastavitev
 
 ### Predpogoji
 - Java 21 ali novejša
 - Maven 3.x
-- Osebni dostopni žeton za GitHub (za GitHub Models)
-- Opcijsko: Poverilnice za Azure OpenAI
+- Azure naročnina z nameščenim modelom v Azure AI Foundry (zagotovi z `azd up`)
+- Azure CLI (`az`) in Azure Developer CLI (`azd`), prijavljeni za prijavo brez ključev
 
 ### Nastavitev okolja
 
 **Možnost 1: GitHub Codespaces (priporočeno)**
 ```bash
-# Fork the repository and create a codespace from GitHub UI
-# The dev container will automatically install all dependencies
-# Wait ~2 minutes for environment setup
+# Razvezi repozitorij in ustvari codespace iz GitHub vmesnika
+# Razvojno okolje bo samodejno namestilo vse odvisnosti
+# Počakaj približno 2 minuti za nastavitev okolja
 ```
 
-**Možnost 2: Lokalni razvojni vsebnik**
+**Možnost 2: Lokalno razvojno okolje v kontejnerju**
 ```bash
-# Clone repository
+# Kloniraj repozitorij
 git clone https://github.com/microsoft/Generative-AI-for-beginners-java.git
 cd Generative-AI-for-beginners-java
 
-# Open in VS Code with Dev Containers extension
-# Reopen in Container when prompted
+# Odpri v VS Code z razširitvijo Dev Containers
+# Ponovno odpri v kontejnerju, ko te pozove
 ```
 
 **Možnost 3: Lokalna nastavitev**
 ```bash
-# Install dependencies
+# Namestite odvisnosti
 sudo apt-get update
 sudo apt-get install -y maven openjdk-21-jdk
 
-# Verify installation
+# Preverite namestitev
 java -version
 mvn -version
 ```
 
 ### Konfiguracija
 
-**Nastavitev GitHub žetona:**
+**Nastavitev Azure AI Foundry (brez ključev, priporočeno):**
 ```bash
-# Create a GitHub Personal Access Token
-# Set environment variable
-export GITHUB_TOKEN="your-token-here"
+# Zagotovite račun Foundry + uvajanja modelov kot kodo
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
+# azd zapiše examples/basic-chat-azure/.env z vašo končno točko (brez ključa)
 ```
 
-**Nastavitev Azure OpenAI (opcijsko):**
+**Ročna konfiguracija končne točke:**
 ```bash
-# For examples using Azure OpenAI
+# Če niste uporabili azd, nastavite končno točko sami (avtorizacija ostane brez ključa preko az login)
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# Uredite .env: AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com/
 ```
 
-## Potek razvoja
+## Razvojni potek
 
 ### Struktura projekta
 ```
@@ -97,38 +100,38 @@ cd [project-directory]
 mvn spring-boot:run
 ```
 
-**Gradnja projekta:**
+**Izgradnja projekta:**
 ```bash
 cd [project-directory]
 mvn clean install
 ```
 
-**Zagon MCP strežnika za kalkulator:**
+**Zagon MCP kalkulator strežnika:**
 ```bash
 cd 04-PracticalSamples/calculator
 mvn spring-boot:run
-# Server runs on http://localhost:8080
+# Strežnik teče na http://localhost:8080
 ```
 
-**Zagon primerov odjemalca:**
+**Zagon primerov odjemalcev:**
 ```bash
-# After starting the server in another terminal
+# Po zagonu strežnika v drugem terminalu
 cd 04-PracticalSamples/calculator
 
-# Direct MCP client
+# Neposredni MCP odjemalec
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient"
 
-# AI-powered client (requires GITHUB_TOKEN)
+# AI-podprt odjemalec (zahteva AZURE_OPENAI_ENDPOINT + az prijava)
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient"
 
-# Interactive bot
+# Interaktivni bot
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.Bot"
 ```
 
-### Hitro ponovno nalaganje
-Spring Boot DevTools je vključen v projekte, ki podpirajo hitro ponovno nalaganje:
+### Hot Reload
+Spring Boot DevTools je vključen v projektih, ki podpirajo hot reload:
 ```bash
-# Changes to Java files will automatically reload when saved
+# Spremembe v Java datotekah se bodo samodejno ponovno naložile ob shranjevanju
 mvn spring-boot:run
 ```
 
@@ -136,56 +139,56 @@ mvn spring-boot:run
 
 ### Zagon testov
 
-**Zagon vseh testov v projektu:**
+**Zaženi vse teste v projektu:**
 ```bash
 cd [project-directory]
 mvn test
 ```
 
-**Zagon testov z obširnim izpisom:**
+**Zaženi teste z obsežnim izpisom:**
 ```bash
 mvn test -X
 ```
 
-**Zagon specifičnega razreda testov:**
+**Zaženi določen test razred:**
 ```bash
 mvn test -Dtest=CalculatorServiceTest
 ```
 
 ### Struktura testov
 - Testne datoteke uporabljajo JUnit 5 (Jupiter)
-- Testni razredi se nahajajo v `src/test/java/`
-- Primeri odjemalcev v projektu kalkulatorja so v `src/test/java/com/microsoft/mcp/sample/client/`
+- Testni razredi so v `src/test/java/`
+- Primeri odjemalcev v kalkulator projektu so v `src/test/java/com/microsoft/mcp/sample/client/`
 
 ### Ročno testiranje
 Veliko primerov so interaktivne aplikacije, ki zahtevajo ročno testiranje:
 
-1. Zaženite aplikacijo z `mvn spring-boot:run`
-2. Testirajte končne točke ali interaktivno uporabljajte CLI
-3. Preverite, ali pričakovano vedenje ustreza dokumentaciji v README.md posameznega projekta
+1. Zaženi aplikacijo z `mvn spring-boot:run`
+2. Testiraj končne točke ali interakcijo v CLI
+3. Preveri, da se pričakovano vedenje ujema z dokumentacijo v README.md vsakega projekta
 
-### Testiranje z GitHub Models
-- Omejitve brezplačnega nivoja: 15 zahtevkov/minuto, 150/dan
-- Največ 5 sočasnih zahtevkov
-- Testirajte filtriranje vsebine z odgovornimi primeri umetne inteligence
+### Testiranje z Azure AI Foundry
+- Prijavi se z `az login` pred zagonom primerov (avtorizacija brez ključev)
+- Prepričaj se, da ima tvoj račun vlogo Cognitive Services OpenAI User na viru
+- Testiraj filtriranje vsebin z odgovornim AI primerom v poglavju 5
 
 ## Smernice za slog kode
 
-### Konvencije za Javo
-- **Različica Jave:** Java 21 z modernimi funkcijami
-- **Slog:** Upoštevajte standardne konvencije za Javo
+### Java konvencije
+- **Java verzija:** Java 21 z modernimi funkcijami
+- **Slog:** Sledi standardnim Java konvencijam
 - **Poimenovanje:** 
   - Razredi: PascalCase
   - Metode/spremenljivke: camelCase
-  - Konstantne vrednosti: UPPER_SNAKE_CASE
+  - Konstantne vrednosti: VELIKE_SNAKE_CASE
   - Imena paketov: male črke
 
-### Vzorci Spring Boot
-- Uporabite `@Service` za poslovno logiko
-- Uporabite `@RestController` za REST končne točke
-- Konfiguracija prek `application.yml` ali `application.properties`
-- Prednostno uporabite okoljske spremenljivke namesto trdo kodiranih vrednosti
-- Uporabite `@Tool` anotacijo za metode, izpostavljene prek MCP
+### Vzorce Spring Boot
+- Uporabi `@Service` za poslovno logiko
+- Uporabi `@RestController` za REST končne točke
+- Konfiguracija preko `application.yml` ali `application.properties`
+- Prometna spremenljivka okolja predvidena pred trdo kodiranimi vrednostmi
+- Uporabi oznako `@Tool` za metode izpostavljene v MCP
 
 ### Organizacija datotek
 ```
@@ -207,26 +210,26 @@ src/
 ```
 
 ### Odvisnosti
-- Upravljanje prek Maven `pom.xml`
-- Spring AI BOM za upravljanje različic
-- LangChain4j za integracije umetne inteligence
-- Spring Boot starter parent za odvisnosti Spring
+- Upravljanje z Maven `pom.xml`
+- Spring AI BOM za upravljanje verzij
+- LangChain4j za AI integracije
+- Spring Boot starter parent za Spring odvisnosti
 
-### Komentarji kode
-- Dodajte JavaDoc za javne API-je
-- Vključite pojasnjevalne komentarje za kompleksne interakcije umetne inteligence
-- Jasno dokumentirajte opise orodij MCP
+### Komentarji v kodi
+- Dodaj JavaDoc za javne API-je
+- Vključi pojasnilne komentarje za kompleksne AI interakcije
+- Jasno dokumentiraj opise orodij MCP
 
-## Gradnja in uvajanje
+## Izgradnja in uvajanje
 
-### Gradnja projektov
+### Izgradnja projektov
 
-**Gradnja brez testov:**
+**Izgradi brez testov:**
 ```bash
 mvn clean install -DskipTests
 ```
 
-**Gradnja z vsemi preverjanji:**
+**Izgradi z vsemi preverjanji:**
 ```bash
 mvn clean install
 ```
@@ -234,7 +237,7 @@ mvn clean install
 **Pakiranje aplikacije:**
 ```bash
 mvn package
-# Creates JAR in target/ directory
+# Ustvari JAR v imeniku target/
 ```
 
 ### Izhodne mape
@@ -243,114 +246,120 @@ mvn package
 - JAR datoteke: `target/*.jar`
 - Maven artefakti: `target/`
 
-### Konfiguracija, specifična za okolje
+### Konfiguracija specifična za okolje
 
 **Razvoj:**
 ```yaml
-# application.yml
+# application.yml (keyless - no api-key; auth via DefaultAzureCredential)
 spring:
   ai:
-    openai:
-      api-key: ${GITHUB_TOKEN}
-      base-url: https://models.inference.ai.azure.com
+    azure:
+      openai:
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 **Produkcija:**
-- Uporabite Azure AI Foundry Models namesto GitHub Models
-- Posodobite osnovni URL na Azure OpenAI končno točko
-- Upravljajte skrivnosti prek Azure Key Vault ali okoljskih spremenljivk
+- Uporabi upravljano identiteto namesto `az login` za prijavo brez ključev
+- Nastavi `AZURE_OPENAI_ENDPOINT` na tvoj produkcijski Foundry vir
+- Upravljaj konfiguracijo preko okoljskih spremenljivk ali Azure Key Vault
 
-### Upoštevanje pri uvajanju
-- To je izobraževalno skladišče z vzorčnimi aplikacijami
-- Ni zasnovano za produkcijsko uvajanje v trenutni obliki
-- Vzorci prikazujejo vzorce, ki jih je mogoče prilagoditi za produkcijsko uporabo
-- Glejte README.md posameznega projekta za specifične opombe o uvajanju
+### Premisleki o uvajanju
+- To je izobraževalni repozitorij s primeri aplikacij
+- Ni načrtovan za direktno uporabo v produkciji
+- Primeri prikazujejo vzorce, prilagojene za produkcijsko uporabo
+- Oglej si README-je posameznih projektov za specifične opombe o uvajanju
 
 ## Dodatne opombe
 
-### GitHub Models proti Azure OpenAI
-- **GitHub Models:** Brezplačni nivo za učenje, ni potrebna kreditna kartica
-- **Azure OpenAI:** Pripravljeno za produkcijo, zahteva naročnino na Azure
-- Koda je združljiva med obema - samo spremenite končno točko in API ključ
+### Azure AI Foundry
+- **Prijava brez ključev:** poveži se z Microsoft Entra ID - ni potrebnih API ključev
+- **Nastavljeno kot koda:** Bicep + azd (`azd up`) ustvarita račun in namestitev modelov
+- Isto združljivo OpenAI kodo lahko uporabljaš lokalno (`az login`) in v Azure (upravljana identiteta)
 
 ### Delo z več projekti
 Vsak vzorčni projekt je samostojen:
 ```bash
-# Navigate to specific project
+# Pomaknite se do specifičnega projekta
 cd 04-PracticalSamples/[project-name]
 
-# Each has its own pom.xml and can be built independently
+# Vsak ima svojo datoteko pom.xml in se lahko gradi neodvisno
 mvn clean install
 ```
 
 ### Pogoste težave
 
-**Neskladje različice Jave:**
+**Neujemanje verzije Jave:**
 ```bash
-# Verify Java 21
+# Preverite Java 21
 java -version
-# Update JAVA_HOME if needed
+# Posodobite JAVA_HOME, če je potrebno
 export JAVA_HOME=/usr/lib/jvm/msopenjdk-current
 ```
 
-**Težave pri prenosu odvisnosti:**
+**Težave z nalaganjem odvisnosti:**
 ```bash
-# Clear Maven cache and retry
+# Počisti Maven predpomnilnik in poskusi znova
 rm -rf ~/.m2/repository
 mvn clean install
 ```
 
-**GitHub žeton ni najden:**
+**Končna točka ali prijava ni najdena:**
 ```bash
-# Set in current session
-export GITHUB_TOKEN="your-token-here"
+# Nastavite končno točko v trenutni seji in se vpišite (brez ključa)
+export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
+az login
 
-# Or use .env file in project directory
-echo "GITHUB_TOKEN=your-token-here" > .env
+# Ali uporabite datoteko .env v imeniku projekta
+echo "AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/" > .env
 ```
 
-**Vrata so že v uporabi:**
+**Vrat že v uporabi:**
 ```bash
-# Spring Boot uses port 8080 by default
-# Change in application.properties:
+# Spring Boot privzeto uporablja vrata 8080
+# Sprememba v application.properties:
 server.port=8081
 ```
 
-### Podpora za več jezikov
-- Dokumentacija je na voljo v več kot 45 jezikih prek avtomatiziranega prevajanja
-- Prevedene datoteke so v mapi `translations/`
-- Prevajanje upravlja GitHub Actions delovni tok
+### Podpora več jezikom
+- Dokumentacija na voljo v več kot 45 jezikih preko avtomatskega prevajanja
+- Prevodi v mapi `translations/`
+- Prevajanje upravlja GitHub Actions potek dela
 
-### Učna pot
-1. Začnite z [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md)
-2. Sledite poglavjem po vrsti (01 → 05)
-3. Izvedite praktične primere v vsakem poglavju
-4. Raziščite vzorčne projekte v poglavju 4
-5. Naučite se praks odgovorne umetne inteligence v poglavju 5
+### Pot učenja
+1. Začni z [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md)
+2. Sledi poglavjem v vrstnem redu (01 → 05)
+3. Dokončaj praktične primere v vsakem poglavju
+4. Raziskuj vzorčne projekte v poglavju 4
+5. Nauči se praks odgovorne AI v poglavju 5
 
-### Razvojni vsebnik
-Konfiguracija `.devcontainer/devcontainer.json` vključuje:
-- Razvojno okolje za Java 21
-- Prednameščen Maven
-- Razširitve za Javo v VS Code
-- Orodja za Spring Boot
-- Integracija GitHub Copilot
-- Podpora za Docker-in-Docker
+### Razvojno okolje v kontejnerju
+`.devcontainer/devcontainer.json` konfigurira:
+- Razvojno okolje Java 21
+- Vnaprej nameščen Maven
+- Razširitve VS Code za Javo
+- Orodja Spring Boot
+- Integracijo GitHub Copilot
+- Podporo Docker-in-Docker
 - Azure CLI
 
-### Upoštevanje zmogljivosti
-- Brezplačni nivo GitHub Models ima omejitve hitrosti
-- Uporabite ustrezne velikosti paketov za vdelave
-- Razmislite o predpomnjenju za ponavljajoče se API klice
-- Spremljajte uporabo žetonov za optimizacijo stroškov
+### Premisleki glede zmogljivosti
+- Azure AI Foundry nameščanja imajo kvote tokenov/poizvedb na minuto
+- Uporabljaj primerne velikosti paketov za vdelave
+- Razmisli o predpomnjenju za ponavljajoče API klice
+- Spremljaj uporabo tokenov za optimizacijo stroškov
 
 ### Varnostne opombe
-- Nikoli ne vključujte `.env` datotek (že v `.gitignore`)
-- Uporabite okoljske spremenljivke za API ključe
-- GitHub žetoni naj imajo minimalne potrebne obsege
-- Upoštevajte smernice odgovorne umetne inteligence v poglavju 5
+- Nikoli ne komitiraj `.env` datotek (že v `.gitignore`)
+- Prednostno uporabljaj avtentikacijo brez ključev (Microsoft Entra ID) namesto API ključev
+- Uporabljaj upravljane identitete v Azure; lokalno za razvoj je `az login`
+- Sledi smernicam odgovorne AI v poglavju 5
 
 ---
 
-**Omejitev odgovornosti**:  
-Ta dokument je bil preveden z uporabo storitve AI za prevajanje [Co-op Translator](https://github.com/Azure/co-op-translator). Čeprav si prizadevamo za natančnost, vas prosimo, da upoštevate, da lahko avtomatizirani prevodi vsebujejo napake ali netočnosti. Izvirni dokument v njegovem maternem jeziku je treba obravnavati kot avtoritativni vir. Za ključne informacije priporočamo profesionalni človeški prevod. Ne prevzemamo odgovornosti za morebitne nesporazume ali napačne razlage, ki bi nastale zaradi uporabe tega prevoda.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Omejitev odgovornosti**:
+Ta dokument je bil preveden z uporabo AI prevajalske storitve [Co-op Translator](https://github.com/Azure/co-op-translator). Čeprav si prizadevamo za natančnost, vas prosimo, da upoštevate, da avtomatizirani prevodi lahko vsebujejo napake ali netočnosti. Izvirni dokument v njegovem izvirnem jeziku je treba obravnavati kot avtoritativni vir. Za kritične informacije je priporočljiv strokovni človeški prevod. Ne odgovarjamo za morebitna nesporazume ali napačne interpretacije, ki izhajajo iz uporabe tega prevoda.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->
