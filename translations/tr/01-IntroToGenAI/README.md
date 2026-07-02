@@ -1,22 +1,18 @@
-# Generatif Yapay Zekaya Giriş - Java Sürümü
+# Üretken Yapay Zekaya Giriş - Java Sürümü
 
-[![Generatif Yapay Zekaya Giriş](https://img.youtube.com/vi/XH46tGp_eSw/0.jpg)](https://www.youtube.com/watch?v=XH46tGp_eSw "Generatif Yapay Zekaya Giriş")
+## Neler Öğreneceksiniz
 
-> **Video**: [Bu dersin video genel bakışını YouTube'da izleyin.](https://www.youtube.com/watch?v=XH46tGp_eSw) Yukarıdaki küçük resim görüntüsüne de tıklayabilirsiniz.
-
-## Öğrenecekleriniz
-
-- LLM'ler, prompt mühendisliği, tokenlar, gömme (embedding) ve vektör veritabanları dahil **Generatif Yapay Zeka temelleri**
-- Azure OpenAI SDK, Spring AI ve OpenAI Java SDK gibi **Java AI geliştirme araçlarını karşılaştırma**
-- AI ajan iletişiminde rolü olan **Model Context Protocol**ü keşfetme
+- LLM'ler, prompt mühendisliği, tokenlar, embeddingler ve vektör veritabanları dahil **Üretken Yapay Zeka temelleri**
+- Azure OpenAI SDK, Spring AI ve OpenAI Java SDK dahil **Java Yapay Zeka geliştirme araçlarını karşılaştırma**
+- **Model Context Protocol** ve AI ajan iletişimindeki rolünü keşfetme
 
 ## İçindekiler
 
 - [Giriş](#giriş)
-- [Generatif Yapay Zeka kavramlarına hızlı bir genel bakış](#generatif-yapay-zeka-kavramlarına-hızlı-bir-genel-bakış)
+- [Üretken Yapay Zeka kavramlarına hızlı bir refresher](#üretken-yapay-zeka-kavramlarına-hızlı-bir-refresher)
 - [Prompt mühendisliği incelemesi](#prompt-mühendisliği-incelemesi)
-- [Tokenlar, gömme işlemleri ve ajanlar](#tokenlar-gömme-işlemleri-ve-ajanlar)
-- [Java için AI Geliştirme Araçları ve Kütüphaneler](#java-için-ai-geliştirme-araçları-ve-kütüphaneler)
+- [Tokenlar, embeddingler ve ajanlar](#tokenlar-embeddingler-ve-ajanlar)
+- [Java için AI Geliştirme Araçları ve Kütüphaneleri](#java-için-ai-geliştirme-araçları-ve-kütüphaneleri)
   - [OpenAI Java SDK](#openai-java-sdk)
   - [Spring AI](#spring-ai)
   - [Azure OpenAI Java SDK](#azure-openai-java-sdk)
@@ -25,80 +21,79 @@
 
 ## Giriş
 
-Başlangıç Seviyesi Generatif Yapay Zeka - Java Sürümü’nün ilk bölümüne hoş geldiniz! Bu temel ders, size generatif yapay zekanın ana kavramlarını ve Java kullanarak bunlarla nasıl çalışılacağını tanıtıyor. Büyük Dil Modelleri (LLM’ler), tokenlar, gömme işlemleri ve AI ajanları dahil olmak üzere AI uygulamalarının temel yapı taşlarını öğreneceksiniz. Ayrıca, bu kurs boyunca kullanacağınız ana Java araçlarını da keşfedeceğiz.
+Üretken Yapay Zeka Başlangıç Rehberi - Java Sürümü'nün ilk bölümüne hoş geldiniz! Bu temel ders, sizi üretken yapay zekanın temel kavramlarıyla tanıştırır ve bunlarla Java kullanarak nasıl çalışacağınızı gösterir. Büyük Dil Modelleri (LLM'ler), tokenlar, embeddingler ve AI ajanları gibi AI uygulamalarının temel yapı taşlarını öğreneceksiniz. Ayrıca bu kurs boyunca kullanacağınız birincil Java araçlarını keşfedeceğiz.
 
-### Generatif Yapay Zeka kavramlarına hızlı bir genel bakış
+### Üretken Yapay Zeka kavramlarına hızlı bir refresher
 
-Generatif Yapay Zeka, veriyle öğrenilen örüntü ve ilişkilerden yola çıkarak metin, görüntü veya kod gibi yeni içerikler oluşturan bir yapay zeka türüdür. Generatif AI modelleri, insan benzeri yanıtlar oluşturabilir, bağlamı anlayabilir ve bazen insan benzeri görünen içerik yaratabilir.
+Üretken Yapay Zeka, verilerden öğrenilen örüntüler ve ilişkiler temelinde metin, resim veya kod gibi yeni içerik oluşturan bir yapay zeka türüdür. Üretken AI modelleri insan benzeri yanıtlar üretebilir, bağlamı anlayabilir ve bazen insan gibi görünen içerikler yaratabilir.
 
-Java yapay zeka uygulamalarınızı geliştirirken, içerik oluşturmak için **generatif AI modelleri**yle çalışacaksınız. Bazı generatif AI modeli yetenekleri şunlardır:
+Java AI uygulamalarınızı geliştirirken, **üretken AI modelleriyle** içerik oluşturacaksınız. Üretken AI modellerinin bazı yetenekleri şunlardır:
 
-- **Metin Üretimi**: Sohbet robotları, içerik üretimi ve metin tamamlama için insan benzeri metinler oluşturma.
-- **Görüntü Oluşturma ve Analizi**: Gerçekçi görüntüler üretme, fotoğrafları iyileştirme ve nesne algılama.
-- **Kod Üretimi**: Kod parçacıkları veya betikler yazma.
+- **Metin üretimi**: Chatbotlar, içerik ve metin tamamlama için insan benzeri metinler oluşturma.
+- **Resim üretimi ve analizi**: Gerçekçi resimler yaratma, fotoğrafları iyileştirme ve nesne algılama.
+- **Kod üretimi**: Kod parçacıkları veya betikler yazma.
 
-Farklı görevler için optimize edilmiş özel model türleri vardır. Örneğin, hem **Küçük Dil Modelleri (SLM’ler)** hem de **Büyük Dil Modelleri (LLM’ler)** metin üretimini işleyebilir; ancak karmaşık görevlerde LLM genellikle daha iyi performans sunar. Görüntüyle ilgili görevlerde, özel görüş modelleri veya çok modlu modeller kullanılır.
+Farklı görevler için optimize edilmiş özel model tipleri vardır. Örneğin, hem **Küçük Dil Modelleri (SLM)** hem de **Büyük Dil Modelleri (LLM)** metin üretimi yapabilir; LLM'ler genellikle karmaşık görevlerde daha iyi performans sunar. Görüntü ile ilgili görevlerde ise özel görsel modeller veya çok modlu modeller kullanılır.
 
-![Şekil: Generatif AI model türleri ve kullanım alanları.](../../../translated_images/tr/llms.225ca2b8a0d34473.webp)
+![Figure: Generative AI model types and use cases.](../../../translated_images/tr/llms.225ca2b8a0d34473.webp)
 
-Elbette, bu modellerin yanıtları her zaman mükemmel değildir. Modellerin "halüsinasyon" yapabildiğini veya otoriter bir şekilde yanlış bilgi üretebildiğini duymuşsunuzdur. Ancak, onlara net talimatlar ve bağlam sunarak daha iyi yanıtlar üretmelerine yardımcı olabilirsiniz. İşte burada **prompt mühendisliği** devreye girer.
+Elbette, bu modellerin yanıtları her zaman mükemmel değildir. Modellerin bazen "halüsinasyon" yapması veya yanlış bilgileri kesin ifadelerle üretmesi hakkında duymuşsunuzdur. Ancak modelleri daha iyi yanıtlar üretmeye yönlendirmek için onlara net talimatlar ve bağlam sağlayabilirsiniz. İşte burada **prompt mühendisliği** devreye girer.
 
 #### Prompt mühendisliği incelemesi
 
-Prompt mühendisliği, AI modellerini istenen çıktılara yönlendirmek için etkili girdiler tasarlama uygulamasıdır. Şunları içerir:
+Prompt mühendisliği, yapay zeka modellerini istenen çıktılara yönlendirmek için etkili girdiler tasarlama pratiğidir. İçerir:
 
-- **Açıklık**: Talimatların net ve belirsiz olmaması.
-- **Bağlam**: Gerekli arka plan bilgisinin sağlanması.
-- **Kısıtlamalar**: Herhangi bir sınırlama veya formatın belirtilmesi.
+- **Açıklık**: Talimatların net ve kesin olması.
+- **Bağlam**: Gerekli temel bilgiler sağlama.
+- **Kısıtlamalar**: Herhangi bir sınırlama veya format belirleme.
 
-Prompt mühendisliğinde iyi uygulamalar arasında prompt tasarımı, net talimatlar, görevlerin parçalara bölünmesi, bir defalık ve birkaç defalık öğrenme ile prompt ayarlama vardır. Belirli kullanım durumunuz için en iyi olanı bulmak adına farklı promptları test etmek önemlidir.
+Prompt mühendisliği için bazı en iyi uygulamalar; prompt tasarımı, net talimatlar, görev bölümü, tek-örnek ve biraz-örnek öğrenme ve prompt ayarıdır. Farklı promptları test etmek, belirli kullanım durumunuz için en iyi sonucu bulmak için çok önemlidir.
 
-Uygulama geliştirirken farklı prompt türleriyle çalışırsınız:
+Uygulama geliştirirken farklı prompt türleriyle çalışacaksınız:
 - **Sistem promptları**: Modelin davranışı için temel kuralları ve bağlamı belirler
-- **Kullanıcı promptları**: Uygulama kullanıcılarınızdan gelen giriş verileri
+- **Kullanıcı promptları**: Uygulama kullanıcılarınızdan gelen giriş verisi
 - **Asistan promptları**: Sistem ve kullanıcı promptlarına dayalı model yanıtları
 
-> **Daha fazlasını öğrenin**: [Prompt Mühendisliği bölümünde daha fazla bilgi edinin](https://github.com/microsoft/generative-ai-for-beginners/tree/main/04-prompt-engineering-fundamentals)
+> **Daha fazla bilgi**: [Üretken AI Başlangıç Kılavuzu'nun Prompt Mühendisliği bölümü](https://github.com/microsoft/generative-ai-for-beginners/tree/main/04-prompt-engineering-fundamentals) hakkında detaylı bilgi alabilirsiniz.
 
-#### Tokenlar, gömme işlemleri ve ajanlar
+#### Tokenlar, embeddingler ve ajanlar
 
-Generatif AI modelleriyle çalışırken **tokenlar**, **gömme işlemleri**, **ajanlar** ve **Model Context Protocol (MCP)** gibi terimlerle karşılaşacaksınız. İşte bu kavramların detaylı genel görünümü:
+Üretken AI modelleriyle çalışırken, **tokenlar**, **embeddingler**, **ajanlar** ve **Model Context Protocol (MCP)** terimleriyle karşılaşacaksınız. İşte bu kavramların detaylı bir özeti:
 
-- **Tokenlar**: Tokenlar, bir modeldeki en küçük metin birimidir. Kelimeler, karakterler veya alt kelimeler olabilirler. Tokenlar, metin verilerini modelin anlayabileceği bir formata dönüştürmek için kullanılır. Örneğin, "The quick brown fox jumped over the lazy dog" cümlesi tokenizasyon stratejisine bağlı olarak ["The", " quick", " brown", " fox", " jumped", " over", " the", " lazy", " dog"] veya ["The", " qu", "ick", " br", "own", " fox", " jump", "ed", " over", " the", " la", "zy", " dog"] olarak ayrılabilir.
+- **Tokenlar**: Tokenlar modeldeki en küçük metin birimidir. Kelimeler, karakterler veya alt kelimeler olabilirler. Tokenlar, modeli anlayabileceği biçimde metin verisini temsil etmek için kullanılır. Örneğin, "The quick brown fox jumped over the lazy dog" cümlesi tokenizasyon stratejisine bağlı olarak ["The", " quick", " brown", " fox", " jumped", " over", " the", " lazy", " dog"] veya ["The", " qu", "ick", " br", "own", " fox", " jump", "ed", " over", " the", " la", "zy", " dog"] şeklinde tokenlara ayrılabilir.
 
-![Şekil: Kelimeleri tokenlara bölme örneği](../../../translated_images/tr/tokens.6283ed277a2ffff4.webp)
+![Figure: Generative AI tokens example of breaking words into tokens](../../../translated_images/tr/tokens.6283ed277a2ffff4.webp)
 
-Tokenizasyon, metni bu daha küçük parçalara bölme işlemidir. Bu süreç önemlidir çünkü modeller ham metin yerine tokenlarla çalışır. Bir promptdaki token sayısı, modelin yanıtının uzunluğunu ve kalitesini etkiler; zira modellerin bağlam penceresi için bir token limiti vardır (örneğin, GPT-4o’nun toplam bağlam penceresinde 128K token; girdi ve çıktı dahil).
+Tokenizasyon, metni bu küçük birimlere bölme işlemidir. Bu çok önemlidir çünkü modeller ham metin yerine tokenlar üzerinde çalışır. Bir prompttaki token sayısı modelin yanıt uzunluğunu ve kalitesini etkiler; çünkü modeller bağlam penceresi için token sınırlarına sahiptir (örneğin, GPT-4o için toplam bağlamda 128K token, hem giriş hem çıkış dahil).
 
-  Java’da, OpenAI SDK gibi kütüphanelerle AI modellere istek gönderirken tokenizasyon otomatik olarak yapılabilir.
+  Java'da, OpenAI SDK gibi kütüphaneler AI modellere istek gönderirken tokenizasyon işlemini otomatik olarak yapar.
 
-- **Gömme İşlemleri (Embeddings)**: Gömme işlemleri, tokenların anlamsal anlamını yakalayan vektör temsilidir. Bunlar genellikle ondalık sayı dizileri (float dizileri) şeklindedir ve modellerin kelimeler arasındaki ilişkileri anlamasına ve bağlama uygun yanıtlar üretmesine olanak tanır. Benzer kelimeler benzer gömme değerlerine sahiptir, bu sayede model eşanlamlılar ve anlamsal ilişkiler gibi kavramları anlayabilir.
+- **Embeddingler**: Embeddingler, kelimelerin anlamsal anlamını yakalayan vektörel temsillerdir. Bunlar sayı dizileri (genellikle kayan nokta sayı dizileri) şeklindedir ve modellerin kelimeler arasındaki ilişkileri anlamasına ve bağlamsal olarak ilgili yanıtlar üretmesine olanak tanır. Benzer kelimelerin embeddingleri birbirine benzer, bu da modelin eşanlamlılar ve anlamsal ilişkiler gibi kavramları anlamasını sağlar.
 
-![Şekil: Gömme işlemleri](../../../translated_images/tr/embedding.398e50802c0037f9.webp)
+![Figure: Embeddings](../../../translated_images/tr/embedding.398e50802c0037f9.webp)
 
-  Java’da, OpenAI SDK veya gömme oluşturmayı destekleyen diğer kütüphaneler kullanılarak gömme işlemleri oluşturulabilir. Bu gömmeler, tam metin yerine anlam temelli benzer içerik aramak için kullanılan anlamsal arama gibi görevler için önemlidir.
+  Java'da embedding oluşturmak için OpenAI SDK veya embedding oluşturmayı destekleyen diğer kütüphaneler kullanılabilir. Embeddingler, anlam temelli arama gibi, tam metin eşleşmeleri yerine anlam bazlı benzer içerik bulma gibi görevler için çok önemlidir.
 
-- **Vektör Veritabanları**: Vektör veritabanları, gömme işlemlerini depolamak ve yönetmek için optimize edilmiş özel depolama sistemleridir. Anlamsal eşleştirme temelinde benzer içerik bulmayı sağlayarak Veriye Dayalı Üretim (Retrieval-Augmented Generation - RAG) gibi desenlerde kritik öneme sahiptir.
+- **Vektör veritabanları**: Vektör veritabanları embeddingler için optimize edilmiş özel depolama sistemleridir. Etkili benzerlik araması yapılabilmesini sağlarlar ve büyük veri kümeleri arasında semantik benzerliğe dayalı bilgi bulmanın önemli olduğu Retrieval-Augmented Generation (RAG) desenlerinde kritik rol oynarlar.
 
-![Şekil: Gömme işlemlerin saklanıp benzerlik araması için geri çağrılması sürecini gösteren vektör veritabanı mimarisi.](../../../translated_images/tr/vector.f12f114934e223df.webp)
+![Figure: Vector database architecture showing how embeddings are stored and retrieved for similarity search.](../../../translated_images/tr/vector.f12f114934e223df.webp)
 
-> **Not**: Bu kursta Vektör veritabanlarına değinilmeyecek fakat gerçek dünyadaki uygulamalarda yaygın kullanımı nedeniyle bahsetmeye değer buluyoruz.
+> **Not**: Bu derste Vektör veritabanlarını kapsamıyoruz ancak gerçek dünya uygulamalarında yaygın kullanıldıkları için bahsetmeye değer olduğunu düşünüyoruz.
 
-- **Ajanlar ve MCP**: Modeller, araçlar ve dış sistemlerle otonom olarak etkileşim kuran AI bileşenleridir. Model Context Protocol (MCP), ajanların dış veri kaynaklarına ve araçlara güvenli bir şekilde erişmesini sağlayan standartlaştırılmış bir yöntem sunar. Daha fazla bilgi için [MCP Başlangıç Kursu](https://github.com/microsoft/mcp-for-beginners)na bakabilirsiniz.
+- **Ajanlar ve MCP**: Modeller, araçlar ve dış sistemlerle otonom etkileşime giren AI bileşenleridir. Model Context Protocol (MCP), ajanların dış veri kaynaklarına ve araçlara güvenli şekilde erişimi için standart bir yol sağlar. Daha fazlası için [MCP for Beginners](https://github.com/microsoft/mcp-for-beginners) kursumuzu inceleyebilirsiniz.
 
-Java AI uygulamalarında, metin işleme için tokenlar, anlamsal arama ve RAG için gömme işlemleri, veri alımı için vektör veritabanları ve zeki araç kullanan sistemler kurmak için MCP ile ajanlar kullanırsınız.
+Java AI uygulamalarında, metin işleme için tokenları, anlamsal arama ve RAG için embeddingleri, veri erişimi için vektör veritabanlarını ve akıllı, araç kullanan sistemler inşa etmek için MCP ile ajanları kullanırsınız.
 
-![Şekil: bir promptun yanıt haline geliş süreci — tokenlar, vektörler, isteğe bağlı RAG araması, LLM düşüncesi ve MCP ajanı tek bir akışta.](../../../translated_images/tr/flow.f4ef62c3052d12a8.webp)
+![Figure: how a prompt becomes a reply—tokens, vectors, optional RAG lookup, LLM thinking, and an MCP agent all in one quick flow..](../../../translated_images/tr/flow.f4ef62c3052d12a8.webp)
 
-### Java için AI Geliştirme Araçları ve Kütüphaneler
+### Java için AI Geliştirme Araçları ve Kütüphaneleri
 
-Java, AI geliştirme için mükemmel araçlar sunar. Bu kurs boyunca keşfedeceğimiz üç ana kütüphane vardır - OpenAI Java SDK, Azure OpenAI SDK ve Spring AI.
+Java, AI geliştirme için mükemmel araç desteği sunar. Bu kursta keşfedeceğimiz üç ana kütüphane vardır - OpenAI Java SDK, Azure OpenAI SDK ve Spring AI.
 
-Her bölümün örneklerinde kullanılan SDK'ları gösteren hızlı referans tablosu:
+Aşağıda her bölümün örneklerinde hangi SDK'nın kullanıldığına dair hızlı bir referans tablosu bulunmaktadır:
 
 | Bölüm | Örnek | SDK |
 |---------|--------|-----|
-| 02-SetupDevEnvironment | github-models | OpenAI Java SDK |
 | 02-SetupDevEnvironment | basic-chat-azure | Spring AI Azure OpenAI |
 | 03-CoreGenerativeAITechniques | examples | Azure OpenAI SDK |
 | 04-PracticalSamples | petstory | OpenAI Java SDK |
@@ -113,41 +108,43 @@ Her bölümün örneklerinde kullanılan SDK'ları gösteren hızlı referans ta
 
 #### OpenAI Java SDK
 
-OpenAI SDK, OpenAI API için resmi Java kitaplığıdır. OpenAI modelleriyle etkileşim için basit ve tutarlı bir arayüz sunar, böylece AI yeteneklerini Java uygulamalarına entegre etmek kolaylaşır. Bölüm 2’deki GitHub Modelleri örneği, Bölüm 4’teki Pet Story uygulaması ve Foundry Local örneği OpenAI SDK yaklaşımını gösterir.
+OpenAI SDK, OpenAI API için resmi Java kütüphanesidir. OpenAI modelleriyle etkileşim için basit ve tutarlı bir arayüz sağlar ve AI yeteneklerini Java uygulamalarına entegre etmeyi kolaylaştırır. Bölüm 4'teki Pet Story uygulaması ve Foundry Local örneği OpenAI SDK yaklaşımını Azure AI Foundry ile gösterir.
 
 #### Spring AI
 
-Spring AI, Spring uygulamalarına AI özellikleri getiren kapsamlı bir çerçevedir ve farklı AI sağlayıcıları arasında tutarlı soyutlama katmanı sağlar. Spring ekosistemiyle sorunsuzca bütünleşir ve AI yetenekleri gereken kurumsal Java uygulamaları için ideal seçimdir.
+Spring AI, AI yeteneklerini Spring uygulamalarına getiren kapsamlı bir çerçevedir ve farklı AI sağlayıcıları için tutarlı bir soyutlama katmanı sunar. Spring ekosistemiyle kusursuz entegrasyon sağlar ve AI yeteneklerine ihtiyaç duyan kurumsal Java uygulamaları için ideal seçimdir.
 
-Spring AI’nin gücü, Spring ekosistemine entegrasyonundaki akıcılıktır; bağımlılık enjeksiyonu, konfigürasyon yönetimi ve test çerçeveleri gibi tanıdık Spring kalıpları ile üretime hazır AI uygulamaları geliştirmek kolaydır. Bölüm 2 ve 4’te OpenAI ile Model Context Protocol (MCP) Spring AI kütüphanelerini kullanan uygulamalar oluşturacaksınız.
+Spring AI'nin gücü, bağımlılık enjeksiyonu, konfigürasyon yönetimi ve test çerçeveleri gibi tanıdık Spring kalıplarıyla üretime hazır AI uygulamaları oluşturmayı kolaylaştıran Spring ekosistemiyle sorunsuz entegrasyonunda yatar. Bu kursta, Spring AI'yi Bölüm 2 ve 4'te, OpenAI ve Model Context Protocol (MCP) Spring AI kütüphanelerini beraber kullanarak uygulamalar geliştirmek için kullanacaksınız.
 
 ##### Model Context Protocol (MCP)
 
-[Model Context Protocol (MCP)](https://modelcontextprotocol.io/), AI uygulamalarının dış veri kaynakları ve araçlarla güvenli bir şekilde etkileşim kurmasını sağlayan gelişmekte olan bir standarttır. MCP, AI modellerinin bağlamsal bilgiye erişmesi ve uygulamalarınızda eylemler gerçekleştirmesi için standart bir yol sunar.
+[Model Context Protocol (MCP)](https://modelcontextprotocol.io/) yapay zekanın dış veri kaynakları ve araçlarla güvenli şekilde etkileşim kurmasını sağlayan gelişmekte olan bir standarttır. MCP, AI modellerinin bağlamsal bilgiyi erişmesi ve uygulamanızda işlemler gerçekleştirmesi için standart bir yöntem sunar.
 
-Bölüm 4’te, Model Context Protocolün temel prensiplerini Spring AI ile gösteren basit bir MCP hesap makinesi servisi inşa edeceksiniz; böylece temel araç entegrasyonları ve servis mimarileri oluşturmayı göreceksiniz.
+Bölüm 4'te, Model Context Protocol'ün temellerini Spring AI ile gösteren temel araç entegrasyonları ve hizmet mimarisi oluşturan basit bir MCP hesap makinesi servisi geliştireceksiniz.
 
 #### Azure OpenAI Java SDK
 
-Azure OpenAI Java istemci kitaplığı, OpenAI’nın REST API'lerinin uyarlanmış hali olup, Azure SDK ekosistemiyle uyumlu, doğal bir arabirim sağlar. Bölüm 3’te sohbet uygulamaları, fonksiyon çağırma ve RAG (Retrieval-Augmented Generation) desenleri gibi uygulamalar kuracaksınız.
+Azure OpenAI Java istemci kitaplığı, OpenAI REST API'lerinin uyarlanmış versiyonudur ve Azure SDK ekosistemi ile doğal entegrasyon sağlar. Bölüm 3'te, sohbet uygulamaları, fonksiyon çağrıları ve RAG (Retrieval-Augmented Generation) desenlerini içeren Azure OpenAI SDK kullanarak uygulamalar geliştireceksiniz.
 
-> Not: Azure OpenAI SDK, özellikler açısından OpenAI Java SDK’nın gerisindedir; bu nedenle gelecekteki projeleriniz için OpenAI Java SDK’yı kullanmayı düşünebilirsiniz.
+> Not: Özellikler açısından Azure OpenAI SDK, OpenAI Java SDK'nın gerisinde kalmaktadır; bu nedenle gelecekteki projelerde OpenAI Java SDK'yı kullanmayı düşünün.
 
 ## Özet
 
-Temelleri tamamladınız! Artık şunları anlıyorsunuz:
+Temelleri öğrendiniz! Artık:
 
-- Generatif yapay zekanın temel kavramları - LLM’lerden prompt mühendisliği, tokenlar, gömmeler ve vektör veritabanlarına kadar
-- Java AI geliştirme için araç seti seçenekleriniz: Azure OpenAI SDK, Spring AI ve OpenAI Java SDK
-- Model Context Protocolün ne olduğu ve AI ajanlarının dış araçlarla nasıl çalışmasını sağladığı
+- Üretken yapay zekanın temel kavramlarını - LLM'ler, prompt mühendisliği, tokenlar, embeddingler ve vektör veritabanlarından
+- Java AI geliştirme için kullanabileceğiniz araç setlerini: Azure OpenAI SDK, Spring AI ve OpenAI Java SDK'yı
+- Model Context Protocol'ün ne olduğunu ve AI ajanlarının dış araçlarla nasıl çalışmasına olanak sağladığını
+
+anlamaktasınız.
 
 ## Sonraki Adımlar
 
-[Bölüm 2: Geliştirme Ortamının Kurulumu](../02-SetupDevEnvironment/README.md)
+[2. Bölüm: Geliştirme Ortamını Kurma](../02-SetupDevEnvironment/README.md)
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Feragatname**:  
-Bu belge, AI çeviri servisi [Co-op Translator](https://github.com/Azure/co-op-translator) kullanılarak çevrilmiştir. Doğruluk için çabalasak da, otomatik çevirilerin hatalar veya yanlışlıklar içerebileceğini lütfen unutmayın. Orijinal belge, kendi dilinde yetkili kaynak olarak kabul edilmelidir. Kritik bilgiler için profesyonel insan çevirisi önerilir. Bu çevirinin kullanımından kaynaklanan herhangi bir yanlış anlama veya yorum farklılığından sorumlu değiliz.
+**Feragatname**:
+Bu belge, AI çeviri hizmeti [Co-op Translator](https://github.com/Azure/co-op-translator) kullanılarak çevrilmiştir. Doğruluk için çaba sarf etsek de, otomatik çevirilerin hata veya yanlışlık içerebileceğini lütfen unutmayınız. Orijinal belge, kendi dilinde yetkili kaynak olarak kabul edilmelidir. Kritik bilgiler için profesyonel insan çevirisi önerilir. Bu çevirinin kullanımı sonucu ortaya çıkabilecek yanlış anlamalardan veya yanlış yorumlamalardan sorumlu değiliz.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

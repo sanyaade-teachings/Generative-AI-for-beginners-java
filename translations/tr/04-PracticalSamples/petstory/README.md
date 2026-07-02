@@ -1,31 +1,31 @@
-# Evcil Hayvan Hikaye Üretici Başlangıç Eğitimi
+# Yeni Başlayanlar İçin Evcil Hayvan Hikayesi Oluşturucu Eğitimi
 
 ## İçindekiler
 
-- [Gereksinimler](../../../../04-PracticalSamples/petstory)
-- [Proje Yapısını Anlama](../../../../04-PracticalSamples/petstory)
-- [Temel Bileşenlerin Açıklaması](../../../../04-PracticalSamples/petstory)
-  - [1. Ana Uygulama](../../../../04-PracticalSamples/petstory)
-  - [2. Web Denetleyicisi](../../../../04-PracticalSamples/petstory)
-  - [3. Hikaye Servisi](../../../../04-PracticalSamples/petstory)
-  - [4. Web Şablonları](../../../../04-PracticalSamples/petstory)
-  - [5. Yapılandırma](../../../../04-PracticalSamples/petstory)
-- [Uygulamayı Çalıştırma](../../../../04-PracticalSamples/petstory)
-- [Her Şey Nasıl Birlikte Çalışır?](../../../../04-PracticalSamples/petstory)
-- [Yapay Zeka Entegrasyonunu Anlama](../../../../04-PracticalSamples/petstory)
-- [Sonraki Adımlar](../../../../04-PracticalSamples/petstory)
+- [Gereksinimler](#gereksinimler)
+- [Proje Yapısını Anlamak](#proje-yapısını-anlamak)
+- [Temel Bileşenlerin Açıklaması](#temel-bileşenlerin-açıklaması)
+  - [1. Ana Uygulama](#1-ana-uygulama)
+  - [2. Web Denetleyici](#2-web-denetleyici)
+  - [3. Hikaye Servisi](#3-hikaye-servisi)
+  - [4. Web Şablonları](#4-web-şablonları)
+  - [5. Yapılandırma](#5-yapılandırma)
+- [Uygulamayı Çalıştırmak](#uygulamayı-çalıştırmak)
+- [Hepsi Nasıl Birlikte Çalışır](#hepsi-nasıl-birlikte-çalışır)
+- [Yapay Zeka Entegrasyonunu Anlamak](#yapay-zeka-entegrasyonunu-anlamak)
+- [Sonraki Adımlar](#sonraki-adımlar)
 
 ## Gereksinimler
 
-Başlamadan önce, aşağıdakilere sahip olduğunuzdan emin olun:
-- Java 21 veya daha üstü yüklü
+Başlamadan önce şunlara sahip olduğunuzdan emin olun:
+- Java 21 veya üzeri kurulu
 - Bağımlılık yönetimi için Maven
-- `models:read` kapsamına sahip bir kişisel erişim belirteci (PAT) içeren bir GitHub hesabı
-- Java, Spring Boot ve web geliştirme hakkında temel bilgi
+- Bir Azure AI Foundry model dağıtımı (bunu `azd up` ile sağlayın — bkz. [Bölüm 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md)), `az login` ile (anahtarsız kimlik doğrulama)
+- Java, Spring Boot ve web geliştirmeye temel düzeyde hakimiyet
 
-## Proje Yapısını Anlama
+## Proje Yapısını Anlamak
 
-Evcil hayvan hikaye projesi birkaç önemli dosyadan oluşur:
+Evcil hayvan hikayesi projesi birkaç önemli dosyaya sahiptir:
 
 ```
 petstory/
@@ -48,7 +48,7 @@ petstory/
 
 **Dosya:** `PetStoryApplication.java`
 
-Bu, Spring Boot uygulamamızın giriş noktasıdır:
+Bu bizim Spring Boot uygulamasının giriş noktasıdır:
 
 ```java
 @SpringBootApplication
@@ -59,16 +59,16 @@ public class PetStoryApplication {
 }
 ```
 
-**Bu ne yapar:**
-- `@SpringBootApplication` anotasyonu otomatik yapılandırmayı ve bileşen taramayı etkinleştirir
+**Yaptıkları:**
+- `@SpringBootApplication` açıklaması otomatik yapılandırma ve bileşen taramayı etkinleştirir
 - 8080 portunda gömülü bir web sunucusu (Tomcat) başlatır
-- Gerekli tüm Spring bean'lerini ve servislerini otomatik olarak oluşturur
+- Gerekli tüm Spring bean'leri ve servisleri otomatik olarak oluşturur
 
-### 2. Web Denetleyicisi
+### 2. Web Denetleyici
 
 **Dosya:** `PetController.java`
 
-Bu, tüm web isteklerini ve kullanıcı etkileşimlerini yönetir:
+Tüm web isteklerini ve kullanıcı etkileşimlerini yönetir:
 
 ```java
 @Controller
@@ -82,7 +82,7 @@ public class PetController {
     
     @GetMapping("/")
     public String index() {
-        return "index";  // Returns index.html template
+        return "index";  // index.html şablonunu döndürür
     }
     
     @PostMapping("/generate-story")
@@ -90,24 +90,24 @@ public class PetController {
                                Model model, 
                                RedirectAttributes redirectAttributes) {
         
-        // Input validation
+        // Girdi doğrulama
         if (description.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please provide a description.");
             return "redirect:/";
         }
         
-        // Sanitize input for security
+        // Güvenlik için girdi temizleme
         String sanitizedDescription = sanitizeInput(description);
         
-        // Generate story with error handling
+        // Hata yönetimi ile hikaye oluşturma
         try {
             String story = storyService.generateStory(sanitizedDescription);
             model.addAttribute("caption", sanitizedDescription);
             model.addAttribute("story", story);
-            return "result";  // Returns result.html template
+            return "result";  // result.html şablonunu döndürür
             
         } catch (Exception e) {
-            // Use fallback story if AI fails
+            // AI başarısız olursa yedek hikaye kullan
             String fallbackStory = generateFallbackStory(sanitizedDescription);
             model.addAttribute("story", fallbackStory);
             return "result";
@@ -117,7 +117,7 @@ public class PetController {
     private String sanitizeInput(String input) {
         return input.replaceAll("[<>\"'&]", "")  // Remove dangerous characters
                    .trim()
-                   .substring(0, Math.min(input.length(), 500));  // Limit length
+                   .substring(0, Math.min(input.length(), 500));  // Uzunluğu sınırla
     }
 }
 ```
@@ -125,13 +125,13 @@ public class PetController {
 **Ana özellikler:**
 
 1. **Rota Yönetimi**: `@GetMapping("/")` yükleme formunu gösterir, `@PostMapping("/generate-story")` gönderimleri işler
-2. **Girdi Doğrulama**: Boş açıklamaları ve uzunluk sınırlarını kontrol eder
-3. **Güvenlik**: Kullanıcı girdilerini XSS saldırılarına karşı temizler
-4. **Hata Yönetimi**: Yapay zeka servisi başarısız olduğunda yedek hikayeler sağlar
-5. **Model Bağlama**: Verileri Spring'in `Model` sınıfını kullanarak HTML şablonlarına aktarır
+2. **Girdi Doğrulama**: Boş açıklama ve uzunluk sınırı kontrolleri yapar
+3. **Güvenlik**: Kullanıcı girdisini XSS saldırılarına karşı temizler
+4. **Hata Yönetimi**: AI servisi başarısız olursa yedek hikayeler sağlar
+5. **Model Bağlama**: Verileri Spring'in `Model` nesnesi aracılığıyla HTML şablonlarına geçirir
 
-**Yedekleme Sistemi:**
-Denetleyici, yapay zeka servisi kullanılamadığında kullanılan önceden yazılmış hikaye şablonlarını içerir:
+**Yedek Sistem:**
+Denetleyici, AI servisi kullanılamadığında kullanılmak üzere önceden yazılmış hikaye şablonları içerir:
 
 ```java
 private String generateFallbackStory(String description) {
@@ -141,7 +141,7 @@ private String generateFallbackStory(String description) {
         "In a cozy home filled with love, there lived an extraordinary pet..."
     };
     
-    // Use description hash for consistent responses
+    // Tutarlı yanıtlar için açıklama karmasını kullanın
     int index = Math.abs(description.hashCode() % storyTemplates.length);
     return storyTemplates[index];
 }
@@ -151,7 +151,7 @@ private String generateFallbackStory(String description) {
 
 **Dosya:** `StoryService.java`
 
-Bu servis, hikayeler oluşturmak için GitHub Modelleri ile iletişim kurar:
+Bu servis, anahtarsız kimlik doğrulama kullanarak Azure AI Foundry ile iletişim kurup hikayeler oluşturur:
 
 ```java
 @Service
@@ -160,18 +160,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // Foundry'nin OpenAI uyumlu uç noktası /openai/v1/ altında yer alır
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // Anahtarsız kimlik doğrulama Microsoft Entra ID ile (API anahtarı yok)
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -182,16 +186,16 @@ public class StoryService {
         
         String userPrompt = "Write a fun short story about a pet described as: " + description;
         
-        // Configure the AI request
+        // AI isteğini yapılandır
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(modelName)
                 .addSystemMessage(systemPrompt)
                 .addUserMessage(userPrompt)
-                .maxCompletionTokens(500)  // Limit response length
-                .temperature(0.8)          // Control creativity (0.0-1.0)
+                .maxCompletionTokens(500)  // Yanıt uzunluğunu sınırla
+                .temperature(0.8)          // Yaratıcılığı kontrol et (0.0-1.0)
                 .build();
         
-        // Send request and get response
+        // İstek gönder ve yanıt al
         ChatCompletion response = openAIClient.chat().completions().create(params);
         
         return response.choices().get(0).message().content().orElse("");
@@ -201,11 +205,11 @@ public class StoryService {
 
 **Ana bileşenler:**
 
-1. **OpenAI İstemcisi**: GitHub Modelleri için yapılandırılmış resmi OpenAI Java SDK'sını kullanır
-2. **Sistem İstemi**: Yapay zekanın aile dostu evcil hayvan hikayeleri yazmasını sağlar
-3. **Kullanıcı İstemi**: Yapay zekaya, açıklamaya dayalı olarak hangi hikayeyi yazması gerektiğini söyler
+1. **OpenAI İstemcisi**: Azure AI Foundry için resmi OpenAI Java SDK'sını anahtarsız yapılandırılmış şekilde kullanır
+2. **Sistem İsteği (Prompt)**: AI'nın aile dostu evcil hayvan hikayeleri yazmasını sağlar
+3. **Kullanıcı İsteği (Prompt)**: Açıklamaya göre AI'ya tam olarak hangi hikayeyi yazacağını söyler
 4. **Parametreler**: Hikaye uzunluğunu ve yaratıcılık seviyesini kontrol eder
-5. **Hata Yönetimi**: Denetleyicinin yakalayıp işleyeceği istisnalar fırlatır
+5. **Hata Yönetimi**: Denetleyici tarafından yakalanan istisnalar fırlatır
 
 ### 4. Web Şablonları
 
@@ -295,16 +299,16 @@ Oluşturulan hikayeyi gösterir:
 
 **Şablon özellikleri:**
 
-1. **Thymeleaf Entegrasyonu**: Dinamik içerik için `th:` öneklerini kullanır
-2. **Duyarlı Tasarım**: Mobil ve masaüstü için CSS stilleri
-3. **Hata Yönetimi**: Kullanıcılara doğrulama hatalarını gösterir
-4. **İstemci Tarafı İşleme**: Görüntü analizi için JavaScript (Transformers.js kullanır)
+1. **Thymeleaf Entegrasyonu**: Dinamik içerik için `th:` özniteliklerini kullanır
+2. **Duyarlı Tasarım**: Mobil ve masaüstü için CSS stili
+3. **Hata Yönetimi**: Kullanıcıya doğrulama hatalarını gösterir
+4. **İstemci Tarafı İşleme**: Transformers.js kullanarak görsel analiz için JavaScript
 
 ### 5. Yapılandırma
 
 **Dosya:** `application.properties`
 
-Uygulama için yapılandırma ayarları:
+Uygulama yapılandırma ayarları:
 
 ```properties
 spring.application.name=pet-story-app
@@ -316,45 +320,48 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 **Yapılandırma açıklaması:**
 
-1. **Dosya Yükleme**: 10MB'a kadar görüntülere izin verir
-2. **Günlük Kaydı**: Çalışma sırasında hangi bilgilerin kaydedileceğini kontrol eder
-3. **GitHub Modelleri**: Hangi yapay zeka modeli ve uç noktanın kullanılacağını belirtir
+1. **Dosya Yükleme**: 10MB'a kadar görsellere izin verir
+2. **Kayıt Tutma**: Çalışma sırasında hangi bilgilerin kaydedileceğini kontrol eder
+3. **Azure AI Foundry**: Kullanılacak uç noktayı ve model dağıtımını belirtir (anahtarsız)
 4. **Güvenlik**: Hassas bilgilerin açığa çıkmasını önlemek için hata yönetimi yapılandırması
 
-## Uygulamayı Çalıştırma
+## Uygulamayı Çalıştırmak
 
-### Adım 1: GitHub Belirtecinizi Ayarlayın
+### Adım 1: Oturum Açın ve Uç Noktanızı Ayarlayın
 
-Öncelikle, GitHub belirtecinizi bir ortam değişkeni olarak ayarlamanız gerekir:
+Kimlik doğrulama anahtarsızdır (Microsoft Entra ID), bu yüzden API anahtarı yoktur. Oturum açın ve Foundry uç noktanızı ayarlayın:
 
 **Windows (Komut İstemi):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-**Neden gerekli:**
-- GitHub Modelleri, yapay zeka modellerine erişim için kimlik doğrulama gerektirir
-- Ortam değişkenlerini kullanmak, hassas belirteçlerin kaynak kodunda bulunmasını önler
-- `models:read` kapsamı, yapay zeka çıkarımına erişim sağlar
+**Bunun Neden Gerekli Olduğu:**
+- Azure AI Foundry, sorgu isteklerini Microsoft Entra ID ile doğrular
+- Anahtarsız kimlik doğrulama, kaynak kod veya ortamda gizli bilgi olmaması demektir
+- Hesabınızın ilgili kaynak üzerinde **Cognitive Services OpenAI User** rolüne sahip olması gerekir
 
-### Adım 2: Derleme ve Çalıştırma
+### Adım 2: Derle ve Çalıştır
 
 Proje dizinine gidin:
 ```bash
@@ -373,49 +380,51 @@ mvn spring-boot:run
 
 Uygulama `http://localhost:8080` adresinde başlayacaktır.
 
-### Adım 3: Uygulamayı Test Etme
+### Adım 3: Uygulamayı Test Edin
 
-1. **Açın** `http://localhost:8080` tarayıcınızda
-2. **Tanımlayın** evcil hayvanınızı metin alanında (ör. "Top oynamayı seven oyuncu bir golden retriever")
-3. **Tıklayın** "Hikaye Oluştur" butonuna, yapay zeka tarafından oluşturulan bir hikaye almak için
-4. **Alternatif olarak**, bir evcil hayvan resmi yükleyerek otomatik bir açıklama oluşturabilirsiniz
-5. **Görün** evcil hayvanınızın açıklamasına dayalı yaratıcı hikayeyi
+1. Tarayıcınızda `http://localhost:8080` adresini açın
+2. Metin alanına evcil hayvanınızı tanımlayın (örneğin, "Top oynamayı seven enerjik bir golden retriever")
+3. "Hikaye Oluştur" butonuna tıklayarak AI tarafından oluşturulan hikayeyi alın
+4. Alternatif olarak, bir evcil hayvan resmi yükleyerek otomatik açıklama oluşturabilirsiniz
+5. Evcil hayvan açıklamanıza dayalı yaratıcı hikayeyi görüntüleyin
 
-## Her Şey Nasıl Birlikte Çalışır?
+## Hepsi Nasıl Birlikte Çalışır
 
-Bir evcil hayvan hikayesi oluşturduğunuzda tüm süreç şu şekilde işler:
+Bir evcil hayvan hikayesi oluşturduğunuzda tam süreç şöyle işler:
 
-1. **Kullanıcı Girdisi**: Web formunda evcil hayvanınızı tanımlarsınız
+1. **Kullanıcı Girişi**: Web formunda evcil hayvanınızı tanımlarsınız
 2. **Form Gönderimi**: Tarayıcı, `/generate-story` adresine POST isteği gönderir
 3. **Denetleyici İşlemi**: `PetController` girdiyi doğrular ve temizler
-4. **Yapay Zeka Servis Çağrısı**: `StoryService`, GitHub Modelleri API'sine istek gönderir
-5. **Hikaye Oluşturma**: Yapay zeka, açıklamaya dayalı yaratıcı bir hikaye oluşturur
+4. **AI Servisi Çağrısı**: `StoryService` isteği Azure AI Foundry modeline gönderir
+5. **Hikaye Oluşumu**: AI, açıklamaya dayalı yaratıcı bir hikaye oluşturur
 6. **Yanıt İşleme**: Denetleyici hikayeyi alır ve modele ekler
-7. **Şablon İşleme**: Thymeleaf, hikaye ile `result.html` dosyasını işler
-8. **Gösterim**: Kullanıcı, tarayıcısında oluşturulan hikayeyi görür
+7. **Şablon Çizimi**: Thymeleaf `result.html` dosyasını hikayeyle işler
+8. **Gösterim**: Kullanıcı tarayıcısında oluşturulan hikaye gösterilir
 
 **Hata Yönetimi Akışı:**
-Yapay zeka servisi başarısız olursa:
-1. Denetleyici istisnayı yakalar
-2. Önceden yazılmış şablonları kullanarak bir yedek hikaye oluşturur
-3. Yapay zekanın kullanılamadığına dair bir not ile yedek hikayeyi gösterir
-4. Kullanıcı yine de bir hikaye alır, bu da iyi bir kullanıcı deneyimi sağlar
+AI servisi başarısız olursa:
+1. Denetleyici hatayı yakalar
+2. Önceden yazılmış yedek şablonlarla bir hikaye oluşturur
+3. AI hizmetinin kullanılamadığına dair bir notla yedek hikayeyi gösterir
+4. Kullanıcı yine de bir hikaye alır, böylece iyi bir kullanıcı deneyimi sağlanır
 
-## Yapay Zeka Entegrasyonunu Anlama
+## Yapay Zeka Entegrasyonunu Anlamak
 
-### GitHub Modelleri API
-Uygulama, çeşitli yapay zeka modellerine ücretsiz erişim sağlayan GitHub Modelleri'ni kullanır:
+### Azure AI Foundry (anahtarsız)
+Uygulama, anahtarsız kimlik doğrulama (Microsoft Entra ID) ile Azure AI Foundry kullanır:
 
 ```java
-// Authentication with GitHub token
+// Anahtarsız kimlik doğrulama - API anahtarı yok
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
-### İstem Mühendisliği
-Servis, iyi sonuçlar almak için dikkatlice hazırlanmış istemler kullanır:
+### İstek Mühendisliği
+Servis, iyi sonuçlar almak için özenle hazırlanmış istekler kullanır:
 
 ```java
 String systemPrompt = "You are a creative storyteller who writes fun, " +
@@ -424,7 +433,7 @@ String systemPrompt = "You are a creative storyteller who writes fun, " +
 ```
 
 ### Yanıt İşleme
-Yapay zeka yanıtı çıkarılır ve doğrulanır:
+AI yanıtı çıkarılır ve doğrulanır:
 
 ```java
 ChatCompletion response = openAIClient.chat().completions().create(params);
@@ -433,7 +442,11 @@ String story = response.choices().get(0).message().content().orElse("");
 
 ## Sonraki Adımlar
 
-Daha fazla örnek için [Bölüm 04: Pratik örnekler](../README.md) bölümüne bakın.
+Daha fazla örnek için bkz. [Bölüm 04: Pratik örnekler](../README.md)
 
-**Feragatname**:  
-Bu belge, AI çeviri hizmeti [Co-op Translator](https://github.com/Azure/co-op-translator) kullanılarak çevrilmiştir. Doğruluk için çaba göstersek de, otomatik çevirilerin hata veya yanlışlıklar içerebileceğini lütfen unutmayın. Belgenin orijinal dili, yetkili kaynak olarak kabul edilmelidir. Kritik bilgiler için profesyonel insan çevirisi önerilir. Bu çevirinin kullanımından kaynaklanan yanlış anlamalar veya yanlış yorumlamalardan sorumlu değiliz.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Feragatname**:
+Bu belge, AI çeviri hizmeti [Co-op Translator](https://github.com/Azure/co-op-translator) kullanılarak çevrilmiştir. Doğruluk için çaba sarf etsek de, otomatik çevirilerin hata veya yanlışlık içerebileceğini lütfen unutmayınız. Orijinal belge, kendi dilinde yetkili kaynak olarak kabul edilmelidir. Kritik bilgiler için profesyonel insan çevirisi önerilir. Bu çevirinin kullanımı sonucu ortaya çıkabilecek yanlış anlamalardan veya yanlış yorumlamalardan sorumlu değiliz.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

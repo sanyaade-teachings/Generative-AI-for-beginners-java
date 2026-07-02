@@ -1,138 +1,151 @@
-# Azure OpenAI için Geliştirme Ortamını Kurma
+# Azure AI Foundry için Geliştirme Ortamının Kurulumu
 
-> **Hızlı Başlangıç**: Bu kılavuz Azure OpenAI kurulumu içindir. Ücretsiz modellerle hemen başlamak için [GitHub Modelleri ve Codespaces](./README.md#quick-start-cloud) kullanabilirsiniz.
+> Bu kılavuz, bu dersteki Java AI uygulamaları için **Azure AI Foundry** modellerini **anahtarsız** kimlik doğrulama (Microsoft Entra ID) kullanarak kurar — yönetilecek API anahtarları yoktur. Araçlara yeni misiniz? [geliştirme ortamı kılavuzuyla](./README.md) başlayın.
 
-Bu kılavuz, bu kursta Java yapay zeka uygulamalarınız için Azure AI Foundry modellerini kurmanıza yardımcı olacaktır.
+Bu kılavuz, bu dersteki Java AI uygulamaları için **Azure AI Foundry** modellerini kurar. İki yolunuz var:
+
+- **Seçenek A — `azd` + Bicep ile sağlama (önerilen):** bir komutla Foundry hesabı ve modeller kod olarak dağıtılır. Portalda tıklama yok.
+- **Seçenek B — Kaynakları elle oluşturun** Azure AI Foundry portalında.
+
+Her iki yol da **anahtarsız kimlik doğrulama** (Microsoft Entra ID) kullanır — kopyalanacak veya sızdırılacak API anahtarı yoktur.
 
 ## İçindekiler
 
-- [Hızlı Kurulum Genel Bakış](../../../02-SetupDevEnvironment)
-- [Adım 1: Azure AI Foundry Kaynaklarını Oluşturun](../../../02-SetupDevEnvironment)
-  - [Bir Hub ve Proje Oluşturun](../../../02-SetupDevEnvironment)
-  - [GPT-4o-mini Modelini Dağıtın](../../../02-SetupDevEnvironment)
-- [Adım 2: Codespace'inizi Oluşturun](../../../02-SetupDevEnvironment)
-- [Adım 3: Ortamınızı Yapılandırın](../../../02-SetupDevEnvironment)
-- [Adım 4: Kurulumunuzu Test Edin](../../../02-SetupDevEnvironment)
-- [Sırada Ne Var?](../../../02-SetupDevEnvironment)
-- [Kaynaklar](../../../02-SetupDevEnvironment)
-- [Ek Kaynaklar](../../../02-SetupDevEnvironment)
+- [Oluşturulanlar](#oluşturulanlar)
+- [Önkoşullar](#önkoşullar)
+- [Seçenek A: azd + Bicep ile Sağlama (Önerilen)](#option-a-provision-with-azd--bicep-recommended)
+- [Seçenek B: Kaynakları Elle Oluşturma](#seçenek-b-kaynakları-elle-oluşturma)
+- [Ortamınızı Yapılandırma](#ortamınızı-yapılandırma)
+- [Kurulumunuzu Test Etme](#kurulumunuzu-test-etme)
+- [Sonraki Adımlar?](#sonraki-adımlar)
+- [Kaynaklar](#kaynaklar)
+- [Ek Kaynaklar](#ek-kaynaklar)
 
-## Hızlı Kurulum Genel Bakış
+## Oluşturulanlar
 
-1. Azure AI Foundry kaynaklarını oluşturun (Hub, Proje, Model)
-2. Java geliştirme konteyneri ile bir Codespace oluşturun
-3. Azure OpenAI kimlik bilgileriyle `.env` dosyanızı yapılandırın
-4. Örnek proje ile kurulumunuzu test edin
+[`infra/`](../../../02-SetupDevEnvironment/infra) içindeki Bicep şablonları şunları sağlar:
 
-## Adım 1: Azure AI Foundry Kaynaklarını Oluşturun
+- Bir **Azure AI Foundry** hesabı (`Microsoft.CognitiveServices/accounts`, tür `AIServices`) ve bir proje
+- Bir **sohbet** dağıtımı — `gpt-4o-mini`
+- Bir **embedding** dağıtımı — `text-embedding-3-small` (ileriki bölümlerde kullanılır)
+- Anahtarsız rol ataması (`Cognitive Services OpenAI User`), böylece anahtar yönetmek yerine `az login` ile oturum açabilirsiniz
 
-### Bir Hub ve Proje Oluşturun
+## Önkoşullar
 
-1. [Azure AI Foundry Portalı](https://ai.azure.com/) adresine gidin ve oturum açın
-2. **+ Create** → **New hub** seçeneğine tıklayın (veya **Management** → **All hubs** → **+ New hub** yolunu izleyin)
-3. Hub'ınızı yapılandırın:
-   - **Hub adı**: Örneğin, "MyAIHub"
-   - **Abonelik**: Azure aboneliğinizi seçin
-   - **Kaynak grubu**: Yeni oluşturun veya mevcut birini seçin
-   - **Konum**: Size en yakın olanı seçin
-   - **Depolama hesabı**: Varsayılanı kullanın veya özel yapılandırın
-   - **Anahtar kasası**: Varsayılanı kullanın veya özel yapılandırın
-   - **Next** → **Review + create** → **Create** seçeneğine tıklayın
-4. Oluşturulduktan sonra, **+ New project** seçeneğine tıklayın (veya hub genel bakışından **Create project** seçeneğini seçin)
-   - **Proje adı**: Örneğin, "GenAIJava"
-   - **Create** seçeneğine tıklayın
+- Bir [Azure aboneliği](https://azure.microsoft.com/free/)
+- [Azure Developer CLI (`azd`)](https://aka.ms/azure-dev/install)
+- [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli)
+- [Java 21+](https://learn.microsoft.com/java/openjdk/download) ve [Maven 3.9+](https://maven.apache.org/download.cgi)
 
-### GPT-4o-mini Modelini Dağıtın
+## Seçenek A: azd + Bicep ile Sağlama (Önerilen)
 
-1. Projenizde, **Model catalog** sekmesine gidin ve **gpt-4o-mini** modelini arayın
-   - *Alternatif*: **Deployments** → **+ Create deployment** yolunu izleyin
-2. gpt-4o-mini model kartında **Deploy** seçeneğine tıklayın
-3. Dağıtımı yapılandırın:
-   - **Dağıtım adı**: "gpt-4o-mini"
-   - **Model sürümü**: En son sürümü kullanın
-   - **Dağıtım türü**: Standart
-4. **Deploy** seçeneğine tıklayın
-5. Dağıtım tamamlandıktan sonra, **Deployments** sekmesine gidin ve şu değerleri kopyalayın:
-   - **Dağıtım adı** (örneğin, "gpt-4o-mini")
-   - **Hedef URI** (örneğin, `https://your-hub-name.openai.azure.com/`) 
-      > **Önemli**: Yalnızca temel URL'yi kopyalayın (örneğin, `https://myhub.openai.azure.com/`), tam uç nokta yolunu değil.
-   - **Anahtar** (Keys and Endpoint bölümünden)
-
-> **Hâlâ sorun mu yaşıyorsunuz?** Resmi [Azure AI Foundry Belgeleri](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project) adresini ziyaret edin.
-
-## Adım 2: Codespace'inizi Oluşturun
-
-1. Bu depoyu GitHub hesabınıza fork edin
-   > **Not**: Temel yapılandırmayı düzenlemek isterseniz [Geliştirme Konteyneri Yapılandırması](../../../.devcontainer/devcontainer.json) bölümüne göz atabilirsiniz.
-2. Forkladığınız depoda, **Code** → **Codespaces** sekmesine tıklayın
-3. **...** → **New with options...** seçeneğine tıklayın  
-![seçeneklerle bir codespace oluşturma](../../../translated_images/tr/codespaces.9945ded8ceb431a5.webp)
-4. **Geliştirme konteyneri yapılandırmasını** seçin: 
-   - **Generative AI Java Development Environment**
-5. **Create codespace** seçeneğine tıklayın
-
-## Adım 3: Ortamınızı Yapılandırın
-
-Codespace'iniz hazır olduğunda, Azure OpenAI kimlik bilgilerinizi ayarlayın:
-
-1. **Depo kökünden örnek projeye gidin:**
-   ```bash
-   cd 02-SetupDevEnvironment/examples/basic-chat-azure
-   ```
-
-2. **.env dosyanızı oluşturun:**
-   ```bash
-   cp .env.example .env
-   ```
-
-3. **.env dosyasını Azure OpenAI kimlik bilgilerinizle düzenleyin:**
-   ```bash
-   # Your Azure OpenAI API key (from Azure AI Foundry portal)
-   AZURE_AI_KEY=your-actual-api-key-here
-   
-   # Your Azure OpenAI endpoint URL (e.g., https://myhub.openai.azure.com/)
-   AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-   ```
-
-   > **Güvenlik Notu**: 
-   > - `.env` dosyanızı asla sürüm kontrolüne göndermeyin
-   > - `.env` dosyası zaten `.gitignore` içinde yer alıyor
-   > - API anahtarlarınızı güvende tutun ve düzenli olarak yenileyin
-
-## Adım 4: Kurulumunuzu Test Edin
-
-Azure OpenAI bağlantınızı test etmek için örnek uygulamayı çalıştırın:
+`02-SetupDevEnvironment` klasöründen:
 
 ```bash
+cd 02-SetupDevEnvironment
+
+# Giriş yap (her iki araç)
+azd auth login
+az login
+
+# Foundry hesabını ve model dağıtımlarını sağla
+azd up
+```
+  
+`azd` sizden bir **ortam adı** (örneğin `genai-java`) ve bir **bölge** ister. `gpt-4o-mini` ve `text-embedding-3-small` modelinin mevcut olduğu bir bölge seçin — örneğin `eastus2` veya `swedencentral`.
+
+Sağlama tamamlandığında azd:
+
+1. [`infra/main.bicep`](../../../02-SetupDevEnvironment/infra/main.bicep) içinde tanımlanan her şeyi dağıtır.
+2. Sonrasında, [`examples/basic-chat-azure/.env`](../../../02-SetupDevEnvironment/examples/basic-chat-azure) dosyasını uç nokta ve dağıtım adlarıyla (gizli bilgi yok) yazar.
+
+> **İpucu:** Değişiklik uygulamak için istediğiniz zaman `azd up` komutunu tekrar çalıştırın. Her şeyi silmek ve maliyetten kaçınmak için `azd down` komutunu kullanın.
+
+Oluşturulan ayarları görmek için:
+
+```bash
+azd env get-values
+```
+  
+Şimdi [Kurulumunuzu Test Etme](#kurulumunuzu-test-etme) bölümüne geçin.
+
+## Seçenek B: Kaynakları Elle Oluşturma
+
+Portali tercih ediyorsanız, kaynakları el ile oluşturun:
+
+1. [Azure AI Foundry portalına](https://ai.azure.com/) gidin ve oturum açın.
+2. **Bir proje oluşturun** (bu ayrıca bir AI Foundry kaynağı da oluşturur). `GenAIJava` gibi bir isim verin.
+3. Projenizde **Modeller + uç noktalar** → **Model dağıt** → **Temel modeli dağıt** bölümünü açın.
+4. **gpt-4o-mini**’yi dağıtın (dağıtım adı `gpt-4o-mini`). Embedding örneklerini istiyorsanız **text-embedding-3-small** için de tekrarlayın.
+5. **Genel Bakış** sayfasından **uç noktayı** kopyalayın (örneğin `https://<resource>.openai.azure.com/`).
+6. Anahtarsız erişim izinleri verin: kaynakta **Erişim kontrolü (IAM)** → **Rol ataması ekle** → **Cognitive Services OpenAI User** rolünü hesabınıza atayın.
+
+> **Hâlâ sorun mu yaşıyorsunuz?** [Azure AI Foundry dokümantasyonuna](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects) bakın.
+
+## Ortamınızı Yapılandırma
+
+**Seçenek A’yı (`azd up`) kullandıysanız**, ayarlar dosyanız zaten yazılmıştır — yapılandıracak bir şey yoktur. [Kurulumunuzu Test Etme](#kurulumunuzu-test-etme) bölümüne geçin.
+
+**Seçenek B’yi (elle) kullandıysanız**, örneğin `.env` dosyasını kendiniz oluşturun:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+cp .env.example .env
+```
+  
+`.env` dosyasını uç noktanızla düzenleyin (anahtar yok — kimlik doğrulama anahtarsızdır):
+
+```bash
+AZURE_OPENAI_ENDPOINT=https://<your-resource>.openai.azure.com/
+AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini
+```
+  
+> **Güvenlik notu:** Saklanacak bir API anahtarı yoktur. Yerelde `az login` ile Microsoft Entra ID üzerinden veya Azure’da yönetilen kimlikle kimlik doğrulaması yaparsınız. `.env` dosyası sadece gizli olmayan ayarları içerir ve zaten `.gitignore` tarafından korunmaktadır.
+
+## Kurulumunuzu Test Etme
+
+Anahtarsız kimlik doğrulamanın bir jeton alabilmesi için oturum açtığınızdan emin olun, sonra örneği çalıştırın:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+
+az login          # eğer zaten giriş yapmadıysanız
 mvn clean spring-boot:run
 ```
+  
+`gpt-4o-mini` modelinden yanıt almalısınız!
 
-GPT-4o-mini modelinden bir yanıt görmelisiniz!
+> **VS Code kullanıcıları:** Çalıştırmak için `F5` tuşuna basın. Uygulama `.env` dosyanızı otomatik yükler.
 
-> **VS Code Kullanıcıları**: Uygulamayı çalıştırmak için `F5` tuşuna da basabilirsiniz. Başlatma yapılandırması `.env` dosyanızı otomatik olarak yükleyecek şekilde ayarlanmıştır.
+> **Tam örnek:** Ayrıntılar ve sorun giderme için [Azure AI Foundry ile Temel Sohbet örneğine](./examples/basic-chat-azure/README.md) bakın.
 
-> **Tam örnek**: Ayrıntılı talimatlar ve sorun giderme için [Uçtan Uca Azure OpenAI Örneği](./examples/basic-chat-azure/README.md) bölümüne bakın.
+## Sonraki Adımlar?
 
-## Sırada Ne Var?
+**Kurulum tamamlandı!** Artık şunlara sahipsiniz:  
+- `gpt-4o-mini` ve `text-embedding-3-small` ile Azure AI Foundry dağıtıldı  
+- Anahtarsız kimlik doğrulama (Microsoft Entra ID) — yönetilecek anahtar yok  
+- Uç nokta ve dağıtım adlarını içeren yerel `.env` dosyası  
+- Hazır bir Java geliştirme ortamı
 
-**Kurulum Tamamlandı!** Artık şunlara sahipsiniz:
-- gpt-4o-mini modeliyle Azure OpenAI dağıtımı
-- Yerel `.env` dosyası yapılandırması
-- Java geliştirme ortamı hazır
-
-**Devam edin** [Bölüm 3: Temel Üretken Yapay Zeka Teknikleri](../03-CoreGenerativeAITechniques/README.md) ile yapay zeka uygulamaları oluşturmaya başlayın!
+**Devam edin:** [Bölüm 3: Temel Üretici AI Teknikleri](../03-CoreGenerativeAITechniques/README.md) ile AI uygulamaları geliştirmeye başlayın!
 
 ## Kaynaklar
 
-- [Azure AI Foundry Belgeleri](https://learn.microsoft.com/azure/ai-services/)
-- [Spring AI Azure OpenAI Belgeleri](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
+- [Azure Developer CLI (azd)](https://aka.ms/azure-dev/install)
+- [Microsoft Entra ID ile anahtarsız kimlik doğrulama](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
+- [Azure AI Foundry Dokümantasyonu](https://learn.microsoft.com/azure/ai-foundry/)
+- [Spring AI Azure OpenAI Dokümantasyonu](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
 - [Azure OpenAI Java SDK](https://learn.microsoft.com/java/api/overview/azure/ai-openai-readme)
 
 ## Ek Kaynaklar
 
-- [VS Code'u İndirin](https://code.visualstudio.com/Download)
-- [Docker Desktop Edinin](https://www.docker.com/products/docker-desktop)
-- [Geliştirme Konteyneri Yapılandırması](../../../.devcontainer/devcontainer.json)
+- [VS Code indir](https://code.visualstudio.com/Download)
+- [Docker Desktop edinin](https://www.docker.com/products/docker-desktop)
+- [Dev Container Konfigürasyonu](../../../.devcontainer/devcontainer.json)
 
-**Feragatname**:  
-Bu belge, AI çeviri hizmeti [Co-op Translator](https://github.com/Azure/co-op-translator) kullanılarak çevrilmiştir. Doğruluk için çaba göstersek de, otomatik çevirilerin hata veya yanlışlık içerebileceğini lütfen unutmayın. Belgenin orijinal dilindeki hali, yetkili kaynak olarak kabul edilmelidir. Kritik bilgiler için profesyonel insan çevirisi önerilir. Bu çevirinin kullanımından kaynaklanan yanlış anlamalar veya yanlış yorumlamalar için sorumluluk kabul etmiyoruz.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Feragatname**:
+Bu belge, AI çeviri hizmeti [Co-op Translator](https://github.com/Azure/co-op-translator) kullanılarak çevrilmiştir. Doğruluk için çaba sarf etsek de, otomatik çevirilerin hata veya yanlışlık içerebileceğini lütfen unutmayınız. Orijinal belge, kendi dilinde yetkili kaynak olarak kabul edilmelidir. Kritik bilgiler için profesyonel insan çevirisi önerilir. Bu çevirinin kullanımı sonucu ortaya çıkabilecek yanlış anlamalardan veya yanlış yorumlamalardan sorumlu değiliz.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

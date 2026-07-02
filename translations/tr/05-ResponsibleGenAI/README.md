@@ -1,98 +1,94 @@
 # Sorumlu Üretken Yapay Zeka
 
-[![Sorumlu Üretken Yapay Zeka](https://img.youtube.com/vi/rF-b2BTSMQ4/0.jpg)](https://www.youtube.com/watch?v=rF-b2BTSMQ4 "Sorumlu Üretken Yapay Zeka")
-
-> **Video**: [Bu dersin video genel bakışını izleyin](https://www.youtube.com/watch?v=rF-b2BTSMQ4).
-> Aynı videoyu açmak için yukarıdaki küçük resim görüntüsüne de tıklayabilirsiniz.
 
 ## Öğrenecekleriniz
 
 - Yapay zeka geliştirme için önemli etik hususları ve en iyi uygulamaları öğrenin
-- Uygulamalarınıza içerik filtreleme ve güvenlik önlemleri ekleyin
-- GitHub Models'in yerleşik korumalarını kullanarak yapay zeka güvenlik yanıtlarını test edin ve yönetin
-- Güvenli, etik yapay zeka sistemleri oluşturmak için sorumlu yapay zeka ilkelerini uygulayın
+- Uygulamalarınıza içerik filtreleme ve güvenlik önlemleri entegre edin
+- Azure AI Foundry'nin yerleşik içerik filtrelemesini kullanarak yapay zeka güvenlik yanıtlarını test edin ve yönetin
+- Güvenli, etik yapay zeka sistemleri oluşturmak için sorumlu yapay zeka prensiplerini uygulayın
 
 ## İçindekiler
 
 - [Giriş](#giriş)
-- [GitHub Models Yerleşik Güvenliği](#github-models-yerleşik-güvenliği)
-- [Uygulamalı Örnek: Sorumlu Yapay Zeka Güvenlik Gösterimi](#uygulamalı-örnek-sorumlu-yapay-zeka-güvenlik-gösterimi)
-  - [Gösterimin Gösterdikleri](#gösterimin-gösterdikleri)
+- [Azure AI Foundry İçerik Güvenliği](#azure-ai-foundry-i̇çerik-güvenliği)
+- [Pratik Örnek: Sorumlu Yapay Zeka Güvenlik Demo](#pratik-örnek-sorumlu-yapay-zeka-güvenlik-demo)
+  - [Demo'nun Gösterdikleri](#demonun-gösterdikleri)
   - [Kurulum Talimatları](#kurulum-talimatları)
-  - [Gösterimi Çalıştırma](#gösterimi-çalıştırma)
+  - [Demoyu Çalıştırma](#demoyu-çalıştırma)
   - [Beklenen Çıktı](#beklenen-çıktı)
-- [Sorumlu Yapay Zeka Geliştirme için En İyi Uygulamalar](#sorumlu-yapay-zeka-geliştirme-için-en-i̇yi-uygulamalar)
+- [Sorumlu Yapay Zeka Geliştirme İçin En İyi Uygulamalar](#sorumlu-yapay-zeka-geliştirme-i̇çin-en-i̇yi-uygulamalar)
 - [Önemli Not](#önemli-not)
 - [Özet](#özet)
-- [Kurs Tamamlama](#kurs-tamamlama)
+- [Kursun Tamamlanması](#kursun-tamamlanması)
 - [Sonraki Adımlar](#sonraki-adımlar)
 
 ## Giriş
 
-Bu son bölüm, sorumlu ve etik üretken yapay zeka uygulamaları oluşturmanın kritik yönlerine odaklanmaktadır. Güvenlik önlemlerinin nasıl uygulanacağını, içerik filtrelemeyi nasıl yöneteceğinizi ve önceki bölümlerde ele alınan araçlar ve çerçevelerle sorumlu yapay zeka geliştirme için en iyi uygulamaları nasıl uygulayacağınızı öğreneceksiniz. Bu ilkeleri anlamak, sadece teknik olarak etkileyici değil, aynı zamanda güvenli, etik ve güvenilir yapay zeka sistemleri oluşturmak için esastır.
+Bu son bölüm, sorumlu ve etik üretken yapay zeka uygulamaları geliştirmeye odaklanır. Güvenlik önlemlerini nasıl uygulayacağınızı, içerik filtrelemeyi nasıl yöneteceğinizi ve önceki bölümlerde ele alınan araçlar ve çerçevelerle sorumlu yapay zeka geliştirme için en iyi uygulamaları nasıl uygulayacağınızı öğreneceksiniz. Bu prensipleri anlamak, sadece teknik olarak etkileyici değil, aynı zamanda güvenli, etik ve güvenilir yapay zeka sistemleri oluşturmak için gereklidir.
 
-## GitHub Models Yerleşik Güvenliği
+## Azure AI Foundry İçerik Güvenliği
 
-GitHub Models kutudan çıktığı gibi temel içerik filtreleme ile gelir. Yapay zeka kulübünüzde dostça bir kapı görevlisi gibidir - en sofistike değil ama temel senaryolar için işi halleder.
+Azure AI Foundry modelleri, Azure AI İçerik Güvenliği tarafından desteklenen kutudan çıktığı anda içerik filtrelemesi ile gelir. Zararlı istemler ve yanıtlar, modele ulaşmadan — veya modelden çıkmadan — önce birkaç kategori üzerinden otomatik olarak taranır.
 
-**GitHub Models'in Koruduğu Alanlar:**
-- **Zararlı İçerik**: Açıkça şiddet, cinsel veya tehlikeli içerikleri engeller
-- **Temel Nefret Söylemi**: Açıkça ayrımcı dili filtreler
-- **Basit Kılık Değiştirmeler**: Güvenlik önlemlerini aşmaya yönelik temel girişimlere karşı dayanıklıdır
+**Azure AI Foundry'nin Koruduğu Şeyler:**
+- **Zararlı İçerik**: Şiddet, cinsel içerik, kendine zarar verme veya tehlikeli içerik engeller
+- **Nefret Söylemi**: Ayrımcı dili filtreler
+- **Jailbreakler**: İstem enjeksiyonu ve güvenlik koruyucularını atlama girişimlerini tespit eder
 
-## Uygulamalı Örnek: Sorumlu Yapay Zeka Güvenlik Gösterimi
+## Pratik Örnek: Sorumlu Yapay Zeka Güvenlik Demo
 
-Bu bölüm, GitHub Models'in sorumlu yapay zeka güvenlik önlemlerini nasıl uyguladığını, güvenlik yönergelerini ihlal edebilecek istemleri test ederek gösteren pratik bir demonstrasyon içerir.
+Bu bölüm, Azure AI Foundry'nin sorumlu yapay zeka güvenlik önlemlerini nasıl uyguladığını, güvenlik yönergelerini potansiyel olarak ihlal edebilecek istemleri test ederek gösteren pratik bir demo içerir.
 
-### Gösterimin Gösterdikleri
+### Demo'nun Gösterdikleri
 
-`ResponsibleGithubModels` sınıfı şu akışı izler:
-1. Kimlik doğrulama ile GitHub Models istemcisini başlatır
-2. Zararlı istemleri test eder (şiddet, nefret söylemi, yanlış bilgi, yasa dışı içerik)
-3. Her istemi GitHub Models API’sine gönderir
-4. Yanıtları ele alır: sert engeller (HTTP hataları), nazik reddetmeler ("Yardım edemem" yanıtları) veya normal içerik üretimi
-5. Hangi içeriğin engellendiği, reddedildiği veya izin verildiğini gösteren sonuçları görüntüler
-6. Karşılaştırma için güvenli içeriği test eder
+`ResponsibleAIDemo` sınıfı şu akışı takip eder:
+1. Microsoft Entra ID kullanarak anahtarsız kimlik doğrulama ile Azure AI Foundry istemcisini başlatır
+2. Zararlı istemleri (şiddet, nefret söylemi, yanlış bilgi, yasadışı içerik) test eder
+3. Her istemi Azure AI Foundry modeline gönderir
+4. Yanıtları yönetir: sert engellemeler (HTTP hataları), yumuşak reddetmeler (nazik "yardım edemem" yanıtları) veya normal içerik üretimi
+5. Hangi içeriğin engellendiğini, reddedildiğini veya izin verildiğini gösteren sonuçları görüntüler
+6. Karşılaştırma için güvenli içerikleri test eder
 
-![Sorumlu Yapay Zeka Güvenlik Gösterimi](../../../translated_images/tr/responsible.e4f51a917bafa4bf.webp)
+![Responsible AI Safety Demo](../../../translated_images/tr/responsible.e4f51a917bafa4bf.webp)
 
 ### Kurulum Talimatları
 
-1. **GitHub Kişisel Erişim Token’ınızı (PAT) ayarlayın:**
+1. **Oturum açın ve Azure AI Foundry uç noktanızı ayarlayın** (anahtarsız kimlik doğrulama — API anahtarı yok). Önce `az login` komutunu çalıştırın, sonra:
    
-   Windows (Komut İstemi) için:
+   Windows (Komut İstemi) üzerinde:
    ```cmd
-   set GITHUB_TOKEN=your_github_token_here
+   set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    ```
    
-   Windows (PowerShell) için:
+   Windows (PowerShell) üzerinde:
    ```powershell
-   $env:GITHUB_TOKEN="your_github_token_here"
+   $env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
    ```
    
-   Linux/macOS için:
+   Linux/macOS üzerinde:
    ```bash
-   export GITHUB_TOKEN=your_github_token_here
+   export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    ```   
 
-### Gösterimi Çalıştırma
+### Demoyu Çalıştırma
 
-1. **examples dizinine gidin:**
+1. **Örnekler dizinine gidin:**
    ```bash
    cd 03-CoreGenerativeAITechniques/examples
    ```
 
-2. **Gösterimi derleyip çalıştırın:**
+2. **Demoyu derleyip çalıştırın:**
    ```bash
-   mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleGithubModels"
+   mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleAIDemo"
    ```
 
 ### Beklenen Çıktı
 
-Gösterim, çeşitli potansiyel zararlı istemleri test edecek ve modern yapay zeka güvenliğinin iki mekanizma üzerinden nasıl çalıştığını gösterecek:
+Demo, çeşitli potansiyel zararlı istem türlerini test edecek ve modern yapay zeka güvenliğinin iki mekanizma aracılığıyla nasıl işlediğini gösterecektir:
 
-- **Sert Engeller**: İçerik modele ulaşmadan önce güvenlik filtreleri tarafından engellendiğinde HTTP 400 hataları
-- **Nazik Reddetmeler**: Modelin "Yardım edemem" gibi kibar reddetme yanıtları (modern modellerde en yaygın)
+- **Sert Engellemeler**: İçerik modele ulaşmadan önce güvenlik filtreleri tarafından engellendiğinde HTTP 400 hataları
+- **Yumuşak Reddetmeler**: Modelin "Bu konuda yardımcı olamam" gibi nazik reddetme yanıtları (modern modellerde en yaygın)
 - **Normal yanıt alan güvenli içerik**
 
 Örnek çıktı formatı:
@@ -113,85 +109,85 @@ Status: Response generated successfully
 ────────────────────────────────────────────────────────────
 ```
 
-**Not**: Hem sert engeller hem de nazik reddetmeler güvenlik sisteminin düzgün çalıştığını gösterir.
+**Not**: Hem sert engellemeler hem de yumuşak reddetmeler güvenlik sisteminin düzgün çalıştığını gösterir.
 
-## Sorumlu Yapay Zeka Geliştirme için En İyi Uygulamalar
+## Sorumlu Yapay Zeka Geliştirme İçin En İyi Uygulamalar
 
-Yapay zeka uygulamaları oluştururken şu temel uygulamaları takip edin:
+Yapay zeka uygulamaları geliştirirken şu temel uygulamaları takip edin:
 
-1. **Potansiyel güvenlik filtre yanıtlarını her zaman nazikçe yönetin**
-   - Engellenen içerikler için uygun hata yönetimini uygulayın
-   - İçerik filtrelendiğinde kullanıcılara anlamlı geri bildirim sağlayın
+1. **Potansiyel güvenlik filtresi yanıtlarını her zaman düzgün şekilde yönetin**
+   - Engellenen içerik için doğru hata yönetimini uygulayın
+   - İçerik filtrelendiğinde kullanıcılara anlamlı geri bildirim verin
 
-2. **İhtiyaç duyulduğunda ek içerik doğrulaması uygulayın**
-   - Alanınıza özel güvenlik kontrolleri ekleyin
-   - Kullanım durumunuza uygun özel doğrulama kuralları oluşturun
+2. **Uygun yerlerde kendi ek içerik doğrulamanızı yapın**
+   - Alanınıza özgü güvenlik kontrolleri ekleyin
+   - Kendi kullanım durumunuza özel doğrulama kuralları oluşturun
 
-3. **Kullanıcıları sorumlu yapay zeka kullanımı hakkında bilgilendirin**
-   - Kabul edilebilir kullanıma dair açık yönergeler sunun
-   - Neden bazı içeriklerin engellendiğini açıklayın
+3. **Kullanıcıları sorumlu yapay zeka kullanımı hakkında eğitin**
+   - Kabul edilebilir kullanım için net yönergeler sunun
+   - Bazı içeriklerin neden engellenebileceğini açıklayın
 
-4. **İyileştirme için güvenlik olaylarını izleyin ve kaydedin**
-   - Engellenen içerik desenlerini takip edin
+4. **Güvenlik olaylarını izleyin ve kaydedin, geliştirme için**
+   - Engellenen içerik kalıplarını takip edin
    - Güvenlik önlemlerinizi sürekli geliştirin
 
 5. **Platformun içerik politikalarına saygı gösterin**
-   - Platform kurallarını güncel tutun
-   - Hizmet şartları ve etik kurallara uyun
+   - Platform yönergeleri ile güncel kalın
+   - Hizmet şartları ve etik rehberlere uyun
 
 ## Önemli Not
 
-Bu örnek, eğitim amaçlı kasıtlı olarak problemli istemler kullanmaktadır. Amaç güvenlik önlemlerini atlamak değil, onları göstermektir. Yapay zeka araçlarını her zaman sorumlu ve etik şekilde kullanın.
+Bu örnek sadece eğitim amaçlı olarak kasıtlı problemli istemler kullanmaktadır. Amaç güvenlik önlemlerini atlamak değil, göstermektir. Yapay zeka araçlarını her zaman sorumlu ve etik şekilde kullanın.
 
 ## Özet
 
-**Tebrikler!** Başarıyla:
+**Tebrikler!** Başarıyla şunları yaptınız:
 
 - **İçerik filtreleme ve güvenlik yanıt yönetimi dahil yapay zeka güvenlik önlemleri uyguladınız**
-- **Etik ve güvenilir yapay zeka sistemleri oluşturmak için sorumlu yapay zeka ilkelerini uyguladınız**
-- **GitHub Models’in yerleşik koruma yeteneklerini kullanarak güvenlik mekanizmalarını test ettiniz**
-- **Sorumlu yapay zeka geliştirme ve uygulama için en iyi uygulamaları öğrendiniz**
+- **Etik ve güvenilir yapay zeka sistemleri oluşturmak için sorumlu yapay zeka prensiplerini uyguladınız**
+- **Azure AI Foundry’nin yerleşik içerik güvenliği özelliklerini kullanarak güvenlik mekanizmalarını test ettiniz**
+- **Sorumlu yapay zeka geliştirme ve dağıtımı için en iyi uygulamaları öğrendiniz**
 
 **Sorumlu Yapay Zeka Kaynakları:**
-- [Microsoft Güven Merkezi](https://www.microsoft.com/trust-center) - Microsoft'un güvenlik, gizlilik ve uyumluluk yaklaşımını öğrenin
-- [Microsoft Sorumlu Yapay Zeka](https://www.microsoft.com/ai/responsible-ai) - Microsoft'un sorumlu yapay zeka geliştirme için ilkeleri ve uygulamalarını keşfedin
+- [Microsoft Güven Merkezi](https://www.microsoft.com/trust-center) - Microsoft'un güvenlik, gizlilik ve uyum yaklaşımını öğrenin
+- [Microsoft Sorumlu Yapay Zeka](https://www.microsoft.com/ai/responsible-ai) - Microsoft’un sorumlu yapay zeka geliştirme prensipleri ve uygulamalarını keşfedin
 
-## Kurs Tamamlama
+## Kursun Tamamlanması
 
-Üretken Yapay Zeka Başlangıç Kursunu başarıyla tamamladınız!
+Üretken Yapay Zeka Başlangıç Kursunu tamamladığınız için tebrikler!
 
-![Kurs Tamamlama](../../../translated_images/tr/image.73c7e2ff4a652e77.webp)
+![Course Completion](../../../translated_images/tr/image.73c7e2ff4a652e77.webp)
 
 **Başardıklarınız:**
 - Geliştirme ortamınızı kurdunuz
 - Temel üretken yapay zeka tekniklerini öğrendiniz
 - Pratik yapay zeka uygulamalarını keşfettiniz
-- Sorumlu yapay zeka ilkelerini anladınız
+- Sorumlu yapay zeka prensiplerini anladınız
 
 ## Sonraki Adımlar
 
-Yapay zeka öğrenim yolculuğunuza bu ek kaynaklarla devam edin:
+Yapay zeka öğrenme yolculuğunuza şu ek kaynaklarla devam edin:
 
 **Ek Öğrenme Kursları:**
-- [Yeni Başlayanlar için AI Ajanları](https://github.com/microsoft/ai-agents-for-beginners)
-- [.NET kullanarak Yeni Başlayanlar için Üretken Yapay Zeka](https://github.com/microsoft/Generative-AI-for-beginners-dotnet)
-- [JavaScript kullanarak Yeni Başlayanlar için Üretken Yapay Zeka](https://github.com/microsoft/generative-ai-with-javascript)
-- [Yeni Başlayanlar için Üretken Yapay Zeka](https://github.com/microsoft/generative-ai-for-beginners)
-- [Yeni Başlayanlar için Makine Öğrenimi](https://aka.ms/ml-beginners)
-- [Yeni Başlayanlar için Veri Bilimi](https://aka.ms/datascience-beginners)
-- [Yeni Başlayanlar için Yapay Zeka](https://aka.ms/ai-beginners)
-- [Yeni Başlayanlar için Siber Güvenlik](https://github.com/microsoft/Security-101)
-- [Yeni Başlayanlar için Web Geliştirme](https://aka.ms/webdev-beginners)
-- [Yeni Başlayanlar için Nesnelerin İnterneti (IoT)](https://aka.ms/iot-beginners)
-- [Yeni Başlayanlar için XR Geliştirme](https://github.com/microsoft/xr-development-for-beginners)
-- [Yapay Zeka Eşli Programlama için GitHub Copilot'u Ustalaştırma](https://aka.ms/GitHubCopilotAI)
-- [C#/.NET Geliştiricileri için GitHub Copilot'u Ustalaştırma](https://github.com/microsoft/mastering-github-copilot-for-dotnet-csharp-developers)
+- [Yeni Başlayanlar İçin AI Ajanları](https://github.com/microsoft/ai-agents-for-beginners)
+- [.NET Kullanarak Yeni Başlayanlar İçin Üretken Yapay Zeka](https://github.com/microsoft/Generative-AI-for-beginners-dotnet)
+- [JavaScript Kullanarak Yeni Başlayanlar İçin Üretken Yapay Zeka](https://github.com/microsoft/generative-ai-with-javascript)
+- [Yeni Başlayanlar İçin Üretken Yapay Zeka](https://github.com/microsoft/generative-ai-for-beginners)
+- [Yeni Başlayanlar İçin ML](https://aka.ms/ml-beginners)
+- [Yeni Başlayanlar İçin Veri Bilimi](https://aka.ms/datascience-beginners)
+- [Yeni Başlayanlar İçin Yapay Zeka](https://aka.ms/ai-beginners)
+- [Yeni Başlayanlar İçin Siber Güvenlik](https://github.com/microsoft/Security-101)
+- [Yeni Başlayanlar İçin Web Geliştirme](https://aka.ms/webdev-beginners)
+- [Yeni Başlayanlar İçin IoT](https://aka.ms/iot-beginners)
+- [Yeni Başlayanlar İçin XR Geliştirme](https://github.com/microsoft/xr-development-for-beginners)
+- [Yapay Zeka Eşli Programlama İçin GitHub Copilot'u Ustalaştırma](https://aka.ms/GitHubCopilotAI)
+- [C#/.NET Geliştiricileri İçin GitHub Copilot'u Ustalaştırma](https://github.com/microsoft/mastering-github-copilot-for-dotnet-csharp-developers)
 - [Kendi Copilot Maceranı Seç](https://github.com/microsoft/CopilotAdventures)
-- [Azure AI Servisleri ile RAG Sohbet Uygulaması](https://github.com/Azure-Samples/azure-search-openai-demo-java)
+- [Azure AI Hizmetleri ile RAG Chat Uygulaması](https://github.com/Azure-Samples/azure-search-openai-demo-java)
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Feragatname**:  
-Bu belge, AI çeviri hizmeti [Co-op Translator](https://github.com/Azure/co-op-translator) kullanılarak çevrilmiştir. Doğruluk için çalışsak da, otomatik çevirilerin hatalar veya yanlışlıklar içerebileceğini lütfen unutmayın. Orijinal belge, kendi ana dilindeki haliyle yetkili kaynak olarak kabul edilmelidir. Kritik bilgiler için profesyonel insan çevirisi tavsiye edilir. Bu çevirinin kullanımı sonucu oluşabilecek herhangi bir yanlış anlama veya yanlış yorumdan sorumlu değiliz.
+**Feragatname**:
+Bu belge, AI çeviri hizmeti [Co-op Translator](https://github.com/Azure/co-op-translator) kullanılarak çevrilmiştir. Doğruluk için çaba sarf etsek de, otomatik çevirilerin hata veya yanlışlık içerebileceğini lütfen unutmayınız. Orijinal belge, kendi dilinde yetkili kaynak olarak kabul edilmelidir. Kritik bilgiler için profesyonel insan çevirisi önerilir. Bu çevirinin kullanımı sonucu ortaya çıkabilecek yanlış anlamalardan veya yanlış yorumlamalardan sorumlu değiliz.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

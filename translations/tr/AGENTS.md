@@ -1,75 +1,78 @@
 # AGENTS.md
 
-## Proje Genel Bakış
+## Proje Genel Bakışı
 
-Bu, Java ile Generative AI geliştirmeyi öğrenmek için bir eğitim deposudur. Büyük Dil Modelleri (LLMs), prompt mühendisliği, gömme (embeddings), RAG (Retrieval-Augmented Generation) ve Model Context Protocol (MCP) gibi konuları kapsayan kapsamlı bir uygulamalı kurs sunar.
+Bu, Java ile Üretici Yapay Zeka geliştirmeyi öğrenmek için eğitsel bir depodur. Büyük Dil Modelleri (LLM'ler), prompt mühendisliği, gömme yapılar, RAG (Retrieval-Augmented Generation) ve Model Context Protocol (MCP) dahil olmak üzere kapsamlı, uygulamalı bir kurs sunar.
 
-**Anahtar Teknolojiler:**
+**Temel Teknolojiler:**
 - Java 21
 - Spring Boot 3.5.x
 - Spring AI 1.1.x
 - Maven
 - LangChain4j
-- GitHub Modelleri, Azure OpenAI ve OpenAI SDK'ları
+- Azure AI Foundry, Azure OpenAI ve OpenAI SDK'ları
 
 **Mimari:**
-- Bölümlere göre düzenlenmiş bağımsız Spring Boot uygulamaları
-- Farklı AI desenlerini gösteren örnek projeler
-- Önceden yapılandırılmış geliştirme konteynerleri ile GitHub Codespaces uyumlu
+- Bölümler halinde düzenlenmiş birden fazla bağımsız Spring Boot uygulaması
+- Farklı yapay zeka desenlerini gösteren örnek projeler
+- Ön yapılandırılmış geliştirme konteynerleri ile GitHub Codespaces uyumlu
 
 ## Kurulum Komutları
 
-### Ön Koşullar
+### Önkoşullar
 - Java 21 veya üstü
 - Maven 3.x
-- GitHub kişisel erişim tokeni (GitHub Modelleri için)
-- Opsiyonel: Azure OpenAI kimlik bilgileri
+- Azure AI Foundry model dağıtımı olan Azure aboneliği (`azd up` ile sağlayın)
+- Azure CLI (`az`) ve Azure Developer CLI (`azd`), anahtarsız kimlik doğrulama için giriş yapılmış
 
 ### Ortam Kurulumu
 
 **Seçenek 1: GitHub Codespaces (Önerilen)**
 ```bash
-# Fork the repository and create a codespace from GitHub UI
-# The dev container will automatically install all dependencies
-# Wait ~2 minutes for environment setup
+# Depoyu çatallayın ve GitHub UI'den bir kod alanı oluşturun
+# Geliştirme konteyneri tüm bağımlılıkları otomatik olarak yükleyecektir
+# Ortam kurulumu için ~2 dakika bekleyin
 ```
 
 **Seçenek 2: Yerel Geliştirme Konteyneri**
 ```bash
-# Clone repository
+# Depoyu klonla
 git clone https://github.com/microsoft/Generative-AI-for-beginners-java.git
 cd Generative-AI-for-beginners-java
 
-# Open in VS Code with Dev Containers extension
-# Reopen in Container when prompted
+# Dev Containers eklentisi ile VS Code'da aç
+# İstendiğinde konteyner içinde yeniden aç
 ```
 
 **Seçenek 3: Yerel Kurulum**
 ```bash
-# Install dependencies
+# Bağımlılıkları yükle
 sudo apt-get update
 sudo apt-get install -y maven openjdk-21-jdk
 
-# Verify installation
+# Kurulumu doğrula
 java -version
 mvn -version
 ```
 
 ### Yapılandırma
 
-**GitHub Token Kurulumu:**
+**Azure AI Foundry Kurulumu (anahtarsız, önerilir):**
 ```bash
-# Create a GitHub Personal Access Token
-# Set environment variable
-export GITHUB_TOKEN="your-token-here"
+# Foundry hesabını ve model dağıtımlarını kod olarak sağlama
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
+# azd, endpoint’iniz ile examples/basic-chat-azure/.env dosyasını yazar (anahtar yok)
 ```
 
-**Azure OpenAI Kurulumu (Opsiyonel):**
+**Manuel uç nokta yapılandırması:**
 ```bash
-# For examples using Azure OpenAI
+# Eğer azd kullanmadıysanız, uç noktayı kendiniz ayarlayın (kimlik doğrulama, az login ile anahtarsız kalır)
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# .env dosyasını düzenleyin: AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com/
 ```
 
 ## Geliştirme İş Akışı
@@ -97,38 +100,38 @@ cd [project-directory]
 mvn spring-boot:run
 ```
 
-**Bir projeyi derleme:**
+**Projeyi derleme:**
 ```bash
 cd [project-directory]
 mvn clean install
 ```
 
-**MCP Hesaplayıcı Sunucusunu Başlatma:**
+**MCP Calculator Server'ı başlatma:**
 ```bash
 cd 04-PracticalSamples/calculator
 mvn spring-boot:run
-# Server runs on http://localhost:8080
+# Sunucu http://localhost:8080 üzerinde çalışıyor
 ```
 
 **İstemci Örneklerini Çalıştırma:**
 ```bash
-# After starting the server in another terminal
+# Sunucuyu başka bir terminalde başlattıktan sonra
 cd 04-PracticalSamples/calculator
 
-# Direct MCP client
+# Doğrudan MCP istemcisi
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient"
 
-# AI-powered client (requires GITHUB_TOKEN)
+# Yapay zeka destekli istemci (AZURE_OPENAI_ENDPOINT + az giriş gerektirir)
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient"
 
-# Interactive bot
+# Etkileşimli bot
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.Bot"
 ```
 
-### Sıcak Yeniden Yükleme
-Spring Boot DevTools, sıcak yeniden yüklemeyi destekleyen projelere dahil edilmiştir:
+### Hot Reload
+Hot reload destekleyen projelerde Spring Boot DevTools dahildir:
 ```bash
-# Changes to Java files will automatically reload when saved
+# Java dosyalarındaki değişiklikler kaydedildiğinde otomatik olarak yeniden yüklenecektir
 mvn spring-boot:run
 ```
 
@@ -154,38 +157,38 @@ mvn test -Dtest=CalculatorServiceTest
 
 ### Test Yapısı
 - Test dosyaları JUnit 5 (Jupiter) kullanır
-- Test sınıfları `src/test/java/` dizininde bulunur
-- Hesaplayıcı projesindeki istemci örnekleri `src/test/java/com/microsoft/mcp/sample/client/` dizinindedir
+- Test sınıfları `src/test/java/` dizinindedir
+- Calculator projesindeki istemci örnekleri `src/test/java/com/microsoft/mcp/sample/client/` yolundadır
 
 ### Manuel Test
-Birçok örnek, manuel test gerektiren etkileşimli uygulamalardır:
+Birçok örnek uygulama kullanıcı etkileşimi gerektirir:
 
 1. Uygulamayı `mvn spring-boot:run` ile başlatın
 2. Uç noktaları test edin veya CLI ile etkileşimde bulunun
-3. Beklenen davranışın her projenin README.md dosyasındaki belgelerle eşleştiğini doğrulayın
+3. Beklenen davranışın her projenin README.md dosyasındaki dokümantasyonla uyumlu olduğunu doğrulayın
 
-### GitHub Modelleri ile Test
-- Ücretsiz katman sınırları: 15 istek/dakika, 150/gün
-- Maksimum 5 eşzamanlı istek
-- Sorumlu AI örnekleriyle içerik filtrelemeyi test edin
+### Azure AI Foundry ile Test
+- Örnekleri çalıştırmadan önce `az login` ile giriş yapın (anahtarsız kimlik doğrulama)
+- Hesabınızın ilgili kaynakta Cognitive Services OpenAI User rolü olduğundan emin olun
+- 5. Bölümdeki sorumlu AI örneği ile içerik filtrelemeyi test edin
 
-## Kod Stili Yönergeleri
+## Kod Stili Rehberi
 
 ### Java Konvansiyonları
-- **Java Versiyonu:** Modern özelliklerle Java 21
+- **Java Sürümü:** Java 21, modern özelliklerle
 - **Stil:** Standart Java konvansiyonlarını takip edin
-- **Adlandırma:** 
+- **İsimlendirme:** 
   - Sınıflar: PascalCase
-  - Metotlar/değişkenler: camelCase
+  - Metot/değişkenler: camelCase
   - Sabitler: UPPER_SNAKE_CASE
-  - Paket adları: küçük harf
+  - Paket isimleri: küçük harf
 
 ### Spring Boot Desenleri
 - İş mantığı için `@Service` kullanın
 - REST uç noktaları için `@RestController` kullanın
-- Yapılandırma `application.yml` veya `application.properties` üzerinden yapılır
-- Sabit değerler yerine ortam değişkenlerini tercih edin
-- MCP tarafından açığa çıkarılan metotlar için `@Tool` anotasyonunu kullanın
+- Yapılandırma için `application.yml` veya `application.properties`
+- Sert kodlanmış değerler yerine ortam değişkenlerini tercih edin
+- MCP tarafından açığa çıkarılan metotlarda `@Tool` anotasyonu kullanın
 
 ### Dosya Organizasyonu
 ```
@@ -208,14 +211,14 @@ src/
 
 ### Bağımlılıklar
 - Maven `pom.xml` ile yönetilir
-- Spring AI BOM sürüm yönetimi için kullanılır
-- AI entegrasyonları için LangChain4j
+- Versiyon yönetimi için Spring AI BOM
+- Yapay zeka entegrasyonları için LangChain4j
 - Spring bağımlılıkları için Spring Boot starter parent
 
 ### Kod Yorumları
 - Genel API'ler için JavaDoc ekleyin
-- Karmaşık AI etkileşimleri için açıklayıcı yorumlar ekleyin
-- MCP araç açıklamalarını net bir şekilde belgeleyin
+- Karmaşık yapay zeka etkileşimlerini açıklayıcı yorumlarla destekleyin
+- MCP araç açıklamalarını açıkça dokümante edin
 
 ## Derleme ve Dağıtım
 
@@ -231,13 +234,13 @@ mvn clean install -DskipTests
 mvn clean install
 ```
 
-**Uygulamayı paketleme:**
+**Uygulama paketleme:**
 ```bash
 mvn package
-# Creates JAR in target/ directory
+# target/ dizininde JAR oluşturur
 ```
 
-### Çıktı Dizinleri
+### Çıktı Dizini
 - Derlenmiş sınıflar: `target/classes/`
 - Test sınıfları: `target/test-classes/`
 - JAR dosyaları: `target/*.jar`
@@ -247,110 +250,116 @@ mvn package
 
 **Geliştirme:**
 ```yaml
-# application.yml
+# application.yml (keyless - no api-key; auth via DefaultAzureCredential)
 spring:
   ai:
-    openai:
-      api-key: ${GITHUB_TOKEN}
-      base-url: https://models.inference.ai.azure.com
+    azure:
+      openai:
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
-**Üretim:**
-- GitHub Modelleri yerine Azure AI Foundry Modelleri kullanın
-- Temel URL'yi Azure OpenAI uç noktasına güncelleyin
-- Azure Key Vault veya ortam değişkenleri ile gizlilikleri yönetin
+**Prodüksiyon:**
+- Anahtarsız kimlik doğrulama için `az login` yerine yönetilen kimlik kullanın
+- `AZURE_OPENAI_ENDPOINT`'i prodüksiyon Foundry kaynağınıza yönlendirin
+- Yapılandırmayı ortam değişkenleri veya Azure Key Vault ile yönetin
 
-### Dağıtım Düşünceleri
-- Bu, örnek uygulamalar içeren bir eğitim deposudur
-- Olduğu gibi üretim dağıtımı için tasarlanmamıştır
-- Örnekler, üretim kullanımı için uyarlanacak desenleri gösterir
-- Bireysel proje README'lerinde spesifik dağıtım notlarına bakın
+### Dağıtım Dikkatleri
+- Bu eğitim amaçlı bir depo olup örnek uygulamalar içerir
+- Üretim dağıtımı için doğrudan tasarlanmamıştır
+- Örnekler, üretime uyarlanabilecek desenleri gösterir
+- Özel dağıtım notları için proje README dosyalarına bakın
 
 ## Ek Notlar
 
-### GitHub Modelleri vs Azure OpenAI
-- **GitHub Modelleri:** Öğrenme için ücretsiz katman, kredi kartı gerektirmez
-- **Azure OpenAI:** Üretime hazır, Azure aboneliği gerektirir
-- Kod her ikisiyle uyumludur - sadece uç noktayı ve API anahtarını değiştirin
+### Azure AI Foundry
+- **Anahtarsız kimlik doğrulama:** Microsoft Entra ID ile bağlantı — API anahtarı yönetimi yok
+- **Kod olarak sağlama:** Bicep + azd (`azd up`) ile hesap ve model dağıtımları oluşturulur
+- Aynı OpenAI uyumlu kod yerelde (`az login`) ve Azure’da (yönetilen kimlik) çalışır
 
-### Birden Fazla Proje ile Çalışma
+### Çoklu Projelerle Çalışma
 Her örnek proje bağımsızdır:
 ```bash
-# Navigate to specific project
+# Belirli projeye git
 cd 04-PracticalSamples/[project-name]
 
-# Each has its own pom.xml and can be built independently
+# Her birinin kendi pom.xml dosyası vardır ve bağımsız olarak derlenebilir
 mvn clean install
 ```
 
 ### Yaygın Sorunlar
 
-**Java Versiyon Uyumsuzluğu:**
+**Java Sürüm Uyumsuzluğu:**
 ```bash
-# Verify Java 21
+# Java 21 doğrulayın
 java -version
-# Update JAVA_HOME if needed
+# Gerekirse JAVA_HOME'u güncelleyin
 export JAVA_HOME=/usr/lib/jvm/msopenjdk-current
 ```
 
 **Bağımlılık İndirme Sorunları:**
 ```bash
-# Clear Maven cache and retry
+# Maven önbelleğini temizleyin ve yeniden deneyin
 rm -rf ~/.m2/repository
 mvn clean install
 ```
 
-**GitHub Token Bulunamadı:**
+**Uç Nokta veya Giriş Bulunamadı:**
 ```bash
-# Set in current session
-export GITHUB_TOKEN="your-token-here"
+# Geçerli oturumda uç noktayı ayarlayın ve oturum açın (anahtarsız)
+export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
+az login
 
-# Or use .env file in project directory
-echo "GITHUB_TOKEN=your-token-here" > .env
+# Veya proje dizininde bir .env dosyası kullanın
+echo "AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/" > .env
 ```
 
-**Port Zaten Kullanımda:**
+**Port Zaten Kullanılıyor:**
 ```bash
-# Spring Boot uses port 8080 by default
-# Change in application.properties:
+# Spring Boot varsayılan olarak 8080 portunu kullanır
+# application.properties dosyasında değişiklik:
 server.port=8081
 ```
 
 ### Çok Dilli Destek
-- Belgeler, otomatik çeviri ile 45+ dilde mevcuttur
-- Çeviriler `translations/` dizininde bulunur
-- Çeviri, GitHub Actions iş akışı tarafından yönetilir
+- Dokümantasyon 45+ dilde otomatik çeviri ile mevcut
+- Çeviriler `translations/` dizininde
+- Çeviri GitHub Actions iş akışı ile yönetilir
 
 ### Öğrenme Yolu
 1. [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md) ile başlayın
-2. Bölümleri sırayla takip edin (01 → 05)
+2. Bölümleri sırasıyla takip edin (01 → 05)
 3. Her bölümdeki uygulamalı örnekleri tamamlayın
-4. Bölüm 4'teki örnek projeleri keşfedin
-5. Bölüm 5'te sorumlu AI uygulamalarını öğrenin
+4. 4. Bölümdeki örnek projeleri keşfedin
+5. 5. Bölümde sorumlu AI uygulamalarını öğrenin
 
 ### Geliştirme Konteyneri
 `.devcontainer/devcontainer.json` şunları yapılandırır:
 - Java 21 geliştirme ortamı
-- Önceden yüklenmiş Maven
-- VS Code Java uzantıları
+- Önceden yüklü Maven
+- VS Code Java eklentileri
 - Spring Boot araçları
 - GitHub Copilot entegrasyonu
 - Docker içinde Docker desteği
 - Azure CLI
 
-### Performans Düşünceleri
-- GitHub Modelleri ücretsiz katmanında hız sınırları vardır
-- Gömme işlemleri için uygun toplu boyutları kullanın
-- Tekrarlanan API çağrıları için önbelleği düşünün
+### Performans Dikkatleri
+- Azure AI Foundry dağıtımları dakikalık token/istek kotası ile sınırlıdır
+- Gömme yapılar için uygun toplu boyutlar kullanın
+- Tekrarlanan API çağrıları için önbellekleme düşünün
 - Maliyet optimizasyonu için token kullanımını izleyin
 
 ### Güvenlik Notları
 - `.env` dosyalarını asla commit etmeyin (zaten `.gitignore` içinde)
-- API anahtarları için ortam değişkenlerini kullanın
-- GitHub tokenleri minimum gerekli kapsamlarla sınırlı olmalıdır
-- Bölüm 5'teki sorumlu AI yönergelerini takip edin
+- API anahtarları yerine anahtarsız kimlik doğrulamayı tercih edin (Microsoft Entra ID)
+- Azure’da yönetilen kimlikleri kullanın; yerel geliştirme için `az login`
+- 5. Bölümdeki sorumlu AI yönergelerini takip edin
 
 ---
 
-**Feragatname**:  
-Bu belge, AI çeviri hizmeti [Co-op Translator](https://github.com/Azure/co-op-translator) kullanılarak çevrilmiştir. Doğruluk için çaba göstersek de, otomatik çevirilerin hata veya yanlışlık içerebileceğini lütfen unutmayın. Belgenin orijinal dili, yetkili kaynak olarak kabul edilmelidir. Kritik bilgiler için profesyonel insan çevirisi önerilir. Bu çevirinin kullanımından kaynaklanan yanlış anlamalar veya yanlış yorumlamalar için sorumluluk kabul edilmez.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Feragatname**:
+Bu belge, AI çeviri hizmeti [Co-op Translator](https://github.com/Azure/co-op-translator) kullanılarak çevrilmiştir. Doğruluk için çaba sarf etsek de, otomatik çevirilerin hata veya yanlışlık içerebileceğini lütfen unutmayınız. Orijinal belge, kendi dilinde yetkili kaynak olarak kabul edilmelidir. Kritik bilgiler için profesyonel insan çevirisi önerilir. Bu çevirinin kullanımı sonucu ortaya çıkabilecek yanlış anlamalardan veya yanlış yorumlamalardan sorumlu değiliz.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

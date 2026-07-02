@@ -1,57 +1,60 @@
-# Podstawowy samouczek technik generatywnej sztucznej inteligencji
-
-[![Podstawowe techniki generatywnej SI](https://img.youtube.com/vi/ZUgN6gTjlPE/0.jpg)](https://www.youtube.com/watch?v=ZUgN6gTjlPE "Podstawowe techniki generatywnej SI")
-
-> **Przegląd wideo:** [Obejrzyj "Podstawowe techniki generatywnej SI" na YouTube](https://www.youtube.com/watch?v=ZUgN6gTjlPE) lub kliknij miniaturkę powyżej.
+# Podstawowy samouczek technik generatywnej AI
 
 ## Spis treści
 
 - [Wymagania wstępne](#wymagania-wstępne)
-- [Rozpoczęcie pracy](#rozpoczęcie-pracy)
-  - [Krok 1: Ustaw zmienną środowiskową](#krok-1-ustaw-zmienną-środowiskową)
+- [Pierwsze kroki](#pierwsze-kroki)
+  - [Krok 1: Skonfiguruj swój punkt końcowy Foundry](#krok-1-skonfiguruj-swój-punkt-końcowy-foundry)
   - [Krok 2: Przejdź do katalogu z przykładami](#krok-2-przejdź-do-katalogu-z-przykładami)
 - [Przewodnik po wyborze modeli](#przewodnik-po-wyborze-modeli)
-- [Samouczek 1: Uzupełnienia LLM i czat](#samouczek-1-uzupełnienia-i-czat-llm)
+- [Samouczek 1: Uzupełnienia i czat LLM](#samouczek-1-uzupełnienia-i-czat-llm)
 - [Samouczek 2: Wywoływanie funkcji](#samouczek-2-wywoływanie-funkcji)
-- [Samouczek 3: RAG (Generowanie wspomagane wyszukiwaniem)](#samouczek-3-rag-generowanie-wspomagane-wyszukiwaniem)
-- [Samouczek 4: Odpowiedzialna SI](#samouczek-4-odpowiedzialna-si)
-- [Typowe wzorce we wszystkich przykładach](#typowe-wzorce-we-wszystkich-przykładach)
+- [Samouczek 3: RAG (Generacja wspomagana wyszukiwaniem)](#samouczek-3-rag-generacja-wspomagana-wyszukiwaniem)
+- [Samouczek 4: Odpowiedzialna AI](#samouczek-4-odpowiedzialna-ai)
+- [Wspólne wzorce w przykładach](#wspólne-wzorce-w-przykładach)
 - [Kolejne kroki](#kolejne-kroki)
 - [Rozwiązywanie problemów](#rozwiązywanie-problemów)
-  - [Typowe problemy](#typowe-problemy)
+  - [Częste problemy](#częste-problemy)
 
 
 ## Przegląd
 
-Ten samouczek dostarcza praktyczne przykłady podstawowych technik generatywnej sztucznej inteligencji z użyciem Javy i modeli GitHub. Nauczysz się jak komunikować się z dużymi modelami językowymi (LLM), implementować wywoływanie funkcji, korzystać z generowania wspomaganego wyszukiwaniem (RAG) oraz stosować odpowiedzialne praktyki SI.
+Ten samouczek dostarcza praktyczne przykłady podstawowych technik generatywnej AI przy użyciu Javy i Azure AI Foundry. Nauczysz się, jak komunikować się z dużymi modelami językowymi (LLM), jak implementować wywoływanie funkcji, używać generacji wspomaganej wyszukiwaniem (RAG) oraz stosować zasady odpowiedzialnej AI.
 
 ## Wymagania wstępne
 
 Przed rozpoczęciem upewnij się, że masz:
-- Zainstalowaną Javę 21 lub nowszą
+- Zainstalowaną Javę w wersji 21 lub wyższej
 - Maven do zarządzania zależnościami
-- Konto na GitHub z tokenem dostępu osobistego (PAT)
+- Wdrożenie modelu Azure AI Foundry (uruchom je poleceniem `azd up` — zobacz [Rozdział 2](../02-SetupDevEnvironment/getting-started-azure-openai.md))
+- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), zalogowany przez `az login` (autoryzacja bezkluczowa)
 
-## Rozpoczęcie pracy
+## Pierwsze kroki
 
-### Krok 1: Ustaw zmienną środowiskową
+> **Najszybsza metoda — uruchom w VS Code (F5):** Po `azd up` (Rozdział 2) i `az login` otwórz **Run and Debug** (`Ctrl+Shift+D`), wybierz konfigurację np. **Ch03: LLM Completions & Chat** i naciśnij **F5**. Punkt końcowy jest ładowany automatycznie z `.env` stworzonego przez `azd up` — więc możesz pominąć Krok 1 poniżej. Dla interaktywnego czatu wpisuj w terminalu i wpisz `exit`, aby wyjść. Konfiguracje uruchomieniowe znajdują się w [`.vscode/launch.json`](../../../.vscode/launch.json).
+>
+> Wolisz linię poleceń? Postępuj zgodnie z Krokiem 1 i Krokiem 2 poniżej.
 
-Najpierw musisz ustawić swój token GitHub jako zmienną środowiskową. Token ten pozwala na darmowy dostęp do modeli GitHub.
+### Krok 1: Skonfiguruj swój punkt końcowy Foundry
+
+Te przykłady korzystają z uwierzytelniania bezkluczowego Azure AI Foundry (Microsoft Entra ID). Zaloguj się przez `az login`, a następnie ustaw swój punkt końcowy Foundry jako zmienną środowiskową. Jeśli uruchomiłeś `azd up`, pobierz wartość poleceniem `azd env get-value AZURE_OPENAI_ENDPOINT`.
 
 **Windows (Command Prompt):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
+
+> Przykłady domyślnie używają wdrożenia `gpt-4o-mini`. Możesz to zmienić, ustawiając zmienną środowiskową `AZURE_OPENAI_DEPLOYMENT`.
 
 ### Krok 2: Przejdź do katalogu z przykładami
 
@@ -61,22 +64,17 @@ cd 03-CoreGenerativeAITechniques/examples/
 
 ## Przewodnik po wyborze modeli
 
-Te przykłady używają różnych modeli zoptymalizowanych pod kątem ich konkretnych zastosowań:
+Wszystkie te przykłady używają wdrożenia **`gpt-4o-mini`** skonfigurowanego w [Rozdziale 2](../02-SetupDevEnvironment/getting-started-azure-openai.md):
 
-**GPT-4.1-nano** (przykład uzupełnień):
-- Ultra szybki i bardzo tani
-- Idealny do podstawowego uzupełniania tekstu i czatu
-- Doskonały do nauki podstawowych wzorców interakcji z LLM
-
-**GPT-4o-mini** (przykłady funkcji, RAG i odpowiedzialnej SI):
-- Mały, ale w pełni funkcjonalny „omni pracownik”
-- Niezawodnie obsługuje zaawansowane funkcje u różnych dostawców:
-  - Przetwarzanie obrazu
-  - Wyjścia JSON/strukturalne  
+**GPT-4o-mini:**
+- Mały, ale w pełni funkcjonalny model "uniwersalny"
+- Niezawodnie obsługuje zaawansowane funkcje:
+  - Przetwarzanie wizji
+  - Wyniki JSON/ustrukturyzowane
   - Wywoływanie narzędzi/funkcji
-- Więcej możliwości niż nano, zapewniając spójne działanie przykładów
+- Szybki i ekonomiczny, a jednocześnie eksponujący potrzebne funkcje dla tych samouczków
 
-> **Dlaczego to ważne**: Modele „nano” są świetne pod względem szybkości i kosztów, ale modele „mini” są bezpieczniejszym wyborem, gdy potrzebujesz niezawodnego dostępu do zaawansowanych funkcji, takich jak wywoływanie funkcji, które mogą nie być w pełni dostępne u wszystkich dostawców dla wariantów nano.
+> **Wskazówka**: Nazwa wdrożenia odczytywana jest ze zmiennej środowiskowej `AZURE_OPENAI_DEPLOYMENT` (domyślnie `gpt-4o-mini`), więc możesz skierować przykłady na inne wdrożenie bez zmiany kodu.
 
 ## Samouczek 1: Uzupełnienia i czat LLM
 
@@ -84,55 +82,55 @@ Te przykłady używają różnych modeli zoptymalizowanych pod kątem ich konkre
 
 ### Czego uczy ten przykład
 
-Ten przykład demonstruje podstawowe mechanizmy interakcji z dużym modelem językowym (LLM) przez API OpenAI, w tym inicjalizację klienta z modelami GitHub, wzorce struktury wiadomości dla promptów systemowych i użytkownika, zarządzanie stanem rozmowy przez akumulację historii wiadomości oraz dostrajanie parametrów kontrolujących długość odpowiedzi i poziom kreatywności.
+Przykład demonstruje podstawowe mechanizmy interakcji z dużym modelem językowym (LLM) przez API Azure OpenAI, w tym inicjalizację klienta bezkluczowego z Azure AI Foundry, wzorce struktury wiadomości dla promptów systemowych i użytkownika, zarządzanie stanem rozmowy przez akumulację historii wiadomości oraz dostrajanie parametrów do kontroli długości odpowiedzi i poziomu kreatywności.
 
 ### Kluczowe koncepcje kodu
 
 #### 1. Konfiguracja klienta
 ```java
-// Utwórz klienta AI
+// Utwórz klienta AI używając uwierzytelniania bezkluczowego (Microsoft Entra ID)
 OpenAIClient client = new OpenAIClientBuilder()
-    .endpoint("https://models.inference.ai.azure.com")
-    .credential(new StaticTokenCredential(pat))
+    .endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"))
+    .credential(new DefaultAzureCredentialBuilder().build())
     .buildClient();
 ```
 
-To tworzy połączenie z modelami GitHub za pomocą twojego tokena.
+Tworzy połączenie z Azure AI Foundry wykorzystując twoje dane logowania `az login` — bez potrzeby klucza API.
 
 #### 2. Proste uzupełnienie
 ```java
 List<ChatRequestMessage> messages = List.of(
-    // Wiadomość systemowa ustawia zachowanie AI
+    // Komunikat systemowy ustala zachowanie AI
     new ChatRequestSystemMessage("You are a helpful Java expert."),
-    // Wiadomość użytkownika zawiera właściwe pytanie
+    // Komunikat użytkownika zawiera właściwe pytanie
     new ChatRequestUserMessage("Explain Java streams briefly.")
 );
 
 ChatCompletionsOptions options = new ChatCompletionsOptions(messages)
-    .setModel("gpt-4.1-nano")  // Szybki, ekonomiczny model do podstawowych uzupełnień
+    .setModel("gpt-4o-mini")   // Nazwa twojej instalacji Foundry
     .setMaxTokens(200)         // Ogranicz długość odpowiedzi
     .setTemperature(0.7);      // Kontroluj kreatywność (0.0-1.0)
 ```
 
-#### 3. Pamięć rozmowy
+#### 3. Pamięć konwersacji
 ```java
-// Dodaj odpowiedź AI, aby utrzymać historię rozmowy
+// Dodaj odpowiedź AI, aby zachować historię rozmowy
 messages.add(new ChatRequestAssistantMessage(aiResponse));
 messages.add(new ChatRequestUserMessage("Follow-up question"));
 ```
 
-SI pamięta poprzednie wiadomości tylko jeśli uwzględnisz je w kolejnych żądaniach.
+AI pamięta poprzednie wiadomości tylko wtedy, gdy dołączysz je do kolejnych zapytań.
 
-### Uruchom przykład
+### Uruchomienie przykładu
 ```bash
 mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.completions.LLMCompletionsApp"
 ```
 
 ### Co się dzieje po uruchomieniu
 
-1. **Proste uzupełnienie**: SI odpowiada na pytanie o Javie z podpowiedzią systemową
-2. **Czat wieloetapowy**: SI utrzymuje kontekst przez wiele pytań
-3. **Interaktywny czat**: Możesz prowadzić prawdziwą rozmowę z SI
+1. **Proste uzupełnienie**: AI odpowiada na pytanie o Javie z instrukcjami prompta systemowego
+2. **Wielokrotna rozmowa**: AI utrzymuje kontekst przez wiele pytań
+3. **Interaktywny czat**: Możesz prowadzić prawdziwą rozmowę z AI
 
 ## Samouczek 2: Wywoływanie funkcji
 
@@ -140,9 +138,9 @@ mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.completions
 
 ### Czego uczy ten przykład
 
-Wywoływanie funkcji umożliwia modelom SI żądanie wykonania zewnętrznych narzędzi i API za pomocą ustrukturyzowanego protokołu, gdzie model analizuje naturalne językowe zapytania, ustala wymagane wywołania funkcji z odpowiednimi parametrami korzystającymi z definicji JSON Schema, a następnie przetwarza zwrócone wyniki, aby wygenerować kontekstowe odpowiedzi, podczas gdy faktyczne wykonanie funkcji pozostaje pod kontrolą dewelopera dla bezpieczeństwa i niezawodności.
+Wywoływanie funkcji umożliwia modelom AI żądanie wykonania zewnętrznych narzędzi i API przez ustrukturyzowany protokół, w którym model analizuje naturalne zapytania, ustala niezbędne wywołania funkcji z odpowiednimi parametrami używając definicji JSON Schema, oraz przetwarza zwrócone wyniki do generowania odpowiedzi kontekstowych, podczas gdy faktyczne wykonanie funkcji pozostaje pod kontrolą developera dla bezpieczeństwa i niezawodności.
 
-> **Uwaga**: Ten przykład używa `gpt-4o-mini`, ponieważ wywoływanie funkcji wymaga niezawodnych możliwości wywoływania narzędzi, które mogą nie być w pełni dostępne w modelach nano na wszystkich platformach hostingowych.
+> **Uwaga**: Ten przykład używa `gpt-4o-mini`, ponieważ wywoływanie funkcji wymaga niezawodnej obsługi narzędzi, która może nie być w pełni dostępna w modelach nano na wszystkich platformach hostingowych.
 
 ### Kluczowe koncepcje kodu
 
@@ -152,7 +150,7 @@ ChatCompletionsFunctionToolDefinitionFunction weatherFunction =
     new ChatCompletionsFunctionToolDefinitionFunction("get_weather");
 weatherFunction.setDescription("Get current weather information for a city");
 
-// Zdefiniuj parametry za pomocą JSON Schema
+// Definiuj parametry za pomocą schematu JSON
 weatherFunction.setParameters(BinaryData.fromString("""
     {
         "type": "object",
@@ -167,7 +165,7 @@ weatherFunction.setParameters(BinaryData.fromString("""
     """));
 ```
 
-To mówi SI, jakie funkcje są dostępne i jak ich używać.
+Mówi AI, jakie funkcje są dostępne i jak ich używać.
 
 #### 2. Przepływ wykonania funkcji
 ```java
@@ -178,10 +176,10 @@ if (choice.getFinishReason() == CompletionsFinishReason.TOOL_CALLS) {
     // 2. Wykonujesz funkcję
     String result = simulateWeatherFunction(functionCall.getFunction().getArguments());
     
-    // 3. Przekazujesz wynik z powrotem do AI
+    // 3. Zwracasz wynik z powrotem do AI
     messages.add(new ChatRequestToolMessage(result, toolCall.getId()));
     
-    // 4. AI podaje końcową odpowiedź z wynikiem funkcji
+    // 4. AI dostarcza ostateczną odpowiedź z wynikiem funkcji
     ChatCompletions finalResponse = client.getChatCompletions(MODEL, options);
 }
 ```
@@ -189,8 +187,8 @@ if (choice.getFinishReason() == CompletionsFinishReason.TOOL_CALLS) {
 #### 3. Implementacja funkcji
 ```java
 private static String simulateWeatherFunction(String arguments) {
-    // Analizuj argumenty i wywołaj rzeczywiste API pogodowe
-    // Dla demonstracji zwracamy dane testowe
+    // Przetwórz argumenty i wywołaj prawdziwe API pogodowe
+    // Dla demonstracji zwracamy dane zastępcze
     return """
         {
             "city": "Seattle",
@@ -201,29 +199,29 @@ private static String simulateWeatherFunction(String arguments) {
 }
 ```
 
-### Uruchom przykład
+### Uruchomienie przykładu
 ```bash
 mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.functions.FunctionsApp"
 ```
 
 ### Co się dzieje po uruchomieniu
 
-1. **Funkcja pogodowa**: SI prosi o dane pogodowe dla Seattle, ty je dostarczasz, SI formatuje odpowiedź
-2. **Funkcja kalkulatora**: SI prosi o obliczenie (15% z 240), ty to obliczasz, SI wyjaśnia wynik
+1. **Funkcja pogodowa**: AI żąda danych pogodowych dla Seattle, dostarczasz dane, AI formatuje odpowiedź
+2. **Funkcja kalkulatora**: AI żąda obliczenia (15% z 240), Ty ją wykonujesz, AI wyjaśnia wynik
 
-## Samouczek 3: RAG (Generowanie wspomagane wyszukiwaniem)
+## Samouczek 3: RAG (Generacja wspomagana wyszukiwaniem)
 
 **Plik:** `src/main/java/com/example/genai/techniques/rag/SimpleReaderDemo.java`
 
 ### Czego uczy ten przykład
 
-Generowanie wspomagane wyszukiwaniem (RAG) łączy wyszukiwanie informacji z generowaniem języka przez wstrzyknięcie zewnętrznego kontekstu dokumentu do promptów SI, umożliwiając modelom dostarczanie dokładnych odpowiedzi opartych na konkretnych źródłach wiedzy, zamiast potencjalnie przestarzałych lub niedokładnych danych treningowych, jednocześnie utrzymując wyraźne granice między zapytaniami użytkownika a autorytatywnymi źródłami informacji przez przemyślane projektowanie promptów.
+Generacja wspomagana wyszukiwaniem (RAG) łączy wyszukiwanie informacji z generowaniem języka, wstrzykując zewnętrzny kontekst dokumentów do promptów AI, co pozwala modelom udzielać dokładnych odpowiedzi opartych na konkretnych źródłach wiedzy, zamiast na potencjalnie przestarzałych lub nieprecyzyjnych danych treningowych, zachowując wyraźne granice między zapytaniami użytkownika a autorytatywnymi źródłami informacji przez strategiczne projektowanie promptów.
 
-> **Uwaga**: Ten przykład używa `gpt-4o-mini`, aby zapewnić niezawodną obsługę ustrukturyzowanych promptów i spójne przetwarzanie kontekstu dokumentów, co jest kluczowe dla skutecznych implementacji RAG.
+> **Uwaga**: Ten przykład używa `gpt-4o-mini`, aby zapewnić niezawodne przetwarzanie ustrukturyzowanych promptów i spójną obsługę kontekstu dokumentów, co jest kluczowe dla efektywnej implementacji RAG.
 
 ### Kluczowe koncepcje kodu
 
-#### 1. Ładowanie dokumentu
+#### 1. Ładowanie dokumentów
 ```java
 // Załaduj swoje źródło wiedzy
 String doc = Files.readString(Paths.get("document.txt"));
@@ -241,7 +239,7 @@ List<ChatRequestMessage> messages = List.of(
 );
 ```
 
-Potrójne cudzysłowy pomagają SI odróżnić kontekst od pytania.
+Potrójne cudzysłowy pomagają AI odróżnić kontekst od pytania.
 
 #### 3. Bezpieczna obsługa odpowiedzi
 ```java
@@ -255,32 +253,32 @@ if (response != null && response.getChoices() != null && !response.getChoices().
 
 Zawsze waliduj odpowiedzi API, aby zapobiec awariom.
 
-### Uruchom przykład
+### Uruchomienie przykładu
 ```bash
 mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.rag.SimpleReaderDemo"
 ```
 
 ### Co się dzieje po uruchomieniu
 
-1. Program ładuje `document.txt` (zawiera informacje o modelach GitHub)
-2. Zadasz pytanie dotyczące dokumentu
-3. SI odpowiada tylko na podstawie zawartości dokumentu, a nie swojej ogólnej wiedzy
+1. Program ładuje plik `document.txt` (zawierający informacje o Azure AI Foundry)
+2. Zadajesz pytanie dotyczące dokumentu
+3. AI odpowiada wyłącznie na podstawie treści dokumentu, a nie swojej ogólnej wiedzy
 
-Spróbuj zapytać: „Czym są modele GitHub?” versus „Jaka jest dzisiaj pogoda?”
+Spróbuj zapytać: "Czym jest Azure AI Foundry?" versus "Jaka jest pogoda?"
 
-## Samouczek 4: Odpowiedzialna SI
+## Samouczek 4: Odpowiedzialna AI
 
-**Plik:** `src/main/java/com/example/genai/techniques/responsibleai/ResponsibleGithubModels.java`
+**Plik:** `src/main/java/com/example/genai/techniques/responsibleai/ResponsibleAIDemo.java`
 
 ### Czego uczy ten przykład
 
-Przykład odpowiedzialnej SI pokazuje, jak ważne jest wdrażanie mechanizmów bezpieczeństwa w aplikacjach SI. Demonstruje, jak działają nowoczesne systemy bezpieczeństwa przez dwa podstawowe mechanizmy: twarde blokady (błędy HTTP 400 z filtrów bezpieczeństwa) oraz miękkie odmowy (grzeczne odpowiedzi „Nie mogę w tym pomóc” od samego modelu). Ten przykład pokazuje, jak aplikacje produkcyjne SI powinny łagodnie obsługiwać naruszenia polityki treści poprzez odpowiednie obsługi wyjątków, wykrywanie odmów, mechanizmy informacji zwrotnej dla użytkownika oraz strategie zapasowych odpowiedzi.
+Przykład dotyczący odpowiedzialnej AI ukazuje znaczenie wdrażania środków bezpieczeństwa w aplikacjach AI. Demonstruje, jak działają nowoczesne systemy bezpieczeństwa AI przez dwa główne mechanizmy: blokady twarde (błędy HTTP 400 z filtrów bezpieczeństwa) oraz miękkie odmowy (grzeczne odpowiedzi „Nie mogę w tym pomóc” wygenerowane przez model). Przykład pokazuje, jak produkcyjne aplikacje AI powinny łagodnie obsługiwać naruszenia polityki treści przez właściwą obsługę wyjątków, wykrywanie odmów, mechanizmy informacji zwrotnej dla użytkownika oraz strategie odpowiedzi awaryjnych.
 
-> **Uwaga**: Ten przykład używa `gpt-4o-mini`, ponieważ zapewnia bardziej spójne i niezawodne odpowiedzi bezpieczeństwa w różnych rodzajach potencjalnie szkodliwych treści, gwarantując poprawną demonstrację mechanizmów bezpieczeństwa.
+> **Uwaga**: Ten przykład używa `gpt-4o-mini`, ponieważ dostarcza bardziej spójne i niezawodne odpowiedzi bezpieczeństwa dla różnych typów potencjalnie szkodliwych treści, zapewniając właściwe pokazanie mechanizmów bezpieczeństwa.
 
 ### Kluczowe koncepcje kodu
 
-#### 1. Framework testów bezpieczeństwa
+#### 1. Framework testowy bezpieczeństwa
 ```java
 private void testPromptSafety(String prompt, String category) {
     try {
@@ -288,7 +286,7 @@ private void testPromptSafety(String prompt, String category) {
         ChatCompletions response = client.getChatCompletions(modelId, options);
         String content = response.getChoices().get(0).getMessage().getContent();
         
-        // Sprawdź, czy model odmówił wykonania żądania (miękka odmowa)
+        // Sprawdź, czy model odrzucił żądanie (miękkie odrzucenie)
         if (isRefusalResponse(content)) {
             System.out.println("[REFUSED BY MODEL]");
             System.out.println("✓ This is GOOD - the AI refused to generate harmful content!");
@@ -325,24 +323,24 @@ private boolean isRefusalResponse(String response) {
 ```
 
 #### 2. Testowane kategorie bezpieczeństwa
-- Instrukcje dotyczące przemocy/krzywdy
+- Instrukcje przemocy/szkodliwości
 - Mowa nienawiści
 - Naruszenia prywatności
-- Dezinformacja medyczna
-- Działania nielegalne
+- Misinformacje medyczne
+- Działalność nielegalna
 
-### Uruchom przykład
+### Uruchomienie przykładu
 ```bash
-mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleGithubModels"
+mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleAIDemo"
 ```
 
 ### Co się dzieje po uruchomieniu
 
-Program testuje różne szkodliwe prompt’y i pokazuje jak system bezpieczeństwa SI działa za pomocą dwóch mechanizmów:
+Program testuje różne szkodliwe prompta i pokazuje, jak działa system bezpieczeństwa przez dwa mechanizmy:
 
-1. **Twarde blokady**: błędy HTTP 400, gdy treść jest blokowana przez filtry bezpieczeństwa przed dotarciem do modelu
-2. **Miękkie odmowy**: model odpowiada grzecznymi odmowami typu „Nie mogę w tym pomóc” (najczęstsze przy nowoczesnych modelach)
-3. **Bezpieczna treść**: pozwala na normalne generowanie legalnych zapytań
+1. **Blokady twarde**: błędy HTTP 400, gdy treść jest zablokowana przez filtry bezpieczeństwa przed dotarciem do modelu
+2. **Miękkie odmowy**: model odpowiada grzecznymi odmowami, np. „Nie mogę w tym pomóc” (najczęściej w nowoczesnych modelach)
+3. **Bezpieczna treść**: pozwala na normalne generowanie uzasadnionych zapytań
 
 Oczekiwany wynik dla szkodliwych promptów:
 ```
@@ -353,19 +351,17 @@ Status: [REFUSED BY MODEL]
 ✓ This is GOOD - the AI refused to generate harmful content!
 ```
 
-To pokazuje, że **zarówno twarde blokady, jak i miękkie odmowy wskazują na prawidłowe działanie systemu bezpieczeństwa**.
+To pokazuje, że **zarówno blokady twarde, jak i miękkie odmowy wskazują, że system bezpieczeństwa działa poprawnie**.
 
-## Typowe wzorce we wszystkich przykładach
+## Wspólne wzorce w przykładach
 
 ### Wzorzec uwierzytelniania
-Wszystkie przykłady używają tego wzorca do uwierzytelniania z modelami GitHub:
+Wszystkie przykłady korzystają z tego bezkluczowego wzorca uwierzytelnienia do Azure AI Foundry:
 
 ```java
-String pat = System.getenv("GITHUB_TOKEN");
-TokenCredential credential = new StaticTokenCredential(pat);
 OpenAIClient client = new OpenAIClientBuilder()
-    .endpoint("https://models.inference.ai.azure.com")
-    .credential(credential)
+    .endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"))
+    .credential(new DefaultAzureCredentialBuilder().build())
     .buildClient();
 ```
 
@@ -374,7 +370,7 @@ OpenAIClient client = new OpenAIClientBuilder()
 try {
     // Operacja AI
 } catch (HttpResponseException e) {
-    // Obsługa błędów API (limity szybkości, filtry bezpieczeństwa)
+    // Obsługa błędów API (limity prędkości, filtry bezpieczeństwa)
 } catch (Exception e) {
     // Obsługa ogólnych błędów (sieć, analiza)
 }
@@ -390,30 +386,30 @@ List<ChatRequestMessage> messages = List.of(
 
 ## Kolejne kroki
 
-Gotowy, aby zastosować te techniki w praktyce? Zbudujmy kilka prawdziwych aplikacji!
+Gotowy, by wykorzystać te techniki w praktyce? Zbudujmy prawdziwe aplikacje!
 
 [Rozdział 04: Praktyczne przykłady](../04-PracticalSamples/README.md)
 
 ## Rozwiązywanie problemów
 
-### Typowe problemy
+### Częste problemy
 
-**"GITHUB_TOKEN nie został ustawiony"**
+**"AZURE_OPENAI_ENDPOINT nie ustawiony"**
 - Upewnij się, że ustawiłeś zmienną środowiskową
-- Sprawdź, czy twój token ma zakres `models:read`
+- Uruchom `az login` — uwierzytelnianie jest bezkluczowe (Microsoft Entra ID)
 
-**"Brak odpowiedzi z API"**
+**"Brak odpowiedzi z API" / 401 / 403**
 - Sprawdź połączenie internetowe
-- Zweryfikuj ważność tokena
-- Sprawdź, czy nie przekroczyłeś limitów
+- Zweryfikuj, czy jesteś zalogowany przez `az login` i masz rolę Cognitive Services OpenAI User
+- Sprawdź, czy nie przekroczyłeś limitów wdrożenia
 
 **Błędy kompilacji Maven**
-- Upewnij się, że masz Javę 21 lub wyższą
+- Upewnij się, że masz Javę 21 lub nowszą
 - Uruchom `mvn clean compile`, aby odświeżyć zależności
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Zastrzeżenie**:  
-Niniejszy dokument został przetłumaczony za pomocą usługi tłumaczenia AI [Co-op Translator](https://github.com/Azure/co-op-translator). Choć dokładamy starań, aby tłumaczenie było jak najdokładniejsze, należy pamiętać, że automatyczne tłumaczenia mogą zawierać błędy lub niedokładności. Oryginalny dokument w jego języku źródłowym powinien być uznawany za źródło wiążące. W przypadku informacji o kluczowym znaczeniu zaleca się skorzystanie z profesjonalnego tłumaczenia wykonanego przez człowieka. Nie ponosimy odpowiedzialności za jakiekolwiek nieporozumienia lub błędne interpretacje wynikające z korzystania z tego tłumaczenia.
+**Zastrzeżenie**:
+Niniejszy dokument został przetłumaczony za pomocą usługi tłumaczenia AI [Co-op Translator](https://github.com/Azure/co-op-translator). Choć dążymy do dokładności, prosimy pamiętać, że automatyczne tłumaczenia mogą zawierać błędy lub niedokładności. Oryginalny dokument w jego języku źródłowym należy uznawać za autorytatywne źródło. W przypadku informacji krytycznych zalecane jest skorzystanie z profesjonalnego tłumaczenia wykonanego przez człowieka. Nie ponosimy odpowiedzialności za jakiekolwiek nieporozumienia lub błędne interpretacje wynikające z użycia tego tłumaczenia.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->
