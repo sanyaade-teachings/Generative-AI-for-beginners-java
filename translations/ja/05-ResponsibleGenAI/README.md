@@ -1,23 +1,19 @@
-# 責任ある生成AI
+# 責任ある生成型AI
 
-[![Responsible Generative AI](https://img.youtube.com/vi/rF-b2BTSMQ4/0.jpg)](https://www.youtube.com/watch?v=rF-b2BTSMQ4 "Responsible Generative AI")
 
-> <strong>ビデオ</strong>: [このレッスンのビデオ概要を見る](https://www.youtube.com/watch?v=rF-b2BTSMQ4).  
-> 上のサムネイル画像をクリックして同じビデオを開くこともできます。
+## 学習内容
 
-## 学べること
-
-- AI開発における倫理的考慮事項とベストプラクティスを学ぶ
+- AI開発における倫理的配慮とベストプラクティスについて学ぶ
 - アプリケーションにコンテンツフィルタリングと安全対策を組み込む
-- GitHub Modelsの組み込み保護機能を使ってAIの安全性への対応をテスト・処理する
-- 安全で倫理的なAIシステムを作るための責任あるAI原則を適用する
+- Azure AI Foundryの組み込みコンテンツフィルタリングを使ってAIの安全応答をテストおよび処理する
+- 責任あるAIの原則を適用して、安全で倫理的なAIシステムを作る
 
 ## 目次
 
 - [はじめに](#はじめに)
-- [GitHub Modelsの組み込み安全機能](#github-modelsの組み込み安全機能)
+- [Azure AI Foundryコンテンツ安全機能](#azure-ai-foundryコンテンツ安全機能)
 - [実践例：責任あるAI安全デモ](#実践例：責任あるai安全デモ)
-  - [デモが示すもの](#デモが示すもの)
+  - [デモの内容](#デモの内容)
   - [セットアップ手順](#セットアップ手順)
   - [デモの実行](#デモの実行)
   - [期待される出力](#期待される出力)
@@ -29,75 +25,75 @@
 
 ## はじめに
 
-この最終章では、責任ある倫理的な生成AIアプリケーションを構築する際の重要なポイントに焦点を当てます。安全対策の実装方法、コンテンツフィルタリングの扱い、そして前章で扱ったツールやフレームワークを活用して責任あるAI開発のベストプラクティスを学びます。これらの原則を理解することは、技術的に優れているだけでなく、安全で倫理的かつ信頼できるAIシステム構築に不可欠です。
+この最終章では、責任ある倫理的な生成型AIアプリケーションの構築における重要な側面に焦点を当てます。安全対策の実装、コンテンツフィルタリングの処理、前章で扱ったツールやフレームワークを用いた責任あるAI開発のベストプラクティスの適用方法を学びます。これらの原則は、技術的に優れているだけでなく、安全かつ倫理的で信頼できるAIシステムを構築するうえで欠かせません。
 
-## GitHub Modelsの組み込み安全機能
+## Azure AI Foundryコンテンツ安全機能
 
-GitHub Modelsには基本的なコンテンツフィルタリング機能が標準搭載されています。AIクラブのフレンドリーなボディーガードのようなもので、最も洗練されてはいませんが基本的なシナリオには十分対応します。
+Azure AI Foundryモデルは、Azure AI Content Safetyによって支えられたコンテンツフィルタリング機能を標準装備しています。有害なプロンプトや応答は、モデルに到達する前またはモデルから出る前に、複数のカテゴリにわたって自動的にスクリーニングされます。
 
-**GitHub Modelsが防ぐもの：**
-- <strong>有害コンテンツ</strong>: 明らかな暴力的、性的、または危険な内容をブロック
-- <strong>基本的なヘイトスピーチ</strong>: 明確な差別的言語をフィルタリング
-- <strong>簡単な脱獄試行</strong>: 基本的な安全策回避の試みを阻止
+**Azure AI Foundryが防ぐもの:**
+- <strong>有害コンテンツ</strong>：暴力的、性的、自傷的、危険なコンテンツをブロック
+- <strong>ヘイトスピーチ</strong>：差別的な言語をフィルタリング
+- <strong>脱獄攻撃</strong>：プロンプトインジェクションや安全ガードレールを回避しようとする試みを検出
 
 ## 実践例：責任あるAI安全デモ
 
-この章では、GitHub Modelsが責任あるAI安全対策をどのように実装しているかを示す実践的なデモを行い、安全ガイドラインに違反する可能性のあるプロンプトをテストします。
+この章には、Azure AI Foundryが責任あるAIの安全対策をどのように実装しているかを示す実践的なデモが含まれています。安全ガイドラインに違反する可能性のあるプロンプトをテストします。
 
-### デモが示すもの
+### デモの内容
 
-`ResponsibleGithubModels`クラスは以下の流れで動作します：  
-1. 認証情報を使ってGitHub Modelsクライアントを初期化  
-2. 有害なプロンプト（暴力、ヘイトスピーチ、誤情報、違法コンテンツ）をテスト  
-3. 各プロンプトをGitHub Models APIに送信  
-4. 応答を処理：ハードブロック（HTTPエラー）、ソフト拒否（丁寧な「対応できません」応答）、通常のコンテンツ生成のいずれか  
-5. どのコンテンツがブロック、拒否、許可されたかを表示  
-6. 比較のための安全なコンテンツをテスト
+`ResponsibleAIDemo`クラスは以下の流れに従います：
+1. キーレス認証（Microsoft Entra ID）によりAzure AI Foundryクライアントを初期化
+2. 有害なプロンプト（暴力、ヘイトスピーチ、誤情報、違法コンテンツなど）をテスト
+3. 各プロンプトをAzure AI Foundryモデルに送信
+4. 応答の処理：ハードブロック（HTTPエラー）、ソフト拒否（丁寧な「お手伝いできません」応答）、または通常のコンテンツ生成
+5. どのコンテンツがブロック、拒否、許可されたかを表示
+6. 比較用に安全なコンテンツもテスト
 
 ![Responsible AI Safety Demo](../../../translated_images/ja/responsible.e4f51a917bafa4bf.webp)
 
 ### セットアップ手順
 
-1. **GitHub個人アクセストークンを設定する:**  
-   
-   Windows (コマンドプロンプト):
+1. **サインインしてAzure AI Foundryエンドポイントを設定**（キーレス認証—APIキー不要）。最初に `az login` を実行し、その後：
+
+   Windows（コマンドプロンプト）：
    ```cmd
-   set GITHUB_TOKEN=your_github_token_here
+   set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    ```
    
-   Windows (PowerShell):
+   Windows（PowerShell）：
    ```powershell
-   $env:GITHUB_TOKEN="your_github_token_here"
+   $env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
    ```
    
-   Linux/macOS:
+   Linux/macOS：
    ```bash
-   export GITHUB_TOKEN=your_github_token_here
+   export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    ```   
 
 
 ### デモの実行
 
-1. **examplesディレクトリに移動:**
+1. **examplesディレクトリに移動：**
    ```bash
    cd 03-CoreGenerativeAITechniques/examples
    ```
-  
-2. **デモのコンパイルと実行:**
+
+2. **デモをコンパイルして実行：**
    ```bash
-   mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleGithubModels"
+   mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleAIDemo"
    ```
 
 
 ### 期待される出力
 
-デモでは、さまざまな種類の有害プロンプトをテストし、現代のAI安全機能が2つの仕組みでどのように機能するかを示します：
+デモは、さまざまなタイプの潜在的に有害なプロンプトをテストし、最新のAI安全対策が次の２つの仕組みで機能する様子を示します：
 
-- <strong>ハードブロック</strong>: モデルに到達する前に安全フィルターによってコンテンツがブロックされるHTTP 400エラー
-- <strong>ソフト拒否</strong>: モデルからの「対応できません」といった丁寧な拒否応答（最新モデルで最も一般的）
-- <strong>通常の応答</strong>を得る安全なコンテンツ
+- <strong>ハードブロック</strong>：コンテンツがモデルに到達する前に安全フィルターによってブロックされ、HTTP 400エラーが発生
+- <strong>ソフト拒否</strong>：モデルが「お手伝いできません」のような丁寧な拒否応答を返す（最新モデルで最も多い）
+- <strong>安全なコンテンツ</strong>は通常の応答が返る
 
-サンプルの出力フォーマット:  
+出力のサンプル形式：
 ```
 === Responsible AI Safety Demonstration ===
 
@@ -114,86 +110,86 @@ Response: Responsible AI development is crucial for ensuring...
 Status: Response generated successfully
 ────────────────────────────────────────────────────────────
 ```
-  
-<strong>注意</strong>：ハードブロックとソフト拒否の両方が安全システムが正しく機能していることを示しています。
+
+<strong>注記</strong>：ハードブロックおよびソフト拒否の両方は安全システムが正しく動作していることを示しています。
 
 ## 責任あるAI開発のベストプラクティス
 
-AIアプリケーションを構築する際には、次の重要な実践事項に従いましょう：
+AIアプリケーションを構築する際に守るべき重要な実践：
 
-1. <strong>潜在的な安全フィルター応答は必ず適切に処理する</strong>  
-   - ブロックされたコンテンツに対する適切なエラーハンドリングを実装  
-   - フィルタリングされた際には利用者に意味のあるフィードバックを提供
+1. <strong>潜在的な安全フィルター応答を常に適切に処理する</strong>
+   - ブロックされたコンテンツに対する適切なエラーハンドリングを実装
+   - コンテンツがフィルタリングされた場合にユーザーへ有意義なフィードバックを提供
 
-2. <strong>適切な場合は独自の追加コンテンツ検証を実装する</strong>  
-   - ドメイン固有の安全チェックを追加  
-   - 利用ケースに応じたカスタム検証ルールを作成
+2. <strong>必要に応じて独自の追加コンテンツ検証を実装する</strong>
+   - ドメイン固有の安全チェックを追加
+   - ユースケースに応じたカスタム検証ルールを作成
 
-3. **責任あるAI利用についてユーザー教育を行う**  
-   - 許容される利用方法の明確なガイドラインを提供  
-   - なぜ特定のコンテンツがブロックされるのか説明する
+3. **責任あるAI利用についてユーザー教育を行う**
+   - 受け入れ可能な利用範囲の明確なガイドラインを提供
+   - あるコンテンツがなぜブロックされるのか説明する
 
-4. <strong>安全事故を監視・ログ化し改善に役立てる</strong>  
-   - ブロックされたコンテンツのパターンを追跡  
-   - 安全対策の継続的な改善
+4. <strong>安全インシデントの監視と記録を行い改善につなげる</strong>
+   - ブロックされたコンテンツの傾向を追跡
+   - 安全対策の継続的な改善を図る
 
-5. <strong>プラットフォームのコンテンツポリシーを尊重する</strong>  
-   - プラットフォームのガイドラインを常に最新に保つ  
-   - 利用規約と倫理ガイドラインに従う
+5. <strong>プラットフォームのコンテンツポリシーを尊重する</strong>
+   - プラットフォームのガイドラインを常に確認
+   - 利用規約および倫理ガイドラインを遵守
 
 ## 重要な注意点
 
-この例では教育目的で意図的に問題のあるプロンプトを使用しています。目的は安全対策のデモンストレーションであり、それらを回避することではありません。AIツールは常に責任を持って倫理的に使用してください。
+この例では教育目的で意図的に問題のあるプロンプトを使用しています。目的は安全対策のデモンストレーションであり、安全対策を回避するためではありません。AIツールは常に責任を持って倫理的に使用してください。
 
 ## まとめ
 
 **おめでとうございます！** あなたは以下を達成しました：
 
-- <strong>AI安全対策を実装</strong>し、コンテンツフィルタリングと安全応答処理を含む  
-- <strong>責任あるAI原則を適用</strong>して倫理的で信頼できるAIシステムを構築  
-- **GitHub Modelsの組み込み保護機能を使って安全機構をテスト**  
-- **責任あるAI開発と運用のベストプラクティスを学習**
+- **コンテンツフィルタリングと安全応答處理を含むAI安全対策を実装**
+- **責任あるAI原則を適用し、倫理的で信頼できるAIシステムを構築**
+- **Azure AI Foundryの組み込みコンテンツ安全機能を使って安全メカニズムをテスト**
+- **責任あるAI開発と展開のベストプラクティスを習得**
 
-**責任あるAIリソース：**  
-- [Microsoft Trust Center](https://www.microsoft.com/trust-center) - マイクロソフトのセキュリティ、プライバシー、コンプライアンスへのアプローチについて学ぶ  
-- [Microsoft Responsible AI](https://www.microsoft.com/ai/responsible-ai) - マイクロソフトの責任あるAI開発の原則と実践を探る
+**責任あるAIのリソース：**
+- [Microsoft Trust Center](https://www.microsoft.com/trust-center) - Microsoftのセキュリティ、プライバシー、コンプライアンスへの取り組みを学ぶ
+- [Microsoft Responsible AI](https://www.microsoft.com/ai/responsible-ai) - Microsoftの責任あるAI開発の原則と実践を探る
 
 ## コース完了
 
-Generative AI for Beginnersコースの修了おめでとうございます！
+ジェネレーティブAI初心者コースの修了、おめでとうございます！
 
 ![Course Completion](../../../translated_images/ja/image.73c7e2ff4a652e77.webp)
 
-**達成したこと：**  
-- 開発環境をセットアップした  
-- コアな生成AI技術を学んだ  
-- 実践的なAIアプリケーションを探索した  
-- 責任あるAIの原則を理解した
+**達成したこと：**
+- 開発環境をセットアップ
+- ジェネレーティブAIの基礎技術を学習
+- 実践的なAIアプリケーションを探求
+- 責任あるAI原則を理解
 
 ## 次のステップ
 
-以下の追加リソースでAI学習を続けましょう：
+追加のリソースとともにAI学習を続けましょう：
 
-**追加学習コース：**  
-- [AI Agents For Beginners](https://github.com/microsoft/ai-agents-for-beginners)  
-- [.NETを使ったGenerative AI for Beginners](https://github.com/microsoft/Generative-AI-for-beginners-dotnet)  
-- [JavaScriptを使ったGenerative AI for Beginners](https://github.com/microsoft/generative-ai-with-javascript)  
-- [Generative AI for Beginners](https://github.com/microsoft/generative-ai-for-beginners)  
-- [ML for Beginners](https://aka.ms/ml-beginners)  
-- [Data Science for Beginners](https://aka.ms/datascience-beginners)  
-- [AI for Beginners](https://aka.ms/ai-beginners)  
-- [Cybersecurity for Beginners](https://github.com/microsoft/Security-101)  
-- [Web Dev for Beginners](https://aka.ms/webdev-beginners)  
-- [IoT for Beginners](https://aka.ms/iot-beginners)  
-- [XR Development for Beginners](https://github.com/microsoft/xr-development-for-beginners)  
-- [AIペアプログラミング向けGitHub Copilotマスタークラス](https://aka.ms/GitHubCopilotAI)  
-- [C#/.NET開発者向けGitHub Copilotマスタークラス](https://github.com/microsoft/mastering-github-copilot-for-dotnet-csharp-developers)  
-- [自分だけのCopilotアドベンチャーを選ぼう](https://github.com/microsoft/CopilotAdventures)  
-- [Azure AIサービスを使ったRAGチャットアプリ](https://github.com/Azure-Samples/azure-search-openai-demo-java)
+**追加学習コース：**
+- [AI Agents For Beginners](https://github.com/microsoft/ai-agents-for-beginners)
+- [Generative AI for Beginners using .NET](https://github.com/microsoft/Generative-AI-for-beginners-dotnet)
+- [Generative AI for Beginners using JavaScript](https://github.com/microsoft/generative-ai-with-javascript)
+- [Generative AI for Beginners](https://github.com/microsoft/generative-ai-for-beginners)
+- [ML for Beginners](https://aka.ms/ml-beginners)
+- [Data Science for Beginners](https://aka.ms/datascience-beginners)
+- [AI for Beginners](https://aka.ms/ai-beginners)
+- [Cybersecurity for Beginners](https://github.com/microsoft/Security-101)
+- [Web Dev for Beginners](https://aka.ms/webdev-beginners)
+- [IoT for Beginners](https://aka.ms/iot-beginners)
+- [XR Development for Beginners](https://github.com/microsoft/xr-development-for-beginners)
+- [Mastering GitHub Copilot for AI Paired Programming](https://aka.ms/GitHubCopilotAI)
+- [Mastering GitHub Copilot for C#/.NET Developers](https://github.com/microsoft/mastering-github-copilot-for-dotnet-csharp-developers)
+- [Choose Your Own Copilot Adventure](https://github.com/microsoft/CopilotAdventures)
+- [RAG Chat App with Azure AI Services](https://github.com/Azure-Samples/azure-search-openai-demo-java)
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**免責事項**:  
-本書類は AI 翻訳サービス [Co-op Translator](https://github.com/Azure/co-op-translator) を使用して翻訳されています。正確性を期していますが、自動翻訳には誤りや不正確な表現が含まれる可能性があることをご了承ください。原文の母国語版が権威ある情報源とみなされます。重要な情報については、専門の人間による翻訳を推奨します。本翻訳の使用により生じる誤解や解釈違いについては責任を負いかねます。
+**免責事項**：
+本書類は AI 翻訳サービス [Co-op Translator](https://github.com/Azure/co-op-translator) を使用して翻訳されています。正確性を期していますが、自動翻訳には誤りや不正確な部分が含まれる可能性があることをご承知おきください。原文の原語版が正式な情報源とみなされるべきです。重要な情報については、専門の人間による翻訳を推奨します。本翻訳の利用により生じたいかなる誤解や解釈違いについても、当方は責任を負いかねます。
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

@@ -1,27 +1,27 @@
-# ペットストーリー生成チュートリアル（初心者向け）
+# Pet Story Generator チュートリアル（初心者向け）
 
 ## 目次
 
-- [前提条件](../../../../04-PracticalSamples/petstory)
-- [プロジェクト構造の理解](../../../../04-PracticalSamples/petstory)
-- [主要コンポーネントの説明](../../../../04-PracticalSamples/petstory)
-  - [1. メインアプリケーション](../../../../04-PracticalSamples/petstory)
-  - [2. Webコントローラー](../../../../04-PracticalSamples/petstory)
-  - [3. ストーリーサービス](../../../../04-PracticalSamples/petstory)
-  - [4. Webテンプレート](../../../../04-PracticalSamples/petstory)
-  - [5. 設定](../../../../04-PracticalSamples/petstory)
-- [アプリケーションの実行](../../../../04-PracticalSamples/petstory)
-- [全体の仕組み](../../../../04-PracticalSamples/petstory)
-- [AI統合の理解](../../../../04-PracticalSamples/petstory)
-- [次のステップ](../../../../04-PracticalSamples/petstory)
+- [前提条件](#前提条件)
+- [プロジェクト構造の理解](#プロジェクト構造の理解)
+- [コアコンポーネントの説明](#コアコンポーネントの説明)
+  - [1. メインアプリケーション](#1-メインアプリケーション)
+  - [2. Webコントローラ](#2-webコントローラ)
+  - [3. ストーリーサービス](#3-ストーリーサービス)
+  - [4. Webテンプレート](#4-webテンプレート)
+  - [5. 設定](#5-設定)
+- [アプリケーションの実行](#アプリケーションの実行)
+- [すべてが連携する仕組み](#すべてが連携する仕組み)
+- [AI連携の理解](#ai連携の理解)
+- [次のステップ](#次のステップ)
 
 ## 前提条件
 
-始める前に以下を確認してください：
-- Java 21以上がインストールされていること
-- 依存関係管理のためのMaven
-- `models:read`スコープを持つ個人アクセストークン（PAT）が設定されたGitHubアカウント
-- Java、Spring Boot、Web開発の基本的な理解
+開始する前に、以下を確認してください：
+- Java 21 以上がインストールされていること
+- 依存関係管理のための Maven
+- Azure AI Foundry モデルのデプロイ（`azd up` でプロビジョニング — [第2章](../../02-SetupDevEnvironment/getting-started-azure-openai.md)参照）、`az login` でサインイン済み（キー不要の認証）
+- Java、Spring Boot、およびウェブ開発の基本知識
 
 ## プロジェクト構造の理解
 
@@ -42,13 +42,13 @@ petstory/
 └── pom.xml                           # Maven dependencies
 ```
 
-## 主要コンポーネントの説明
+## コアコンポーネントの説明
 
 ### 1. メインアプリケーション
 
 **ファイル:** `PetStoryApplication.java`
 
-これはSpring Bootアプリケーションのエントリーポイントです：
+これは Spring Boot アプリケーションのエントリポイントです：
 
 ```java
 @SpringBootApplication
@@ -59,16 +59,16 @@ public class PetStoryApplication {
 }
 ```
 
-**このファイルの役割:**
-- `@SpringBootApplication`アノテーションにより自動構成とコンポーネントスキャンを有効化
-- ポート8080で埋め込みWebサーバー（Tomcat）を起動
-- 必要なSpringのBeanやサービスを自動的に作成
+**概要:**
+- `@SpringBootApplication` アノテーションは自動構成とコンポーネントスキャンを有効にします
+- ポート8080で組み込みのウェブサーバ（Tomcat）を起動します
+- 必要なSpringのBeanとサービスを自動で作成します
 
-### 2. Webコントローラー
+### 2. Webコントローラ
 
 **ファイル:** `PetController.java`
 
-Webリクエストとユーザーの操作を処理します：
+これはすべてのウェブリクエストとユーザーインタラクションを処理します：
 
 ```java
 @Controller
@@ -82,7 +82,7 @@ public class PetController {
     
     @GetMapping("/")
     public String index() {
-        return "index";  // Returns index.html template
+        return "index";  // index.htmlテンプレートを返す
     }
     
     @PostMapping("/generate-story")
@@ -90,24 +90,24 @@ public class PetController {
                                Model model, 
                                RedirectAttributes redirectAttributes) {
         
-        // Input validation
+        // 入力の検証
         if (description.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please provide a description.");
             return "redirect:/";
         }
         
-        // Sanitize input for security
+        // セキュリティのために入力をサニタイズする
         String sanitizedDescription = sanitizeInput(description);
         
-        // Generate story with error handling
+        // エラーハンドリング付きでストーリーを生成する
         try {
             String story = storyService.generateStory(sanitizedDescription);
             model.addAttribute("caption", sanitizedDescription);
             model.addAttribute("story", story);
-            return "result";  // Returns result.html template
+            return "result";  // result.htmlテンプレートを返す
             
         } catch (Exception e) {
-            // Use fallback story if AI fails
+            // AIが失敗した場合にフォールバックのストーリーを使用する
             String fallbackStory = generateFallbackStory(sanitizedDescription);
             model.addAttribute("story", fallbackStory);
             return "result";
@@ -117,21 +117,21 @@ public class PetController {
     private String sanitizeInput(String input) {
         return input.replaceAll("[<>\"'&]", "")  // Remove dangerous characters
                    .trim()
-                   .substring(0, Math.min(input.length(), 500));  // Limit length
+                   .substring(0, Math.min(input.length(), 500));  // 長さを制限する
     }
 }
 ```
 
-**主な機能:**
+**主な機能：**
 
-1. **ルート処理**: `@GetMapping("/")`でアップロードフォームを表示し、`@PostMapping("/generate-story")`で送信内容を処理
-2. **入力検証**: 空の説明や長さ制限をチェック
-3. **セキュリティ**: ユーザー入力をサニタイズしてXSS攻撃を防止
-4. **エラーハンドリング**: AIサービスが失敗した場合にフォールバックストーリーを提供
-5. **モデルバインディング**: Springの`Model`を使用してHTMLテンプレートにデータを渡す
+1. <strong>ルート処理</strong>: `@GetMapping("/")` はアップロードフォームを表示し、`@PostMapping("/generate-story")` は送信を処理します
+2. <strong>入力検証</strong>: 空の説明や文字数制限をチェックします
+3. <strong>セキュリティ</strong>: ユーザー入力をサニタイズしてXSS攻撃を防ぎます
+4. <strong>エラーハンドリング</strong>: AIサービスが失敗した場合は代替ストーリーを提供します
+5. <strong>モデルバインディング</strong>: Springの `Model` を使ってデータをHTMLテンプレートに渡します
 
 **フォールバックシステム:**
-コントローラーには、AIサービスが利用できない場合に使用される事前作成されたストーリーテンプレートが含まれています：
+コントローラにはAIサービスが利用できない場合に使用する事前作成済みのストーリーテンプレートがあります：
 
 ```java
 private String generateFallbackStory(String description) {
@@ -141,7 +141,7 @@ private String generateFallbackStory(String description) {
         "In a cozy home filled with love, there lived an extraordinary pet..."
     };
     
-    // Use description hash for consistent responses
+    // 一貫した応答のために説明ハッシュを使用する
     int index = Math.abs(description.hashCode() % storyTemplates.length);
     return storyTemplates[index];
 }
@@ -151,7 +151,7 @@ private String generateFallbackStory(String description) {
 
 **ファイル:** `StoryService.java`
 
-このサービスはGitHub Modelsと通信してストーリーを生成します：
+このサービスは Azure AI Foundry と通信し、キー不要の認証を使ってストーリーを生成します：
 
 ```java
 @Service
@@ -160,18 +160,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // FoundryのOpenAI互換エンドポイントは/openai/v1/にあります
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // Microsoft Entra IDによるキーレス認証（APIキー不要）
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -182,16 +186,16 @@ public class StoryService {
         
         String userPrompt = "Write a fun short story about a pet described as: " + description;
         
-        // Configure the AI request
+        // AIリクエストを設定する
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(modelName)
                 .addSystemMessage(systemPrompt)
                 .addUserMessage(userPrompt)
-                .maxCompletionTokens(500)  // Limit response length
-                .temperature(0.8)          // Control creativity (0.0-1.0)
+                .maxCompletionTokens(500)  // 応答の長さを制限する
+                .temperature(0.8)          // 創造性を制御する（0.0〜1.0）
                 .build();
         
-        // Send request and get response
+        // リクエストを送信して応答を取得する
         ChatCompletion response = openAIClient.chat().completions().create(params);
         
         return response.choices().get(0).message().content().orElse("");
@@ -201,17 +205,17 @@ public class StoryService {
 
 **主な構成要素:**
 
-1. **OpenAIクライアント**: GitHub Models用に構成された公式OpenAI Java SDKを使用
-2. **システムプロンプト**: AIの動作を家族向けのペットストーリーを書くよう設定
-3. **ユーザープロンプト**: 説明に基づいてAIに具体的なストーリーを書くよう指示
-4. **パラメータ**: ストーリーの長さや創造性レベルを制御
-5. **エラーハンドリング**: コントローラーがキャッチして処理する例外をスロー
+1. **OpenAI クライアント**: Azure AI Foundry 用に設定された公式OpenAI Java SDK（キー不要）
+2. <strong>システムプロンプト</strong>: AIに家族向けのペットストーリーを書くよう指示
+3. <strong>ユーザープロンプト</strong>: 説明に基づきAIにどのようなストーリーを書くか正確に指示
+4. <strong>パラメータ</strong>: ストーリーの長さと創造性のレベルを制御
+5. <strong>エラーハンドリング</strong>: コントローラが捕捉可能な例外を投げます
 
 ### 4. Webテンプレート
 
 **ファイル:** `index.html`（アップロードフォーム）
 
-ユーザーがペットを説明するメインページ：
+ユーザーがペットを説明するメインページです：
 
 ```html
 <!DOCTYPE html>
@@ -260,7 +264,7 @@ public class StoryService {
 
 **ファイル:** `result.html`（ストーリー表示）
 
-生成されたストーリーを表示：
+生成されたストーリーを表示します：
 
 ```html
 <!DOCTYPE html>
@@ -293,18 +297,18 @@ public class StoryService {
 </html>
 ```
 
-**テンプレートの特徴:**
+**テンプレートの特徴：**
 
-1. **Thymeleaf統合**: 動的コンテンツ用に`th:`属性を使用
-2. **レスポンシブデザイン**: モバイルとデスクトップ向けのCSSスタイリング
-3. **エラーハンドリング**: 検証エラーをユーザーに表示
-4. **クライアントサイド処理**: 画像解析のためのJavaScript（Transformers.jsを使用）
+1. **Thymeleaf連携**: 動的コンテンツ用の `th:` 属性を使用
+2. <strong>レスポンシブデザイン</strong>: モバイルとデスクトップ向けのCSSスタイリング
+3. <strong>エラーハンドリング</strong>: 検証エラーをユーザーに表示
+4. <strong>クライアントサイド処理</strong>: 画像解析用JavaScript（Transformers.jsを使用）
 
 ### 5. 設定
 
 **ファイル:** `application.properties`
 
-アプリケーションの設定：
+アプリケーションの設定内容：
 
 ```properties
 spring.application.name=pet-story-app
@@ -316,45 +320,48 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
-**設定の説明:**
+**設定の説明：**
 
-1. **ファイルアップロード**: 最大10MBの画像を許可
-2. **ログ**: 実行中に記録される情報を制御
-3. **GitHub Models**: 使用するAIモデルとエンドポイントを指定
-4. **セキュリティ**: 敏感な情報を公開しないようエラーハンドリングを構成
+1. <strong>ファイルアップロード</strong>: 最大10MBの画像を許可
+2. <strong>ログ出力</strong>: 実行中のログ情報を制御
+3. **Azure AI Foundry**: 使用するエンドポイントとモデルデプロイを指定（キー不要認証）
+4. <strong>セキュリティ</strong>: 敏感情報を公開しないエラーハンドリング設定
 
 ## アプリケーションの実行
 
-### ステップ1: GitHubトークンを設定
+### 手順1: サインインしてエンドポイントを設定
 
-まず、GitHubトークンを環境変数として設定します：
+認証はキー不要のMicrosoft Entra IDを使いますので、APIキー不要です。サインインしてFoundryエンドポイントを設定します：
 
-**Windows（コマンドプロンプト）:**
+**Windows（コマンドプロンプト）：**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-**Windows（PowerShell）:**
+**Windows（PowerShell）：**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
-**Linux/macOS:**
+**Linux/macOS：**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-**これが必要な理由:**
-- GitHub ModelsはAIモデルへのアクセスに認証を必要とします
-- 環境変数を使用することで、ソースコードにトークンを含めないようにします
-- `models:read`スコープはAI推論へのアクセスを提供
+**必要な理由：**
+- Azure AI Foundryは推論リクエスト認証にMicrosoft Entra IDを使用します
+- キー不要認証により、ソースコードや環境変数に秘密情報を含める必要がありません
+- アカウントは対象リソースに対して **Cognitive Services OpenAI User** ロールが必要です
 
-### ステップ2: ビルドと実行
+### 手順2: ビルドと実行
 
 プロジェクトディレクトリに移動：
 ```bash
@@ -371,51 +378,53 @@ mvn clean compile
 mvn spring-boot:run
 ```
 
-アプリケーションは`http://localhost:8080`で起動します。
+アプリケーションは `http://localhost:8080` で起動します。
 
-### ステップ3: アプリケーションをテスト
+### 手順3: アプリケーションをテスト
 
-1. **ブラウザで** `http://localhost:8080` を開く
-2. **ペットを説明**（例: "ボール遊びが大好きな活発なゴールデンレトリバー"）
-3. **「ストーリーを生成」ボタンをクリック**してAI生成ストーリーを取得
-4. **または**、ペットの画像をアップロードして自動的に説明を生成
-5. **生成されたストーリーを表示**して楽しむ
+1. ブラウザで `http://localhost:8080` を開く
+2. テキストエリアにペットを説明（例：「遊び好きのゴールデンレトリバーでボール遊びが大好き」）
+3. 「ストーリーを生成」ボタンをクリックしてAI生成のストーリーを取得
+4. あるいはペットの画像をアップロードして自動で説明を生成
+5. ペットの説明に基づくクリエイティブなストーリーを閲覧
 
-## 全体の仕組み
+## すべてが連携する仕組み
 
-ペットストーリーを生成する際の全体の流れ：
+ペットストーリー生成の全体の流れは以下の通りです：
 
-1. **ユーザー入力**: Webフォームでペットを説明
-2. **フォーム送信**: ブラウザがPOSTリクエストを`/generate-story`に送信
-3. **コントローラー処理**: `PetController`が入力を検証しサニタイズ
-4. **AIサービス呼び出し**: `StoryService`がGitHub Models APIにリクエストを送信
-5. **ストーリー生成**: AIが説明に基づいて創造的なストーリーを生成
-6. **レスポンス処理**: コントローラーがストーリーを受け取りモデルに追加
-7. **テンプレートレンダリング**: Thymeleafが`result.html`をストーリー付きでレンダリング
-8. **表示**: ユーザーがブラウザで生成されたストーリーを見る
+1. <strong>ユーザー入力</strong>：ウェブフォームでペットの説明を入力
+2. <strong>フォーム送信</strong>：ブラウザが `/generate-story` にPOSTリクエスト送信
+3. <strong>コントローラ処理</strong>：`PetController` が入力を検証しサニタイズ
+4. **AIサービス呼び出し**：`StoryService` がAzure AI Foundryモデルにリクエスト送信
+5. <strong>ストーリー生成</strong>：AIが説明に基づいてクリエイティブなストーリーを生成
+6. <strong>レスポンス処理</strong>：コントローラがストーリーを受け取りモデルに追加
+7. <strong>テンプレート描画</strong>：Thymeleafが `result.html` をストーリー付きでレンダリング
+8. <strong>表示</strong>：ユーザーのブラウザに生成ストーリーを表示
 
-**エラーハンドリングの流れ:**
+**エラーハンドリングの流れ：**  
 AIサービスが失敗した場合：
-1. コントローラーが例外をキャッチ
-2. 事前作成されたテンプレートを使用してフォールバックストーリーを生成
-3. AIが利用できない旨のメモとともにフォールバックストーリーを表示
-4. ユーザーがストーリーを受け取れるようにし、良好なユーザー体験を確保
+1. コントローラが例外を捕捉
+2. 事前用意したテンプレートから代替ストーリーを生成
+3. AI非利用状態の説明付きで代替ストーリーを表示
+4. ユーザーには常にストーリーが提供され、良いユーザー体験を確保
 
-## AI統合の理解
+## AI連携の理解
 
-### GitHub Models API
-このアプリケーションはGitHub Modelsを使用しており、さまざまなAIモデルへの無料アクセスを提供します：
+### Azure AI Foundry（キー不要認証）  
+アプリは Azure AI Foundry をキー不要認証（Microsoft Entra ID）で使用しています：
 
 ```java
-// Authentication with GitHub token
+// キーレス認証 - APIキー不要
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
-### プロンプトエンジニアリング
-サービスは良い結果を得るために慎重に作成されたプロンプトを使用します：
+### プロンプトエンジニアリング  
+優れた結果を得るために慎重に設計されたプロンプトを使用：
 
 ```java
 String systemPrompt = "You are a creative storyteller who writes fun, " +
@@ -423,8 +432,8 @@ String systemPrompt = "You are a creative storyteller who writes fun, " +
                      "Keep stories under 500 words and appropriate for all ages.";
 ```
 
-### レスポンス処理
-AIのレスポンスを抽出し、検証します：
+### 応答処理  
+AIの応答を抽出し検証：
 
 ```java
 ChatCompletion response = openAIClient.chat().completions().create(params);
@@ -433,7 +442,11 @@ String story = response.choices().get(0).message().content().orElse("");
 
 ## 次のステップ
 
-さらなる例については、[第4章 実用サンプル](../README.md) を参照してください。
+さらなる例については [第04章: 実践サンプル](../README.md) をご覧ください。
 
-**免責事項**:  
-この文書は、AI翻訳サービス [Co-op Translator](https://github.com/Azure/co-op-translator) を使用して翻訳されています。正確性を追求しておりますが、自動翻訳には誤りや不正確な部分が含まれる可能性があることをご承知ください。元の言語で記載された文書が正式な情報源とみなされるべきです。重要な情報については、専門の人間による翻訳を推奨します。この翻訳の使用に起因する誤解や誤解釈について、当方は一切の責任を負いません。
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**免責事項**：
+本書類は AI 翻訳サービス [Co-op Translator](https://github.com/Azure/co-op-translator) を使用して翻訳されています。正確性を期していますが、自動翻訳には誤りや不正確な部分が含まれる可能性があることをご承知おきください。原文の原語版が正式な情報源とみなされるべきです。重要な情報については、専門の人間による翻訳を推奨します。本翻訳の利用により生じたいかなる誤解や解釈違いについても、当方は責任を負いかねます。
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

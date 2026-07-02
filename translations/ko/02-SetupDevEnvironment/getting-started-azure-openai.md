@@ -1,138 +1,151 @@
-# Azure OpenAI 개발 환경 설정
+# Azure AI Foundry 개발 환경 설정
 
-> **빠른 시작**: 이 가이드는 Azure OpenAI 설정을 위한 것입니다. 무료 모델로 바로 시작하려면 [GitHub Models with Codespaces](./README.md#quick-start-cloud)를 사용하세요.
+> 이 가이드는 이 과정의 Java AI 앱용 **Azure AI Foundry** 모델을 **키 없는** 인증(Microsoft Entra ID)을 사용해 설정합니다 — 관리할 API 키가 필요 없습니다. 도구가 처음인가요? [개발 환경 가이드](./README.md)부터 시작하세요.
 
-이 가이드는 이 과정에서 Java AI 앱을 위한 Azure AI Foundry 모델을 설정하는 방법을 안내합니다.
+이 가이드는 이 과정의 Java AI 앱용 **Azure AI Foundry** 모델을 설정합니다. 두 가지 경로가 있습니다:
+
+- **옵션 A — `azd` + Bicep으로 프로비저닝(권장):** 한 번의 명령으로 Foundry 계정과 모델을 코드로 배포합니다. 포털 클릭 불필요.
+- **옵션 B — Azure AI Foundry 포털에서 리소스를 수동으로 생성하기**
+
+두 경로 모두 **키 없는 인증**(Microsoft Entra ID)을 사용하므로 복사하거나 노출할 API 키가 없습니다.
 
 ## 목차
 
-- [빠른 설정 개요](../../../02-SetupDevEnvironment)
-- [1단계: Azure AI Foundry 리소스 생성](../../../02-SetupDevEnvironment)
-  - [허브 및 프로젝트 생성](../../../02-SetupDevEnvironment)
-  - [GPT-4o-mini 모델 배포](../../../02-SetupDevEnvironment)
-- [2단계: Codespace 생성](../../../02-SetupDevEnvironment)
-- [3단계: 환경 구성](../../../02-SetupDevEnvironment)
-- [4단계: 설정 테스트](../../../02-SetupDevEnvironment)
-- [다음 단계](../../../02-SetupDevEnvironment)
-- [리소스](../../../02-SetupDevEnvironment)
-- [추가 리소스](../../../02-SetupDevEnvironment)
+- [생성되는 항목](#생성되는-항목)
+- [필수 조건](#필수-조건)
+- [옵션 A: azd + Bicep으로 프로비저닝(권장)](#option-a-provision-with-azd--bicep-recommended)
+- [옵션 B: 리소스 수동 생성](#옵션-b-리소스-수동-생성)
+- [환경 구성](#환경-구성)
+- [설정 테스트](#설정-테스트)
+- [다음 단계](#다음-단계)
+- [리소스](#리소스)
+- [추가 리소스](#추가-리소스)
 
-## 빠른 설정 개요
+## 생성되는 항목
 
-1. Azure AI Foundry 리소스 생성 (허브, 프로젝트, 모델)
-2. Java 개발 컨테이너를 사용하여 Codespace 생성
-3. Azure OpenAI 자격 증명을 포함한 `.env` 파일 구성
-4. 예제 프로젝트로 설정 테스트
+[`infra/`](../../../02-SetupDevEnvironment/infra)의 Bicep 템플릿은 다음을 프로비저닝합니다:
 
-## 1단계: Azure AI Foundry 리소스 생성
+- 프로젝트가 포함된 **Azure AI Foundry** 계정(`Microsoft.CognitiveServices/accounts`, kind `AIServices`)
+- <strong>채팅</strong> 배포 — `gpt-4o-mini`
+- <strong>임베딩</strong> 배포 — `text-embedding-3-small` (나중 챕터에서 사용)
+- 키를 관리하지 않고 `az login`으로 로그인할 수 있는 **키 없는 역할 할당**(`Cognitive Services OpenAI User`)
 
-### 허브 및 프로젝트 생성
+## 필수 조건
 
-1. [Azure AI Foundry Portal](https://ai.azure.com/)로 이동하여 로그인합니다.
-2. **+ Create** → **New hub**를 클릭합니다 (또는 **Management** → **All hubs** → **+ New hub**로 이동).
-3. 허브를 구성합니다:
-   - **허브 이름**: 예: "MyAIHub"
-   - **구독**: Azure 구독 선택
-   - **리소스 그룹**: 새로 생성하거나 기존 그룹 선택
-   - **위치**: 가까운 위치 선택
-   - **스토리지 계정**: 기본값 사용 또는 사용자 지정 구성
-   - **키 자격증명 모음**: 기본값 사용 또는 사용자 지정 구성
-   - **Next** → **Review + create** → **Create**를 클릭합니다.
-4. 생성 후, **+ New project**를 클릭합니다 (또는 허브 개요에서 **Create project** 선택).
-   - **프로젝트 이름**: 예: "GenAIJava"
-   - **Create**를 클릭합니다.
+- [Azure 구독](https://azure.microsoft.com/free/)
+- [Azure Developer CLI (`azd`)](https://aka.ms/azure-dev/install)
+- [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli)
+- [Java 21+](https://learn.microsoft.com/java/openjdk/download) 및 [Maven 3.9+](https://maven.apache.org/download.cgi)
 
-### GPT-4o-mini 모델 배포
+## 옵션 A: azd + Bicep으로 프로비저닝(권장)
 
-1. 프로젝트에서 **Model catalog**로 이동하여 **gpt-4o-mini**를 검색합니다.
-   - *대안: **Deployments** → **+ Create deployment**로 이동합니다.*
-2. gpt-4o-mini 모델 카드에서 **Deploy**를 클릭합니다.
-3. 배포를 구성합니다:
-   - **배포 이름**: "gpt-4o-mini"
-   - **모델 버전**: 최신 버전 사용
-   - **배포 유형**: Standard
-4. **Deploy**를 클릭합니다.
-5. 배포 후, **Deployments** 탭으로 이동하여 다음 값을 복사합니다:
-   - **배포 이름** (예: "gpt-4o-mini")
-   - **Target URI** (예: `https://your-hub-name.openai.azure.com/`)  
-      > **중요**: 전체 엔드포인트 경로가 아닌 기본 URL만 복사하세요 (예: `https://myhub.openai.azure.com/`).
-   - **Key** (Keys and Endpoint 섹션에서 확인 가능)
-
-> **문제가 있나요?** 공식 [Azure AI Foundry Documentation](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project)을 참조하세요.
-
-## 2단계: Codespace 생성
-
-1. 이 저장소를 GitHub 계정으로 포크합니다.
-   > **참고**: 기본 설정을 수정하려면 [Dev Container Configuration](../../../.devcontainer/devcontainer.json)을 확인하세요.
-2. 포크한 저장소에서 **Code** → **Codespaces** 탭을 클릭합니다.
-3. **...** → **New with options...**를 클릭합니다.
-![옵션으로 Codespace 생성](../../../translated_images/ko/codespaces.9945ded8ceb431a5.webp)
-4. **Dev container configuration**을 선택합니다: 
-   - **Generative AI Java Development Environment**
-5. **Create codespace**를 클릭합니다.
-
-## 3단계: 환경 구성
-
-Codespace가 준비되면 Azure OpenAI 자격 증명을 설정합니다:
-
-1. **저장소 루트에서 예제 프로젝트로 이동합니다:**
-   ```bash
-   cd 02-SetupDevEnvironment/examples/basic-chat-azure
-   ```
-
-2. **.env 파일을 생성합니다:**
-   ```bash
-   cp .env.example .env
-   ```
-
-3. **.env 파일을 열어 Azure OpenAI 자격 증명을 입력합니다:**
-   ```bash
-   # Your Azure OpenAI API key (from Azure AI Foundry portal)
-   AZURE_AI_KEY=your-actual-api-key-here
-   
-   # Your Azure OpenAI endpoint URL (e.g., https://myhub.openai.azure.com/)
-   AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-   ```
-
-   > **보안 주의**: 
-   > - `.env` 파일을 버전 관리에 커밋하지 마세요.
-   > - `.env` 파일은 이미 `.gitignore`에 포함되어 있습니다.
-   > - API 키를 안전하게 보관하고 정기적으로 교체하세요.
-
-## 4단계: 설정 테스트
-
-예제 애플리케이션을 실행하여 Azure OpenAI 연결을 테스트합니다:
+`02-SetupDevEnvironment` 폴더에서:
 
 ```bash
+cd 02-SetupDevEnvironment
+
+# 로그인 (두 도구 모두)
+azd auth login
+az login
+
+# Foundry 계정 및 모델 배포 준비
+azd up
+```
+  
+`azd`는 **환경 이름**(예: `genai-java`)과 <strong>지역</strong>을 묻습니다. `gpt-4o-mini`와 `text-embedding-3-small`이 사용 가능한 지역을 선택하세요 — 예를 들어 `eastus2` 또는 `swedencentral`.
+
+프로비저닝이 끝나면 azd는:
+
+1. [`infra/main.bicep`](../../../02-SetupDevEnvironment/infra/main.bicep)에 정의된 모든 항목을 배포합니다.
+2. 포스트 프로비저닝 훅을 실행해 [`examples/basic-chat-azure/.env`](../../../02-SetupDevEnvironment/examples/basic-chat-azure)에 엔드포인트와 배포 이름을 기록합니다(비밀 정보 없음).
+
+> **팁:** 변경 사항을 적용하려면 언제든지 `azd up`을 재실행하세요. 모든 리소스를 삭제하고 비용 발생을 중단하려면 `azd down`을 실행하세요.
+
+생성된 설정을 보려면:
+
+```bash
+azd env get-values
+```
+  
+이제 [설정 테스트](#설정-테스트)로 건너뛰세요.
+
+## 옵션 B: 리소스 수동 생성
+
+포털을 선호하시나요? 수동으로 리소스를 생성하세요:
+
+1. [Azure AI Foundry 포털](https://ai.azure.com/)에 로그인하세요.
+2. **프로젝트 생성**(이 과정에서 AI Foundry 리소스도 생성됩니다). 이름은 `GenAIJava` 같은 이름을 붙이세요.
+3. 프로젝트에서 **Models + endpoints** → **Deploy model** → <strong>Deploy base model</strong>을 엽니다.
+4. **gpt-4o-mini**(배포 이름 `gpt-4o-mini`)를 배포합니다. 임베딩 예제를 원하면 <strong>text-embedding-3-small</strong>도 반복하여 배포하세요.
+5. <strong>개요(Overview)</strong>에서 <strong>엔드포인트</strong>(예: `https://<resource>.openai.azure.com/`)를 복사합니다.
+6. 키 없는 액세스 권한 부여: 리소스의 **접근 제어(IAM)** → **역할 할당 추가** → 계정에 **Cognitive Services OpenAI User** 역할을 할당합니다.
+
+> **문제가 계속되나요?** [Azure AI Foundry 문서](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects)를 참고하세요.
+
+## 환경 구성
+
+**옵션 A (`azd up`)를 사용했다면**, 설정 파일이 이미 작성되어 있어 구성할 필요가 없습니다. [설정 테스트](#설정-테스트)로 건너뛰세요.
+
+**옵션 B (수동)를 사용했다면**, 예제 `.env` 파일을 직접 만드세요:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+cp .env.example .env
+```
+  
+`.env`를 편집해 엔드포인트를 넣으세요(키는 없습니다 — 인증은 키 없음):
+
+```bash
+AZURE_OPENAI_ENDPOINT=https://<your-resource>.openai.azure.com/
+AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini
+```
+  
+> **보안 참고:** 저장할 API 키가 없습니다. `az login`(로컬) 또는 관리 ID(Azure 내)를 통해 Microsoft Entra ID로 인증합니다. `.env` 파일은 비밀이 아닌 설정만 포함하며 이미 `.gitignore`에 포함되어 있습니다.
+
+## 설정 테스트
+
+키 없는 인증이 토큰을 얻을 수 있도록 로그인되어 있는지 확인한 후 예제를 실행하세요:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+
+az login          # 아직 로그인하지 않은 경우
 mvn clean spring-boot:run
 ```
+  
+`gpt-4o-mini` 모델의 응답을 볼 수 있을 것입니다!
 
-GPT-4o-mini 모델에서 응답을 확인할 수 있습니다!
+> **VS Code 사용자:** `F5`를 눌러 실행하세요. 앱이 `.env`를 자동으로 로드합니다.
 
-> **VS Code 사용자**: VS Code에서 `F5`를 눌러 애플리케이션을 실행할 수도 있습니다. `.env` 파일을 자동으로 로드하도록 실행 구성이 이미 설정되어 있습니다.
-
-> **전체 예제**: 자세한 지침 및 문제 해결은 [End-to-End Azure OpenAI Example](./examples/basic-chat-azure/README.md)을 참조하세요.
+> **전체 예제:** 자세한 내용과 문제 해결은 [Azure AI Foundry와 기본 채팅 예제](./examples/basic-chat-azure/README.md)를 참고하세요.
 
 ## 다음 단계
 
-**설정 완료!** 이제 다음을 사용할 수 있습니다:
-- gpt-4o-mini가 배포된 Azure OpenAI
-- 로컬 `.env` 파일 구성
-- Java 개발 환경 준비 완료
+**설정 완료!** 이제 다음이 준비되었습니다:  
+- `gpt-4o-mini`와 `text-embedding-3-small`이 배포된 Azure AI Foundry  
+- 관리할 키가 없는 인증(Microsoft Entra ID)  
+- 엔드포인트와 배포 이름이 포함된 로컬 `.env`  
+- Java 개발 환경
 
-**다음으로 진행하세요** [3장: 핵심 생성 AI 기술](../03-CoreGenerativeAITechniques/README.md)에서 AI 애플리케이션을 구축하기 시작하세요!
+**AI 앱 개발을 시작하려면** [3장: 핵심 생성 AI 기법](../03-CoreGenerativeAITechniques/README.md)으로 계속하세요!
 
 ## 리소스
 
-- [Azure AI Foundry Documentation](https://learn.microsoft.com/azure/ai-services/)
-- [Spring AI Azure OpenAI Documentation](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
+- [Azure Developer CLI (azd)](https://aka.ms/azure-dev/install)
+- [Microsoft Entra ID로 키 없는 인증](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
+- [Azure AI Foundry 문서](https://learn.microsoft.com/azure/ai-foundry/)
+- [Spring AI Azure OpenAI 문서](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
 - [Azure OpenAI Java SDK](https://learn.microsoft.com/java/api/overview/azure/ai-openai-readme)
 
 ## 추가 리소스
 
 - [VS Code 다운로드](https://code.visualstudio.com/Download)
 - [Docker Desktop 받기](https://www.docker.com/products/docker-desktop)
-- [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
+- [Dev Container 구성](../../../.devcontainer/devcontainer.json)
 
-**면책 조항**:  
-이 문서는 AI 번역 서비스 [Co-op Translator](https://github.com/Azure/co-op-translator)를 사용하여 번역되었습니다. 정확성을 위해 최선을 다하고 있지만, 자동 번역에는 오류나 부정확성이 포함될 수 있습니다. 원본 문서를 해당 언어로 작성된 상태에서 권위 있는 자료로 간주해야 합니다. 중요한 정보의 경우, 전문적인 인간 번역을 권장합니다. 이 번역 사용으로 인해 발생하는 오해나 잘못된 해석에 대해 당사는 책임을 지지 않습니다.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**면책 조항**:
+이 문서는 AI 번역 서비스 [Co-op Translator](https://github.com/Azure/co-op-translator)를 사용하여 번역되었습니다. 정확성을 기하기 위해 노력하고 있으나, 자동 번역은 오류나 부정확한 부분이 있을 수 있음을 유의하시기 바랍니다. 원본 문서의 원어본이 권위 있는 자료로 간주되어야 합니다. 중요한 정보의 경우, 전문가의 인간 번역을 권장합니다. 이 번역 사용으로 인해 발생하는 오해나 잘못된 해석에 대해 당사는 책임을 지지 않습니다.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->
