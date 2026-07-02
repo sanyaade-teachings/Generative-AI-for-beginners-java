@@ -1,99 +1,95 @@
-# 負責任生成式人工智能
+# 負責任的生成式人工智能
 
-[![負責任生成式人工智能](https://img.youtube.com/vi/rF-b2BTSMQ4/0.jpg)](https://www.youtube.com/watch?v=rF-b2BTSMQ4 "Responsible Generative AI")
 
-> <strong>影片</strong>: [觀看本課程的影片總覽](https://www.youtube.com/watch?v=rF-b2BTSMQ4)。
-> 你也可以點擊上方縮圖來開啟相同的影片。
+## 你將學習到的內容
 
-## 您將學習的內容
-
-- 學習對 AI 開發重要的倫理考量與最佳實踐
-- 在應用程式中建立內容過濾與安全機制
-- 使用 GitHub Models 內建保護測試並處理 AI 安全回應
-- 應用負責任 AI 原則，打造安全且有倫理的 AI 系統
+- 了解對 AI 開發重要的倫理考量和最佳實踐
+- 在應用程式中建立內容過濾與安全措施
+- 使用 Azure AI Foundry 內建內容過濾功能，測試並處理 AI 安全回應
+- 應用負責任的 AI 原則，建立安全且具倫理的 AI 系統
 
 ## 目錄
 
 - [簡介](#簡介)
-- [GitHub Models 內建安全機制](#github-models-內建安全機制)
-- [實際範例：負責任 AI 安全示範](#實際範例：負責任-ai-安全示範)
+- [Azure AI Foundry 內容安全](#azure-ai-foundry-內容安全)
+- [實務範例：負責任的 AI 安全示範](#實務範例：負責任的-ai-安全示範)
   - [示範內容](#示範內容)
-  - [設定指引](#設定指引)
+  - [設定指導](#設定指導)
   - [執行示範](#執行示範)
   - [預期輸出](#預期輸出)
-- [負責任 AI 開發最佳實踐](#負責任-ai-開發最佳實踐)
-- [重要提醒](#重要提醒)
+- [負責任 AI 開發的最佳實踐](#負責任-ai-開發的最佳實踐)
+- [重要說明](#重要說明)
 - [總結](#總結)
-- [課程結束](#課程結束)
-- [後續步驟](#後續步驟)
+- [課程完成](#課程完成)
+- [下一步](#下一步)
 
 ## 簡介
 
-本章節聚焦於建立負責任且具倫理的生成式 AI 應用的重要面向。您將了解如何實作安全機制、處理內容過濾，以及應用先前章節介紹的工具與框架所涵蓋的負責任 AI 最佳實踐。了解這些原則對於打造不只是技術上令人印象深刻，更同時安全、合乎倫理且值得信賴的 AI 系統至關重要。
+本章節聚焦於建立負責任且具倫理的生成式 AI 應用程式的關鍵面向。你將學習如何實施安全措施、處理內容過濾，以及利用先前章節涵蓋的工具和框架，應用負責任的 AI 開發最佳實踐。理解這些原則對於打造不僅技術上優秀，且安全、具倫理及值得信賴的 AI 系統至關重要。
 
-## GitHub Models 內建安全機制
+## Azure AI Foundry 內容安全
 
-GitHub Models 內建有基本的內容過濾。就像在你的 AI 俱樂部裡有個親切的保全—雖不是最複雜但能應付基本情境。
+Azure AI Foundry 模型內建內容過濾功能，由 Azure AI 內容安全驅動。在任何內容到達或離開模型之前，均會自動篩檢多個類別的有害提示及回應。
 
-**GitHub Models 防護範圍：**
-- <strong>有害內容</strong>：阻擋明顯暴力、色情或危險內容
-- <strong>基本仇恨言論</strong>：過濾清晰的歧視語言
-- <strong>簡單脫困攻擊</strong>：抵抗基本試圖繞過安全防護的嘗試
+**Azure AI Foundry 防護的內容包括：**
+- <strong>有害內容</strong>：阻擋暴力、性、傷害自己或危險內容
+- <strong>仇恨言論</strong>：過濾歧視性語言
+- <strong>繞過防護</strong>：偵測提示注入與繞過安全防護的嘗試
 
-## 實際範例：負責任 AI 安全示範
+## 實務範例：負責任的 AI 安全示範
 
-本章包含一個實際示範，展示 GitHub Models 如何實施負責任 AI 安全措施，透過測試可能違反安全指引的提示語。
+本章節包含一個實際示範，展示 Azure AI Foundry 如何透過測試可能違反安全準則的提示，來實作負責任的 AI 安全措施。
 
 ### 示範內容
 
-`ResponsibleGithubModels` 類別遵循以下流程：
-1. 使用驗證初始化 GitHub Models 客戶端
-2. 測試有害提示語（暴力、仇恨言論、錯誤資訊、非法內容）
-3. 將每個提示語送至 GitHub Models API
-4. 處理回應：硬阻擋（HTTP 錯誤）、軟拒絕（客氣的「我無法協助」回覆）或正常內容產生
-5. 顯示結果，呈現哪些內容被阻擋、拒絕或允許
-6. 測試安全內容以作比較
+`ResponsibleAIDemo` 類別流程如下：
+1. 使用無鍵認證（Microsoft Entra ID）初始化 Azure AI Foundry 用戶端
+2. 測試有害提示（暴力、仇恨言論、錯誤資訊、非法內容）
+3. 將每個提示傳送至 Azure AI Foundry 模型
+4. 處理回應：硬阻擋（HTTP 錯誤）、軟拒絕（禮貌的「我無法協助」回應），或正常內容生成
+5. 顯示結果，指出哪些內容被阻擋、拒絕或允許
+6. 測試安全內容做比較
 
-![負責任 AI 安全示範](../../../translated_images/zh-HK/responsible.e4f51a917bafa4bf.webp)
+![Responsible AI Safety Demo](../../../translated_images/zh-HK/responsible.e4f51a917bafa4bf.webp)
 
-### 設定指引
+### 設定指導
 
-1. **設定您的 GitHub 個人存取權杖：**
+1. **登入並設置你的 Azure AI Foundry 端點**（無鍵認證 — 無需 API 金鑰）。先執行 `az login`，然後：
    
    Windows（命令提示字元）：
    ```cmd
-   set GITHUB_TOKEN=your_github_token_here
+   set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    ```
    
    Windows（PowerShell）：
    ```powershell
-   $env:GITHUB_TOKEN="your_github_token_here"
+   $env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
    ```
    
    Linux/macOS：
    ```bash
-   export GITHUB_TOKEN=your_github_token_here
+   export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    ```   
 
 ### 執行示範
 
-1. **切換到 examples 目錄：**
+1. **切換到 examples 資料夾：**
    ```bash
    cd 03-CoreGenerativeAITechniques/examples
    ```
 
 2. **編譯並執行示範：**
    ```bash
-   mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleGithubModels"
+   mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleAIDemo"
    ```
 
 ### 預期輸出
 
-示範會測試各種類型的潛在有害提示語，並展示現代 AI 安全如何透過兩種機制運作：
+該示範會測試各種潛在有害提示，展示現代 AI 安全透過兩種機制運作：
 
-- <strong>硬阻擋</strong>：安全過濾器在內容抵達模型前即阻擋，返回 HTTP 400 錯誤
-- <strong>軟拒絕</strong>：模型以客氣拒絕（例如「我無法協助這件事」）回應（現代模型中最常見）
-- <strong>安全內容</strong>可得到正常回應
+- <strong>硬阻擋</strong>：內容在到達模型前被安全過濾器阻擋，回傳 HTTP 400 錯誤
+- <strong>軟拒絕</strong>：模型以禮貌拒絕回應，例如「我無法協助」(現代模型中最常見)
+- <strong>安全內容</strong> 得到正常回應
 
 範例輸出格式：
 ```
@@ -113,66 +109,66 @@ Status: Response generated successfully
 ────────────────────────────────────────────────────────────
 ```
 
-<strong>注意</strong>：硬阻擋與軟拒絕兩者均代表安全系統正常運作。
+<strong>注意</strong>：硬阻擋和軟拒絕皆表示安全系統運作正常。
 
-## 負責任 AI 開發最佳實踐
+## 負責任 AI 開發的最佳實踐
 
-建立 AI 應用時，請遵循以下重要做法：
+建置 AI 應用程式時，請遵循以下重要做法：
 
 1. <strong>務必優雅處理潛在的安全過濾回應</strong>
-   - 對被阻擋內容實作適當錯誤處理
-   - 在內容被過濾時，提供使用者有意義的反饋
+   - 為被阻擋的內容實施妥善錯誤處理
+   - 於內容被過濾時，向使用者提供有意義的反饋
 
-2. <strong>必要時實作額外的內容驗證</strong>
-   - 加入領域專屬的安全檢查
-   - 針對使用場景設計自訂驗證規則
+2. <strong>在適當時實作自訂內容驗證</strong>
+   - 增加特定領域的安全檢查
+   - 為你的使用案例建立自訂驗證規則
 
-3. **教育使用者負責任地使用 AI**
-   - 提供明確的使用準則
-   - 解釋為何某些內容可能被阻擋
+3. **教育使用者負責任使用 AI**
+   - 提供明確可接受使用指南
+   - 解釋某些內容為何會被阻擋
 
-4. <strong>監控並記錄安全事件以持續改進</strong>
-   - 跟蹤被阻擋內容的模式
-   - 持續改善安全措施
+4. <strong>監控並記錄安全事件以便改進</strong>
+   - 追蹤被阻擋內容的模式
+   - 持續優化安全措施
 
-5. <strong>遵守平台的內容政策</strong>
-   - 隨時更新並遵守平台指引
-   - 遵循服務條款及倫理守則
+5. <strong>尊重平台的內容政策</strong>
+   - 保持對平台指南的最新了解
+   - 遵守服務條款與倫理守則
 
-## 重要提醒
+## 重要說明
 
-本範例刻意使用具問題性的提示語僅供教學用途。目標是展示安全措施，而非規避安全機制。請務必負責任且合乎倫理地使用 AI 工具。
+此示例故意使用有問題的提示，僅供教學目的。目標是演示安全措施，而非試圖繞過。請務必負責任且具倫理使用 AI 工具。
 
 ## 總結
 
-**恭喜您！** 您已成功：
+**恭喜你！** 你已成功：
 
-- **實作 AI 安全措施**，包含內容過濾與安全回應處理
-- **應用負責任 AI 原則**，打造倫理與值得信賴的 AI 系統
-- <strong>測試安全機制</strong>，利用 GitHub Models 內建保護功能
-- <strong>學習負責任 AI 的最佳實踐</strong>以便開發與部署
+- **實作 AI 安全措施**，包括內容過濾與安全回應處理
+- **應用負責任 AI 原則**，打造倫理且值得信賴的 AI 系統
+- **使用 Azure AI Foundry 內建內容安全功能測試安全機制**
+- **學習負責任 AI 開發與部署的最佳實踐**
 
-**負責任 AI 資源：**
-- [Microsoft Trust Center](https://www.microsoft.com/trust-center) - 了解微軟在安全、隱私與合規方面的做法
-- [Microsoft Responsible AI](https://www.microsoft.com/ai/responsible-ai) - 探索微軟負責任 AI 的原則與實務
+**負責任的 AI 資源：**
+- [Microsoft Trust Center](https://www.microsoft.com/trust-center) - 瞭解微軟在安全、隱私和合規方面的方法
+- [Microsoft Responsible AI](https://www.microsoft.com/ai/responsible-ai) - 探索微軟對負責任 AI 開發的原則與實踐
 
-## 課程結束
+## 課程完成
 
-恭喜完成 Generative AI for Beginners 課程！
+恭喜你完成生成式 AI 入門課程！
 
-![課程完成](../../../translated_images/zh-HK/image.73c7e2ff4a652e77.webp)
+![Course Completion](../../../translated_images/zh-HK/image.73c7e2ff4a652e77.webp)
 
-**您已達成目標：**
-- 設定開發環境
-- 學習生成式 AI 核心技術
-- 探索實際 AI 應用
-- 理解負責任 AI 原則
+**你已完成項目：**
+- 建立你的開發環境
+- 學習核心生成式 AI 技術
+- 探索實務 AI 應用
+- 理解負責任的 AI 原則
 
-## 後續步驟
+## 下一步
 
-繼續您的 AI 學習之旅，參考以下資源：
+繼續你的 AI 學習之旅，參考以下額外資源：
 
-**附加學習課程：**
+**進階學習課程：**
 - [AI Agents For Beginners](https://github.com/microsoft/ai-agents-for-beginners)
 - [Generative AI for Beginners using .NET](https://github.com/microsoft/Generative-AI-for-beginners-dotnet)
 - [Generative AI for Beginners using JavaScript](https://github.com/microsoft/generative-ai-with-javascript)
@@ -193,5 +189,5 @@ Status: Response generated successfully
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
 **免責聲明**：
-本文件由 AI 翻譯服務 [Co-op Translator](https://github.com/Azure/co-op-translator) 翻譯而成。儘管我們努力確保準確性，但請注意自動翻譯可能含有錯誤或不準確之處。原文檔的本地語言版本應被視為權威來源。如涉及重要資訊，建議進行專業人工翻譯。對因使用本翻譯而產生的任何誤解或誤釋，我們不承擔任何責任。
+本文件由 AI 翻譯服務 [Co-op Translator](https://github.com/Azure/co-op-translator) 翻譯而成。雖然我們致力於確保準確性，但請注意，機器自動翻譯可能包含錯誤或不準確之處。原始文件的母語版本應被視為權威來源。對於重要資訊，建議進行專業人工翻譯。我們不對因使用本翻譯而產生的任何誤解或誤釋承擔責任。
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->
