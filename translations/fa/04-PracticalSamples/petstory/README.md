@@ -1,31 +1,31 @@
-# آموزش تولید داستان حیوانات خانگی برای مبتدیان
+# آموزش ساخت داستان حیوان خانگی برای مبتدیان
 
 ## فهرست مطالب
 
-- [پیش‌نیازها](../../../../04-PracticalSamples/petstory)
-- [درک ساختار پروژه](../../../../04-PracticalSamples/petstory)
-- [توضیح اجزای اصلی](../../../../04-PracticalSamples/petstory)
-  - [1. برنامه اصلی](../../../../04-PracticalSamples/petstory)
-  - [2. کنترل‌کننده وب](../../../../04-PracticalSamples/petstory)
-  - [3. سرویس داستان](../../../../04-PracticalSamples/petstory)
-  - [4. قالب‌های وب](../../../../04-PracticalSamples/petstory)
-  - [5. تنظیمات](../../../../04-PracticalSamples/petstory)
-- [اجرای برنامه](../../../../04-PracticalSamples/petstory)
-- [چگونگی همکاری اجزا](../../../../04-PracticalSamples/petstory)
-- [درک یکپارچگی هوش مصنوعی](../../../../04-PracticalSamples/petstory)
-- [گام‌های بعدی](../../../../04-PracticalSamples/petstory)
+- [پیش‌نیازها](#پیش‌نیازها)
+- [درک ساختار پروژه](#درک-ساختار-پروژه)
+- [توضیح اجزای اصلی](#توضیح-اجزای-اصلی)
+  - [1. برنامه اصلی](#1-برنامه-اصلی)
+  - [2. کنترل‌کننده وب](#2-کنترل‌کننده-وب)
+  - [3. سرویس داستان](#3-سرویس-داستان)
+  - [4. قالب‌های وب](#4-قالب‌های-وب)
+  - [5. پیکربندی](#5-پیکربندی)
+- [اجرای برنامه](#اجرای-برنامه)
+- [نحوه کارکرد همه‌چیز با هم](#نحوه-کارکرد-همه‌چیز-با-هم)
+- [درک ادغام هوش مصنوعی](#درک-ادغام-هوش-مصنوعی)
+- [گام‌های بعدی](#گام‌های-بعدی)
 
 ## پیش‌نیازها
 
-قبل از شروع، مطمئن شوید که موارد زیر را دارید:
-- نصب Java 21 یا بالاتر
+قبل از شروع، مطمئن شوید که:
+- جاوا ۲۱ یا بالاتر نصب شده است
 - Maven برای مدیریت وابستگی‌ها
-- حساب GitHub با توکن دسترسی شخصی (PAT) با دسترسی `models:read`
-- آشنایی اولیه با Java، Spring Boot و توسعه وب
+- یک استقرار مدل Azure AI Foundry دارید (با دستور `azd up` آن را فراهم کنید — مراجعه کنید به [فصل ۲](../../02-SetupDevEnvironment/getting-started-azure-openai.md))، به وسیله `az login` وارد شده‌اید (احراز هویت بدون کلید)
+- دانش پایه‌ای از جاوا، Spring Boot، و توسعه وب دارید
 
 ## درک ساختار پروژه
 
-پروژه داستان حیوانات خانگی شامل چندین فایل مهم است:
+پروژه داستان حیوان خانگی شامل چندین فایل مهم است:
 
 ```
 petstory/
@@ -48,7 +48,7 @@ petstory/
 
 **فایل:** `PetStoryApplication.java`
 
-این نقطه ورود برای برنامه Spring Boot ما است:
+این نقطه شروع برنامه Spring Boot ماست:
 
 ```java
 @SpringBootApplication
@@ -59,16 +59,16 @@ public class PetStoryApplication {
 }
 ```
 
-**کارهایی که انجام می‌دهد:**
-- استفاده از annotation `@SpringBootApplication` برای فعال‌سازی پیکربندی خودکار و اسکن کامپوننت‌ها
-- راه‌اندازی یک سرور وب داخلی (Tomcat) روی پورت 8080
-- ایجاد خودکار تمام Bean‌ها و سرویس‌های مورد نیاز Spring
+**کارکرد این بخش:**
+- صفت `@SpringBootApplication` پیکربندی خودکار و جستجوی کامپوننت‌ها را فعال می‌کند
+- یک وب‌سرور داخلی (Tomcat) را روی پورت ۸۰۸۰ راه‌اندازی می‌کند
+- به صورت خودکار تمام Beanها و سرویس‌های Spring مورد نیاز را می‌سازد
 
 ### 2. کنترل‌کننده وب
 
 **فایل:** `PetController.java`
 
-این بخش مسئول مدیریت درخواست‌های وب و تعاملات کاربر است:
+این کنترل‌کننده تمام درخواست‌های وب و تعاملات کاربر را مدیریت می‌کند:
 
 ```java
 @Controller
@@ -82,7 +82,7 @@ public class PetController {
     
     @GetMapping("/")
     public String index() {
-        return "index";  // Returns index.html template
+        return "index";  // قالب index.html را باز می‌گرداند
     }
     
     @PostMapping("/generate-story")
@@ -90,24 +90,24 @@ public class PetController {
                                Model model, 
                                RedirectAttributes redirectAttributes) {
         
-        // Input validation
+        // اعتبارسنجی ورودی
         if (description.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please provide a description.");
             return "redirect:/";
         }
         
-        // Sanitize input for security
+        // ورودی را برای امنیت پاک‌سازی کنید
         String sanitizedDescription = sanitizeInput(description);
         
-        // Generate story with error handling
+        // تولید داستان با مدیریت خطا
         try {
             String story = storyService.generateStory(sanitizedDescription);
             model.addAttribute("caption", sanitizedDescription);
             model.addAttribute("story", story);
-            return "result";  // Returns result.html template
+            return "result";  // قالب result.html را باز می‌گرداند
             
         } catch (Exception e) {
-            // Use fallback story if AI fails
+            // در صورت شکست هوش مصنوعی از داستان جایگزین استفاده کنید
             String fallbackStory = generateFallbackStory(sanitizedDescription);
             model.addAttribute("story", fallbackStory);
             return "result";
@@ -117,21 +117,21 @@ public class PetController {
     private String sanitizeInput(String input) {
         return input.replaceAll("[<>\"'&]", "")  // Remove dangerous characters
                    .trim()
-                   .substring(0, Math.min(input.length(), 500));  // Limit length
+                   .substring(0, Math.min(input.length(), 500));  // محدود کردن طول
     }
 }
 ```
 
 **ویژگی‌های کلیدی:**
 
-1. **مدیریت مسیرها**: `@GetMapping("/")` فرم آپلود را نمایش می‌دهد، `@PostMapping("/generate-story")` ارسال‌ها را پردازش می‌کند
-2. **اعتبارسنجی ورودی**: بررسی توضیحات خالی و محدودیت‌های طول
-3. **امنیت**: پاکسازی ورودی‌های کاربر برای جلوگیری از حملات XSS
-4. **مدیریت خطا**: ارائه داستان‌های جایگزین در صورت شکست سرویس هوش مصنوعی
-5. **مدل‌سازی داده‌ها**: انتقال داده‌ها به قالب‌های HTML با استفاده از `Model` در Spring
+1. **مدیریت مسیرها:** `@GetMapping("/")` فرم بارگذاری را نمایش می‌دهد، `@PostMapping("/generate-story")` ارسال‌ها را پردازش می‌کند
+2. **اعتبارسنجی ورودی:** بررسی توصیف‌های خالی و محدودیت طول
+3. **امنیت:** پاکسازی ورودی‌های کاربر برای جلوگیری از حملات XSS
+4. **مدیریت خطا:** ارائه داستان‌های جایگزین هنگام بروز اشکال در سرویس هوش مصنوعی
+5. **اتصال مدل:** ارسال داده‌ها به قالب‌های HTML با استفاده از Model در Spring
 
 **سیستم جایگزین:**
-کنترل‌کننده شامل قالب‌های داستان از پیش نوشته شده است که در صورت عدم دسترسی به سرویس هوش مصنوعی استفاده می‌شوند:
+کنترل‌کننده قالب‌های داستان از پیش نوشته شده دارد که وقتی سرویس هوش مصنوعی در دسترس نباشد، استفاده می‌شوند:
 
 ```java
 private String generateFallbackStory(String description) {
@@ -141,7 +141,7 @@ private String generateFallbackStory(String description) {
         "In a cozy home filled with love, there lived an extraordinary pet..."
     };
     
-    // Use description hash for consistent responses
+    // استفاده از هش توضیحات برای پاسخ‌های منسجم
     int index = Math.abs(description.hashCode() % storyTemplates.length);
     return storyTemplates[index];
 }
@@ -151,7 +151,7 @@ private String generateFallbackStory(String description) {
 
 **فایل:** `StoryService.java`
 
-این سرویس با مدل‌های GitHub ارتباط برقرار می‌کند تا داستان‌ها را تولید کند:
+این سرویس برای تولید داستان‌ها با استفاده از احراز هویت بدون کلید با Azure AI Foundry ارتباط برقرار می‌کند:
 
 ```java
 @Service
@@ -160,18 +160,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // نقطه انتهایی سازگار با OpenAI Foundry زیر /openai/v1/ قرار دارد
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // احراز هویت بدون کلید با Microsoft Entra ID (بدون کلید API)
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -182,16 +186,16 @@ public class StoryService {
         
         String userPrompt = "Write a fun short story about a pet described as: " + description;
         
-        // Configure the AI request
+        // پیکربندی درخواست هوش مصنوعی
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(modelName)
                 .addSystemMessage(systemPrompt)
                 .addUserMessage(userPrompt)
-                .maxCompletionTokens(500)  // Limit response length
-                .temperature(0.8)          // Control creativity (0.0-1.0)
+                .maxCompletionTokens(500)  // محدود کردن طول پاسخ
+                .temperature(0.8)          // کنترل خلاقیت (۰.۰-۱.۰)
                 .build();
         
-        // Send request and get response
+        // ارسال درخواست و دریافت پاسخ
         ChatCompletion response = openAIClient.chat().completions().create(params);
         
         return response.choices().get(0).message().content().orElse("");
@@ -201,17 +205,17 @@ public class StoryService {
 
 **اجزای کلیدی:**
 
-1. **کلاینت OpenAI**: استفاده از SDK رسمی OpenAI برای مدل‌های GitHub
-2. **سیستم Prompt**: تنظیم رفتار هوش مصنوعی برای نوشتن داستان‌های خانوادگی و دوستانه
-3. **Prompt کاربر**: توضیح دقیق داستانی که باید بر اساس توضیحات نوشته شود
-4. **پارامترها**: کنترل طول داستان و سطح خلاقیت
-5. **مدیریت خطا**: پرتاب استثناهایی که توسط کنترل‌کننده مدیریت می‌شوند
+1. **کلاینت OpenAI:** از SDK رسمی OpenAI Java استفاده می‌کند که برای Azure AI Foundry (بدون کلید) پیکربندی شده است
+2. **دستور سیستم:** رفتار هوش مصنوعی را برای نوشتن داستان‌های مناسب خانواده درباره حیوانات خانگی تنظیم می‌کند
+3. **دستور کاربر:** به هوش مصنوعی دقیقا می‌گوید بر اساس توصیف چه داستانی بنویسد
+4. **پارامترها:** کنترل طول داستان و سطح خلاقیت
+5. **مدیریت خطا:** استثناهایی که کنترل‌کننده آن‌ها را دریافت و مدیریت می‌کند، پرتاب می‌کند
 
 ### 4. قالب‌های وب
 
-**فایل:** `index.html` (فرم آپلود)
+**فایل:** `index.html` (فرم بارگذاری)
 
-صفحه اصلی که کاربران حیوانات خانگی خود را توصیف می‌کنند:
+صفحه اصلی که کاربران در آن حیوانات خانگی خود را توصیف می‌کنند:
 
 ```html
 <!DOCTYPE html>
@@ -295,16 +299,16 @@ public class StoryService {
 
 **ویژگی‌های قالب:**
 
-1. **یکپارچگی Thymeleaf**: استفاده از ویژگی‌های `th:` برای محتوای پویا
-2. **طراحی واکنش‌گرا**: استایل CSS برای موبایل و دسکتاپ
-3. **مدیریت خطا**: نمایش خطاهای اعتبارسنجی به کاربران
-4. **پردازش سمت کلاینت**: استفاده از JavaScript برای تحلیل تصویر (با Transformers.js)
+1. **ادغام Thymeleaf:** استفاده از ویژگی‌های `th:` برای محتوای پویا
+2. **طراحی پاسخگو:** استایل CSS برای موبایل و دسکتاپ
+3. **مدیریت خطا:** نمایش خطاهای اعتبارسنجی به کاربران
+4. **پردازش سمت کلاینت:** استفاده از جاوااسکریپت برای تحلیل تصویر (با استفاده از Transformers.js)
 
-### 5. تنظیمات
+### 5. پیکربندی
 
 **فایل:** `application.properties`
 
-تنظیمات پیکربندی برای برنامه:
+تنظیمات پیکربندی برنامه:
 
 ```properties
 spring.application.name=pet-story-app
@@ -316,45 +320,48 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
-**توضیح تنظیمات:**
+**توضیح پیکربندی:**
 
-1. **آپلود فایل**: اجازه آپلود تصاویر تا حجم 10MB
-2. **ثبت وقایع**: کنترل اطلاعاتی که در طول اجرا ثبت می‌شوند
-3. **مدل‌های GitHub**: مشخص کردن مدل هوش مصنوعی و نقطه پایانی مورد استفاده
-4. **امنیت**: پیکربندی مدیریت خطا برای جلوگیری از افشای اطلاعات حساس
+1. **بارگذاری فایل:** اجازه بارگذاری تصاویر تا حجم ۱۰ مگابایت را می‌دهد
+2. **ثبت لاگ:** کنترل اطلاعاتی که هنگام اجرا ثبت می‌شود
+3. **Azure AI Foundry:** مشخص کردن نقطه انتهایی و مدل استقرار برای استفاده (احراز هویت بدون کلید)
+4. **امنیت:** پیکربندی مدیریت خطا برای جلوگیری از افشای اطلاعات حساس
 
 ## اجرای برنامه
 
-### مرحله 1: تنظیم توکن GitHub
+### گام ۱: ورود و تعیین نقطه انتهایی
 
-ابتدا باید توکن GitHub خود را به عنوان یک متغیر محیطی تنظیم کنید:
+احراز هویت بدون کلید است (Microsoft Entra ID)، پس کلید API وجود ندارد. وارد شوید و نقطه انتهایی Foundry خود را تنظیم کنید:
 
 **ویندوز (Command Prompt):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **ویندوز (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **لینوکس/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-**چرا این مورد لازم است:**
-- مدل‌های GitHub برای دسترسی به مدل‌های هوش مصنوعی نیاز به احراز هویت دارند
-- استفاده از متغیرهای محیطی باعث می‌شود توکن‌های حساس در کد منبع ذخیره نشوند
-- دسترسی `models:read` امکان استفاده از مدل‌های هوش مصنوعی را فراهم می‌کند
+**چرا این کار لازم است:**
+- Azure AI Foundry برای احراز هویت درخواست‌های استنتاج از Microsoft Entra ID استفاده می‌کند
+- احراز هویت بدون کلید یعنی هیچ راز یا کلیدی در سورس کد یا محیط وجود ندارد
+- حساب شما باید دارای نقش **Cognitive Services OpenAI User** روی منبع باشد
 
-### مرحله 2: ساخت و اجرا
+### گام ۲: ساخت و اجرا
 
 به دایرکتوری پروژه بروید:
 ```bash
@@ -373,49 +380,53 @@ mvn spring-boot:run
 
 برنامه روی `http://localhost:8080` اجرا خواهد شد.
 
-### مرحله 3: تست برنامه
+### گام ۳: آزمایش برنامه
 
 1. **باز کردن** `http://localhost:8080` در مرورگر
-2. **توصیف** حیوان خانگی خود در قسمت متن (مثلاً "یک سگ بازیگوش طلایی که عاشق بازی با توپ است")
-3. **کلیک** روی "تولید داستان" برای دریافت داستان تولید شده توسط هوش مصنوعی
-4. **یا** آپلود تصویر حیوان خانگی برای تولید خودکار توضیحات
-5. **مشاهده** داستان خلاقانه بر اساس توضیحات حیوان خانگی شما
+2. **توصیف** حیوان خانگی خود در کادر متن (مثلا: «یک سگ گلدن رتریور بازیگوش که دوست دارد توپ بیاورد»)
+3. **کلیک** روی "Generate Story" برای دریافت داستان تولید شده توسط هوش مصنوعی
+4. **یا** تصویری از حیوان خانگی بارگذاری کنید تا توصیف به صورت خودکار تولید شود
+5. **مشاهده** داستان خلاقانه بر اساس توصیف حیوان خانگی شما
 
-## چگونگی همکاری اجزا
+## نحوه کارکرد همه‌چیز با هم
 
-در اینجا جریان کامل زمانی که یک داستان حیوان خانگی تولید می‌کنید آمده است:
+در اینجا جریان کامل زمانی که داستان حیوان خانگی تولید می‌کنید آمده است:
 
-1. **ورودی کاربر**: شما حیوان خانگی خود را در فرم وب توصیف می‌کنید
-2. **ارسال فرم**: مرورگر درخواست POST به `/generate-story` ارسال می‌کند
-3. **پردازش کنترل‌کننده**: `PetController` ورودی را اعتبارسنجی و پاکسازی می‌کند
-4. **تماس سرویس هوش مصنوعی**: `StoryService` درخواست را به API مدل‌های GitHub ارسال می‌کند
-5. **تولید داستان**: هوش مصنوعی داستانی خلاقانه بر اساس توضیحات تولید می‌کند
-6. **مدیریت پاسخ**: کنترل‌کننده داستان را دریافت کرده و به مدل اضافه می‌کند
-7. **رندر قالب**: Thymeleaf قالب `result.html` را با داستان رندر می‌کند
-8. **نمایش**: کاربر داستان تولید شده را در مرورگر خود مشاهده می‌کند
+1. **ورودی کاربر:** شما حیوان خانگی خود را در فرم وب توصیف می‌کنید
+2. **ارسال فرم:** مرورگر درخواست POST به `/generate-story` می‌فرستد
+3. **پردازش کنترل‌کننده:** `PetController` ورودی را اعتبارسنجی و پاکسازی می‌کند
+4. **تماس با سرویس هوش مصنوعی:** `StoryService` درخواست به مدل Azure AI Foundry ارسال می‌کند
+5. **تولید داستان:** هوش مصنوعی داستان خلاقانه‌ای بر اساس توصیف می‌نویسد
+6. **مدیریت پاسخ:** کنترل‌کننده داستان را دریافت و به مدل اضافه می‌کند
+7. **رندر قالب:** Thymeleaf قالب `result.html` را با داستان نمایش می‌دهد
+8. **نمایش:** کاربر داستان تولید شده را در مرورگر خود می‌بیند
 
 **جریان مدیریت خطا:**
-اگر سرویس هوش مصنوعی شکست بخورد:
+اگر سرویس هوش مصنوعی خطا دهد:
 1. کنترل‌کننده استثنا را می‌گیرد
-2. داستان جایگزین با استفاده از قالب‌های از پیش نوشته شده تولید می‌کند
-3. داستان جایگزین با یادداشتی درباره عدم دسترسی هوش مصنوعی نمایش داده می‌شود
-4. کاربر همچنان داستانی دریافت می‌کند، که تجربه کاربری خوبی را تضمین می‌کند
+2. با استفاده از قالب‌های از پیش نوشته شده یک داستان جایگزین تولید می‌کند
+3. داستان جایگزین را همراه با پیامی درباره عدم دسترسی AI نمایش می‌دهد
+4. کاربر همچنان یک داستان دریافت می‌کند تا تجربه کاربری خوبی حفظ شود
 
-## درک یکپارچگی هوش مصنوعی
+## درک ادغام هوش مصنوعی
 
-### API مدل‌های GitHub
-برنامه از مدل‌های GitHub استفاده می‌کند که دسترسی رایگان به مدل‌های مختلف هوش مصنوعی را فراهم می‌کند:
+### Azure AI Foundry (بدون کلید)
+
+برنامه از Azure AI Foundry با احراز هویت بدون کلید (Microsoft Entra ID) استفاده می‌کند:
 
 ```java
-// Authentication with GitHub token
+// احراز هویت بدون کلید - بدون کلید API
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
-### مهندسی Prompt
-سرویس از Prompt‌های طراحی شده با دقت برای دریافت نتایج خوب استفاده می‌کند:
+### مهندسی پرامپت
+
+سرویس از پرامپت‌های به دقت طراحی شده برای گرفتن نتایج خوب استفاده می‌کند:
 
 ```java
 String systemPrompt = "You are a creative storyteller who writes fun, " +
@@ -424,6 +435,7 @@ String systemPrompt = "You are a creative storyteller who writes fun, " +
 ```
 
 ### پردازش پاسخ
+
 پاسخ هوش مصنوعی استخراج و اعتبارسنجی می‌شود:
 
 ```java
@@ -433,7 +445,11 @@ String story = response.choices().get(0).message().content().orElse("");
 
 ## گام‌های بعدی
 
-برای مثال‌های بیشتر، به [فصل 04: نمونه‌های عملی](../README.md) مراجعه کنید.
+برای نمونه‌های بیشتر، به [فصل ۰۴: نمونه‌های عملی](../README.md) مراجعه کنید.
 
-**سلب مسئولیت**:  
-این سند با استفاده از سرویس ترجمه هوش مصنوعی [Co-op Translator](https://github.com/Azure/co-op-translator) ترجمه شده است. در حالی که ما تلاش می‌کنیم دقت را حفظ کنیم، لطفاً توجه داشته باشید که ترجمه‌های خودکار ممکن است شامل خطاها یا نادرستی‌ها باشند. سند اصلی به زبان اصلی آن باید به عنوان منبع معتبر در نظر گرفته شود. برای اطلاعات حساس، توصیه می‌شود از ترجمه حرفه‌ای انسانی استفاده کنید. ما مسئولیتی در قبال سوء تفاهم‌ها یا تفسیرهای نادرست ناشی از استفاده از این ترجمه نداریم.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**سلب مسئولیت**:
+این سند با استفاده از سرویس ترجمه هوش مصنوعی [Co-op Translator](https://github.com/Azure/co-op-translator) ترجمه شده است. در حالی که ما در تلاش برای دقت هستیم، لطفاً توجه داشته باشید که ترجمه‌های خودکار ممکن است شامل خطاها یا نادرستی‌هایی باشند. سند اصلی به زبان مادری خود باید به عنوان منبع معتبر در نظر گرفته شود. برای اطلاعات حیاتی، ترجمه حرفه‌ای انسانی توصیه می‌شود. ما در قبال هرگونه سوء تفاهم یا برداشت نادرست ناشی از استفاده از این ترجمه مسئولیتی نداریم.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

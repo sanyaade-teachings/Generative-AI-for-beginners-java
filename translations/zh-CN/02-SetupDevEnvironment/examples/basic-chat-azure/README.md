@@ -1,104 +1,59 @@
-# 使用 Azure OpenAI 的基础聊天 - 端到端示例
+# 使用 Azure AI Foundry 的基础聊天演示 - 端到端示例
 
-此示例展示了如何创建一个简单的 Spring Boot 应用程序，连接到 Azure OpenAI 并测试您的设置。
+此示例是一个简单的 Spring Boot 应用程序，使用<strong>无密钥身份验证</strong>（Microsoft Entra ID）连接到 **Azure AI Foundry** 模型并测试您的设置。它使用 Spring AI 的 `ChatClient`。
 
 ## 目录
 
-- [前置条件](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [快速开始](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [配置选项](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [选项 1：环境变量 (.env 文件) - 推荐](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [选项 2：GitHub Codespace Secrets](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [运行应用程序](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [使用 Maven](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [使用 VS Code](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [预期输出](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [配置参考](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [环境变量](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Spring 配置](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [故障排除](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [常见问题](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [调试模式](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [下一步](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [资源](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
+- [先决条件](#先决条件)
+- [快速开始](#快速开始)
+- [身份验证工作原理](#身份验证工作原理)
+- [运行应用程序](#运行应用程序)
+  - [使用 Maven](#使用-maven)
+  - [使用 VS Code](#使用-vs-code)
+  - [预期输出](#预期输出)
+- [配置参考](#配置参考)
+  - [环境变量](#环境变量)
+  - [Spring 配置](#spring-配置)
+- [故障排除](#故障排除)
+  - [常见问题](#常见问题)
+  - [调试模式](#调试模式)
+- [下一步](#下一步)
+- [资源](#资源)
 
-## 前置条件
+## 先决条件
 
-在运行此示例之前，请确保您已完成以下操作：
+运行此示例之前，请确保您具备：
 
-- 完成 [Azure OpenAI 设置指南](../../getting-started-azure-openai.md)  
-- 部署 Azure OpenAI 资源（通过 Azure AI Foundry 门户）  
-- 部署 gpt-4o-mini 模型（或其他替代模型）  
-- 获取 Azure 的 API 密钥和端点 URL  
+- 一个带有 `gpt-4o-mini` 部署的 Azure AI Foundry 资源 —— 通过 `azd up` 或手动使用 [Azure AI Foundry 设置指南](../../getting-started-azure-openai.md) 进行配置
+- 该资源上的 **认知服务 OpenAI 用户** 角色（Bicep 模板会为您分配）
+- 已登录的 [Azure CLI（`az`）](https://learn.microsoft.com/cli/azure/install-azure-cli) ，使用 `az login`
+- Java 21+ 和 Maven 3.9+
+
+> **无需 API 密钥** — 身份验证通过 Microsoft Entra ID 无密钥完成。
 
 ## 快速开始
 
 ```bash
-# 1. Navigate to project
+# 1. 导航到项目
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 
-# 2. Configure credentials
-cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# 2. 登录以便无密钥身份验证可以获取令牌
+az login
 
-# 3. Run the application
+# 3. 配置端点
+#    - 如果你运行了 `azd up`，.env 文件已经为你写好（跳过此步骤）。
+#    - 否则复制模板并设置 AZURE_OPENAI_ENDPOINT：
+cp .env.example .env
+
+# 4. 运行应用程序
 mvn spring-boot:run
 ```
 
-## 配置选项
+## 身份验证工作原理
 
-### 选项 1：环境变量 (.env 文件) - 推荐
+此示例使用 **Microsoft Entra ID** 进行身份验证 —— 不需要 API 密钥。
 
-**步骤 1：创建您的配置文件**
-```bash
-cp .env.example .env
-```
-
-**步骤 2：添加您的 Azure OpenAI 凭据**
-```bash
-# Your Azure OpenAI API key (from Azure AI Foundry portal)
-AZURE_AI_KEY=your-actual-api-key-here
-
-# Your Azure OpenAI endpoint URL (e.g., https://your-hub-name.openai.azure.com/)
-AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-> **安全提示**： 
-> - 切勿将 `.env` 文件提交到版本控制
-> - `.env` 文件已被添加到 `.gitignore`
-> - 确保您的 API 密钥安全并定期轮换
-
-### 选项 2：GitHub Codespace Secrets
-
-对于 GitHub Codespaces，请在您的仓库中设置以下 Secrets：
-- `AZURE_AI_KEY` - 您的 Azure OpenAI API 密钥
-- `AZURE_AI_ENDPOINT` - 您的 Azure OpenAI 端点 URL
-
-应用程序会自动检测并使用这些 Secrets。
-
-### 替代方案：直接使用环境变量
-
-<details>
-<summary>点击查看平台特定命令</summary>
-
-**Linux/macOS (bash/zsh):**
-```bash
-export AZURE_AI_KEY=your-actual-api-key-here
-export AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (命令提示符):**
-```cmd
-set AZURE_AI_KEY=your-actual-api-key-here
-set AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (PowerShell):**
-```powershell
-$env:AZURE_AI_KEY="your-actual-api-key-here"
-$env:AZURE_AI_ENDPOINT="https://your-hub-name.openai.azure.com/"
-```
-</details>
+仅设置了 `spring.ai.azure.openai.endpoint`（且无 api-key）时，Spring AI 会使用 [`DefaultAzureCredential`](https://learn.microsoft.com/java/api/com.azure.identity.defaultazurecredential) 构建 Azure OpenAI 客户端。该凭据会自动从您的本地 `az login` 会话获取令牌，或在 Azure 中使用托管身份 —— 因此相同的代码无需更改即可在两者之间运行。
 
 ## 运行应用程序
 
@@ -112,9 +67,9 @@ mvn spring-boot:run
 
 1. 在 VS Code 中打开项目
 2. 按 `F5` 或使用“运行和调试”面板
-3. 选择 "Spring Boot-BasicChatApplication" 配置
+3. 选择 “Spring Boot-BasicChatApplication” 配置
 
-> **注意**：VS Code 配置会自动加载您的 .env 文件
+> <strong>注意</strong>：VS Code 配置会自动加载您的 .env 文件
 
 ### 预期输出
 
@@ -136,61 +91,62 @@ Success! Azure OpenAI connection is working correctly.
 
 ### 环境变量
 
-| 变量 | 描述 | 必需 | 示例 |
-|------|------|------|------|
-| `AZURE_AI_KEY` | Azure OpenAI API 密钥 | 是 | `abc123...` |
-| `AZURE_AI_ENDPOINT` | Azure OpenAI 端点 URL | 是 | `https://my-hub.openai.azure.com/` |
-| `AZURE_AI_MODEL_DEPLOYMENT` | 模型部署名称 | 否 | `gpt-4o-mini`（默认） |
+| 变量 | 描述 | 是否必需 | 示例 |
+|----------|-------------|----------|---------|
+| `AZURE_OPENAI_ENDPOINT` | Foundry（Azure OpenAI）端点 URL | 是 | `https://my-resource.openai.azure.com/` |
+| `AZURE_OPENAI_DEPLOYMENT` | 聊天模型部署名称 | 否 | `gpt-4o-mini`（默认） |
+
+> 没有 API 密钥变量 —— 身份验证是无密钥的（通过 `az login` 使用 Microsoft Entra ID）。
 
 ### Spring 配置
 
 `application.yml` 文件配置：
-- **API 密钥**：`${AZURE_AI_KEY}` - 来自环境变量
-- **端点**：`${AZURE_AI_ENDPOINT}` - 来自环境变量  
-- **模型**：`${AZURE_AI_MODEL_DEPLOYMENT:gpt-4o-mini}` - 来自环境变量，带默认值
-- **温度**：`0.7` - 控制创意性（0.0 = 确定性，1.0 = 创意性）
-- **最大令牌数**：`500` - 响应的最大长度
+- <strong>端点</strong>：`${AZURE_OPENAI_ENDPOINT}` - 来自环境变量
+- <strong>部署</strong>：`${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}` - 来自环境变量，带回退值
+- <strong>认证</strong>：无密钥 —— 未设置 `api-key`，Spring AI 使用 `DefaultAzureCredential`
+- <strong>温度</strong>：`0.7` - 控制创造力（0.0=确定性，1.0=创造性）
+- <strong>最大令牌数</strong>：`500` - 最大响应长度
 
 ## 故障排除
 
 ### 常见问题
 
 <details>
-<summary><strong>错误："API 密钥无效"</strong></summary>
+<summary><strong>错误：401 / "PermissionDenied" / 令牌错误</strong></summary>
 
-- 检查您的 `AZURE_AI_KEY` 是否正确设置在 `.env` 文件中
-- 确保 API 密钥完全复制自 Azure AI Foundry 门户
-- 确保密钥周围没有额外的空格或引号
+- 运行 `az login` — 无密钥身份验证需要有效登录以获取令牌
+- 验证您的账户在资源上具备 **认知服务 OpenAI 用户** 角色
+- 如果刚分配角色，等待一分钟以便生效
+- 确认您处于正确的租户/订阅（`az account show`）
 </details>
 
 <details>
-<summary><strong>错误："端点无效"</strong></summary>
+<summary><strong>错误："端点无效" / 连接错误</strong></summary>
 
-- 确保您的 `AZURE_AI_ENDPOINT` 包含完整的 URL（例如 `https://your-hub-name.openai.azure.com/`）
-- 检查是否有一致的尾部斜杠
-- 验证端点是否与您的 Azure 部署区域匹配
+- 确保 `AZURE_OPENAI_ENDPOINT` 是完整的基础 URL（例如 `https://your-resource.openai.azure.com/`）
+- 检查尾部斜杠一致性
+- 确认端点匹配您已配置的资源（`azd env get-values`）
 </details>
 
 <details>
-<summary><strong>错误："未找到部署"</strong></summary>
+<summary><strong>错误："找不到部署"</strong></summary>
 
-- 验证您的模型部署名称是否与 Azure 中部署的名称完全匹配
-- 检查模型是否成功部署并处于活动状态
-- 尝试使用默认部署名称：`gpt-4o-mini`
+- 验证 `AZURE_OPENAI_DEPLOYMENT` 是否与 Azure 中的部署名称一致
+- 检查模型已成功部署并处于激活状态
+- 默认部署名称是 `gpt-4o-mini`
 </details>
 
 <details>
 <summary><strong>VS Code：环境变量未加载</strong></summary>
 
-- 确保您的 `.env` 文件位于项目根目录（与 `pom.xml` 同级）
-- 尝试在 VS Code 的集成终端中运行 `mvn spring-boot:run`
-- 检查 VS Code 的 Java 扩展是否正确安装
-- 验证启动配置是否包含 `"envFile": "${workspaceFolder}/.env"`
+- 确保 `.env` 文件位于项目根目录（与 `pom.xml` 同级）
+- 尝试在 VS Code 集成终端中运行 `mvn spring-boot:run`
+- 确认已正确安装 VS Code 的 Java 扩展
 </details>
 
 ### 调试模式
 
-要启用详细日志记录，请取消注释 `application.yml` 中的以下行：
+要启用详细日志，请取消注释 `application.yml` 中的以下内容：
 
 ```yaml
 logging:
@@ -201,16 +157,20 @@ logging:
 
 ## 下一步
 
-**设置完成！** 继续您的学习之旅：
+**设置完成！** 继续您的学习旅程：
 
-[第 3 章：核心生成式 AI 技术](../../../03-CoreGenerativeAITechniques/README.md)
+[第3章：核心生成式 AI 技术](../../../03-CoreGenerativeAITechniques/README.md)
 
 ## 资源
 
-- [Spring AI Azure OpenAI 文档](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
-- [Azure OpenAI 服务文档](https://learn.microsoft.com/azure/ai-services/openai/)
+- [Spring AI Azure OpenAI 文档](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
+- [使用 Microsoft Entra ID 的无密钥身份验证](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
 - [Azure AI Foundry 门户](https://ai.azure.com/)
-- [Azure AI Foundry 文档](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project)
+- [Azure AI Foundry 文档](https://learn.microsoft.com/azure/ai-foundry/)
 
-**免责声明**：  
-本文档使用AI翻译服务[Co-op Translator](https://github.com/Azure/co-op-translator)进行翻译。尽管我们努力确保翻译的准确性，但请注意，自动翻译可能包含错误或不准确之处。原始语言的文档应被视为权威来源。对于重要信息，建议使用专业人工翻译。我们对因使用此翻译而产生的任何误解或误读不承担责任。
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**免责声明**：
+本文件由 AI 翻译服务 [Co-op Translator](https://github.com/Azure/co-op-translator) 翻译完成。尽管我们力求准确，但请注意，自动翻译可能包含错误或不准确之处。原始语言版文件应视为权威来源。对于重要信息，建议使用专业人工翻译。我们对因使用本翻译而产生的任何误解或误释不承担责任。
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

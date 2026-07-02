@@ -1,253 +1,224 @@
-# 为 Java 生成式 AI 设置开发环境
+# 为 Java 构建生成式 AI 设置开发环境
 
-> **快速开始**：2 分钟内在云端编码 - 跳到 [GitHub Codespaces 设置](../../../02-SetupDevEnvironment) - 无需本地安装，且使用 GitHub 模型！
-
-> **对 Azure OpenAI 感兴趣？**，请参见我们的 [Azure OpenAI 设置指南](getting-started-azure-openai.md) ，包含创建新的 Azure OpenAI 资源的步骤。
+> **快速开始：** 使用 Bicep + `azd` 在几分钟内将您的 AI 模型作为代码在 **Azure AI Foundry** 上配置——请参阅[Azure AI Foundry 设置指南](getting-started-azure-openai.md)。身份验证采用<strong>无密钥</strong>（Microsoft Entra ID），因此无需管理 API 密钥。
 
 ## 您将学到什么
 
-- 为 AI 应用设置 Java 开发环境
-- 选择并配置您喜欢的开发环境（优先云端 Codespaces、本地开发容器或完全本地设置）
-- 通过连接 GitHub 模型测试您的设置
+- 设置用于 AI 应用的 Java 开发环境  
+- 选择并配置您偏好的开发环境（云优先的 Codespaces、本地开发容器或完整本地设置）  
+- 通过连接到 Azure AI Foundry 模型测试您的设置  
 
 ## 目录
 
-- [您将学到什么](../../../02-SetupDevEnvironment)
-- [介绍](../../../02-SetupDevEnvironment)
-- [步骤 1：设置开发环境](../../../02-SetupDevEnvironment)
-  - [选项 A：GitHub Codespaces（推荐）](../../../02-SetupDevEnvironment)
-  - [选项 B：本地开发容器](../../../02-SetupDevEnvironment)
-  - [选项 C：使用您现有的本地安装](../../../02-SetupDevEnvironment)
-- [步骤 2：创建 GitHub 个人访问令牌](../../../02-SetupDevEnvironment)
-- [步骤 3：测试您的设置](../../../02-SetupDevEnvironment)
-- [故障排除](../../../02-SetupDevEnvironment)
-- [总结](../../../02-SetupDevEnvironment)
-- [下一步](../../../02-SetupDevEnvironment)
+- [您将学到什么](#您将学到什么)
+- [介绍](#介绍)
+- [步骤 1：设置开发环境](#步骤-1设置开发环境)
+  - [选项 A：GitHub Codespaces（推荐）](#选项-agithub-codespaces推荐)
+  - [选项 B：本地开发容器](#选项-b本地开发容器)
+  - [选项 C：使用现有本地安装](#选项-c使用现有本地安装)
+- [步骤 2：配置 Azure AI Foundry](#步骤-2配置-azure-ai-foundry)
+- [步骤 3：测试您的设置](#步骤-3测试您的设置)
+- [故障排除](#故障排除)
+- [摘要](#摘要)
+- [后续步骤](#后续步骤)
 
 ## 介绍
 
-本章将指导您完成开发环境的设置。我们将使用 **GitHub 模型** 作为主要示例，因为它免费、仅需 GitHub 账户即可轻松设置、无需信用卡，并可访问多个模型进行实验。
+本章将引导您设置开发环境。在本课程中，我们将使用 **Azure AI Foundry** 进行模型管理。您可以通过 Bicep 和 Azure 开发者 CLI (`azd`) 将模型作为代码进行配置，然后采用 <strong>无密钥身份验证</strong>（Microsoft Entra ID）连接——无需复制或泄露 API 密钥。
 
-**无需本地设置！**您可以立即使用 GitHub Codespaces 直接在浏览器中开始编写代码，提供完整的开发环境。
+**无需本地设置！** 您可以使用 GitHub Codespaces，它在浏览器中提供完整的开发环境，并可从那里配置 Foundry。
 
-<img src="../../../translated_images/zh-CN/models.cb07f8af0d724e4d.webp" alt="截图：GitHub 模型" width="50%">
+我们选用 **Azure AI Foundry** 是因为它：
+- <strong>作为代码进行配置</strong> —— 一条 `azd up` 命令即可部署账户和模型  
+- <strong>无密钥</strong> —— 使用 Azure 登录或托管身份进行身份验证  
+- <strong>生产级别准备</strong> —— 同一份代码可以本地和 Azure 上运行  
+- <strong>灵活性强</strong> —— 通过更改部署名称替换模型，无需修改代码  
 
-我们推荐课程使用[**GitHub 模型**](https://github.com/marketplace?type=models)，因为它：
-- **免费**开始使用
-- **仅需 GitHub 账户**即可轻松设置
-- **无需信用卡**
-- 提供多种模型供实验
-
-> **注意**：本培训中使用的 GitHub 模型有以下免费限制：
-> - 每分钟 15 次请求（每天 150 次）
-> - 每次请求约 8000 字输入，4000 字输出
-> - 5 个并发请求
->
-> 若用于生产，请使用您的 Azure 账户升级到 Azure AI Foundry 模型。代码无需更改。请参见 [Azure AI Foundry 文档](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/quickstart-github-models)。
+> **注意：** Azure AI Foundry 的部署按令牌计费（按用量付费）。有关配置、区域和费用详情，请参阅[Azure AI Foundry 设置指南](getting-started-azure-openai.md)。
 
 ## 步骤 1：设置开发环境
 
 <a name="quick-start-cloud"></a>
 
-我们创建了预配置的开发容器，最大限度减少设置时间，并确保您拥有本课程所需的所有工具。请选择您喜欢的开发方式：
+我们已创建了预配置的开发容器，以最大限度减少设置时间，确保您拥有本生成式 AI for Java 课程所需的所有工具。请选择您的开发方式：
 
 ### 环境设置选项：
 
 #### 选项 A：GitHub Codespaces（推荐）
 
-**2 分钟内开始编码 - 无需本地设置！**
+**2 分钟内开始编码——无需本地设置！**
 
-1. 将此仓库 Fork 到您的 GitHub 账户
-   > **注意**：如果您想编辑基本配置，请查看 [开发容器配置](../../../.devcontainer/devcontainer.json)
-2. 点击 **Code** → **Codespaces** 标签 → **...** → **New with options...**
-3. 使用默认设置 – 这会选择为本课程创建的自定义开发容器配置：**Generative AI Java Development Environment**
-4. 点击 **Create codespace**
-5. 等待大约 2 分钟环境准备完成
-6. 继续到 [步骤 2：创建 GitHub 令牌](../../../02-SetupDevEnvironment)
+1. 将此仓库 Fork 到您的 GitHub 账户  
+   > **注意：** 如需编辑基础配置，请查看[开发容器配置](../../../.devcontainer/devcontainer.json)  
+2. 点击 **Code** → **Codespaces** 标签 → **...** → **New with options...**  
+3. 使用默认设置 —— 这将选择为本课程定制的 **生成式 AI Java 开发环境** 开发容器配置  
+4. 点击 **Create codespace**  
+5. 等待约 2 分钟，环境即准备好  
+6. 继续进行[步骤 2：配置 Azure AI Foundry](#步骤-2配置-azure-ai-foundry)
 
 <img src="../../../translated_images/zh-CN/codespaces.9945ded8ceb431a5.webp" alt="截图：Codespaces 子菜单" width="50%">
 
-<img src="../../../translated_images/zh-CN/image.833552b62eee7766.webp" alt="截图：New with options" width="50%">
+<img src="../../../translated_images/zh-CN/image.833552b62eee7766.webp" alt="截图：带选项的新建" width="50%">
 
 <img src="../../../translated_images/zh-CN/codespaces-create.b44a36f728660ab7.webp" alt="截图：创建 codespace 选项" width="50%">
 
-
-> **Codespaces 的优势**：
-> - 无需本地安装
-> - 任何带浏览器的设备都可使用
-> - 预配置所有工具和依赖
-> - 个人账户每月免费 60 小时
-> - 为所有学习者提供一致的环境
+> **Codespaces 的优势：**  
+> - 无需本地安装  
+> - 在任何带浏览器的设备上运行  
+> - 预配置所有工具和依赖  
+> - 个人账户每月免费 60 小时  
+> - 为所有学员提供一致环境
 
 #### 选项 B：本地开发容器
 
-**适合喜欢使用 Docker 本地开发的开发者**
+**适合偏好本地使用 Docker 开发的开发者**
 
-1. 将此仓库 Fork 并克隆到您的本地机器
-   > **注意**：如果您想编辑基本配置，请查看 [开发容器配置](../../../.devcontainer/devcontainer.json)
-2. 安装 [Docker Desktop](https://www.docker.com/products/docker-desktop/) 和 [VS Code](https://code.visualstudio.com/)
-3. 在 VS Code 中安装 [开发容器扩展](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
-4. 在 VS Code 中打开仓库文件夹
-5. 出现提示时，点击 **Reopen in Container**（或使用 `Ctrl+Shift+P` → “Dev Containers: Reopen in Container”）
-6. 等待容器构建并启动
-7. 继续到 [步骤 2：创建 GitHub 令牌](../../../02-SetupDevEnvironment)
+1. 将此仓库 Fork 并克隆到本地机器  
+   > **注意：** 如需编辑基础配置，请查看[开发容器配置](../../../.devcontainer/devcontainer.json)  
+2. 安装 [Docker Desktop](https://www.docker.com/products/docker-desktop/) 及 [VS Code](https://code.visualstudio.com/)  
+3. 在 VS Code 中安装 [Dev Containers 扩展](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)  
+4. 在 VS Code 中打开仓库文件夹  
+5. 当提示时，点击 **Reopen in Container**（或使用 `Ctrl+Shift+P` → “Dev Containers: Reopen in Container”）  
+6. 等待容器构建并启动完成  
+7. 继续进行[步骤 2：配置 Azure AI Foundry](#步骤-2配置-azure-ai-foundry)
 
 <img src="../../../translated_images/zh-CN/devcontainer.21126c9d6de64494.webp" alt="截图：开发容器设置" width="50%">
 
 <img src="../../../translated_images/zh-CN/image-3.bf93d533bbc84268.webp" alt="截图：开发容器构建完成" width="50%">
 
-#### 选项 C：使用您现有的本地安装
+#### 选项 C：使用现有本地安装
 
 **适合已有 Java 环境的开发者**
 
-先决条件：
-- [Java 21+](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html)
-- [Maven 3.9+](https://maven.apache.org/download.cgi)
-- [VS Code](https://code.visualstudio.com) 或您喜欢的 IDE
+前置要求：  
+- [Java 21+](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html)  
+- [Maven 3.9+](https://maven.apache.org/download.cgi)  
+- [VS Code](https://code.visualstudio.com) 或您偏好的 IDE
 
-步骤：
-1. 克隆此仓库到本地机器
-2. 在您的 IDE 中打开项目
-3. 继续到 [步骤 2：创建 GitHub 令牌](../../../02-SetupDevEnvironment)
+步骤：  
+1. 克隆此仓库到本地机器  
+2. 在 IDE 中打开项目  
+3. 继续进行[步骤 2：配置 Azure AI Foundry](#步骤-2配置-azure-ai-foundry)
 
-> **专业提示**：如果您的设备配置较低但想在本地用 VS Code，可以使用 GitHub Codespaces！您可以将本地 VS Code 连接到云端 Codespace，兼得两者优势。
+> **专业提示：** 如果机器配置较低但想本地用 VS Code，强烈推荐使用 GitHub Codespaces！您可以将本地 VS Code 连接到云端的 Codespace，享受两者最佳体验。
 
-<img src="../../../translated_images/zh-CN/image-2.fc0da29a6e4d2aff.webp" alt="截图：创建的本地开发容器实例" width="50%">
+<img src="../../../translated_images/zh-CN/image-2.fc0da29a6e4d2aff.webp" alt="截图：已创建的本地开发容器实例" width="50%">
 
+## 步骤 2：配置 Azure AI Foundry
 
-## 步骤 2：创建 GitHub 个人访问令牌
+将课程 AI 模型作为代码部署到 Azure AI Foundry。请在仓库根目录执行：
 
-1. 访问 [GitHub 设置](https://github.com/settings/profile)，从您的个人资料菜单选择 **Settings**。
-2. 在左侧边栏点击 **Developer settings**（通常在底部）。
-3. 在 **Personal access tokens** 下，点击 **Fine-grained tokens**（或直接访问此 [链接](https://github.com/settings/personal-access-tokens)）。
-4. 点击 **Generate new token**。
-5. 在“Token name”中填写描述性名称（例如 `GenAI-Java-Course-Token`）。
-6. 设置过期时间（推荐：7 天以符合安全最佳实践）。
-7. 在“Resource owner”选择您的用户账户。
-8. 在“Repository access”选择您想用 GitHub 模型访问的仓库（或“所有仓库”，如有需要）。
-9. 在“Account permissions”中找到 **Models** 并设置为 **只读**。
-10. 点击 **Generate token**。
-11. **现在复制并保存您的令牌** – 以后不会再次显示！
-
-> **安全提示**：令牌权限应最小化，过期时间应尽可能短。
-
-## 步骤 3：使用 GitHub 模型示例测试您的设置
-
-当您的开发环境准备好后，让我们用位于 [`02-SetupDevEnvironment/examples/github-models`](../../../02-SetupDevEnvironment/examples/github-models) 的示例应用测试 GitHub 模型集成。
-
-1. 打开开发环境的终端。
-2. 切换到 GitHub 模型示例目录：
-   ```bash
-   cd 02-SetupDevEnvironment/examples/github-models
-   ```
-3. 将您的 GitHub 令牌设置为环境变量：
-   ```bash
-   # macOS/Linux
-   export GITHUB_TOKEN=your_token_here
-   
-   # Windows（命令提示符）
-   set GITHUB_TOKEN=your_token_here
-   
-   # Windows（PowerShell）
-   $env:GITHUB_TOKEN="your_token_here"
-   ```
-
-4. 运行应用：
-   ```bash
-   mvn compile exec:java -Dexec.mainClass="com.example.githubmodels.App"
-   ```
-
-您应该看到类似输出：
-```text
-Using model: gpt-4.1-nano
-Sending request to GitHub Models...
-Response: Hello World!
+```bash
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
 ```
+  
+`azd` 会提示您输入环境名称和区域，配置包含 `gpt-4o-mini` 和 `text-embedding-3-small` 部署的 Azure AI Foundry 账户，并将端点写入示例的 `.env` 文件——均采用<strong>无密钥</strong>身份验证（无需 API 密钥）。
 
-### 了解示例代码
+> **完整操作指导：** 请参阅[Azure AI Foundry 设置指南](getting-started-azure-openai.md)，了解先决条件、手动（门户）方式、区域建议以及费用/清理说明。
 
-首先，让我们理解刚刚运行的内容。`examples/github-models` 中的示例使用了 OpenAI Java SDK 连接到 GitHub 模型：
+## 步骤 3：测试您的设置
 
-**这段代码做了什么：**
-- 使用您的个人访问令牌 **连接** GitHub 模型
-- **发送** 一条简单的 “Say Hello World!” 消息到 AI 模型
-- **接收** 并显示 AI 的响应
-- **验证** 您的设置是否正确
+Foundry 模型配置完成后，使用示例应用测试连接，路径为 [`02-SetupDevEnvironment/examples/basic-chat-azure`](../../../02-SetupDevEnvironment/examples/basic-chat-azure)。
 
-**关键依赖**（在 `pom.xml`）：
+1. 在开发环境中打开终端。  
+2. 进入示例目录：  
+   ```bash
+   cd 02-SetupDevEnvironment/examples/basic-chat-azure
+   ```
+  
+3. 确保您已登录（无密钥身份验证需要令牌）：  
+   ```bash
+   az login
+   ```
+  
+   > 如果您已运行 `azd up`，则 `.env` 文件和端点已自动写好。  
+4. 运行应用：  
+   ```bash
+   mvn clean spring-boot:run
+   ```
+  
+您应看到来自 `gpt-4o-mini` 模型的响应。
+
+### 理解示例代码
+
+`examples/basic-chat-azure` 下的示例是一个 Spring Boot 应用，使用 **Spring AI** 通过无密钥身份验证连接到 Azure AI Foundry。
+
+**代码实现功能：**  
+- <strong>连接</strong> Azure AI Foundry，使用您的 Azure 登录（Microsoft Entra ID）——无需 API 密钥  
+- <strong>发送</strong> 提示给 `gpt-4o-mini` 模型  
+- <strong>接收</strong> 并显示 AI 回复  
+- <strong>验证</strong> 您的设置是否正确  
+
+<strong>关键依赖</strong> （在 `pom.xml`）：  
 ```xml
 <dependency>
-    <groupId>com.openai</groupId>
-    <artifactId>openai-java</artifactId>
-    <version>2.12.0</version>
+    <groupId>org.springframework.ai</groupId>
+    <artifactId>spring-ai-starter-model-azure-openai</artifactId>
 </dependency>
 ```
-
-**主要代码** (`App.java`)：
-```java
-// 使用 OpenAI Java SDK 连接到 GitHub 模型
-OpenAIClient client = OpenAIOkHttpClient.builder()
-    .apiKey(pat)
-    .baseUrl("https://models.inference.ai.azure.com")
-    .build();
-
-// 创建聊天补全请求
-ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
-    .model(modelId)
-    .addSystemMessage("You are a concise assistant.")
-    .addUserMessage("Say Hello World!")
-    .build();
-
-// 获取 AI 响应
-ChatCompletion response = client.chat().completions().create(params);
-System.out.println("Response: " + response.choices().get(0).message().content().orElse("No response content"));
+  
+<strong>配置文件</strong> (`application.yml`)：  
+```yaml
+spring:
+  ai:
+    azure:
+      openai:
+        # Endpoint only - no api-key. Spring AI uses DefaultAzureCredential (keyless).
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
+  
 
-## 总结
+## 摘要
 
-太好了！您现在已完成所有设置：
+太好了！您现在已完成所有配置：
 
-- 创建了具有访问 AI 模型权限的 GitHub 个人访问令牌
-- 启动并运行了 Java 开发环境（无论是 Codespaces、开发容器还是本地）
-- 使用 OpenAI Java SDK 连接到 GitHub 模型，免费进行 AI 开发
-- 通过简单示例测试了与 AI 模型的连接
+- 使用 Bicep + `azd` 将 Azure AI Foundry 模型作为代码配置完毕  
+- 启动了 Java 开发环境（无论是 Codespaces、开发容器还是本地环境）  
+- 通过无密钥身份验证（Microsoft Entra ID）连接到 Azure AI Foundry——无须 API 密钥  
+- 通过一个简单示例，成功测试了模型调用  
 
-## 下一步
+## 后续步骤
 
 [第 3 章：核心生成式 AI 技术](../03-CoreGenerativeAITechniques/README.md)
 
 ## 故障排除
 
-遇到问题？这里是常见问题及解决方案：
+遇到问题？这里列出常见问题与解决方案：
 
-- **令牌无效？**  
-  - 确认您完全复制了令牌且无多余空格  
-  - 确保令牌作为环境变量设置正确  
-  - 检查令牌权限是否正确（Models：只读）
+- **认证失败（401/403）？**  
+  - 运行 `az login` —— 身份验证为无密钥，必须先登录  
+  - 确认您的账户在资源上具有 **认知服务 OpenAI 用户** 角色  
+  - 若刚配置完成，请稍等一分钟让角色分配生效  
 
 - **找不到 Maven？**  
   - 使用开发容器/Codespaces 时，Maven 应已预装  
-  - 本地设置需确保安装 Java 21+ 和 Maven 3.9+  
-  - 运行 `mvn --version` 验证安装
+  - 本地安装确保 Java 21+ 和 Maven 3.9+  
+  - 运行 `mvn --version` 验证安装  
 
-- **连接问题？**  
-  - 检查网络连接  
-  - 确认所在网络允许访问 GitHub  
-  - 确保没有防火墙阻止 GitHub 模型端点
+- **找不到 `azd` 或配置失败？**  
+  - 安装 [Azure Developer CLI](https://aka.ms/azure-dev/install) 并执行 `azd auth login`  
+  - 选择支持 `gpt-4o-mini` 的区域（例如 `eastus2`）  
+  - 参阅[Azure AI Foundry 设置指南](getting-started-azure-openai.md)
 
 - **开发容器无法启动？**  
-  - 确保 Docker Desktop 正在运行（本地开发时）  
-  - 尝试重建容器：`Ctrl+Shift+P` → “Dev Containers: Rebuild Container”
+  - 确认 Docker Desktop 已运行（针对本地开发）  
+  - 尝试重建容器：`Ctrl+Shift+P` → “Dev Containers: Rebuild Container”  
 
 - **应用编译错误？**  
-  - 确保位置正确：`02-SetupDevEnvironment/examples/github-models`  
-  - 尝试清理并重建：`mvn clean compile`
+  - 确保所在目录为：`02-SetupDevEnvironment/examples/basic-chat-azure`  
+  - 尝试清理并重新编译：`mvn clean compile`  
 
-> **需要帮助？**：依然有问题？请在仓库中提出 issue，我们会协助您解决。
+> **需要帮助？** 遇到困难请在仓库提 Issue，我们会帮您解决。
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**免责声明**：  
-本文档由 AI 翻译服务 [Co-op Translator](https://github.com/Azure/co-op-translator) 翻译而成。虽然我们力求准确，但请注意自动翻译可能包含错误或不准确之处。原始文档的原语言版本应被视为权威来源。对于重要信息，建议采用专业人工翻译。我们不对因使用此翻译而产生的任何误解或曲解承担责任。
+**免责声明**：
+本文件由 AI 翻译服务 [Co-op Translator](https://github.com/Azure/co-op-translator) 翻译完成。尽管我们力求准确，但请注意，自动翻译可能包含错误或不准确之处。原始语言版文件应视为权威来源。对于重要信息，建议使用专业人工翻译。我们对因使用本翻译而产生的任何误解或误释不承担责任。
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->
