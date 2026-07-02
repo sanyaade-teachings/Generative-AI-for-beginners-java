@@ -1,142 +1,151 @@
-# Azure OpenAI కోసం డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్ సెట్ అప్ చేయడం
+# Azure AI Foundry కోసం అభివృద్ధి వాతావరణం సెట్ చేయడం
 
-> **త్వరిత ప్రారంభం**: ఇది Azure OpenAI సెటప్ కోసం గైడ్. ఉచిత మోడల్స్‌తో వెంటనే ప్రారంభించాలంటే, [GitHub Models with Codespaces](./README.md#quick-start-cloud) ఉపయోగించండి.
+> ఈ గైడ్ ఈ కోర్సులోని జావా AI యాప్స్ కోసం **Azure AI Foundry** మోడల్స్‌ను **కీలెస్** ధృవీకరణ (Microsoft Entra ID) ఉపయోగించి సెట్ చేస్తుంది — నిర్వహించడానికి API కీలు అవసరం లేదు. టూల్లింగ్ కొత్తదా? [వికాస వాతావరణ గైడ్](./README.md) తో ప్రారంభించండి.
 
-ఈ గైడ్ మీ Java AI యాప్‌ల కోసం Azure AI Foundry మోడల్స్‌ను సెట్ అప్ చేయడంలో మీకు సహాయపడుతుంది.
+ఈ గైడ్ ఈ కోర్సులోని జావా AI యాప్స్ కోసం **Azure AI Foundry** మోడల్స్‌ను సెట్ చేస్తుంది. మీకు రెండు మార్గాలు ఉన్నాయి:
 
-## విషయ సూచిక
+- **ఎంపిక A — `azd` + బైసప్ తో ప్రావిషనింగ్ (సిఫారసు):** ఒక ఆదేశం ద్వారా Foundry ఖాతా మరియు మోడల్స్ కోడ్ రూపంలో డిప్లాయ్ చేయబడతాయి. ఎటువంటి పోర్టల్ క్లికింగ్ అవసరం లేదు.
+- **ఎంపిక B — Azure AI Foundry పోర్టల్‌లో మానవీయంగా వనరులను సృష్టించండి.**
 
-- [త్వరిత సెటప్ అవలోకనం](../../../02-SetupDevEnvironment)
-- [దశ 1: Azure AI Foundry వనరులను సృష్టించండి](../../../02-SetupDevEnvironment)
-  - [హబ్ మరియు ప్రాజెక్ట్ సృష్టించండి](../../../02-SetupDevEnvironment)
-  - [GPT-4o-mini మోడల్‌ను డిప్లాయ్ చేయండి](../../../02-SetupDevEnvironment)
-- [దశ 2: మీ కోడ్‌స్పేస్‌ను సృష్టించండి](../../../02-SetupDevEnvironment)
-- [దశ 3: మీ ఎన్విరాన్‌మెంట్‌ను కాన్ఫిగర్ చేయండి](../../../02-SetupDevEnvironment)
-- [దశ 4: మీ సెటప్‌ను పరీక్షించండి](../../../02-SetupDevEnvironment)
-- [తరువాత ఏమిటి?](../../../02-SetupDevEnvironment)
-- [వనరులు](../../../02-SetupDevEnvironment)
-- [అదనపు వనరులు](../../../02-SetupDevEnvironment)
+రెండు మార్గాలు కూడా **కీలెస్ ధృవీకరణ** (Microsoft Entra ID) ఉపయోగిస్తాయి — కాపీ చేయడానికి లేదా లీక్ అయ్యే API కీలు ఉండవు.
 
-## త్వరిత సెటప్ అవలోకనం
+## విభాగాల పట్టిక
 
-1. Azure AI Foundry వనరులను సృష్టించండి (హబ్, ప్రాజెక్ట్, మోడల్)
-2. Java డెవలప్‌మెంట్ కంటైనర్‌తో కోడ్‌స్పేస్ సృష్టించండి
-3. Azure OpenAI క్రెడెన్షియల్స్‌తో మీ .env ఫైల్‌ను కాన్ఫిగర్ చేయండి
-4. ఉదాహరణ ప్రాజెక్ట్‌తో మీ సెటప్‌ను పరీక్షించండి
+- [ఏమి సృష్టించబడుతుంది](#ఏమి-సృష్టించబడుతుంది)
+- [పూర్వాపరాలు](#పూర్వాపరాలు)
+- [ఎంపిక A: azd + బైసప్ తో ప్రావిషనింగ్ (సిఫారసు)](#option-a-provision-with-azd--bicep-recommended)
+- [ఎంపిక B: వనరులను మానవీయంగా సృష్టించడం](#ఎంపిక-b-వనరులను-మానవీయంగా-సృష్టించడం)
+- [మీ వాతావరణాన్ని కాన్ఫిగర్ చేయండి](#మీ-వాతావరణాన్ని-కాన్ఫిగర్-చేయండి)
+- [మీ సెటప్‌ని పరీక్షించండి](#మీ-సెటప్‌ని-పరీక్షించండి)
+- [తరువాత ఏమిటి?](#తరువాత-ఏమిటి)
+- [వనరులు](#వనరులు)
+- [అదనపు వనరులు](#అదనపు-వనరులు)
 
-## దశ 1: Azure AI Foundry వనరులను సృష్టించండి
+## ఏమి సృష్టించబడుతుంది
 
-### హబ్ మరియు ప్రాజెక్ట్ సృష్టించండి
+[`infra/`](../../../02-SetupDevEnvironment/infra) లోని బైసప్ టెంప్లేట్లు:
 
-1. [Azure AI Foundry Portal](https://ai.azure.com/)కి వెళ్లి సైన్ ఇన్ చేయండి
-2. **+ Create** → **New hub** క్లిక్ చేయండి (లేదా **Management** → **All hubs** → **+ New hub**కి వెళ్లండి)
-3. మీ హబ్‌ను కాన్ఫిగర్ చేయండి:
-   - **Hub name**: ఉదా., "MyAIHub"
-   - **Subscription**: మీ Azure సబ్‌స్క్రిప్షన్‌ను ఎంచుకోండి
-   - **Resource group**: కొత్తది సృష్టించండి లేదా ఉన్నదాన్ని ఎంచుకోండి
-   - **Location**: మీకు దగ్గరగా ఉన్నదాన్ని ఎంచుకోండి
-   - **Storage account**: డిఫాల్ట్‌ను ఉపయోగించండి లేదా కస్టమ్‌గా కాన్ఫిగర్ చేయండి
-   - **Key vault**: డిఫాల్ట్‌ను ఉపయోగించండి లేదా కస్టమ్‌గా కాన్ఫిగర్ చేయండి
-   - **Next** → **Review + create** → **Create** క్లిక్ చేయండి
-4. సృష్టించిన తర్వాత, **+ New project** క్లిక్ చేయండి (లేదా హబ్ అవలోకనం నుండి **Create project**)
-   - **Project name**: ఉదా., "GenAIJava"
-   - **Create** క్లిక్ చేయండి
+- ఒక **Azure AI Foundry** ఖాతాను (`Microsoft.CognitiveServices/accounts`, రకం `AIServices`) ఒక ప్రాజెక్టుతో కలిసి సృష్టిస్తాయి
+- ఒక **చాట్** డిప్లాయ్‌మెంట్ — `gpt-4o-mini`
+- ఒక **ఎంబెడ్డింగ్** డిప్లాయ్‌మెంట్ — `text-embedding-3-small` (తరువాతి అధ్యాయాల్లో ఉపయోగిస్తారు)
+- ఒక **కీలెస్ రోల్ అసైన్‌మెంట్** (`Cognitive Services OpenAI User`), అందువల్ల మీరు కీలు నిర్వహించకుండా `az login` తో సైన్ ఇన్ అవ్వవచ్చు
 
-### GPT-4o-mini మోడల్‌ను డిప్లాయ్ చేయండి
+## పూర్వాపరాలు
 
-1. మీ ప్రాజెక్ట్‌లో **Model catalog**కి వెళ్లి **gpt-4o-mini** కోసం శోధించండి
-   - *ప్రత్యామ్నాయం: **Deployments** → **+ Create deployment**కి వెళ్లండి*
-2. gpt-4o-mini మోడల్ కార్డ్‌పై **Deploy** క్లిక్ చేయండి
-3. డిప్లాయ్‌మెంట్‌ను కాన్ఫిగర్ చేయండి:
-   - **Deployment name**: "gpt-4o-mini"
-   - **Model version**: తాజాదాన్ని ఉపయోగించండి
-   - **Deployment type**: స్టాండర్డ్
-4. **Deploy** క్లిక్ చేయండి
-5. డిప్లాయ్ అయిన తర్వాత, **Deployments** ట్యాబ్‌కి వెళ్లి ఈ విలువలను కాపీ చేయండి:
-   - **Deployment name** (ఉదా., "gpt-4o-mini")
-   - **Target URI** (ఉదా., `https://your-hub-name.openai.azure.com/`) 
-      > **ముఖ్యం**: పూర్తి ఎండ్‌పాయింట్ పాత్ కాకుండా బేస్ URL (ఉదా., `https://myhub.openai.azure.com/`) మాత్రమే కాపీ చేయండి.
-   - **Key** (Keys and Endpoint విభాగం నుండి)
+- ఒక [Azure సబ్స్క్రిప్షన్](https://azure.microsoft.com/free/)
+- [Azure Developer CLI (`azd`)](https://aka.ms/azure-dev/install)
+- [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli)
+- [Java 21+](https://learn.microsoft.com/java/openjdk/download) మరియు [Maven 3.9+](https://maven.apache.org/download.cgi)
 
-> **ఇంకా సమస్యలు ఉన్నాయా?** అధికారిక [Azure AI Foundry Documentation](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project)ను సందర్శించండి
+## ఎంపిక A: azd + బైసప్ తో ప్రావిషనింగ్ (సిఫారసు)
 
-## దశ 2: మీ కోడ్‌స్పేస్‌ను సృష్టించండి
-
-1. ఈ రిపోజిటరీని మీ GitHub ఖాతాకు ఫోర్క్ చేయండి
-   > **గమనిక**: మీరు ప్రాథమిక కాన్ఫిగరేషన్‌ను మార్చాలనుకుంటే, [Dev Container Configuration](../../../.devcontainer/devcontainer.json)ని చూడండి
-2. మీ ఫోర్క్ చేసిన రిపోలో, **Code** → **Codespaces** ట్యాబ్ క్లిక్ చేయండి
-3. **...** → **New with options...** క్లిక్ చేయండి  
-![creating a codespace with options](../../../translated_images/te/codespaces.9945ded8ceb431a5.webp)
-4. **Dev container configuration** ఎంచుకోండి: 
-   - **Generative AI Java Development Environment**
-5. **Create codespace** క్లిక్ చేయండి
-
-## దశ 3: మీ ఎన్విరాన్‌మెంట్‌ను కాన్ఫిగర్ చేయండి
-
-మీ కోడ్‌స్పేస్ సిద్ధమైన తర్వాత, మీ Azure OpenAI క్రెడెన్షియల్స్‌ను సెట్ చేయండి:
-
-1. **రిపోజిటరీ రూట్ నుండి ఉదాహరణ ప్రాజెక్ట్‌కి వెళ్లండి:**
-   ```bash
-   cd 02-SetupDevEnvironment/examples/basic-chat-azure
-   ```
-
-2. **మీ .env ఫైల్‌ను సృష్టించండి:**
-   ```bash
-   cp .env.example .env
-   ```
-
-3. **మీ Azure OpenAI క్రెడెన్షియల్స్‌తో .env ఫైల్‌ను ఎడిట్ చేయండి:**
-   ```bash
-   # మీ Azure OpenAI API కీ (Azure AI Foundry పోర్టల్ నుండి)
-   AZURE_AI_KEY=your-actual-api-key-here
-   
-   # మీ Azure OpenAI ఎండ్‌పాయింట్ URL (ఉదా., https://myhub.openai.azure.com/)
-   AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-   ```
-
-   > **భద్రతా గమనిక**: 
-   > - మీ `.env` ఫైల్‌ను వెర్షన్ కంట్రోల్‌కు కమిట్ చేయవద్దు
-   > - `.env` ఫైల్ ఇప్పటికే `.gitignore`లో చేర్చబడింది
-   > - మీ API కీలు సురక్షితంగా ఉంచండి మరియు వాటిని తరచుగా రొటేట్ చేయండి
-
-## దశ 4: మీ సెటప్‌ను పరీక్షించండి
-
-Azure OpenAI కనెక్షన్‌ను పరీక్షించడానికి ఉదాహరణ అప్లికేషన్‌ను రన్ చేయండి:
+`02-SetupDevEnvironment` ఫోల్డర్ నుండి:
 
 ```bash
+cd 02-SetupDevEnvironment
+
+# సైన్ ఇన్ చేయండి (రెండు టూల్స్ లేక)
+azd auth login
+az login
+
+# ఫౌండ్రీ ఖాతా + మోడల్ అమన్స్‌కు ఏర్పాట్లు చేయండి
+azd up
+```
+  
+`azd` **వాతావరణం పేరు** (ఉదాహరణకి `genai-java`) మరియు **రిజియన్** కోసం అడుగుతుంది. `gpt-4o-mini` మరియు `text-embedding-3-small` అందుబాటులో ఉన్న రీజియన్‌ని ఎంచుకోండి — ఉదాహరణకి `eastus2` లేదా `swedencentral`.
+
+ప్రావిషనింగ్ ముగిసిన తరువాత, azd:
+
+1. [`infra/main.bicep`](../../../02-SetupDevEnvironment/infra/main.bicep) లో నిర్వచించబడిన అన్ని అంశాలను డిప్లాయ్ చేస్తుంది.
+2. తరువాత ప్రావిషనింగ్ హుక్ రన్ చేసి, [`examples/basic-chat-azure/.env`](../../../02-SetupDevEnvironment/examples/basic-chat-azure) మీరు ఎండ్‌పాయింట్ మరియు డిప్లాయ్‌మెంట్ పేర్లతో (రహస్యాలు లేకుండా) రాస్తుంది.
+
+> **సలహా:** మార్పుల అన్వయించడానికి ఎప్పుడైనా `azd up` మళ్ళీ నడిపించండి. మొత్తం డిలీట్ చేసి ఖర్చును నిలిపేందుకు `azd down` ని ఉపయోగించండి.
+
+సృష్టించబడిన సెట్టింగ్స్ చూడడానికి:
+
+```bash
+azd env get-values
+```
+  
+ఇప్పుడు [మీ సెటప్‌ని పరీక్షించండి](#మీ-సెటప్‌ని-పరీక్షించండి) కు దొరుకుద్దాం.
+
+## ఎంపిక B: వనరులను మానవీయంగా సృష్టించడం
+
+పోర్టల్‌ని ప్రాధాన్యం ఇస్తారా? వనరులను మీ చేతితో సృష్టించండి:
+
+1. [Azure AI Foundry పోర్టల్](https://ai.azure.com/) కు వెళ్ళి సైన్ ఇన్ అవ్వండి.
+2. **ప్రాజెక్ట్ సృష్టించండి** (ఇది ఒక AI Foundry వనరును కూడా సృష్టిస్తుంది). దీని పేరు `GenAIJava` వంటి ఇవ్వండి.
+3. మీ ప్రాజెక్టులో, **Models + endpoints** → **Deploy model** → **Deploy base model** ని తెరవండి.
+4. **gpt-4o-mini** (డిప్లాయ్‌మెంట్ పేరు `gpt-4o-mini`) డిప్లాయ్ చేయండి. ఎంబెడ్డింగ్ ఉదాహరణల కోసం **text-embedding-3-small** ని కూడా డిప్లాయ్ చేయండి.
+5. **Overview** నుండి **ఎండ్‌పాయింట్** కాపీ చేసుకోండి (ఉదాహరణకి `https://<resource>.openai.azure.com/`).
+6. మీకు కీలెస్ యాక్సెస్ ఇవ్వండి: వనరులో **Access control (IAM)** → **Add role assignment** → **Cognitive Services OpenAI User** మీ ఖాతాకు అసైన్ చేయండి.
+
+> **ఏదైనా సమస్య ఉంటే?** [Azure AI Foundry డాక్యుమెంటేషన్](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects) చూడండి.
+
+## మీ వాతావరణాన్ని కాన్ఫిగర్ చేయండి
+
+**మీరు ఎంపిక A (`azd up`) ఉపయోగించి ఉంటే**, మీ సెట్టింగ్స్ ఫైల్ ఇప్పటికే రాయబడ్డాయి — ఎటువంటి కాన్ఫిగరేషన్ అవసరం లేదు. [మీ సెటప్‌ని పరీక్షించండి](#మీ-సెటప్‌ని-పరీక్షించండి) కి వెళ్లండి.
+
+**మీరు ఎంపిక B (మానవీయ) ఉపయోగించి ఉంటే**, ఉదాహరణ `.env` ఫైల్‌ను మీరు మీరూ సృష్టించండి:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+cp .env.example .env
+```
+  
+మీ ఎండ్‌పాయింట్ తో `.env`ను సవరించండి (కీ లేదు — ధృవీకరణ కీలెస్):
+
+```bash
+AZURE_OPENAI_ENDPOINT=https://<your-resource>.openai.azure.com/
+AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini
+```
+  
+> **భద్రతా గమనిక:** నిల్వ చేయవలసిన API కీ లేదు. మీరు Microsoft Entra ID ద్వారా `az login` (লোকల్) లేదా మేనేజ్డ్ ఐడెంటిటీ (Azureలో) తో ధృవీకరించబడతారు. `.env` ఫైల్‌లో కేవలం రహస్యంలేని సెట్టింగ్స్ ఉంటాయి మరియు ఇది `.gitignore` ద్వారా కవర్ చేయబడింది.
+
+## మీ సెటప్‌ని పరీక్షించండి
+
+కీలెస్ ధృవీకరణ టోకెన్ పొందగలిగేందుకు మీరు సైన్ ఇన్ అయి ఉండాలి, ఆపై ఉదాహరణను నడుపండి:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+
+az login          # మీరు ఇప్పటికే సైన్ ఇన్ కాలేదైతే
 mvn clean spring-boot:run
 ```
+  
+`gpt-4o-mini` మోడల్ నుండి స్పందన కనపడాలి!
 
-మీకు GPT-4o-mini మోడల్ నుండి స్పందన కనిపించాలి!
+> **VS Code వినియోగదారులు:** నడిపేందుకు `F5` ఒత్తండి. యాప్ మీ `.env` ని ఆటోమేటిక్ లోడ్ చేస్తుంది.
 
-> **VS కోడ్ వినియోగదారులు**: అప్లికేషన్‌ను రన్ చేయడానికి మీరు VS కోడ్‌లో `F5` నొక్కవచ్చు. లాంచ్ కాన్ఫిగరేషన్ ఇప్పటికే మీ `.env` ఫైల్‌ను ఆటోమేటిక్‌గా లోడ్ చేయడానికి సెట్ చేయబడింది.
-
-> **పూర్తి ఉదాహరణ**: వివరమైన సూచనలు మరియు సమస్యల పరిష్కారానికి [End-to-End Azure OpenAI Example](./examples/basic-chat-azure/README.md) చూడండి.
+> **పూర్తి ఉదాహరణ:** వివరాలు మరియు సమస్య పరిష్కారానికి [Azure AI Foundry తో బెసిక్ చాట్ ఉదాహరణ](./examples/basic-chat-azure/README.md) చూడండి.
 
 ## తరువాత ఏమిటి?
 
-**సెటప్ పూర్తయింది!** మీరు ఇప్పుడు:
-- gpt-4o-miniతో Azure OpenAIని డిప్లాయ్ చేశారు
-- స్థానిక .env ఫైల్ కాన్ఫిగరేషన్
-- Java డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్ సిద్ధంగా ఉంది
+**సెటప్ పూర్తయింది!** మీరు ఇప్పుడు కలిగి ఉన్నారు:  
+- `gpt-4o-mini` మరియు `text-embedding-3-small` తో Azure AI Foundry డిప్లాయ్ చేయబడింది  
+- కీలెస్ ధృవీకరణ (Microsoft Entra ID) — నిర్వహించాల్సిన కీలు లేవు  
+- మీ ఎండ్‌పాయింట్ మరియు డిప్లాయ్‌మెంట్ పేర్లతో ఒక లోకల్ `.env`  
+- జావా అభివృద్ధి వాతావరణం సిద్ధంగా ఉంది  
 
-**తరువాత కొనసాగండి** [Chapter 3: Core Generative AI Techniques](../03-CoreGenerativeAITechniques/README.md)కి, AI అప్లికేషన్లను నిర్మించడం ప్రారంభించండి!
+**కొనసాగండి** [అధ్యాయం 3: బేసిక్ జనరేటివ్ AI సాంకేతికతలు](../03-CoreGenerativeAITechniques/README.md) నుండి AI యాప్స్ నిర్మించడానికి!
 
 ## వనరులు
 
-- [Azure AI Foundry Documentation](https://learn.microsoft.com/azure/ai-services/)
-- [Spring AI Azure OpenAI Documentation](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
+- [Azure Developer CLI (azd)](https://aka.ms/azure-dev/install)
+- [Microsoft Entra ID తో కీలెస్ ధృవీకరణ](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
+- [Azure AI Foundry డాక్యుమెంటేషన్](https://learn.microsoft.com/azure/ai-foundry/)
+- [Spring AI Azure OpenAI డాక్యుమెంటేషన్](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
 - [Azure OpenAI Java SDK](https://learn.microsoft.com/java/api/overview/azure/ai-openai-readme)
 
 ## అదనపు వనరులు
 
-- [VS కోడ్ డౌన్‌లోడ్ చేయండి](https://code.visualstudio.com/Download)
-- [డాకర్ డెస్క్‌టాప్ పొందండి](https://www.docker.com/products/docker-desktop)
-- [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
+- [VS Code డౌన్లోడ్](https://code.visualstudio.com/Download)
+- [Docker Desktop పొందండి](https://www.docker.com/products/docker-desktop)
+- [డెవ్ కంటైనర్ కాన్ఫిగరేషన్](../../../.devcontainer/devcontainer.json)
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**అస్వీకరణ**:  
-ఈ పత్రం AI అనువాద సేవ [Co-op Translator](https://github.com/Azure/co-op-translator) ఉపయోగించి అనువదించబడింది. మేము ఖచ్చితత్వానికి ప్రయత్నిస్తున్నప్పటికీ, ఆటోమేటెడ్ అనువాదాలు తప్పులు లేదా అసమగ్రతలను కలిగి ఉండవచ్చు. దాని స్వదేశ భాషలో ఉన్న అసలు పత్రాన్ని అధికారం కలిగిన మూలంగా పరిగణించాలి. కీలకమైన సమాచారం కోసం, ప్రొఫెషనల్ మానవ అనువాదం సిఫారసు చేయబడుతుంది. ఈ అనువాదం ఉపయోగం వల్ల కలిగే ఏదైనా అపార్థాలు లేదా తప్పుదారులు కోసం మేము బాధ్యత వహించము.
+**అస్వీకరణ**:
+ఈ పత్రం AI అనువాద సేవ [Co-op Translator](https://github.com/Azure/co-op-translator) ఉపయోగించి అనువదించబడింది. మేము ఖచ్చితత్వానికి ప్రయత్నిస్తున్నప్పటికీ, ఆటోమేటెడ్ అనువాదాలు తప్పులు లేదా అసమగ్రతలను కలిగి ఉండవచ్చు. దాని స్వదేశ భాషలో ఉన్న అసలు పత్రాన్ని అధికారం కలిగిన మూలంగా పరిగణించాలి. కీలకమైన సమాచారం కోసం, ప్రొఫెషనల్ మానవ అనువాదాన్ని సిఫారసు చేస్తాము. ఈ అనువాదం ఉపయోగం వల్ల కలిగే ఏవైనా అపార్థాలు లేదా తప్పుదారులు కోసం మేము బాధ్యత వహించము.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

@@ -1,122 +1,77 @@
-# Azure OpenAI తో బేసిక్ చాట్ - ఎండ్-టు-ఎండ్ ఉదాహరణ
+# Azure AI Foundry తో ప్రాథమిక చాట్ - ఎండ్ టు ఎండ్ ఉదాహరణ
 
-ఈ ఉదాహరణ Azure OpenAI కి కనెక్ట్ అయ్యే సింపుల్ స్ప్రింగ్ బూట్ అప్లికేషన్‌ను ఎలా సృష్టించాలో మరియు మీ సెటప్‌ను పరీక్షించాలో చూపిస్తుంది.
+ఈ ఉదాహరణ కీ లెస్ సాక్ష్యీకరణ (Microsoft Entra ID) ఉపయోగించి **Azure AI Foundry** మోడల్ కు కనెక్ట్ చేసే సింపుల్ Spring Boot అప్లికేషన్ మరియు మీ సెటప్ ని పరీక్షిస్తుంది. ఇది Spring AI యొక్క `ChatClient` ని ఉపయోగిస్తుంది.
 
-## విషయ సూచిక
+## సూచనలు
 
-- [ముందస్తు అవసరాలు](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [త్వరిత ప్రారంభం](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [కాన్ఫిగరేషన్ ఎంపికలు](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [ఎంపిక 1: ఎన్విరాన్‌మెంట్ వేరియబుల్స్ (.env ఫైల్) - సిఫార్సు](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [ఎంపిక 2: GitHub కోడ్స్‌పేస్ సీక్రెట్స్](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [అప్లికేషన్ నడపడం](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [మేవెన్ ఉపయోగించడం](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [VS కోడ్ ఉపయోగించడం](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [అంచనా ఫలితాలు](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [కాన్ఫిగరేషన్ రిఫరెన్స్](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [ఎన్విరాన్‌మెంట్ వేరియబుల్స్](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [స్ప్రింగ్ కాన్ఫిగరేషన్](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [ట్రబుల్‌షూటింగ్](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [సాధారణ సమస్యలు](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [డీబగ్ మోడ్](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [తదుపరి దశలు](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [వనరులు](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
+- [అవసరాలు](#అవసరాలు)
+- [త్వరిత ప్రారంభం](#త్వరిత-ప్రారంభం)
+- [సాక్ష్యీకరణ ఎలా పనిచేస్తుంది](#సాక్ష్యీకరణ-ఎలా-పనిచేస్తుంది)
+- [అప్లికేషన్ ని నడపడం](#అప్లికేషన్-ను-నడపడం)
+  - [Maven ఉపయోగించడం](#maven-ఉపయోగించడం)
+  - [VS Code ఉపయోగించడం](#vs-code-ఉపయోగించడం)
+  - [ఆశించిన అవుట్‌పుట్](#ఆశించిన-అవుట్‌పుట్)
+- [కాన్ఫిగరేషను సూచిక](#కాన్ఫిగరేషన్-సూచిక)
+  - [పరిసర వేరియబుల్స్](#పరిసర-వేరియబుల్స్)
+  - [Spring కాన్ఫిగరేషన్](#spring-కాన్ఫిగరేషన్)
+- [గందరగోళ పరిష్కారం](#గందరగోళ-పరిష్కారం)
+  - [సాధారణ సమస్యలు](#సాధారణ-సమస్యలు)
+  - [డీబగ్ మోడ్](#డీబగ్-మోడ్)
+- [తర్వాతి దశలు](#తర్వాతి-దశలు)
+- [మెరుగైన వనరులు](#మెరుగైన-వనరులు)
 
-## ముందస్తు అవసరాలు
+## అవసరాలు
 
-ఈ ఉదాహరణను నడిపే ముందు, మీరు ఈ క్రింది వాటిని పూర్తి చేసి ఉండాలి:
+ఈ ఉదాహరణ నడపడానికి ముందుగా కలిగి ఉండాలి:
 
-- [Azure OpenAI సెటప్ గైడ్](../../getting-started-azure-openai.md) పూర్తి చేయండి  
-- Azure OpenAI రిసోర్స్‌ను (Azure AI Foundry పోర్టల్ ద్వారా) డిప్లాయ్ చేయండి  
-- gpt-4o-mini మోడల్ (లేదా ప్రత్యామ్నాయం) డిప్లాయ్ చేయండి  
-- Azure నుండి API కీ మరియు ఎండ్‌పాయింట్ URL పొందండి  
+- `gpt-4o-mini` మోడల్ కోసం ఒక Azure AI Foundry వనరు — దీన్ని `azd up` తో లేదా చేతితో [Azure AI Foundry సెటప్ గైడ్](../../getting-started-azure-openai.md) ద్వారా ప్రొవిజన్ చేయండి
+- ఆ వనరు పై **Cognitive Services OpenAI User** పాత్ర (Bicep టెంప్లేట్లు మీరు కోసం నియమిస్తాయి)
+- [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli), `az login` తో సైన్ ఇన్ అయి ఉండాలి
+- Java 21+ మరియు Maven 3.9+ 
+
+> **ఏ API కీ అవసరం లేదు** — సాక్ష్యీకరణ కీ లెస్ గా ఉంటుంది Microsoft Entra ID ద్వారా.
 
 ## త్వరిత ప్రారంభం
 
 ```bash
-# 1. ప్రాజెక్ట్‌కు నావిగేట్ చేయండి
+# 1. ప్రాజెక్టుకు నావిగేట్ చేయండి
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 
-# 2. క్రెడెన్షియల్స్‌ను కాన్ఫిగర్ చేయండి
-cp .env.example .env
-# మీ Azure OpenAI క్రెడెన్షియల్స్‌తో .env ను సవరించండి
+# 2. కీ్లెస్ ఆథ్ టోకెన్‌ను పొందటానికి సైన్ ఇన్ అవ్వండి
+az login
 
-# 3. అప్లికేషన్‌ను రన్ చేయండి
+# 3. ఎండ్పాయింట్‌ని రూపొందించండి
+#    - మీరు `azd up` ని నడిపితే, .env మీకు రాయబడ్డది (ఇది స్కిప్ చేయండి).
+#    - లేకపోతే టెంప్లేట్‌ను కాపీ చేసి AZURE_OPENAI_ENDPOINTను సెట్ చేయండి:
+cp .env.example .env
+
+# 4. అప్లికేషన్‌ను నడపండి
 mvn spring-boot:run
 ```
 
-## కాన్ఫిగరేషన్ ఎంపికలు
+## సాక్ష్యీకరణ ఎలా పనిచేస్తుంది
 
-### ఎంపిక 1: ఎన్విరాన్‌మెంట్ వేరియబుల్స్ (.env ఫైల్) - సిఫార్సు
+ఈ ఉదాహరణ **Microsoft Entra ID** తో సాక్ష్యీకరించబడుతుంది — API కీ లేదు.
 
-**దశ 1: మీ కాన్ఫిగరేషన్ ఫైల్ సృష్టించండి**
-```bash
-cp .env.example .env
-```
+పేరుతో `spring.ai.azure.openai.endpoint` మాత్రమే సెట్ చేయబడి(api-key లేకుండా), Spring AI Azure OpenAI క్లయింట్ ని [`DefaultAzureCredential`](https://learn.microsoft.com/java/api/com.azure.identity.defaultazurecredential) తో సృష్టిస్తుంది. ఆ క్రెడెన్షియల్ ఆటోమేటిగ్గా మీ స్థానికంగా ఉన్న `az login` సెషన్ నుండి లేదా Azure లో నడుస్తున్నప్పుడు ఒక మేనేజ్డ్ ఐడెంటిటీ నుండి టోకెన్ ని పొందుతుంది — కాబట్టి ఒకే కోడ్ రెండిటి ప్లేసులలో కూడా మార్పుల్లేకుండా పనిచేస్తుంది.
 
-**దశ 2: మీ Azure OpenAI క్రెడెన్షియల్స్ జోడించండి**
-```bash
-# మీ Azure OpenAI API కీ (Azure AI Foundry పోర్టల్ నుండి)
-AZURE_AI_KEY=your-actual-api-key-here
+## అప్లికేషన్ ను నడపడం
 
-# మీ Azure OpenAI ఎండ్‌పాయింట్ URL (ఉదా., https://your-hub-name.openai.azure.com/)
-AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-> **భద్రతా గమనిక**: 
-> - మీ `.env` ఫైల్‌ను వెర్షన్ కంట్రోల్‌కు ఎప్పుడూ కమిట్ చేయవద్దు
-> - `.env` ఫైల్ ఇప్పటికే `.gitignore` లో ఉంది
-> - మీ API కీలు సురక్షితంగా ఉంచండి మరియు వాటిని తరచుగా రొటేట్ చేయండి
-
-### ఎంపిక 2: GitHub కోడ్స్‌పేస్ సీక్రెట్స్
-
-GitHub కోడ్స్‌పేస్‌ల కోసం, ఈ సీక్రెట్స్‌ను మీ రిపోజిటరీలో సెట్ చేయండి:
-- `AZURE_AI_KEY` - మీ Azure OpenAI API కీ
-- `AZURE_AI_ENDPOINT` - మీ Azure OpenAI ఎండ్‌పాయింట్ URL
-
-అప్లికేషన్ ఈ సీక్రెట్స్‌ను ఆటోమేటిక్‌గా గుర్తించి ఉపయోగిస్తుంది.
-
-### ప్రత్యామ్నాయం: డైరెక్ట్ ఎన్విరాన్‌మెంట్ వేరియబుల్స్
-
-<details>
-<summary>ప్లాట్‌ఫారమ్-స్పెసిఫిక్ కమాండ్లను చూడటానికి క్లిక్ చేయండి</summary>
-
-**Linux/macOS (bash/zsh):**
-```bash
-export AZURE_AI_KEY=your-actual-api-key-here
-export AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (కమాండ్ ప్రాంప్ట్):**
-```cmd
-set AZURE_AI_KEY=your-actual-api-key-here
-set AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (పవర్‌షెల్):**
-```powershell
-$env:AZURE_AI_KEY="your-actual-api-key-here"
-$env:AZURE_AI_ENDPOINT="https://your-hub-name.openai.azure.com/"
-```
-</details>
-
-## అప్లికేషన్ నడపడం
-
-### మేవెన్ ఉపయోగించడం
+### Maven ఉపయోగించడం
 
 ```bash
 mvn spring-boot:run
 ```
 
-### VS కోడ్ ఉపయోగించడం
+### VS Code ఉపయోగించడం
 
-1. ప్రాజెక్ట్‌ను VS కోడ్‌లో ఓపెన్ చేయండి  
-2. `F5` నొక్కండి లేదా "Run and Debug" ప్యానెల్‌ను ఉపయోగించండి  
-3. "Spring Boot-BasicChatApplication" కాన్ఫిగరేషన్‌ను ఎంచుకోండి  
+1. ప్రాజెక్ట్ ను VS Code లో తెరవండి
+2. `F5` నొక్కండి లేదా "Run and Debug" ప్యానెల్ ఉపయోగించండి
+3. "Spring Boot-BasicChatApplication" కాన్ఫిగరేషన్ ఎంచుకోండి
 
-> **గమనిక**: VS కోడ్ కాన్ఫిగరేషన్ మీ .env ఫైల్‌ను ఆటోమేటిక్‌గా లోడ్ చేస్తుంది
+> **గమనిక**: VS Code కాన్ఫిగరేషన్ మీ .env ఫైల్ ను ఆటోమేటీక్గా లోడ్ చేస్తుంది
 
-### అంచనా ఫలితాలు
+### ఆశించిన అవుట్‌పుట్
 
 ```
 Starting Basic Chat with Azure OpenAI...
@@ -132,65 +87,66 @@ AI, or Artificial Intelligence, is the simulation of human intelligence in machi
 Success! Azure OpenAI connection is working correctly.
 ```
 
-## కాన్ఫిగరేషన్ రిఫరెన్స్
+## కాన్ఫిగరేషన్ సూచిక
 
-### ఎన్విరాన్‌మెంట్ వేరియబుల్స్
+### పరిసర వేరియబుల్స్
 
 | వేరియబుల్ | వివరణ | అవసరం | ఉదాహరణ |
-|-----------|--------|--------|---------|
-| `AZURE_AI_KEY` | Azure OpenAI API కీ | అవును | `abc123...` |
-| `AZURE_AI_ENDPOINT` | Azure OpenAI ఎండ్‌పాయింట్ URL | అవును | `https://my-hub.openai.azure.com/` |
-| `AZURE_AI_MODEL_DEPLOYMENT` | మోడల్ డిప్లాయ్‌మెంట్ పేరు | కాదు | `gpt-4o-mini` (డిఫాల్ట్) |
+|----------|-------------|----------|---------|
+| `AZURE_OPENAI_ENDPOINT` | Foundry (Azure OpenAI) ఎండపాయింట్ URL | అవును | `https://my-resource.openai.azure.com/` |
+| `AZURE_OPENAI_DEPLOYMENT` | చాట్ మోడల్ డిప్లాయ్‌మెంట్ పేరును | కాదు | `gpt-4o-mini` (డిఫాల్ట్) |
 
-### స్ప్రింగ్ కాన్ఫిగరేషన్
+> API కీ వేరియబుల్ **లేదు** — సాక్ష్యీకరణ కీ లెస్ (Microsoft Entra ID ద్వారా `az login`).
 
-`application.yml` ఫైల్‌లో ఈ క్రింది అంశాలు కాన్ఫిగర్ చేయబడ్డాయి:
-- **API కీ**: `${AZURE_AI_KEY}` - ఎన్విరాన్‌మెంట్ వేరియబుల్ నుండి  
-- **ఎండ్‌పాయింట్**: `${AZURE_AI_ENDPOINT}` - ఎన్విరాన్‌మెంట్ వేరియబుల్ నుండి  
-- **మోడల్**: `${AZURE_AI_MODEL_DEPLOYMENT:gpt-4o-mini}` - ఎన్విరాన్‌మెంట్ వేరియబుల్ నుండి ఫాల్బ్యాక్‌తో  
-- **టెంపరేచర్**: `0.7` - క్రియేటివిటీని నియంత్రిస్తుంది (0.0 = డిటర్మినిస్టిక్, 1.0 = క్రియేటివ్)  
-- **మాక్స్ టోకెన్స్**: `500` - గరిష్ట స్పందన పొడవు  
+### Spring కాన్ఫిగరేషన్
 
-## ట్రబుల్‌షూటింగ్
+`application.yml` ఫైల్ లో కింది కాన్ఫిగరేషన్లు ఉంటాయి:
+- **ఎండపాయింట్**: `${AZURE_OPENAI_ENDPOINT}` - పరిసర వేరియబుల్ నుండి
+- **డిప్లాయ్‌మెంట్**: `${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}` - పరిసర వేరియబుల్ నుండి, లేకుంటే డిఫాల్ట్
+- **సాక్ష్యీకరణ**: కీ లెస్ — `api-key` సెట్ చేయలేదు, కాబట్టి Spring AI `DefaultAzureCredential` ఉపయోగిస్తుంది
+- **తాపం**: `0.7` - సృజనాత్మకత నియంత్రణ (0.0 = స్థిరమైన, 1.0 = సృజనాత్మకమైనది)
+- **గరిష్ట టోకెన్లు**: `500` - గరిష్ట ప్రతిస్పందన పొడవు
+
+## గందరగోళ పరిష్కారం
 
 ### సాధారణ సమస్యలు
 
 <details>
-<summary><strong>లోపం: "API కీ చెల్లుబాటు కాదు"</strong></summary>
+<summary><strong>లోపం: 401 / "PermissionDenied" / టోకెన్ లోపాలు</strong></summary>
 
-- మీ `.env` ఫైల్‌లో `AZURE_AI_KEY` సరిగ్గా సెట్ చేయబడిందో లేదో తనిఖీ చేయండి  
-- API కీని Azure AI Foundry పోర్టల్ నుండి ఖచ్చితంగా కాపీ చేసారో లేదో నిర్ధారించుకోండి  
-- కీ చుట్టూ అదనపు స్పేస్‌లు లేదా కోట్స్ లేవో చూడండి  
+- `az login` నడపండి — కీ లెస్ సాక్ష్యీకరణకు టోకెన్ కోసం యాక్టివ్ సైన్-ఇన్ అవసరం
+- మీ ఖాతాకు ఆ వనరుపై **Cognitive Services OpenAI User** పాత్ర ఉన్నదని నిర్ధారించుకోండి
+- మీరు పాత్రను అప్పుడే అప్పగించగా అయితే, అది వ్యాప్తి చెందడానికి కొద్దిసేపు వేచి ఉండండి
+- మీరు సరైన టెనెంట్/సబ్స్క్రిప్షన్ లో ఉన్నారు అనేదానిని ధృవీకరించుకోండి (`az account show`)
 </details>
 
 <details>
-<summary><strong>లోపం: "ఎండ్‌పాయింట్ చెల్లుబాటు కాదు"</strong></summary>
+<summary><strong>లోపం: "The endpoint is not valid" / కనెక్షన్ లోపాలు</strong></summary>
 
-- మీ `AZURE_AI_ENDPOINT` పూర్తి URL (ఉదా: `https://your-hub-name.openai.azure.com/`) కలిగి ఉందో చూడండి  
-- ట్రైలింగ్ స్లాష్ సరిగా ఉందో తనిఖీ చేయండి  
-- ఎండ్‌పాయింట్ మీ Azure డిప్లాయ్‌మెంట్ రీజియన్‌కు సరిపోతుందో చూడండి  
+- `AZURE_OPENAI_ENDPOINT` పూర్తి ఆధార URL అని నిర్ధారించుకోండి (ఉదా. `https://your-resource.openai.azure.com/`)
+- ట్రైలింగ్ స్లాష్ సరిగ్గా ఉంది కదా చూసుకోండి
+- ఎండపాయింట్ మీ ప్రొవిజన్డ్ వనరుతో సరిపోతుందని ధృవీకరించుకోండి (`azd env get-values`)
 </details>
 
 <details>
-<summary><strong>లోపం: "డిప్లాయ్‌మెంట్ కనుగొనబడలేదు"</strong></summary>
+<summary><strong>లోపం: "The deployment was not found"</strong></summary>
 
-- మీ మోడల్ డిప్లాయ్‌మెంట్ పేరు Azure లో డిప్లాయ్ చేసినదానికి సరిపోతుందో చూడండి  
-- మోడల్ విజయవంతంగా డిప్లాయ్ చేయబడిందో, యాక్టివ్‌గా ఉందో తనిఖీ చేయండి  
-- డిఫాల్ట్ డిప్లాయ్‌మెంట్ పేరు: `gpt-4o-mini` ఉపయోగించడానికి ప్రయత్నించండి  
+- `AZURE_OPENAI_DEPLOYMENT` ఏజ<A><B>కు డిప్లాయ్‌మెంట్ పేరుతో సరిపోతుందా అని వాటిల్లండి
+- మోడల్ విజయవంతంగా డిప్లాయ్ అయిందని మరియు సక్రియంగా ఉందని చూడండి
+- డిఫాల్ట్ డిప్లాయ్‌మెంట్ పేరు `gpt-4o-mini`
 </details>
 
 <details>
-<summary><strong>VS కోడ్: ఎన్విరాన్‌మెంట్ వేరియబుల్స్ లోడ్ కావడం లేదు</strong></summary>
+<summary><strong>VS Code: పరిసర వేరియబుల్స్ లోడ్ కాదు అవడం</strong></summary>
 
-- మీ `.env` ఫైల్ ప్రాజెక్ట్ రూట్ డైరెక్టరీలో ఉందో (అంటే `pom.xml` తో సమాన స్థాయిలో) చూడండి  
-- VS కోడ్ ఇంటిగ్రేటెడ్ టెర్మినల్‌లో `mvn spring-boot:run` నడపడానికి ప్రయత్నించండి  
-- VS కోడ్ జావా ఎక్స్‌టెన్షన్ సరిగా ఇన్‌స్టాల్ చేయబడిందో చూడండి  
-- లాంచ్ కాన్ఫిగరేషన్‌లో `"envFile": "${workspaceFolder}/.env"` ఉందో నిర్ధారించుకోండి  
+- మీ `.env` ఫైల్ ప్రాజెక్ట్ రూట్ డైరెక్టరీలో ఉండాలి (ప్రమాణంతో `pom.xml` వంటి స్థాయిలో)
+- VS Code యొక్క ఇంటిగ్రేటెడ్ టెర్మినల్ లో `mvn spring-boot:run` నడపండి
+- VS Code Java ఎక్స్‌టెన్షన్ సరిగా ఇన్‌స్టాల్ అయిందా లేదో చూడండి
 </details>
 
 ### డీబగ్ మోడ్
 
-వివరణాత్మక లాగింగ్‌ను ఎనేబుల్ చేయడానికి, `application.yml` లో ఈ లైన్లను అన్‌కామెంట్ చేయండి:
+వివరమైన లాగింగ్ కోసం, `application.yml` లోని ఈ లైన్లను అన్ కామెంట్ చేయండి:
 
 ```yaml
 logging:
@@ -199,22 +155,22 @@ logging:
     com.azure: DEBUG
 ```
 
-## తదుపరి దశలు
+## తర్వాతి దశలు
 
-**సెటప్ పూర్తయింది!** మీ లెర్నింగ్ జర్నీని కొనసాగించండి:
+**సెట్టప్ పూర్తయింది!** మీ నేర్చుకుంటున్న ప్రయాణం కొనసాగించండి:
 
-[చాప్టర్ 3: కోర్ జనరేటివ్ AI టెక్నిక్స్](../../../03-CoreGenerativeAITechniques/README.md)
+[అధ్యాయం 3: కోర్ జనరేటివ్ AI సాంకేతికతలు](../../../03-CoreGenerativeAITechniques/README.md)
 
-## వనరులు
+## మెరుగైన వనరులు
 
-- [Spring AI Azure OpenAI డాక్యుమెంటేషన్](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)  
-- [Azure OpenAI సర్వీస్ డాక్యుమెంటేషన్](https://learn.microsoft.com/azure/ai-services/openai/)  
-- [Azure AI Foundry పోర్టల్](https://ai.azure.com/)  
-- [Azure AI Foundry డాక్యుమెంటేషన్](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project)  
+- [Spring AI Azure OpenAI డాక్యుమెంటేషన్](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
+- [Microsoft Entra ID తో కీ లెస్ సాక్ష్యీకరణ](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
+- [Azure AI Foundry పోర్టల్](https://ai.azure.com/)
+- [Azure AI Foundry డాక్యుమెంటేషన్](https://learn.microsoft.com/azure/ai-foundry/)
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**అస్వీకరణ**:  
-ఈ పత్రం AI అనువాద సేవ [Co-op Translator](https://github.com/Azure/co-op-translator) ఉపయోగించి అనువదించబడింది. మేము ఖచ్చితత్వానికి ప్రయత్నిస్తున్నప్పటికీ, ఆటోమేటెడ్ అనువాదాలు తప్పులు లేదా అసమగ్రతలను కలిగి ఉండవచ్చు. దాని స్వదేశ భాషలో ఉన్న అసలు పత్రాన్ని అధికారం కలిగిన మూలంగా పరిగణించాలి. కీలకమైన సమాచారం కోసం, ప్రొఫెషనల్ మానవ అనువాదాన్ని సిఫారసు చేస్తాము. ఈ అనువాదాన్ని ఉపయోగించడం వల్ల కలిగే ఏవైనా అపార్థాలు లేదా తప్పుదారులు కోసం మేము బాధ్యత వహించము.
+**అస్వీకరణ**:
+ఈ పత్రం AI అనువాద సేవ [Co-op Translator](https://github.com/Azure/co-op-translator) ఉపయోగించి అనువదించబడింది. మేము ఖచ్చితత్వానికి ప్రయత్నిస్తున్నప్పటికీ, ఆటోమేటెడ్ అనువాదాలు తప్పులు లేదా అసమగ్రతలను కలిగి ఉండవచ్చు. దాని స్వదేశ భాషలో ఉన్న అసలు పత్రాన్ని అధికారం కలిగిన మూలంగా పరిగణించాలి. కీలకమైన సమాచారం కోసం, ప్రొఫెషనల్ మానవ అనువాదాన్ని సిఫారసు చేస్తాము. ఈ అనువాదం ఉపయోగం వల్ల కలిగే ఏవైనా అపార్థాలు లేదా తప్పుదారులు కోసం మేము బాధ్యత వహించము.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

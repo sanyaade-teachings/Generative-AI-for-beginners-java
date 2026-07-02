@@ -1,122 +1,77 @@
-# Azure OpenAI ಜೊತೆ ಮೂಲಭೂತ ಚಾಟ್ - ಸಂಪೂರ್ಣ ಉದಾಹರಣೆ
+# ಅಜೂರ್ AI ಫೌಂಡ್ರಿಯಿಂದ ಮೂಲ ಚಾಟ್ - ಸಂಪೂರ್ಣ ಉದಾಹರಣೆ
 
-ಈ ಉದಾಹರಣೆ, Azure OpenAI ಗೆ ಸಂಪರ್ಕಿಸುವ ಮತ್ತು ನಿಮ್ಮ ಸೆಟಪ್ ಅನ್ನು ಪರೀಕ್ಷಿಸುವ ಸರಳ Spring Boot ಅಪ್ಲಿಕೇಶನ್ ಅನ್ನು ಹೇಗೆ ರಚಿಸಬೇಕೆಂದು ತೋರಿಸುತ್ತದೆ.
+ಈ ಉದಾಹರಣೆ ಸರಳ ಸ್ಪ್ರಿಂಗ್ ಬೂಟ್ ಅಪ್ಲಿಕೈಶನ್ ಆಗಿದ್ದು, **ಅಜೂರ್ AI ಫೌಂಡ್ರಿ** ಮಾದರಿಯನ್ನು **ಕೀಲೆಸ್ ಪ್ರಮಾಣೀಕರಣ** (Microsoft Entra ID) ಬಳಸಿ ಸಂಪರ್ಕಿಸಿ ನಿಮ್ಮ ಸೆಟ್ ಅಪ್‌ನ್ನು ಪರೀಕ್ಷಿಸುತ್ತದೆ. ಇದು Spring AIರ `ChatClient` ಅನ್ನು ಬಳಸುತ್ತದೆ.
 
-## ವಿಷಯಗಳ ಪಟ್ಟಿಯು
+## ವಿಷಯಗಳ ಪಟ್ಟಿಕೆ
 
-- [ಪೂರ್ವಶರತ್ತುಗಳು](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [ತ್ವರಿತ ಪ್ರಾರಂಭ](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [ಕಾನ್ಫಿಗರೇಶನ್ ಆಯ್ಕೆಗಳು](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [ಆಯ್ಕೆ 1: ಪರಿಸರ ಚರಗಳು (.env ಫೈಲ್) - ಶಿಫಾರಸು](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [ಆಯ್ಕೆ 2: GitHub Codespace Secrets](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [ಅಪ್ಲಿಕೇಶನ್ ಅನ್ನು ರನ್ ಮಾಡುವುದು](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Maven ಬಳಸಿ](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [VS Code ಬಳಸಿ](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [ನಿರೀಕ್ಷಿತ ಔಟ್‌ಪುಟ್](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [ಕಾನ್ಫಿಗರೇಶನ್ ರೆಫರೆನ್ಸ್](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [ಪರಿಸರ ಚರಗಳು](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Spring ಕಾನ್ಫಿಗರೇಶನ್](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [ತೊಂದರೆ ಪರಿಹಾರ](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [ಸಾಮಾನ್ಯ ಸಮಸ್ಯೆಗಳು](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [ಡಿಬಗ್ ಮೋಡ್](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [ಮುಂದಿನ ಹಂತಗಳು](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [ಸಂಪತ್ತುಗಳು](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
+- [ಮೊದಲು ಬೇಕಾಗಿರುವವು](#ಮೊದಲೇ-ಬೇಕಾಗಿರುವವು)
+- [ತ್ವರಿತ ಪ್ರಾರಂಭ](#ತ್ವರಿತ-ಪ್ರಾರಂಭ)
+- [ಪ್ರಮಾಣೀಕರಣ ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ](#ಪ್ರಮಾಣೀಕರಣ-ಹೇಗೆ-ಕೆಲಸ-ಮಾಡುತ್ತದೆ)
+- [ಅಪ್ಲಿಕೈಶನ್ ಚಾಲನೆ](#ಅಪ್ಲಿಕೈಶನ್-ಚಾಲನೆ)
+  - [ಮೇವನ್ ಬಳಸಿ](#ಮೇವನ್-ಬಳಸಿ)
+  - [VS ಕೋಡ್ ಬಳಸಿ](#vs-ಕೋಡ್-ಬಳಸಿ)
+  - [ನಿರೀಕ್ಷಿತ ಫಲಿತಾಂಶ](#ನಿರೀಕ್ಷಿತ-ಫಲಿತಾಂಶ)
+- [ರಚನಾ ಸೂಚನೆ](#ರಚನಾ-ಸೂಚನೆ)
+  - [ಪರಿಸರ ಚರಗಳು](#ಪರಿಸರ-ಚರಗಳು)
+  - [ಸ್ಪ್ರಿಂಗ್ ರಚನೆ](#ಸ್ಪ್ರಿಂಗ್-ರಚನೆ)
+- [ಸರಿದೂಗಿಸುವಿಕೆ](#ಸರಿದೂಗಿಸುವಿಕೆ)
+  - [ಸಾಮಾನ್ಯ ಸಮಸ್ಯೆಗಳು](#ಸಾಮಾನ್ಯ-ಸಮಸ್ಯೆಗಳು)
+  - [ಡೀಬಗ್ಗಿಂಗ್ ಮೋಡ್](#ಡೀಬಗ್ಗಿಂಗ್-ಮೋಡ್)
+- [ಮುಂದಿನ ಹಂತಗಳು](#ಮುಂದಿನ-ಹಂತಗಳು)
+- [ಸಂಪನ್ಮೂಲಗಳು](#ಸಂಪನ್ಮೂಲಗಳು)
 
-## ಪೂರ್ವಶರತ್ತುಗಳು
+## ಮೊದಲೇ ಬೇಕಾಗಿರುವವು
 
-ಈ ಉದಾಹರಣೆಯನ್ನು ರನ್ ಮಾಡುವ ಮೊದಲು, ನೀವು ಈ ಕೆಳಗಿನವುಗಳನ್ನು ಪೂರ್ಣಗೊಳಿಸಿರಬೇಕು:
+ಈ ಉದಾಹರಣೆ ನಿರ್ವಹಿಸುವ ಮೊದಲು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ:
 
-- [Azure OpenAI ಸೆಟಪ್ ಗೈಡ್](../../getting-started-azure-openai.md) ಅನ್ನು ಪೂರ್ಣಗೊಳಿಸಲಾಗಿದೆ  
-- Azure AI Foundry ಪೋರ್ಟಲ್ ಮೂಲಕ Azure OpenAI ಸಂಪತ್ತು ಡಿಪ್ಲಾಯ್ ಮಾಡಲಾಗಿದೆ  
-- gpt-4o-mini ಮಾದರಿ (ಅಥವಾ ಪರ್ಯಾಯ) ಡಿಪ್ಲಾಯ್ ಮಾಡಲಾಗಿದೆ  
-- Azure ನಿಂದ API ಕೀ ಮತ್ತು ಎಂಡ್‌ಪಾಯಿಂಟ್ URL ಲಭ್ಯವಿದೆ  
+- `gpt-4o-mini` ನಿಯೋಜನೆ ಹೊಂದಿರುವ ಅಜೂರ್ AI ಫೌಂಡ್ರಿ ಸಂಪನ್ಮೂಲ — ಅದನ್ನು `azd up` ಅಥವಾ ಕೈಯಿಂದ [ಅಜೂರ್ AI ಫೌಂಡ್ರಿ ಸೆಟ್‌ಅಪ್ ಮಾರ್ಗದರ್ಶಿ](../../getting-started-azure-openai.md) ಮೂಲಕ ಒದಗಿಸಿ
+- ಆ ಸಂಪನ್ಮೂಲದ ಮೇಲೆ **ಕಾಗ್ನಿಟಿವ್ ಸರ್ವೀಸಸ್ ಓಪನ್‌ಎಐ ಬಳಕೆದಾರ** ಪಾತ್ರ (ಬೈಸ್ಪ್ ಟೆಂಪ್ಲೇಟುಗಳು ಇದನ್ನು ನಿಮ್ಮಿಗಾಗಿ ನಿಯೋಜಿಸುತ್ತವೆ)
+- [ಅಜೂರ್ CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli), `az login` ಮೂಲಕ ಸೈನ್ ಇನ್ ಆಗಿರುವುದು
+- ಜಾವಾ 21+ ಮತ್ತು ಮೇವನ್ 3.9+
+
+> **ಯಾವುದೇ API ಕೀ ಅಗತ್ಯವಿಲ್ಲ** — ಪ್ರಮಾಣೀಕರಣವು Microsoft Entra ID ಮೂಲಕ ಕೀಲೆಸ್ ಆಗಿದೆ.
 
 ## ತ್ವರಿತ ಪ್ರಾರಂಭ
 
 ```bash
-# 1. ಪ್ರಾಜೆಕ್ಟ್‌ಗೆ ನಾವಿಗೇಟ್ ಮಾಡಿ
+# 1. ಯೋಜನೆಗೆ ದಿಕ್ಕುಮಾಡಿ
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 
-# 2. ಕ್ರೆಡೆನ್ಷಿಯಲ್ಸ್ ಅನ್ನು ಕಾನ್ಫಿಗರ್ ಮಾಡಿ
-cp .env.example .env
-# ನಿಮ್ಮ Azure OpenAI ಕ್ರೆಡೆನ್ಷಿಯಲ್ಸ್‌ನೊಂದಿಗೆ .env ಅನ್ನು ಸಂಪಾದಿಸಿ
+# 2. ಟೋಕನ್ ಪಡೆಯಲು ಕೀಲಿಯಿಲ್ಲದ ಪರಿಶೀಲನೆಗೆ ಸೈನ್ ಇನ್ ಮಾಡಿ
+az login
 
-# 3. ಅಪ್ಲಿಕೇಶನ್ ಅನ್ನು ರನ್ ಮಾಡಿ
+# 3. ಎಂಡ್‌ಪಾಯಿಂಟ್ ಅನ್ನು ಹೊಂದಿಸಿ
+#    - ನೀವು `azd up` ಓಡಿಸಿದರೆ, .env ನಿಮಗಾಗಿ ಬರೆಯಲ್ಪಟ್ಟಿದೆ (ಇದನ್ನು ಬಿಟ್ಟಿಮಾಡಿ).
+#    - ಇಲ್ಲದಿದ್ದರೆ ಟೆಂಪ್ಲೇಟ್ ಅನ್ನು ನಕಲಿಸಿ ಮತ್ತು AZURE_OPENAI_ENDPOINT ಅನ್ನು ಹೊಂದಿಸಿ:
+cp .env.example .env
+
+# 4. ಅಪ್ಲಿಕೇಶನ್ ಅನ್ನು ಚಾಲನೆ ಮಾಡು
 mvn spring-boot:run
 ```
 
-## ಕಾನ್ಫಿಗರೇಶನ್ ಆಯ್ಕೆಗಳು
+## ಪ್ರಮಾಣೀಕರಣ ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ
 
-### ಆಯ್ಕೆ 1: ಪರಿಸರ ಚರಗಳು (.env ಫೈಲ್) - ಶಿಫಾರಸು
+ಈ ಉದಾಹರಣೆ **Microsoft Entra ID** ಮೂಲಕ ಪ್ರಮಾಣೀಕರಿಸುತ್ತದೆ — ಯಾವುದೇ API ಕೀ ಇಲ್ಲ.
 
-**ಹಂತ 1: ನಿಮ್ಮ ಕಾನ್ಫಿಗರೇಶನ್ ಫೈಲ್ ರಚಿಸಿ**
-```bash
-cp .env.example .env
-```
+ಕೆवल `spring.ai.azure.openai.endpoint` ಸೆಟ್ ಮಾಡಿರುವಾಗ (ಮತ್ತು api-key ಇಲ್ಲದೆ), Spring AI ಅಜೂರ್ ಓಪನ್‌ಎಐ ಕ್ಲೈಯಂಟ್ ಅನ್ನು [`DefaultAzureCredential`](https://learn.microsoft.com/java/api/com.azure.identity.defaultazurecredential) ಬಳಸಿ ರಚಿಸುತ್ತದೆ. ಆ ಕ್ರೆಡೆನ್ಷಿಯಲ್ ನಿಮ್ಮ `az login` ಸೆಷನ್‌ನಿಂದ ಟೋಕನ್ ಅನ್ನು ಸ್ಥಳೀಯವಾಗಿ ಅಥವಾ ಅಜೂರಿನಲ್ಲಿ ರನ್ ಮಾಡುವಾಗ ನಿರ್ವಹಿತ ಐಡೆಂಟಿಟಿಯಿಂದ ಕಂಡುಹಿಡಿಯುತ್ತದೆ — ಹೀಗಾಗಿ ಅದೇ ಕೋಡ್ ಯಾವುದೇ ಬದಲಾವಣೆ ಇಲ್ಲದೆ ಎರಡೂ ಜಾಗಗಳಲ್ಲಿ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ.
 
-**ಹಂತ 2: ನಿಮ್ಮ Azure OpenAI ಕ್ರೆಡೆನ್ಷಿಯಲ್ಸ್ ಸೇರಿಸಿ**
-```bash
-# ನಿಮ್ಮ Azure OpenAI API ಕೀ (Azure AI Foundry ಪೋರ್ಟಲ್‌ನಿಂದ)
-AZURE_AI_KEY=your-actual-api-key-here
+## ಅಪ್ಲಿಕೈಶನ್ ಚಾಲನೆ
 
-# ನಿಮ್ಮ Azure OpenAI ಎಂಡ್ಪಾಯಿಂಟ್ URL (ಉದಾ., https://your-hub-name.openai.azure.com/)
-AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-> **ಭದ್ರತಾ ಟಿಪ್ಪಣಿ**: 
-> - ನಿಮ್ಮ `.env` ಫೈಲ್ ಅನ್ನು ಎಂದಿಗೂ ವರ್ಜನ್ ಕಂಟ್ರೋಲ್ ಗೆ ಕಮಿಟ್ ಮಾಡಬೇಡಿ
-> - `.env` ಫೈಲ್ ಈಗಾಗಲೇ `.gitignore` ನಲ್ಲಿ ಸೇರಿಸಲಾಗಿದೆ
-> - ನಿಮ್ಮ API ಕೀಗಳನ್ನು ಸುರಕ್ಷಿತವಾಗಿ ಇಟ್ಟುಕೊಳ್ಳಿ ಮತ್ತು ಅವುಗಳನ್ನು ನಿಯಮಿತವಾಗಿ ರೋಟೇಟ್ ಮಾಡಿ
-
-### ಆಯ್ಕೆ 2: GitHub Codespace Secrets
-
-GitHub Codespaces ಗೆ, ಈ ಸೀಕ್ರೆಟ್ಸ್ ಅನ್ನು ನಿಮ್ಮ ರೆಪೊಸಿಟರಿಯಲ್ಲಿ ಸೆಟ್ ಮಾಡಿ:
-- `AZURE_AI_KEY` - ನಿಮ್ಮ Azure OpenAI API ಕೀ
-- `AZURE_AI_ENDPOINT` - ನಿಮ್ಮ Azure OpenAI ಎಂಡ್‌ಪಾಯಿಂಟ್ URL
-
-ಅಪ್ಲಿಕೇಶನ್ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಈ ಸೀಕ್ರೆಟ್ಸ್ ಅನ್ನು ಪತ್ತೆಹಚ್ಚಿ ಬಳಸುತ್ತದೆ.
-
-### ಪರ್ಯಾಯ: ನೇರ ಪರಿಸರ ಚರಗಳು
-
-<details>
-<summary>ಪ್ಲಾಟ್‌ಫಾರ್ಮ್-ನಿರ್ದಿಷ್ಟ ಕಮಾಂಡ್‌ಗಳನ್ನು ನೋಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ</summary>
-
-**Linux/macOS (bash/zsh):**
-```bash
-export AZURE_AI_KEY=your-actual-api-key-here
-export AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (Command Prompt):**
-```cmd
-set AZURE_AI_KEY=your-actual-api-key-here
-set AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (PowerShell):**
-```powershell
-$env:AZURE_AI_KEY="your-actual-api-key-here"
-$env:AZURE_AI_ENDPOINT="https://your-hub-name.openai.azure.com/"
-```
-</details>
-
-## ಅಪ್ಲಿಕೇಶನ್ ಅನ್ನು ರನ್ ಮಾಡುವುದು
-
-### Maven ಬಳಸಿ
+### ಮೇವನ್ ಬಳಸಿ
 
 ```bash
 mvn spring-boot:run
 ```
 
-### VS Code ಬಳಸಿ
+### VS ಕೋಡ್ ಬಳಸಿ
 
-1. ಪ್ರಾಜೆಕ್ಟ್ ಅನ್ನು VS Code ನಲ್ಲಿ ತೆರೆಯಿರಿ
-2. `F5` ಒತ್ತಿ ಅಥವಾ "Run and Debug" ಪ್ಯಾನೆಲ್ ಬಳಸಿ
-3. "Spring Boot-BasicChatApplication" ಕಾನ್ಫಿಗರೇಶನ್ ಆಯ್ಕೆಮಾಡಿ
+1. ಪ್ರಾಜೆಕ್ಟ್ ಅನ್ನು VS ಕೋಡ್‌ನಲ್ಲಿ ತೆರೆಯಿರಿ
+2. `F5` ಒತ್ತಿ ಅಥವಾ "ದೌಡಿತ್ಯ ಮತ್ತು ಡೀಬಗ್ಗಿಂಗ್" ಪ್ಯಾನೆಲ್ ಬಳಸಿ
+3. "Spring Boot-BasicChatApplication" ರಚನೆಯನ್ನು ಆರಿಸಿಕೊಳ್ಳಿ
 
-> **ಟಿಪ್ಪಣಿ**: VS Code ಕಾನ್ಫಿಗರೇಶನ್ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ನಿಮ್ಮ .env ಫೈಲ್ ಅನ್ನು ಲೋಡ್ ಮಾಡುತ್ತದೆ
+> **ಸೂಚನೆ**: VS ಕೋಡ್ ರಚನೆ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ನಿಮ್ಮ .env ಫೈಲ್ ಅನ್ನು ಲೋಡ್ ಮಾಡುತ್ತದೆ
 
-### ನಿರೀಕ್ಷಿತ ಔಟ್‌ಪುಟ್
+### ನಿರೀಕ್ಷಿತ ಫಲಿತಾಂಶ
 
 ```
 Starting Basic Chat with Azure OpenAI...
@@ -132,65 +87,66 @@ AI, or Artificial Intelligence, is the simulation of human intelligence in machi
 Success! Azure OpenAI connection is working correctly.
 ```
 
-## ಕಾನ್ಫಿಗರೇಶನ್ ರೆಫರೆನ್ಸ್
+## ರಚನಾ ಸೂಚನೆ
 
 ### ಪರಿಸರ ಚರಗಳು
 
-| ಚರ | ವಿವರಣೆ | ಅಗತ್ಯವಿದೆ | ಉದಾಹರಣೆ |
+| ಚರ | ವರ್ಣನೆ | ಅಗತ್ಯ | ಉದಾಹರಣೆ |
 |----------|-------------|----------|---------|
-| `AZURE_AI_KEY` | Azure OpenAI API ಕೀ | ಹೌದು | `abc123...` |
-| `AZURE_AI_ENDPOINT` | Azure OpenAI ಎಂಡ್‌ಪಾಯಿಂಟ್ URL | ಹೌದು | `https://my-hub.openai.azure.com/` |
-| `AZURE_AI_MODEL_DEPLOYMENT` | ಮಾದರಿ ಡಿಪ್ಲಾಯ್‌ಮೆಂಟ್ ಹೆಸರು | ಇಲ್ಲ | `gpt-4o-mini` (ಡೀಫಾಲ್ಟ್) |
+| `AZURE_OPENAI_ENDPOINT` | ಫೌಂಡ್ರಿ (ಅಜೂರ್ ಓಪನ್‌ಎಐ) ಎಂಡ್‌ಪಾಯಿಂಟ್ URL | ಹೌದು | `https://my-resource.openai.azure.com/` |
+| `AZURE_OPENAI_DEPLOYMENT` | ಚಾಟ್ ಮಾದರಿ ನಿಯೋಜನೆ ಹೆಸರು | ಇಲ್ಲ | `gpt-4o-mini` (ಡೀಫಾಲ್ಟ್) |
 
-### Spring ಕಾನ್ಫಿಗರೇಶನ್
+> **ಯಾವುದೇ** API ಕೀ ಚರ ಇಲ್ಲ — ಪ್ರಮಾಣೀಕರಣವು ಕೀಲೆಸ್ ಆಗಿದೆ (Microsoft Entra ID ಮೂಲಕ `az login`).
 
-`application.yml` ಫೈಲ್ ಈ ಕೆಳಗಿನವುಗಳನ್ನು ಕಾನ್ಫಿಗರ್ ಮಾಡುತ್ತದೆ:
-- **API ಕೀ**: `${AZURE_AI_KEY}` - ಪರಿಸರ ಚರದಿಂದ
-- **ಎಂಡ್‌ಪಾಯಿಂಟ್**: `${AZURE_AI_ENDPOINT}` - ಪರಿಸರ ಚರದಿಂದ  
-- **ಮಾದರಿ**: `${AZURE_AI_MODEL_DEPLOYMENT:gpt-4o-mini}` - ಪರಿಸರ ಚರದಿಂದ ಫಾಲ್ಬ್ಯಾಕ್ ಸಹಿತ
-- **Temperature**: `0.7` - ಸೃಜನಶೀಲತೆಯನ್ನು ನಿಯಂತ್ರಿಸುತ್ತದೆ (0.0 = ನಿರ್ಧಿಷ್ಟ, 1.0 = ಸೃಜನಶೀಲ)
-- **Max Tokens**: `500` - ಗರಿಷ್ಠ ಪ್ರತಿಕ್ರಿಯೆಯ ಉದ್ದ
+### ಸ್ಪ್ರಿಂಗ್ ರಚನೆ
 
-## ತೊಂದರೆ ಪರಿಹಾರ
+`application.yml` ಫೈಲ್ ನಲ್ಲಿ:
+- **ಎಂಡ್‌ಪಾಯಿಂಟ್**: `${AZURE_OPENAI_ENDPOINT}` - ಪರಿಸರ ಚರದಿಂದ
+- **ನಿಯೋಜನೆ**: `${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}` - ಪರಿಸರ ಚರದಿಂದ fallback ಜೊತೆಗೆ
+- **ಅಥ್**: ಕೀಲೆಸ್ — ಯಾವುದೇ `api-key` ಸೆಟ್ ಆಗಿಲ್ಲ, ಆದ್ದರಿಂದ Spring AI `DefaultAzureCredential` ಅನ್ನು ಬಳಸುತ್ತದೆ
+- **ತೆಂಪರೇಚರ್**: `0.7` - ಸೃಜನಶೀಲತೆಯನ್ನು ನಿಯಂತ್ರಿಸುತ್ತದೆ (0.0 = ನಿರ್ಣಾಯಕ, 1.0 = ಸೃಜನಶೀಲ)
+- **ಗರಿಷ್ಠ ಟೋಕನ್ಗಳು**: `500` - ಗರಿಷ್ಠ ಪ್ರತಿಕ್ರಿಯೆ ವಿಳಾಸ
+
+## ಸರಿದೂಗಿಸುವಿಕೆ
 
 ### ಸಾಮಾನ್ಯ ಸಮಸ್ಯೆಗಳು
 
 <details>
-<summary><strong>ದೋಷ: "API ಕೀ ಮಾನ್ಯವಿಲ್ಲ"</strong></summary>
+<summary><strong>ದೋಷ: 401 / "PermissionDenied" / ಟೋಕನ್ ದೋಷಗಳು</strong></summary>
 
-- ನಿಮ್ಮ `AZURE_AI_KEY` ಅನ್ನು `.env` ಫೈಲ್‌ನಲ್ಲಿ ಸರಿಯಾಗಿ ಸೆಟ್ ಮಾಡಲಾಗಿದೆ ಎಂದು ಪರಿಶೀಲಿಸಿ
-- API ಕೀ ಅನ್ನು Azure AI Foundry ಪೋರ್ಟಲ್‌ನಿಂದ ನಿಖರವಾಗಿ ನಕಲಿಸಲಾಗಿದೆ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ
-- ಕೀ ಸುತ್ತಲೂ ಯಾವುದೇ ಹೆಚ್ಚುವರಿ ಖಾಲಿ ಸ್ಥಳಗಳು ಅಥವಾ ಉಲ್ಲೇಖಗಳು ಇಲ್ಲ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ
+- `az login` ಅನ್ನು ರನ್ ಮಾಡಿ — ಕೀಲೆಸ್ ಅಥ್ ಒಂದು ಸಕ್ರಿಯ ಲಾಗಿನ್ ಅಗತ್ಯವಿದೆ ಟೋಕನ್ ಪಡೆಯಲು
+- ನಿಮ್ಮ ಖಾತೆಗೆ ಆ ಸಂಪನ್ಮೂಲದ ಮೇಲೆ **ಕಾಗ್ನಿಟಿವ್ ಸರ್ವೀಸಸ್ ಓಪನ್‌ಎಐ ಬಳಕೆದಾರ** ಸ್ಥಾನವಿವೆ ಎಂದು ದೃಢಪಡಿಸಿ
+- ನೀವು ಪಾತ್ರವನ್ನು ನವೀನೀಕರಿಸಿ ಇದ್ದರೆ, ಅದು ಹರಡಲು ಕೆಲವು ನಿಮಿಷಗಳ ಸಮಯ ಕ್ರಯಿಸಿ
+- ನೀವು ಸರಿಯಾದ ಟೆನಂಟ್/ಸಬ್ಸ್ಕ್ರಿಪ್ಷನ್‌ನಲ್ಲಿದ್ದೀರಾ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ (`az account show`)
 </details>
 
 <details>
-<summary><strong>ದೋಷ: "ಎಂಡ್‌ಪಾಯಿಂಟ್ ಮಾನ್ಯವಿಲ್ಲ"</strong></summary>
+<summary><strong>ದೋಷ: "ಎಂಡ್‌ಪಾಯಿಂಟ್ ಮಾನ್ಯವಲ್ಲ" / ಸಂಪರ್ಕ ದೋಷಗಳು</strong></summary>
 
-- ನಿಮ್ಮ `AZURE_AI_ENDPOINT` ಪೂರ್ಣ URL ಅನ್ನು ಒಳಗೊಂಡಿದೆ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ (ಉದಾ., `https://your-hub-name.openai.azure.com/`)
-- ಟ್ರೈಲಿಂಗ್ ಸ್ಲ್ಯಾಶ್ ಸಮ್ಮತತೆಯನ್ನು ಪರಿಶೀಲಿಸಿ
-- ಎಂಡ್‌ಪಾಯಿಂಟ್ ನಿಮ್ಮ Azure ಡಿಪ್ಲಾಯ್‌ಮೆಂಟ್ ಪ್ರದೇಶಕ್ಕೆ ಹೊಂದಿಕೆಯಾಗುತ್ತದೆ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ
+- ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ `AZURE_OPENAI_ENDPOINT` ಸಂಪೂರ್ಣ ಮೂಲ URL ಆಗಿದ್ದು (ಉದಾಹರಣೆಗೆ, `https://your-resource.openai.azure.com/`)
+- ಕೊನೆಗಿನ ಸ್ಲಾಶ್ ಸुसಂಗತಿಯನ್ನು ಪರಿಶೀಲಿಸಿ
+- ಎಂಡ್‌ಪಾಯಿಂಟ್ ನಿಮ್ಮ ನಿಯೋಜಿತ ಸಂಪನ್ಮೂಲಕ್ಕೆ ಹೊಂದಿಕೆಯಾಗುವುದನ್ನು ದೃಢಪಡಿಸಿ (`azd env get-values`)
 </details>
 
 <details>
-<summary><strong>ದೋಷ: "ಡಿಪ್ಲಾಯ್‌ಮೆಂಟ್ ಕಂಡುಬಂದಿಲ್ಲ"</strong></summary>
+<summary><strong>ದೋಷ: "ನಿಯೋಜನೆ ಕಂಡುಬಂದಿಲ್ಲ"</strong></summary>
 
-- ನಿಮ್ಮ ಮಾದರಿ ಡಿಪ್ಲಾಯ್‌ಮೆಂಟ್ ಹೆಸರು Azure ನಲ್ಲಿ ಡಿಪ್ಲಾಯ್ ಮಾಡಿರುವುದಕ್ಕೆ ನಿಖರವಾಗಿ ಹೊಂದಿಕೆಯಾಗುತ್ತದೆ ಎಂದು ಪರಿಶೀಲಿಸಿ
-- ಮಾದರಿ ಯಶಸ್ವಿಯಾಗಿ ಡಿಪ್ಲಾಯ್ ಆಗಿದೆ ಮತ್ತು ಸಕ್ರಿಯವಾಗಿದೆ ಎಂದು ಪರಿಶೀಲಿಸಿ
-- ಡೀಫಾಲ್ಟ್ ಡಿಪ್ಲಾಯ್‌ಮೆಂಟ್ ಹೆಸರು ಬಳಸಲು ಪ್ರಯತ್ನಿಸಿ: `gpt-4o-mini`
+- `AZURE_OPENAI_DEPLOYMENT` ನ ನಿಯೋಜನೆ ಹೆಸರಿನೊಂದಿಗೆ ನಿಮ್ಮ ಅಜೂರ್‌ನಲ್ಲಿ ಹೊಂದಾಣಿಕೆ ಇರುವುದು ಪರಿಶೀಲಿಸಿ
+- ಮಾದರಿ ಯಶಸ್ವಿಯಾಗಿ ನಿಯೋಜನೆಗೊಂಡಿದ್ದು ಸಕ್ರಿಯವಿದೆ ಎಂದು ಪರಿಶೀಲಿಸಿ
+- ಡೀಫಾಲ್ಟ್ ನಿಯೋಜನೆ ಹೆಸರು `gpt-4o-mini`
 </details>
 
 <details>
-<summary><strong>VS Code: ಪರಿಸರ ಚರಗಳು ಲೋಡ್ ಆಗುತ್ತಿಲ್ಲ</strong></summary>
+<summary><strong>VS ಕೋಡ್: ಪರಿಸರ ಚರಗಳು ಲೋಡ್ ಆಗುತ್ತಿಲ್ಲ</strong></summary>
 
-- ನಿಮ್ಮ `.env` ಫೈಲ್ ಪ್ರಾಜೆಕ್ಟ್ ರೂಟ್ ಡೈರೆಕ್ಟರಿಯಲ್ಲಿ (ಅದೇ ಮಟ್ಟದಲ್ಲಿ `pom.xml`) ಇದೆ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ
-- VS Code ನ ಇಂಟಿಗ್ರೇಟೆಡ್ ಟರ್ಮಿನಲ್‌ನಲ್ಲಿ `mvn spring-boot:run` ರನ್ ಮಾಡಿ
-- VS Code Java ಎಕ್ಸ್ಟೆನ್ಷನ್ ಸರಿಯಾಗಿ ಇನ್‌ಸ್ಟಾಲ್ ಆಗಿದೆ ಎಂದು ಪರಿಶೀಲಿಸಿ
-- ಲಾಂಚ್ ಕಾನ್ಫಿಗರೇಶನ್ ನಲ್ಲಿ `"envFile": "${workspaceFolder}/.env"` ಇದೆ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ
+- ನಿಮ್ಮ `.env` ಫೈಲ್ ಪ್ರಾಜೆಕ್ಟ್ ರೂಟ್ ಡೈರೆಕ್ಟರಿಯಲ್ಲಿ ಇದೆ ಎಂಬುದನ್ನು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ (`pom.xml` ಮಟ್ಟದಲ್ಲಿ)
+- VS ಕೋಡ್‌ನ ಇಂಟಿಗ್ರೇಟೆಡ್ ಟರ್ಮಿನಲಿನಲ್ಲಿ `mvn spring-boot:run` ರನ್ ಮಾಡಿ ಪ್ರಯತ್ನಿಸಿ
+- VS ಕೋಡ್ ಜಾವಾ ವಿಸ್ತರಣೆ ಸರಿಯಾಗಿ ಸ್ಥಾಪಿತವಾಗಿದೆ ಎಂದು ಪರಿಶೀಲಿಸಿ
 </details>
 
-### ಡಿಬಗ್ ಮೋಡ್
+### ಡೀಬಗ್ಗಿಂಗ್ ಮೋಡ್
 
-ವಿವರವಾದ ಲಾಗಿಂಗ್ ಅನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಲು, `application.yml` ನಲ್ಲಿ ಈ ಸಾಲುಗಳನ್ನು ಅನ್‌ಕಾಮೆಂಟ್ ಮಾಡಿ:
+ವಿಸ್ತೃತ ಲಾಗ್‌ಗಾಗಿ, `application.yml` ನಲ್ಲಿ ಈ ಸಾಲುಗಳನ್ನು ಅನಕಮೆಂಟ್ ಮಾಡಿ:
 
 ```yaml
 logging:
@@ -201,20 +157,20 @@ logging:
 
 ## ಮುಂದಿನ ಹಂತಗಳು
 
-**ಸೆಟಪ್ ಪೂರ್ಣಗೊಂಡಿದೆ!** ನಿಮ್ಮ ಕಲಿಕೆಯ ಪ್ರಯಾಣವನ್ನು ಮುಂದುವರಿಸಿ:
+**ಸೆಟ್‌ಅಪ್ ಪೂರ್ಣಗೊಂಡಿದೆ!** ನಿಮ್ಮ ಅಧ್ಯಯನವನ್ನು ಮುಂದುವರಿಸಿ:
 
 [ಅಧ್ಯಾಯ 3: ಕೋರ್ ಜನರೇಟಿವ್ AI ತಂತ್ರಗಳು](../../../03-CoreGenerativeAITechniques/README.md)
 
-## ಸಂಪತ್ತುಗಳು
+## ಸಂಪನ್ಮೂಲಗಳು
 
-- [Spring AI Azure OpenAI ಡಾಕ್ಯುಮೆಂಟೇಶನ್](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
-- [Azure OpenAI ಸೇವಾ ಡಾಕ್ಯುಮೆಂಟೇಶನ್](https://learn.microsoft.com/azure/ai-services/openai/)
-- [Azure AI Foundry ಪೋರ್ಟಲ್](https://ai.azure.com/)
-- [Azure AI Foundry ಡಾಕ್ಯುಮೆಂಟೇಶನ್](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project)
+- [Spring AI ಅಜೂರ್ ಓಪನ್‌ಎಐ ಡಾಕ್ಯುಮೆಂಟೇಶನ್](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
+- [Microsoft Entra ID ಸಹಿತ ಕೀಲೆಸ್ ಪ್ರಮಾಣೀಕರಣ](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
+- [ಅಜೂರ್ AI ಫೌಂಡ್ರಿ ಪೋರ್ಟಲ್](https://ai.azure.com/)
+- [ಅಜೂರ್ AI ಫೌಂಡ್ರಿ ಡಾಕ್ಯುಮೆಂಟೇಶನ್](https://learn.microsoft.com/azure/ai-foundry/)
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**ಅಸಮಾಕ್ಷ್ಯತೆ**:  
-ಈ ದಸ್ತಾವೇಜು AI ಅನುವಾದ ಸೇವೆ [Co-op Translator](https://github.com/Azure/co-op-translator) ಬಳಸಿ ಅನುವಾದಿಸಲಾಗಿದೆ. ನಾವು ನಿಖರತೆಯನ್ನು ಸಾಧಿಸಲು ಪ್ರಯತ್ನಿಸುತ್ತಿದ್ದರೂ, ದಯವಿಟ್ಟು ಗಮನಿಸಿ, ಸ್ವಯಂಚಾಲಿತ ಅನುವಾದಗಳಲ್ಲಿ ದೋಷಗಳು ಅಥವಾ ಅಸಮಾಕ್ಷ್ಯತೆಗಳು ಇರಬಹುದು. ಮೂಲ ಭಾಷೆಯಲ್ಲಿರುವ ಮೂಲ ದಸ್ತಾವೇಜು ಪ್ರಾಮಾಣಿಕ ಮೂಲವೆಂದು ಪರಿಗಣಿಸಬೇಕು. ಮಹತ್ವದ ಮಾಹಿತಿಗಾಗಿ, ವೃತ್ತಿಪರ ಮಾನವ ಅನುವಾದವನ್ನು ಶಿಫಾರಸು ಮಾಡಲಾಗುತ್ತದೆ. ಈ ಅನುವಾದವನ್ನು ಬಳಸುವ ಮೂಲಕ ಉಂಟಾಗುವ ಯಾವುದೇ ತಪ್ಪು ಅರ್ಥಗಳ ಅಥವಾ ತಪ್ಪು ವ್ಯಾಖ್ಯಾನಗಳ ಬಗ್ಗೆ ನಾವು ಹೊಣೆಗಾರರಲ್ಲ.
+**ಅಸ್ವೀಕಾರ**:
+ಈ ದಸ್ತಾವೇಜು AI ಅನುವಾದ ಸೇವೆ [Co-op Translator](https://github.com/Azure/co-op-translator) ಬಳಸಿ ಅನುವಾದಿಸಲಾಗಿದೆ. ನಾವು ನಿಖರತೆಯನ್ನು ಸಾಧಿಸಲು ಪ್ರಯತ್ನಿಸುತ್ತಿದ್ದರೂ, ದಯವಿಟ್ಟು ಗಮನಿಸಿ, ಸ್ವಯಂಚಾಲಿತ ಅನುವಾದಗಳಲ್ಲಿ ದೋಷಗಳು ಅಥವಾ ಅಸಡ್ಡೆಗಳು ಇರಬಹುದು. ಮೂಲ ಭಾಷೆಯಲ್ಲಿರುವ ಮೂಲ ದಸ್ತಾವೇಜು ಪ್ರಾಮಾಣಿಕ ಮೂಲವೆಂದು ಪರಿಗಣಿಸಬೇಕು. ಪ್ರಮುಖ ಮಾಹಿತಿಗಾಗಿ, ವೃತ್ತಿಪರ ಮಾನವ ಅನುವಾದವನ್ನು ಶಿಫಾರಸು ಮಾಡಲಾಗುತ್ತದೆ. ಈ ಅನುವಾದವನ್ನು ಬಳಸುವ ಮೂಲಕ ಉಂಟಾಗುವ ಯಾವುದೇ ತಪ್ಪು ಅರ್ಥಗಳ ಅಥವಾ ತಪ್ಪು ವ್ಯಾಖ್ಯಾನಗಳ ಬಗ್ಗೆ ನಾವು ಹೊಣೆಗಾರರಲ್ಲ.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->
