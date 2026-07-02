@@ -1,104 +1,59 @@
-# Põhiline vestlus Azure OpenAI-ga - Näide algusest lõpuni
+# Põhiline vestlus Azure AI Foundry'ga - näide lõpust lõpuni
 
-See näide näitab, kuidas luua lihtne Spring Boot rakendus, mis ühendub Azure OpenAI-ga ja testib teie seadistust.
+See näide on lihtne Spring Boot rakendus, mis ühendub **Azure AI Foundry** mudeliga, kasutades **võtmeta autentimist** (Microsoft Entra ID) ja testib teie seadistust. Kasutab Spring AI `ChatClient`i.
 
 ## Sisukord
 
-- [Eeltingimused](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Kiire alustamine](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Konfiguratsioonivalikud](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Valik 1: Keskkonnamuutujad (.env fail) - Soovitatav](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Valik 2: GitHub Codespace'i saladused](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Rakenduse käivitamine](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Maveni kasutamine](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [VS Code'i kasutamine](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Oodatav väljund](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Konfiguratsiooni viide](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Keskkonnamuutujad](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Spring konfiguratsioon](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Tõrkeotsing](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Levinud probleemid](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Debug-režiim](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Järgmised sammud](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Ressursid](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
+- [Nõuded](#nõuded)
+- [Kiire stardijuhend](#kiire-stardijuhend)
+- [Kuidas autentimine töötab](#kuidas-autentimine-töötab)
+- [Rakenduse käivitamine](#rakenduse-käivitamine)
+  - [Maveni kasutamine](#maveni-kasutamine)
+  - [VS Code'i kasutamine](#vs-codei-kasutamine)
+  - [Oodatud väljund](#oodatud-väljund)
+- [Konfiguratsioonijuhend](#konfiguratsioonijuhend)
+  - [Keskkonnamuutujad](#keskkonnamuutujad)
+  - [Springi konfiguratsioon](#springi-konfiguratsioon)
+- [Probleemide lahendamine](#probleemide-lahendamine)
+  - [Tavalised probleemid](#tavalised-probleemid)
+  - [Silumisrežiim](#silumisrežiim)
+- [Järgmised sammud](#järgmised-sammud)
+- [Võimalused](#võimalused)
 
-## Eeltingimused
+## Nõuded
 
 Enne selle näite käivitamist veenduge, et teil on:
 
-- Läbitud [Azure OpenAI seadistusjuhend](../../getting-started-azure-openai.md)  
-- Azure OpenAI ressurss juurutatud (Azure AI Foundry portaalis)  
-- gpt-4o-mini mudel (või alternatiiv) juurutatud  
-- API võti ja lõpp-punkti URL Azure'ist  
+- Azure AI Foundry ressurss koos `gpt-4o-mini` juurutusega — looge see käsuga `azd up` või käsitsi via [Azure AI Foundry seadistamisjuhend](../../getting-started-azure-openai.md)
+- Sellel ressursil **Cognitive Services OpenAI User** roll (Bicep mallid määravad selle teile automaatselt)
+- [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli), sisse logitud käsuga `az login`
+- Java 21+ ja Maven 3.9+
 
-## Kiire alustamine
+> **API-võtit ei nõuta** — autentimine toimub võtmeta Microsoft Entra ID kaudu.
+
+## Kiire stardijuhend
 
 ```bash
-# 1. Navigate to project
+# 1. Navigeeri projekti
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 
-# 2. Configure credentials
-cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# 2. Logi sisse, et võtmeta autentimine saaks tokeni
+az login
 
-# 3. Run the application
+# 3. Konfigureeri lõpp-punkt
+#    - Kui sa jooksutasid `azd up`, siis .env kirjutati sinu jaoks (loe see vahele).
+#    - Vastasel juhul kopeeri mall ja määra AZURE_OPENAI_ENDPOINT:
+cp .env.example .env
+
+# 4. Käivita rakendus
 mvn spring-boot:run
 ```
 
-## Konfiguratsioonivalikud
+## Kuidas autentimine töötab
 
-### Valik 1: Keskkonnamuutujad (.env fail) - Soovitatav
+See näide autentib end **Microsoft Entra ID** abil — API-võtit ei kasutata.
 
-**Samm 1: Looge oma konfiguratsioonifail**
-```bash
-cp .env.example .env
-```
-
-**Samm 2: Lisage oma Azure OpenAI mandaadid**
-```bash
-# Your Azure OpenAI API key (from Azure AI Foundry portal)
-AZURE_AI_KEY=your-actual-api-key-here
-
-# Your Azure OpenAI endpoint URL (e.g., https://your-hub-name.openai.azure.com/)
-AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-> **Turvanõuanne**: 
-> - Ärge kunagi lisage `.env` faili versioonihaldusse
-> - `.env` fail on juba `.gitignore` failis
-> - Hoidke oma API võtmed turvaliselt ja vahetage neid regulaarselt
-
-### Valik 2: GitHub Codespace'i saladused
-
-GitHub Codespace'i jaoks seadistage need saladused oma repositooriumis:
-- `AZURE_AI_KEY` - Teie Azure OpenAI API võti
-- `AZURE_AI_ENDPOINT` - Teie Azure OpenAI lõpp-punkti URL
-
-Rakendus tuvastab ja kasutab neid saladusi automaatselt.
-
-### Alternatiiv: Otsesed keskkonnamuutujad
-
-<details>
-<summary>Klõpsake, et näha platvormispetsiifilisi käske</summary>
-
-**Linux/macOS (bash/zsh):**
-```bash
-export AZURE_AI_KEY=your-actual-api-key-here
-export AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (Command Prompt):**
-```cmd
-set AZURE_AI_KEY=your-actual-api-key-here
-set AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (PowerShell):**
-```powershell
-$env:AZURE_AI_KEY="your-actual-api-key-here"
-$env:AZURE_AI_ENDPOINT="https://your-hub-name.openai.azure.com/"
-```
-</details>
+Kui on määratud ainult `spring.ai.azure.openai.endpoint` (ja pole api-key'd), loob Spring AI Azure OpenAI kliendi [`DefaultAzureCredential`](https://learn.microsoft.com/java/api/com.azure.identity.defaultazurecredential) abil. See mandaad automaatselt leiab teie kohalikust `az login` sessioonist tokeni või haldatu identiteedi kaudu, kui töötab Azure'is — nii toimib sama kood mõlemas keskkonnas ilma muudatusteta.
 
 ## Rakenduse käivitamine
 
@@ -111,12 +66,12 @@ mvn spring-boot:run
 ### VS Code'i kasutamine
 
 1. Avage projekt VS Code'is
-2. Vajutage `F5` või kasutage "Run and Debug" paneeli
-3. Valige "Spring Boot-BasicChatApplication" konfiguratsioon
+2. Vajutage `F5` või kasutage paneeli "Run and Debug"
+3. Valige konfiguratsioon "Spring Boot-BasicChatApplication"
 
-> **Märkus**: VS Code'i konfiguratsioon laadib automaatselt teie .env faili
+> **Märkus**: VS Code konfiguratsioon laadib automaatselt teie .env faili
 
-### Oodatav väljund
+### Oodatud väljund
 
 ```
 Starting Basic Chat with Azure OpenAI...
@@ -132,65 +87,66 @@ AI, or Artificial Intelligence, is the simulation of human intelligence in machi
 Success! Azure OpenAI connection is working correctly.
 ```
 
-## Konfiguratsiooni viide
+## Konfiguratsioonijuhend
 
 ### Keskkonnamuutujad
 
 | Muutuja | Kirjeldus | Kohustuslik | Näide |
-|---------|-----------|-------------|-------|
-| `AZURE_AI_KEY` | Azure OpenAI API võti | Jah | `abc123...` |
-| `AZURE_AI_ENDPOINT` | Azure OpenAI lõpp-punkti URL | Jah | `https://my-hub.openai.azure.com/` |
-| `AZURE_AI_MODEL_DEPLOYMENT` | Mudeli juurutamise nimi | Ei | `gpt-4o-mini` (vaikimisi) |
+|----------|-------------|----------|---------|
+| `AZURE_OPENAI_ENDPOINT` | Foundry (Azure OpenAI) lõpp-punkti URL | Jah | `https://my-resource.openai.azure.com/` |
+| `AZURE_OPENAI_DEPLOYMENT` | Vestlusmudeli juurutuse nimi | Ei | `gpt-4o-mini` (vaikimisi) |
 
-### Spring konfiguratsioon
+> API-võtme muutujat **puudub** — autentimine on võtmeta (Microsoft Entra ID kaudu `az login`).
 
-`application.yml` fail konfigureerib:
-- **API võti**: `${AZURE_AI_KEY}` - Keskkonnamuutujast
-- **Lõpp-punkt**: `${AZURE_AI_ENDPOINT}` - Keskkonnamuutujast  
-- **Mudel**: `${AZURE_AI_MODEL_DEPLOYMENT:gpt-4o-mini}` - Keskkonnamuutujast koos varuvalikuga
-- **Temperatuur**: `0.7` - Loovuse kontroll (0.0 = deterministlik, 1.0 = loov)
-- **Maksimaalne tokenite arv**: `500` - Maksimaalne vastuse pikkus
+### Springi konfiguratsioon
 
-## Tõrkeotsing
+Fail `application.yml` seadistab:
+- **Lõpp-punkt**: `${AZURE_OPENAI_ENDPOINT}` - Keskkonnamuutuja põhjal
+- **Juurutus**: `${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}` - Keskkonnamuutuja koos varuväärtusega
+- **Autentimine**: võtmeta — pole `api-key` määratud, Spring AI kasutab `DefaultAzureCredential`i
+- **Temperatuur**: `0.7` - Kontroller loovust (0.0 = deterministlik, 1.0 = loov)
+- **Maksimaalne sümbolite arv**: `500` - Maksimaalne vastuse pikkus
 
-### Levinud probleemid
+## Probleemide lahendamine
+
+### Tavalised probleemid
 
 <details>
-<summary><strong>Viga: "API võti ei ole kehtiv"</strong></summary>
+<summary><strong>Viga: 401 / "PermissionDenied" / tokeni vead</strong></summary>
 
-- Kontrollige, et teie `AZURE_AI_KEY` oleks õigesti seadistatud teie `.env` failis
-- Veenduge, et API võti oleks täpselt kopeeritud Azure AI Foundry portaalist
-- Kontrollige, et võtme ümber ei oleks lisaruume ega jutumärke
+- Käivitage `az login` — võtmeta autentimine vajab aktiivset sisselogimist tokeni saamiseks
+- Kontrollige, et teie kontol oleks sellel ressursil **Cognitive Services OpenAI User** roll
+- Kui just määrasite rolli, oodake minut, et see jõustuks
+- Veenduge, et olete õiges tenant/ tellimuses (`az account show`)
 </details>
 
 <details>
-<summary><strong>Viga: "Lõpp-punkt ei ole kehtiv"</strong></summary>
+<summary><strong>Viga: "Lõpp-punkt ei kehti" / ühenduse vead</strong></summary>
 
-- Veenduge, et teie `AZURE_AI_ENDPOINT` sisaldaks täielikku URL-i (nt `https://your-hub-name.openai.azure.com/`)
-- Kontrollige, et lõpus ei oleks üleliigset kaldkriipsu
-- Veenduge, et lõpp-punkt vastaks teie Azure juurutamise piirkonnale
+- Veenduge, et `AZURE_OPENAI_ENDPOINT` on täielik põhja-URL (nt `https://your-resource.openai.azure.com/`)
+- Kontrollige, kas kaldkriips lõpus on järjekindel
+- Kontrollige, et lõpp-punkt vastab loodud ressursile (`azd env get-values`)
 </details>
 
 <details>
-<summary><strong>Viga: "Juurutamist ei leitud"</strong></summary>
+<summary><strong>Viga: "Juurutus ei leitud"</strong></summary>
 
-- Kontrollige, et teie mudeli juurutamise nimi vastaks täpselt Azure'is juurutatule
-- Veenduge, et mudel oleks edukalt juurutatud ja aktiivne
-- Proovige kasutada vaikimisi juurutamise nime: `gpt-4o-mini`
+- Kontrollige, et `AZURE_OPENAI_DEPLOYMENT` vastab Azure juurutuse nimele
+- Kontrollige, et mudel on edukalt juurutatud ja aktiivne
+- Vaikimisi juurutuse nimi on `gpt-4o-mini`
 </details>
 
 <details>
 <summary><strong>VS Code: Keskkonnamuutujad ei laadi</strong></summary>
 
-- Veenduge, et teie `.env` fail oleks projekti juurkataloogis (samal tasemel kui `pom.xml`)
+- Veenduge, et `.env` fail asub projekti juurkaustas (samas tasemel kui `pom.xml`)
 - Proovige käivitada `mvn spring-boot:run` VS Code'i integreeritud terminalis
-- Kontrollige, et VS Code'i Java laiendus oleks korralikult installitud
-- Veenduge, et käivitamise konfiguratsioonis oleks `"envFile": "${workspaceFolder}/.env"`
+- Kontrollige, et VS Code Java laiendus on õigesti paigaldatud
 </details>
 
-### Debug-režiim
+### Silumisrežiim
 
-Üksikasjaliku logimise lubamiseks kommenteerige lahti need read `application.yml` failis:
+Põhjaliku logimise lubamiseks kommenteerige read `application.yml` failis:
 
 ```yaml
 logging:
@@ -201,18 +157,20 @@ logging:
 
 ## Järgmised sammud
 
-**Seadistus on valmis!** Jätkake oma õppe teekonda:
+**Seadistus on lõpetatud!** Jätkake oma õppeteekonda:
 
-[3. peatükk: Generatiivse tehisintellekti põhitehnikad](../../../03-CoreGenerativeAITechniques/README.md)
+[3. peatükk: Tuumik generatiivse tehisintellekti tehnikad](../../../03-CoreGenerativeAITechniques/README.md)
 
-## Ressursid
+## Võimalused
 
-- [Spring AI Azure OpenAI dokumentatsioon](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
-- [Azure OpenAI teenuse dokumentatsioon](https://learn.microsoft.com/azure/ai-services/openai/)
+- [Spring AI Azure OpenAI dokumentatsioon](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
+- [Võtmeta autentimine Microsoft Entra ID-ga](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
 - [Azure AI Foundry portaal](https://ai.azure.com/)
-- [Azure AI Foundry dokumentatsioon](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project)
+- [Azure AI Foundry dokumentatsioon](https://learn.microsoft.com/azure/ai-foundry/)
 
 ---
 
-**Lahtiütlus**:  
-See dokument on tõlgitud AI tõlketeenuse [Co-op Translator](https://github.com/Azure/co-op-translator) abil. Kuigi püüame tagada täpsust, palume arvestada, et automaatsed tõlked võivad sisaldada vigu või ebatäpsusi. Algne dokument selle algses keeles tuleks pidada autoriteetseks allikaks. Olulise teabe puhul soovitame kasutada professionaalset inimtõlget. Me ei vastuta selle tõlke kasutamisest tulenevate arusaamatuste või valesti tõlgenduste eest.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Lahtiütlus**:
+See dokument on tõlgitud kasutades AI tõlketeenust [Co-op Translator](https://github.com/Azure/co-op-translator). Kuigi me püüdleme täpsuse poole, palun pange tähele, et automatiseeritud tõlgetes võib esineda vigu või ebatäpsusi. Originaaldokument selle emakeeles tuleks pidada autoriteetseks allikaks. Olulise teabe puhul soovitatakse kasutada professionaalset inimtõlget. Me ei vastuta selle tõlkega seotud eksimustest või valesti mõistmistest.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->
