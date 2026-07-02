@@ -1,254 +1,224 @@
-# ਜੇਨੇਰੇਟਿਵ ਏਆਈ ਲਈ ਜਾਵਾ ਦੇ ਵਿਕਾਸਕਾਰੀ ਮਾਹੌਲ ਨੂੰ ਸੈਟਅਪ ਕਰਨਾ
+# ਜੇਨੇਰੇਟਿਵ ਏਆਈ ਫੋਰ ਜਾਵਾ ਲਈ ਵਿਕਾਸ ਦਾ ਮਾਹੌਲ ਸੈਟਅਪ ਕਰਨਾ
 
-> **ਥੋੜ੍ਹੀ ਦੇਰ ਵਿੱਚ ਸ਼ੁਰੂ ਕਰੋ**: 2 ਮਿੰਟਾਂ ਵਿੱਚ ਕਲਾਉਡ ਵਿੱਚ ਕੋਡ ਕਰੋ - [GitHub ਕੋਡਸਪੇਸ ਸੈਟਅਪ](../../../02-SetupDevEnvironment) ਤੇ ਜਾਓ - ਕੋਈ ਸਥਾਨਕ ਇੰਸਟਾਲੇਸ਼ਨ ਲੋੜੀਂਦੀ ਨਹੀਂ ਅਤੇ github ਮਾਡਲ ਉਪਯੋਗ ਕਰਦਾ ਹੈ!
-
-> **Azure OpenAI ਵਿੱਚ ਦਿਲਚਸਪੀ ਹੈ?**, ਸਾਡੇ [Azure OpenAI ਸੈਟਅਪ ਗਾਈਡ](getting-started-azure-openai.md) ਵਿੱਚ ਵੇਖੋ ਜਿੱਦੇ ਵਿੱਚ ਨਵਾਂ Azure OpenAI ਰਿਸੋਰਸ ਬਣਾਉਣ ਦੇ ਕਦਮ ਹਨ।
+> **ਫਟਾਫਟ ਸ਼ੁਰੂਆਤ:** ਆਪਣੇ ਏਆਈ ਮਾਡਲਾਂ ਨੂੰ ਕੁਝ ਮਿੰਟਾਂ ਵਿੱਚ ਕੋਡ ਦੇ ਤੌਰ ਤੇ **Azure AI Foundry** 'ਤੇ ਬਾਇਸਪ + `azd` ਨਾਲ ਪ੍ਰੋਵਿਜ਼ਨ ਕਰੋ — ਵੇਖੋ [Azure AI Foundry ਸੈਟਅਪ ਗਾਈਡ](getting-started-azure-openai.md)। ਪ੍ਰਮਾਣਿਕਤਾ **ਕੀਲੈੱਸ** ਹੈ (Microsoft Entra ID), ਇਸ ਲਈ ਕੋਈ API ਕੁੰਜੀਆਂ ਪ੍ਰਬੰਧਿਤ ਕਰਨ ਦੀ ਲੋੜ ਨਹੀਂ ਹੈ।
 
 ## ਤੁਸੀਂ ਕੀ ਸਿੱਖੋਗੇ
 
-- AI ਐਪਲੀਕੇਸ਼ਨਾਂ ਲਈ ਜਾਵਾ ਦੇ ਵਿਕਾਸਕਾਰੀ ਮਾਹੌਲ ਦੀ ਸੈਟਅਪ ਕਰਨਾ
-- ਆਪਣੀ ਪਸੰਦ ਨੁਸਰ ਵਿਕਾਸਕਾਰੀ ਮਾਹੌਲ ਚੁਣੋ ਅਤੇ ਅਨੁਕੂਲਿਤ ਕਰੋ (Codespaces ਨਾਲ ਕਲਾਉਡ-ਪਹਿਲਾ, ਸਥਾਨਕ ਡੇਵ ਕਨਟੇਨਰ, ਜਾਂ ਪੂਰੀ ਸਥਾਨਕ ਸੈਟਅਪ)
-- GitHub ਮਾਡਲ ਨਾਲ ਕਨੈਕਟ ਕਰਕੇ ਆਪਣੀ ਸੈਟਅਪ ਦੀ ਜਾਂਚ ਕਰੋ
+- ਏਆਈ ਐਪਲੀਕੇਸ਼ਨਾਂ ਲਈ ਜਾਵਾ ਵਿਕਾਸ ਦਾ ਮਾਹੌਲ ਸੈਟਅਪ ਕਰਨਾ  
+- ਆਪਣੀ ਪਸੰਦ ਦੀ ਵਿਕਾਸ ਮਾਹੌਲ ਚੁਣੋ ਅਤੇ ਕਨਫਿਗਰ ਕਰੋ (ਕਲਾਉਡ-ਪਹਿਲਾ ਕੋਡਸਪੇਸਸ, ਲੋਕਲ ਡੈਵ ਕੰਟੇਨਰ, ਜਾਂ ਪੂਰਾ ਲੋਕਲ ਸੈਟਅਪ)  
+- Azure AI Foundry ਮਾਡਲ ਨਾਲ ਜੁੜ ਕੇ ਆਪਣਾ ਸੈਟਅਪ ਟੈਸਟ ਕਰੋ  
 
-## ਮਾਹਿਰ ਸੂਚੀ
+## ਸੂਚੀ
 
-- [ਤੁਸੀਂ ਕੀ ਸਿੱਖੋਗੇ](../../../02-SetupDevEnvironment)
-- [ਪਰਿਚਇ](../../../02-SetupDevEnvironment)
-- [ਕਦਮ 1: ਆਪਣਾ ਵਿਕਾਸਕਾਰੀ ਮਾਹੌਲ ਸੈਟਅਪ ਕਰੋ](../../../02-SetupDevEnvironment)
-  - [ਵਿਕਲਪ ਏ: GitHub ਕੋਡਸਪੇਸ (ਸਿਫਾਰਸ਼ੀ)](../../../02-SetupDevEnvironment)
-  - [ਵਿਕਲਪ ਬੀ: ਸਥਾਨਕ ਡੇਵ ਕਨਟੇਨਰ](../../../02-SetupDevEnvironment)
-  - [ਵਿਕਲਪ ਸੀ: ਆਪਣੀ ਮੌਜੂਦਾ ਸਥਾਨਕ ਇੰਸਟਾਲੇਸ਼ਨ ਵਰਤੋਂ](../../../02-SetupDevEnvironment)
-- [ਕਦਮ 2: GitHub ਪ੍ਰਸਨਲ ਐਕਸੈਸ ਟੋਕਨ ਬਣਾਓ](../../../02-SetupDevEnvironment)
-- [ਕਦਮ 3: GitHub ਮਾਡਲਾਂ ਨਾਲ ਆਪਣੀ ਸੈਟਅਪ ਦੀ ਜਾਂਚ ਕਰੋ](../../../02-SetupDevEnvironment)
-- [ਸਮੱਸਿਆ ਸਮਾਧਾਨ](../../../02-SetupDevEnvironment)
-- [ਸਾਰ](../../../02-SetupDevEnvironment)
-- [ਅਗਲੇ ਕਦਮ](../../../02-SetupDevEnvironment)
+- [ਤੁਸੀਂ ਕੀ ਸਿੱਖੋਗੇ](#ਤੁਸੀਂ-ਕੀ-ਸਿੱਖੋਗੇ)  
+- [ਪ੍ਰਸਤਾਵਨਾ](#ਪ੍ਰਸਤਾਵਨਾ)  
+- [ਕਦਮ 1: ਆਪਣੇ ਵਿਕਾਸ ਮਾਹੌਲ ਸੈੱਟ ਕਰੋ](#ਕਦਮ-1-ਆਪਣੇ-ਵਿਕਾਸ-ਮਾਹੌਲ-ਸੈੱਟ-ਕਰੋ)  
+  - [ਵਿਕਲਪ A: GitHub Codespaces (ਸਿਫਾਰਸੀ)](#ਵਿਕਲਪ-a-github-codespaces-ਸਿਫਾਰਸੀ)  
+  - [ਵਿਕਲਪ B: ਲੋਕਲ ਡੈਵ ਕੰਟੇਨਰ](#ਵਿਕਲਪ-b-ਲੋਕਲ-ਡੈਵ-ਕੰਟੇਨਰ)  
+  - [ਵਿਕਲਪ C: ਆਪਣਾ ਮੌਜੂਦਾ ਲੋਕਲ ਇੰਸਟਾਲੇਸ਼ਨ ਵਰਤੋ](#ਵਿਕਲਪ-c-ਆਪਣਾ-ਮੌਜੂਦਾ-ਲੋਕਲ-ਇੰਸਟਾਲੇਸ਼ਨ-ਵਰਤੋ)  
+- [ਕਦਮ 2: Azure AI Foundry ਪ੍ਰੋਵਿਜ਼ਨ ਕਰੋ](#ਕਦਮ-2-azure-ai-foundry-ਪ੍ਰੋਵਿਜ਼ਨ-ਕਰੋ)  
+- [ਕਦਮ 3: ਆਪਣਾ ਸੈਟਅਪ ਟੈਸਟ ਕਰੋ](#ਕਦਮ-3-ਆਪਣਾ-ਸੈਟਅਪ-ਟੈਸਟ-ਕਰੋ)  
+- [ਟ੍ਰਬਲਸ਼ੂਟਿੰਗ](#ਟ੍ਰਬਲਸ਼ੂਟਿੰਗ)  
+- [ਸਾਰ](#ਸਾਰ)  
+- [ਅਗਲੇ ਕਦਮ](#ਅਗਲੇ-ਕਦਮ)  
 
-## ਪਰਿਚਇ
+## ਪ੍ਰਸਤਾਵਨਾ
 
-ਇਹ ਅਧਿਆਇ ਤੁਹਾਨੂੰ ਵਿਕਾਸਕਾਰੀ ਮਾਹੌਲ ਸੈਟਅਪ ਕਰਨ ਵਿੱਚ ਮਦਦ ਦੇਵੇਗਾ। ਅਸੀਂ ਆਪਣਾ ਮੁੱਖ ਉਦਾਹਰਨ ਵਜੋਂ **GitHub Models** ਨੂੰ ਉਪਯੋਗ ਕਰਾਂਗੇ ਕਿਉਂਕਿ ਇਹ ਮੁਫਤ ਹੈ, ਸਿਰਫ ਇੱਕ GitHub ਅਕਾਉਂਟ ਨਾਲ ਆਸਾਨੀ ਨਾਲ ਸੈਟਅਪ ਹੁੰਦਾ ਹੈ, ਕਿਸੇ ਕਰੈਡਿਟ ਕਾਰਡ ਦੀ ਲੋੜ ਨਹੀਂ ਹੈ, ਅਤੇ ਪ੍ਰਯੋਗ ਲਈ ਇਕੱਠੇ ਕਈ ਮਾਡਲ ਮੁਹੱਈਆ ਕਰਵਾਉਂਦਾ ਹੈ।
+ਇਸ ਅਧਿਆਇ ਵਿੱਚ ਅਸੀਂ ਤੁਹਾਨੂੰ ਵਿਕਾਸ ਦਾ ਮਾਹੌਲ ਸੈੱਟਅਪ ਕਰਨ ਦਾ ਮਾਰਗਦਰਸ਼ਨ ਕਰਾਂਗੇ। ਅਸੀਂ ਸਾਰੇ ਕੋਰਸ ਲਈ ਮਾਡਲਾਂ ਲਈ **Azure AI Foundry** ਵਰਤਾਂਗੇ। ਤੁਸੀਂ ਮਾਡਲਾਂ ਨੂੰ ਬਾਇਸਪ ਅਤੇ Azure Developer CLI (`azd`) ਨਾਲ ਕੋਡ ਦੇ ਤੌਰ 'ਤੇ ਪ੍ਰੋਵਿਜਨ ਕਰਦੇ ਹੋ, ਫਿਰ **ਕੀਲੈੱਸ ਪ੍ਰਮਾਣਿਕਤਾ** (Microsoft Entra ID) ਨਾਲ ਜੁੜਦੇ ਹੋ — ਕੋਈ API ਕੁੰਜੀਆਂ ਕਾਪੀ ਜਾਂ ਲੀਕ ਕਰਨ ਦੀ ਲੋੜ ਨਹੀਂ।
 
-**ਕੋਈ ਸਥਾਨਕ ਸੈਟਅਪ ਲੋੜੀਂਦੀ ਨਹੀਂ!** ਤੁਸੀਂ ਤੁਰੰਤ GitHub Codespaces ਦੀ ਵਰਤੋਂ ਕਰਕੇ ਬ੍ਰਾਊਜ਼ਰ ਵਿੱਚ ਪੂਰਾ ਵਿਕਾਸਕਾਰੀ ਮਾਹੌਲ ਵਰਤ ਸਕਦੇ ਹੋ।
+**ਕੋئی ਲੋਕਲ ਸੈਟਅਪ ਲੋੜੀਂਦਾ ਨਹੀਂ!** ਤੁਸੀਂ GitHub Codespaces ਵਰਤ ਸਕਦੇ ਹੋ, ਜੋ ਤੁਹਾਡੇ ਬਰਾਊਜ਼ਰ ਵਿੱਚ ਪੂਰਾ ਵਿਕਾਸ ਮਾਹੌਲ ਮੁਹੱਈਆ ਕਰਦਾ ਹੈ, ਅਤੇ ਉਥੋਂ Foundry ਪ੍ਰੋਵਿਜਨ ਕਰ ਸਕਦੇ ਹੋ।
 
-<img src="../../../translated_images/pa/models.cb07f8af0d724e4d.webp" alt="ਸਕਰੀਨਸ਼ਾਟ: GitHub Models" width="50%">
+ਅਸੀਂ ਇਸ ਕੋਰਸ ਲਈ **Azure AI Foundry** ਇਸ ਲਈ ਵਰਤਦੇ ਹਾਂ ਕਿਉਂਕਿ ਇਹ ਹੈ:  
+- **ਕੋਡ ਦੇ ਤੌਰ 'ਤੇ ਪ੍ਰੋਵਿਜਨ ਕੀਤਾ ਗਿਆ** — ਇੱਕ `azd up` ਖਾਤਾ ਅਤੇ ਮਾਡਲ ਡਿਪਲੌਇਮੈਂਟ ਤਿਆਰ ਕਰਦਾ ਹੈ  
+- **ਕੀਲੈੱਸ** — Azure ਸਾਇਨ-ਇਨ ਜਾਂ ਮੈਨੇਜ ਕੀਤੀ ਪਹਚਾਣ ਨਾਲ ਪ੍ਰਮਾਣਿਤ  
+- **ਪ੍ਰੋਡਕਸ਼ਨ-ਰੇਡੀ** — ਇੱਕੋ ਕੋਡ ਲੋਕਲ ਅਤੇ Azure ਦੋਹਾਂ 'ਤੇ ਚੱਲਦਾ ਹੈ  
+- **ਲਚਕੀਲਾ** — ਡਿਪਲੌਇਮੈਂਟ ਦੇ ਨਾਮ ਬਦਲ ਕੇ ਮਾਡਲ ਬਦਲੋ, ਨਾ ਕਿ ਆਪਣੇ ਕੋਡ ਨੂੰ  
 
-ਅਸੀਂ ਇਸ ਕੋਰਸ ਲਈ [**GitHub Models**](https://github.com/marketplace?type=models) ਵਰਤੋਂ ਦੀ ਸਿਫਾਰਸ਼ ਕਰਦੇ ਹਾਂ ਕਿਉਂਕਿ ਇਹ:
-- ਸ਼ੁਰੂ ਕਰਨ ਲਈ **ਮੁਫਤ** ਹੈ
-- ਸਿਰਫ ਇੱਕ GitHub ਅਕਾਉਂਟ ਨਾਲ **ਆਸਾਨ** ਸੈਟਅਪ
-- **ਕੋਈ ਕਰੈਡਿਟ ਕਾਰਡ ਚਾਹੀਦਾ ਨਹੀਂ**
-- **ਕਈ ਮਾਡਲ** ਪ੍ਰਯੋਗ ਲਈ ਉਪਲਬਧ
+> **ਟਿੱਪਣੀ**: Azure AI Foundry ਡਿਪਲੌਇਮੈਂਟ ਟੋਕਨ ਮੁਤਾਬਕ ਬਿਲ ਕੀਤੇ ਜਾਂਦੇ ਹਨ (ਪੇਅ-ਏਜ਼-ਯੂ-ਗੋ)। ਵੇਰਵੇ ਲਈ [Azure AI Foundry ਸੈਟਅਪ ਗਾਈਡ](getting-started-azure-openai.md) ਵੇਖੋ।  
 
-> **ਨੋਟ**: ਇਸ ਟ੍ਰੇਨਿੰਗ ਵਿੱਚ ਵਰਤੇ GitHub Models ਲਈ ਮੁਫਤ ਸੀਮਾਵਾਂ ਹਨ:
-> - 15 ਬੇਨਤੀਆਂ ਪ੍ਰਤੀ ਮਿੰਟ (150 ਪ੍ਰਤੀ ਦਿਨ)
-> - ਹਰ ਬੇਨਤੀ ਵਿੱਚ ਲਗਭਗ 8,000 ਸ਼ਬਦ ਇਹਨਾਂ 'ਚ, ਲਗਭਗ 4,000 ਸ਼ਬਦ ਬਾਹਰ
-> - 5 ਇਕਸਾਰ ਬੇਨਤੀਆਂ
-> 
-> ਉਤਪਾਦਨ ਲਈ, Azure ਖਾਤੇ ਨਾਲ Azure AI Foundry ਮਾਡਲਾਂ ਵਿੱਚ ਅੱਪਗਰੇਡ ਕਰੋ। ਤੁਹਾਡੇ ਕੋਡ ਵਿੱਚ ਕੋਈ ਬਦਲਾਅ ਦੀ ਲੋੜ ਨਹੀਂ। ਵੇਖੋ [Azure AI Foundry ਡੌਕਯੂਮੈਂਟੇਸ਼ਨ](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/quickstart-github-models)।
-
-## ਕਦਮ 1: ਆਪਣਾ ਵਿਕਾਸਕਾਰੀ ਮਾਹੌਲ ਸੈਟਅਪ ਕਰੋ
+## ਕਦਮ 1: ਆਪਣੇ ਵਿਕਾਸ ਮਾਹੌਲ ਸੈੱਟ ਕਰੋ
 
 <a name="quick-start-cloud"></a>
 
-ਅਸੀਂ ਇੱਕ ਪਹਿਲਾਂ ਤਿਆਰ ਕੀਤਾ ਡੇਵ ਕਨਟੇਨਰ ਬਣਾਇਆ ਹੈ ਤਾਂ ਜੋ ਸੈਟਅਪ ਦਾ ਸਮਾਂ ਘੱਟ ਹੋਵੇ ਅਤੇ ਤੁਹਾਡੇ ਕੋਲ ਜ਼ਰੂਰੀ ਟੂਲ ਹੋਣ। ਆਪਣੀ ਪਸੰਦ ਦਾ ਵਿਕਾਸਕਾਰੀ ਤਰੀਕਾ ਚੁਣੋ:
+ਅਸੀਂ ਵਧੇਰੇ ਸੈਟਅਪ ਸਮਾਂ ਘਟਾਉਣ ਅਤੇ Generative AI for Java ਕੋਰਸ ਲਈ ਲੋੜੀਂਦੇ ਸਾਰੇ ਟੂਲਾਂ ਨੂੰ ਸੁਨਿਸ਼ਚਿਤ ਕਰਨ ਵਾਸਤੇ ਇਕ ਪ੍ਰੀਕਨਫਿਗਰਡ ਡੈਵਲਪਮੈਂਟ ਕੰਟੇਨਰ ਬਣਾਇਆ ਹੈ। ਆਪਣੇ ਫਸੰਦ ਦਾ ਵਿਕਾਸ ਵਿਧੀ ਚੁਣੋ:
 
-### ਮਾਹੌਲ ਸੈਟਅਪ ਦੇ ਵਿਕਲਪ:
+### ਮਾਹੌਲ ਸੈਟਅਪ ਵਿਕਲਪ:
 
-#### ਵਿਕਲਪ ਏ: GitHub ਕੋਡਸਪੇਸ (ਸਿਫਾਰਸ਼ੀ)
+#### ਵਿਕਲਪ A: GitHub Codespaces (ਸਿਫਾਰਸੀ)
 
-**2 ਮਿੰਟਾਂ ਵਿੱਚ ਕੋਡਿੰਗ ਸ਼ੁਰੂ ਕਰੋ - ਕੋਈ ਸਥਾਨਕ ਸੈਟਅਪ ਲੋੜੀਂਦੀ ਨਹੀਂ!**
+**2 ਮਿੰਟਾਂ ਵਿੱਚ ਕੋਡਿੰਗ ਸ਼ੁਰੂ ਕਰੋ - ਕੋਈ ਲੋਕਲ ਸੈਟਅਪ ਲੋੜੀਂਦਾ ਨਹੀਂ!**
 
-1. ਇਸ ਰਿਪੋਜਿਟਰੀ ਨੂੰ ਆਪਣੇ GitHub ਅਕਾਉਂਟ ਤੇ fork ਕਰੋ
-   > **ਨੋਟ**: ਜੇ ਤੁਸੀਂ ਮੂਲ ਕੰਫਿਗਰੇਸ਼ਨ ਸੋਧਣਾ ਚਾਹੁੰਦੇ ਹੋ ਤਾਂ [Dev Container Configuration](../../../.devcontainer/devcontainer.json) ਵੇਖੋ
-2. **Code** → **Codespaces** ਟੈਬ → **...** → **New with options...** ਤੇ ਕਲਿਕ ਕਰੋ
-3. ਡੀਫੌਲਟ ਵਰਤੋਂ – ਇਹ **Dev container configuration** ਚੁਣੇਗਾ: **Generative AI Java Development Environment** ਕਸਟਮ devcontainer ਜੋ ਇਸ ਕੋਰਸ ਲਈ ਬਣਾਇਆ ਗਿਆ ਹੈ
-4. **Create codespace** ਤੇ ਕਲਿਕ ਕਰੋ
-5. ਮਾਹੌਲ ਤਿਆਰ ਹੋਣ ਲਈ ਲਗਭਗ 2 ਮਿੰਟ ਉਡੀਕ ਕਰੋ
-6. [ਕਦਮ 2: GitHub ਟੋਕਨ ਬਣਾਓ](../../../02-SetupDevEnvironment) ਤੇ ਜਾਓ
+1. ਇਸ ਰੀਪੋਜ਼ਿਟਰੀ ਨੂੰ ਆਪਣੇ GitHub ਖਾਤੇ ਵਿੱਚ ਫੋਰਕ ਕਰੋ  
+   > **ਨੋਟ**: ਜੇ ਤੁਸੀਂ ਬੁਨਿਆਦੀ ਸੰਰਚਨਾ ਸੋਧਣਾ ਚਾਹੁੰਦੇ ਹੋ ਤਾਂ [Dev Container Configuration](../../../.devcontainer/devcontainer.json) ਨੂੰ ਵੇਖੋ  
+2. **Code** → **Codespaces** ਟੈਬ → **...** → **New with options...** 'ਤੇ ਕਲਿੱਕ ਕਰੋ  
+3. ਡਿਫੌਲਟ ਵਰਤੋ – ਇਹ **Dev container configuration** ਚੁਣੇਗਾ: **Generative AI Java Development Environment** ਜੋ ਇਸ ਕੋਰਸ ਲਈ ਬਣਾਇਆ ਗਿਆ ਹੈ  
+4. **Create codespace** 'ਤੇ ਕਲਿੱਕ ਕਰੋ  
+5. ਮਾਹੌਲ ਨੂੰ ਤਿਆਰ ਹੋਣ ਲਈ ~2 ਮਿੰਟ ਦੀ ਉਡੀਕ ਕਰੋ  
+6. ਜਾਵੋ [ਕਦਮ 2: Azure AI Foundry ਪ੍ਰੋਵਿਜ਼ਨ ਕਰੋ](#ਕਦਮ-2-ਪ੍ਰੋਵਿਜ਼ਨ-azure-ai-foundry)  
 
-<img src="../../../translated_images/pa/codespaces.9945ded8ceb431a5.webp" alt="ਸਕਰੀਨਸ਼ਾਟ: Codespaces ਸਬਮੇਨੂ" width="50%">
+<img src="../../../translated_images/pa/codespaces.9945ded8ceb431a5.webp" alt="স্ক্রীਨশট: Codespaces submenu" width="50%">
 
-<img src="../../../translated_images/pa/image.833552b62eee7766.webp" alt="ਸਕਰੀਨਸ਼ਾਟ: New with options" width="50%">
+<img src="../../../translated_images/pa/image.833552b62eee7766.webp" alt="스크린샷 : New with options" width="50%">
 
-<img src="../../../translated_images/pa/codespaces-create.b44a36f728660ab7.webp" alt="ਸਕਰੀਨਸ਼ਾਟ: ਕੋਡਸਪੇਸ ਬਣਾਓ ਵਿਕਲਪ" width="50%">
+<img src="../../../translated_images/pa/codespaces-create.b44a36f728660ab7.webp" alt="스크린샷: Create codespace options" width="50%">
 
-> **Codespaces ਦੇ ਫਾਇਦੇ**:
-> - ਕੋਈ ਸਥਾਨਕ ਇੰਸਟਾਲੇਸ਼ਨ ਨਹੀਂ
-> - ਕਿਸੇ ਵੀ ਡਿਵਾਈਸ ਤੇ ਜੋ ਬ੍ਰਾਊਜਰ ਰੱਖਦਾ ਹੈ ਉਹ ਕੰਮ ਕਰਦਾ ਹੈ
-> - ਸਾਰੇ ਟੂਲ ਅਤੇ ਡਿਪੈਂਡਨਸੀਆਂ ਨਾਲ ਪਹਿਲਾਂ ਤੋਂ ਕਨਫਿਗਰਡ
-> - ਨਿੱਜੀ ਅਕਾਉਂਟਾਂ ਲਈ ਮਾਸਿਕ 60 ਘੰਟੇ ਮੁਫ਼ਤ
-> - ਸਾਰੇ ਵਿਦਿਆਰਥੀਆਂ ਲਈ ਇੱਕਸਾਰ ਮਾਹੌਲ
+> **Codespaces ਦੇ ਫਾਇਦੇ**:  
+> - ਕੋਈ ਲੋਕਲ ਇੰਸਟਾਲੇਸ਼ਨ ਲੋੜੀਂਦੀ ਨਹੀਂ  
+> - ਕਿਸੇ ਵੀ ਡਿਵਾਈਸ ਤੇ ਬਰਾਊਜ਼ਰ ਨਾਲ ਕੰਮ ਕਰਦਾ ਹੈ  
+> - ਸਾਰੇ ਟੂਲਾਂ ਅਤੇ ਡਿਪੈਂਡੇਂਸੀਜ਼ ਨਾਲ ਪਹਿਲਾਂ ਤੋਂ ਸੰਰਚਿਤ  
+> - ਪ੍ਰਤੀ ਮਹੀਨਾ ਨਿੱਜੀ ਖਾਤਿਆਂ ਲਈ 60 ਘੰਟੇ ਮੁਫ਼ਤ  
+> - ਸਾਰੇ ਵਿਦਿਆਰਥੀਆਂ ਲਈ ਇਕਸਾਰ ਮਾਹੌਲ  
 
-#### ਵਿਕਲਪ ਬੀ: ਸਥਾਨਕ ਡੇਵ ਕਨਟੇਨਰ
+#### ਵਿਕਲਪ B: ਲੋਕਲ ਡੈਵ ਕੰਟੇਨਰ
 
-**ਉਹ ਵਿਕਾਸਕਾਰ ਜਿਹੜੇ Docker ਨਾਲ ਸਥਾਨਕ ਵਿਕਾਸ ਪਸੰਦ ਕਰਦੇ ਹਨ**
+**ਜਿਹੜੇ ਵਿਕਾਸਕਾਰ ਲੋਕਲ Docker ਨਾਲ ਵਿਕਾਸ ਚਾਹੁੰਦੇ ਹਨ**
 
-1. ਇਸ ਰਿਪੋਜਿਟਰੀ ਨੂੰ fork ਅਤੇ clone ਕਰੋ ਆਪਣੇ ਸਥਾਨਕ ਮਸ਼ੀਨ 'ਤੇ
-   > **ਨੋਟ**: ਜੇ ਤੁਸੀਂ ਮੂਲ ਕੰਫਿਗਰੇਸ਼ਨ ਸੋਧਣਾ ਚਾਹੁੰਦੇ ਹੋ ਤਾਂ [Dev Container Configuration](../../../.devcontainer/devcontainer.json) ਵੇਖੋ
-2. [Docker Desktop](https://www.docker.com/products/docker-desktop/) ਅਤੇ [VS Code](https://code.visualstudio.com/) ਇੰਸਟਾਲ ਕਰੋ
-3. VS Code ਵਿੱਚ [Dev Containers ਐਕਸਟੈਂਸ਼ਨ](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) ਇੰਸਟਾਲ ਕਰੋ
-4. VS Code ਵਿੱਚ ਰਿਪੋਜਿਟਰੀ ਫੋਲਡਰ ਖੋਲ੍ਹੋ
-5. ਪ੍ਰੰਪਟ ਆਉਣ 'ਤੇ, **Reopen in Container** 'ਤੇ ਕਲਿਕ ਕਰੋ (ਜਾਂ `Ctrl+Shift+P` → "Dev Containers: Reopen in Container" ਵਰਤੋਂ)
-6. ਕਨਟੇਨਰ ਬਣਨ ਅਤੇ ਸਟਾਰਟ ਹੋਣ ਲਈ ਉਡੀਕ ਕਰੋ
-7. [ਕਦਮ 2: GitHub ਟੋਕਨ ਬਣਾਓ](../../../02-SetupDevEnvironment) ਤੇ ਜਾਓ
+1. ਇਸ ਰੀਪੋਜ਼ਿਟਰੀ ਨੂੰ ਆਪਣੇ ਲੋਕਲ ਮਸ਼ੀਨ 'ਤੇ ਫੋਰਕ ਅਤੇ ਕਲੋਨ ਕਰੋ  
+   > **ਨੋਟ**: ਕਿਸੇ ਵੀ ਬੁਨਿਆਦੀ ਸੰਰਚਨਾ ਦੀ ਸੋਧ ਲਈ ਵੇਖੋ [Dev Container Configuration](../../../.devcontainer/devcontainer.json)  
+2. [Docker Desktop](https://www.docker.com/products/docker-desktop/) ਅਤੇ [VS Code](https://code.visualstudio.com/) ਇੰਸਟਾਲ ਕਰੋ  
+3. VS Code ਵਿੱਚ [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) ਇੰਸਟਾਲ ਕਰੋ  
+4. ਰੀਪੋਜ਼ਿਟਰੀ ਫੋਲਡਰ VS Code ਵਿੱਚ ਖੋਲ੍ਹੋ  
+5. ਜਦੋਂ ਪੁੱਛਿਆ ਜਾਵੇ, **Reopen in Container** 'ਤੇ ਕਲਿੱਕ ਕਰੋ (ਜਾਂ `Ctrl+Shift+P` → "Dev Containers: Reopen in Container" ਵਰਤੋ)  
+6. ਕੰਟੇਨਰ ਨੂੰ ਬਣਨ ਅਤੇ ਸ਼ੁਰੂ ਹੋਣ ਦੀ ਉਡੀਕ ਕਰੋ  
+7. ਜਾਵੋ [ਕਦਮ 2: Azure AI Foundry ਪ੍ਰੋਵਿਜ਼ਨ ਕਰੋ](#ਕਦਮ-2-ਪ੍ਰੋਵਿਜ਼ਨ-azure-ai-foundry)  
 
-<img src="../../../translated_images/pa/devcontainer.21126c9d6de64494.webp" alt="ਸਕਰੀਨਸ਼ਾਟ: ਡੇਵ ਕਨਟੇਨਰ ਸੈਟਅਪ" width="50%">
+<img src="../../../translated_images/pa/devcontainer.21126c9d6de64494.webp" alt="스크린샷 : Dev container setup" width="50%">
 
-<img src="../../../translated_images/pa/image-3.bf93d533bbc84268.webp" alt="ਸਕਰੀਨਸ਼ਾਟ: ਡੇਵ ਕਨਟੇਨਰ ਬਣਾਉਣ ਮੁਕੰਮਲ" width="50%">
+<img src="../../../translated_images/pa/image-3.bf93d533bbc84268.webp" alt="스크린샷 : Dev container build complete" width="50%">
 
-#### ਵਿਕਲਪ ਸੀ: ਆਪਣੀ ਮੌਜੂਦਾ ਸਥਾਨਕ ਇੰਸਟਾਲੇਸ਼ਨ ਵਰਤੋਂ
+#### ਵਿਕਲਪ C: ਆਪਣਾ ਮੌਜੂਦਾ ਲੋਕਲ ਇੰਸਟਾਲੇਸ਼ਨ ਵਰਤੋ
 
-**ਜਿਨ੍ਹਾਂ ਵਿਕਾਸਕਾਰਾਂ ਕੋਲ ਮੌਜੂਦਾ ਜਾਵਾ ਮਾਹੌਲ ਹੈ**
+**ਉਹ ਵਿਕਾਸਕਾਰ ਜਿਨ੍ਹਾਂ ਕੋਲ ਪਹਿਲਾਂ ਤੋਂ ਜਾਵਾ ਮਾਹੌਲ ਹੈ**
 
-ਜ਼ਰੂਰੀ ਸਮੱਗਰੀ:
-- [Java 21+](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html) 
-- [Maven 3.9+](https://maven.apache.org/download.cgi)
-- [VS Code](https://code.visualstudio.com) ਜਾਂ ਆਪਣਾ ਪਸੰਦੀਦਾ IDE
+ਜ਼ਰੂਰੀ ਚੀਜ਼ਾਂ:  
+- [Java 21+](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html)  
+- [Maven 3.9+](https://maven.apache.org/download.cgi)  
+- [VS Code](https://code.visualstudio.com) ਜਾਂ ਆਪਣਾ ਮਨਪਸੰਦ IDE  
 
-ਕਦਮ:
-1. ਇਸ ਰਿਪੋਜਿਟਰੀ ਨੂੰ ਸਥਾਨਕ ਮਸ਼ੀਨ 'ਤੇ clone ਕਰੋ
-2. ਆਪਣੇ IDE ਵਿੱਚ ਪ੍ਰੋਜੈਕਟ ਖੋਲ੍ਹੋ
-3. [ਕਦਮ 2: GitHub ਟੋਕਨ ਬਣਾਓ](../../../02-SetupDevEnvironment) ਤੇ ਜਾਓ
+ਕਦਮ:  
+1. ਇਸ ਰੀਪੋਜ਼ਿਟਰੀ ਨੂੰ ਆਪਣੇ ਲੋਕਲ ਮਸ਼ੀਨ 'ਤੇ ਕਲੋਨ ਕਰੋ  
+2. ਆਪਣੀ IDE ਵਿੱਚ ਪ੍ਰੋਜੈਕਟ ਖੋਲ੍ਹੋ  
+3. ਜਾਵੋ [ਕਦਮ 2: Azure AI Foundry ਪ੍ਰੋਵਿਜ਼ਨ ਕਰੋ](#ਕਦਮ-2-ਪ੍ਰੋਵਿਜ਼ਨ-azure-ai-foundry)  
 
-> **ਪ੍ਰੋ ਟਿੱਪ**: ਜੇ ਤੁਹਾਡੇ ਕੋਲ ਘੱਟ-ਸਮਰੱਥਾ ਵਾਲਾ ਮਸ਼ੀਨ ਹੈ ਪਰ VS Code ਸਥਾਨਕ ਚਾਹੁੰਦੇ ਹੋ ਤਾਂ GitHub ਕੋਡਸਪੇਸ ਵਰਤੋ! ਤੁਸੀਂ ਆਪਣੇ ਸਥਾਨਕ VS Code ਨੂੰ ਇੱਕ ਕਲਾਉਡ-ਹੋਸਟੇਡ ਕੋਡਸਪੇਸ ਨਾਲ ਜੋੜ ਸਕਦੇ ਹੋ ਜੋ ਦੋਹਾਂ ਦੁਨੀਆਂ ਦਾ ਵਧੀਆ ਹੈ।
+> **ਮਾਹਿਰ ਸਲਾਹ**: ਜੇ ਤੁਹਾਡੇ ਕੋਲ ਘੱਟ ਸਪੀਕਡ ਮਸ਼ੀਨ ਹੈ ਪਰ ਤੁਸੀਂ ਲੋਕਲ ਤੇ VS Code ਚਾਹੁੰਦੇ ਹੋ, ਤਾਂ GitHub Codespaces ਵਰਤੋ! ਤੁਸੀਂ ਆਪਣੀ ਲੋਕਲ VS Code ਨੂੰ ਕਲਾਉਡ-ਹੋਸਟ ਕੀਤੇ Codespace ਨਾਲ ਜੋੜ ਕੇ ਸਭ ਤੋਂ ਵਧੀਆ ਦੁਨੀਆ ਦੇ ਫਾਇਦੇ ਲੈ ਸਕਦੇ ਹੋ।  
 
-<img src="../../../translated_images/pa/image-2.fc0da29a6e4d2aff.webp" alt="ਸਕਰੀਨਸ਼ਾਟ: ਬਣਾਇਆ ਹੋਇਆ ਸਥਾਨਕ ਡੇਵਕੰਟੇਨਰ ਇੰਸਟੈਂਸ" width="50%">
+<img src="../../../translated_images/pa/image-2.fc0da29a6e4d2aff.webp" alt="스크린샷 : created local devcontainer instance" width="50%">
 
-## ਕਦਮ 2: GitHub ਪ੍ਰਸਨਲ ਐਕਸੈਸ ਟੋਕਨ ਬਣਾਓ
+## ਕਦਮ 2: Azure AI Foundry ਪ੍ਰੋਵਿਜ਼ਨ ਕਰੋ
 
-1. [GitHub ਸੈਟਿੰਗਜ਼](https://github.com/settings/profile) 'ਤੇ ਜਾਓ ਅਤੇ ਆਪਣੇ ਪ੍ਰੋਫਾਈਲ ਮੀਨੂ ਵਿੱਚੋਂ **Settings** ਚੁਣੋ।
-2. ਖੱਬੇ ਫਲੈਸ਼ਤਰ ਵਿੱਚ **Developer settings** 'ਤੇ ਕਲਿਕ ਕਰੋ (ਆਮਤੌਰ 'ਤੇ ਹੇਠਾਂ)
-3. **Personal access tokens** ਹੇਠਾਂ, **Fine-grained tokens** 'ਤੇ ਕਲਿਕ ਕਰੋ (ਜਾਂ ਇਹ [ਸਿੱਧਾ ਲਿੰਕ](https://github.com/settings/personal-access-tokens) ਵਰਤੋਂ)
-4. **Generate new token** 'ਤੇ ਕਲਿਕ ਕਰੋ
-5. "ਟੋਕਨ ਨਾਮ" ਵਿੱਚ ਵਰਣਨਾਤਮਕ ਨਾਮ ਦਿਓ (ਜਿਵੇਂ `GenAI-Java-Course-Token`)
-6. ਇੱਕ ਮਿਆਦ-ਅੰਤ ਦੀ ਤਾਰੀਖ ਸੈੱਟ ਕਰੋ (ਸੁਰੱਖਿਆ ਲਈ 7 ਦਿਨ ਸੁਝਾਏ ਗਏ ਹਨ)
-7. "Resource owner" ਹੇਠ ਆਪਣੇ ਯੂਜ਼ਰ ਅਕਾਉਂਟ ਨੂੰ ਚੁਣੋ
-8. "Repository access" ਵਿੱਚ ਆਪਣੀ ਵਰਤੋਂ ਲਈ ਰਿਪੋਜਿਟਰੀਆਂ ਚੁਣੋ (ਜਾਂ ਸਾਰੇ ਰਿਪੋ 'ਚਾਵੋ)
-9. "Account permissions" ਵਿੱਚ **Models** ਨੂੰ **Read-only** ਸੈੱਟ ਕਰੋ
-10. **Generate token** 'ਤੇ ਕਲਿਕ ਕਰੋ
-11. ਹੁਣੇ ਹੀ ਆਪਣੇ ਟੋਕਨ ਨੂੰ ਕਾਪੀ ਅਤੇ ਸੰਭਾਲੋ – ਇਹ ਫਿਰ ਨਹੀਂ ਦਿਖਾਇਆ ਜਾਵੇਗਾ!
+ਕੋਰਸ ਦੇ ਏਆਈ ਮਾਡਲਾਂ ਨੂੰ Azure AI Foundry 'ਤੇ ਕੋਡ ਦੇ ਤੌਰ 'ਤੇ ਡਿਪਲੌਇ ਕਰੋ। ਰੀਪੋਜ਼ਿਟਰੀ ਦੇ ਰੂਟ ਤੋਂ:
 
-> **ਸੁਰੱਖਿਆ ਟਿੱਪ**: ਆਪਣੀ ਐਕਸੈਸ ਟੋਕਨ ਲਈ ਘੱਟੋ-ਘੱਟ ਲੋੜੀਂਦਾ ਸਕੋਪ ਅਤੇ ਸਭ ਤੋਂ ਛੋਟਾ ਕਾਰਗਰ ਮਿਆਦ ਅੰਤ ਵਰਤੋਂ।
-
-## ਕਦਮ 3: GitHub ਮਾਡਲ ਨਾਲ ਆਪਣੀ ਸੈਟਅਪ ਦੀ ਜਾਂਚ ਕਰੋ
-
-ਜਦੋਂ ਤੁਹਾਡਾ ਵਿਕਾਸਕਾਰੀ ਮਾਹੌਲ ਤਿਆਰ ਹੋ ਜਾਵੇ, ਤਾਂ ਆਓ ਇੱਕ ਸਧਾਰਣ ਐਪਲੀਕੇਸ਼ਨ ਵਿੱਚ GitHub Models ਇন্টੈਗਰੇਸ਼ਨ ਦੀ ਜਾਂਚ ਕਰੀਏ ਜਾਂ [examples/github-models](../../../02-SetupDevEnvironment/examples/github-models) ਵਿੱਚ।
-
-1. ਆਪਣੀ ਵਿਕਾਸਕਾਰੀ ਮਾਹੌਲ ਵਿੱਚ ਟਰਮੀਨਲ ਖੋਲੋ।
-2. GitHub Models ਉਦਾਹਰਨ ਵਾਲੇ ਫੋਲਡਰ ਵਿਚ ਜਾਓ:
-   ```bash
-   cd 02-SetupDevEnvironment/examples/github-models
-   ```
-3. ਆਪਣਾ GitHub ਟੋਕਨ ਇੱਕ ਵਾਤਾਵਰਣ ਵੈਰੀਏਬਲ ਵਜੋਂ ਸੈੱਟ ਕਰੋ:
-   ```bash
-   # ਮੈਕਓਐਸ/ਲਿਨਕਸ
-   export GITHUB_TOKEN=your_token_here
-   
-   # ਵਿੰਡੋਜ਼ (ਕਮਾਂਡ ਪ੍ਰਾਂਪਟ)
-   set GITHUB_TOKEN=your_token_here
-   
-   # ਵਿੰਡੋਜ਼ (ਪਾਵਰਸ਼ੈੱਲ)
-   $env:GITHUB_TOKEN="your_token_here"
-   ```
-
-4. ਐਪਲੀਕੇਸ਼ਨ ਚਲਾਓ:
-   ```bash
-   mvn compile exec:java -Dexec.mainClass="com.example.githubmodels.App"
-   ```
-
-ਤੁਸੀਂ ਇਸ ਤਰ੍ਹਾਂ ਦਾ ਆਉਟਪੁੱਟ ਵੇਖੋਗੇ:
-```text
-Using model: gpt-4.1-nano
-Sending request to GitHub Models...
-Response: Hello World!
+```bash
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
 ```
+  
+`azd` ਵਾਤਾਵਰਣ ਦਾ ਨਾਮ ਤੇ ਇਲਾਕਾ ਪੁੱਛਦਾ ਹੈ, `gpt-4o-mini` ਤੇ `text-embedding-3-small` ਡਿਪਲੌਇਮੈਂਟ ਦੇ ਨਾਲ ਇੱਕ Azure AI Foundry ਖਾਤਾ ਪ੍ਰੋਵਿਜ਼ਨ ਕਰਦਾ ਹੈ, ਅਤੇ ਉਦਾਹਰਨ ਦੇ `.env` ਵਿੱਚ ਐਂਡਪੌਇੰਟ ਲਿਖਦਾ ਹੈ — ਸਾਰੇ **ਕੀਲੈੱਸ** ਪ੍ਰਮਾਣਿਕਤਾ (ਕੋਈ API ਕੁੰਜੀਆਂ ਨਹੀਂ) ਨਾਲ।
 
+> **ਪੂਰਾ ਮਾਰਗਦਰਸ਼ਨ:** ਪੂਰਵ ਸ਼ਰਤਾਂ, ਮੈਨੂਅਲ (ਪੋਰਟਲ) ਵਿਕਲਪ, ਇਲਾਕਾ ਮਦਦ ਅਤੇ ਲਾਗਤ/ਸਾਫ਼-ਸੁਥਰਾ ਨੋਟਾਂ ਲਈ [Azure AI Foundry Setup Guide](getting-started-azure-openai.md) ਵੇਖੋ।  
 
-### ਉਦਾਹਰਨ ਕੋਡ ਨੂੰ ਸਮਝਣਾ
+## ਕਦਮ 3: ਆਪਣਾ ਸੈਟਅਪ ਟੈਸਟ ਕਰੋ
 
-ਸਭ ਤੋਂ ਪਹਿਲਾਂ, ਦੇਖੀਏ ਅਸੀਂ ਜੋ ਚਲਾਇਆ ਉਹ ਕੀ ਕਰਦਾ ਹੈ। `examples/github-models` ਹੇਠ ਦਿੱਤਾ ਉਦਾਹਰਨ OpenAI Java SDK ਵਰਤ ਕੇ GitHub Models ਨਾਲ ਕਨੈਕਟ ਕਰਦਾ ਹੈ:
+ਜਦੋਂ ਤੁਹਾਡੇ Foundry ਮਾਡਲ ਪ੍ਰੋਵਿਜ਼ਨ ਹੋ ਜਾਣ, ਉਦਾਹਰਨ ਐਪ ਨਾਲ ਸੰਪਰਕ ਟੈਸਟ ਕਰੋ ਜੋ [`02-SetupDevEnvironment/examples/basic-chat-azure`](../../../02-SetupDevEnvironment/examples/basic-chat-azure) ਵਿੱਚ ਹੈ।
 
-**ਇਹ ਕੋਡ ਕੀ ਕਰਦਾ ਹੈ:**
-- ਤੁਹਾਡੇ ਪ੍ਰਸਨਲ ਐਕਸੈਸ ਟੋਕਨ ਦੀ ਵਰਤੋਂ ਕਰਕੇ GitHub Models ਨਾਲ **ਕਨੈਕਟ ਹੋਣਾ**
-- AI ਮਾਡਲ ਨੂੰ ਇੱਕ ਸਧਾਰਣ "Say Hello World!" ਸੁਨੇਹਾ ਭੇਜਣਾ
-- AI ਦਾ ਪ੍ਰਤਿਕਿਰਿਆ ਪ੍ਰਾਪਤ ਕਰਨਾ ਅਤੇ ਦਿਖਾਉਣਾ
-- ਤੁਹਾਡੀ ਸੈਟਅਪ ਦੀ ਸਹੀ ਕਾਰਗੁਜ਼ਾਰੀ ਦੀ ਪੁਸ਼ਟੀ ਕਰਨਾ
+1. ਆਪਣੀ ਵਿਕਾਸ ਮਾਹੌਲ ਵਿੱਚ ਟਰਮੀਨਲ ਖੋਲ੍ਹੋ।  
+2. ਉਦਾਹਰਨ ਫੋਲਡਰ ਵਿੱਚ ਜਾਓ:  
+   ```bash
+   cd 02-SetupDevEnvironment/examples/basic-chat-azure
+   ```
+  
+3. ਯਕੀਨੀ ਬਣਾਓ ਕਿ ਤੁਸੀਂ ਸਾਈਨ-ਇਨ ਹੋ (ਕੀਲੈੱਸ ਪ੍ਰਮਾਣਿਕਤਾ ਲਈ ਟੋਕਨ ਚਾਹੀਦਾ ਹੈ):  
+   ```bash
+   az login
+   ```
+  
+   > ਜੇ ਤੁਸੀਂ `azd up` ਚਲਾਇਆ ਸੀ, ਤਾਂ `.env` ਫਾਈਲ ਵਿੱਚ ਤੁਹਾਡਾ ਐਂਡਪੌਇੰਟ ਪਹਿਲਾਂ ਹੀ ਲਿਖਿਆ ਹੋਇਆ ਸੀ।  
+4. ਐਪਲੀਕੇਸ਼ਨ ਚਲਾੋ:  
+   ```bash
+   mvn clean spring-boot:run
+   ```
+  
+ਤੁਹਾਨੂੰ `gpt-4o-mini` ਮਾਡਲ ਤੋਂ ਇੱਕ ਜਵਾਬ ਦੇਖਣਾ ਚਾਹੀਦਾ ਹੈ।
 
-**ਮੁੱਖ ਡਿਪੈਂਡੈਂਸੀ** (`pom.xml` ਵਿੱਚ):
+### ਉਦਾਹਰਨ ਕੋਡ ਸਮਝਣਾ
+
+`examples/basic-chat-azure` ਹੇਠਾਂ ਦੀ ਉਦਾਹਰਨ ਇੱਕ Spring Boot ਐਪ ਹੈ ਜੋ **Spring AI** ਵਰਤ ਕੇ Azure AI Foundry ਨਾਲ ਕੀਲੈੱਸ ਪ੍ਰਮਾਣਿਕਤਾ ਨਾਲ ਜੁਰਦੀ ਹੈ।
+
+**ਇਹ ਕੋਡ ਕੀ ਕਰਦਾ ਹੈ:**  
+- Azure AI Foundry ਨਾਲ ਤੁਹਾਡੇ Azure ਸਾਈਨ-ਇਨ (Microsoft Entra ID) ਤੋਂ ਬਿਨਾਂ API ਕੀ ਦੇ ਸਾਥ ਜੋੜਦਾ ਹੈ  
+- `gpt-4o-mini` ਮਾਡਲ ਨੂੰ ਪ੍ਰਾਂਪਟ ਭੇਜਦਾ ਹੈ  
+- ਏਆਈ ਦਾ ਜਵਾਬ ਪ੍ਰਾਪਤ ਕਰਦਾ ਹੈ ਅਤੇ ਦਿਖਾਉਂਦਾ ਹੈ  
+- ਤੁਹਾਡੇ ਸੈਟਅਪ ਦੀ ਸਹੀ ਕਾਰਗੁਜ਼ਾਰੀ ਨੁਹ ਹੋਣੀ ਜਾਂਚਦਾ ਹੈ  
+
+**ਮੁੱਖ ਡਿਪੈਂਡੈਂਸੀ** (`pom.xml` ਵਿੱਚ):  
 ```xml
 <dependency>
-    <groupId>com.openai</groupId>
-    <artifactId>openai-java</artifactId>
-    <version>2.12.0</version>
+    <groupId>org.springframework.ai</groupId>
+    <artifactId>spring-ai-starter-model-azure-openai</artifactId>
 </dependency>
 ```
-
-
-**ਮੁੱਖ ਕੋਡ** (`App.java`):
-```java
-// OpenAI ਜਾਵਾ SDK ਦੀ ਵਰਤੋਂ ਕਰਕੇ GitHub ਮਾਡਲਾਂ ਨਾਲ ਜੁੜੋ
-OpenAIClient client = OpenAIOkHttpClient.builder()
-    .apiKey(pat)
-    .baseUrl("https://models.inference.ai.azure.com")
-    .build();
-
-// ਚੈਟ ਮੁਕੰਮਲ ਕਰਨ ਦੀ ਬੇਨਤੀ ਬਣਾਓ
-ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
-    .model(modelId)
-    .addSystemMessage("You are a concise assistant.")
-    .addUserMessage("Say Hello World!")
-    .build();
-
-// AI ਜਵਾਬ ਪ੍ਰਾਪਤ ਕਰੋ
-ChatCompletion response = client.chat().completions().create(params);
-System.out.println("Response: " + response.choices().get(0).message().content().orElse("No response content"));
+  
+**ਕੰਫਿਗਰੇਸ਼ਨ** (`application.yml`):  
+```yaml
+spring:
+  ai:
+    azure:
+      openai:
+        # Endpoint only - no api-key. Spring AI uses DefaultAzureCredential (keyless).
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
-
+  
 
 ## ਸਾਰ
 
-ਸ਼ਾਬਾਸ਼! ਹੁਣ ਤੁਹਾਡੇ ਕੋਲ ਸਾਰੇ ਕੁਝ ਸੈਟਅਪ ਹੈ:
+ਵਧੀਆ! ਹੁਣ ਤੁਹਾਡੇ ਕੋਲ ਸਭ ਕੁਝ ਸੈਟ ਹੈ:
 
-- AI ਮਾਡਲ ਦੀ ਪਹੁੰਚ ਲਈ ਉਚਿਤ ਅਧਿਕਾਰਾਂ ਨਾਲ GitHub ਪ੍ਰਸਨਲ ਐਕਸੈਸ ਟੋਕਨ ਬਣਾਇਆ
-- ਆਪਣਾ ਜਾਵਾ ਵਿਕਾਸਕਾਰੀ ਮਾਹੌਲ ਚਲਾਇਆ (ਚਾਹੇ Codespaces ਹੋਵੇ, ਡੇਵ ਕਨਟੇਨਰ, ਜਾਂ ਸਥਾਨਕ)
-- ਮੁਫ਼ਤ AI ਵਿਕਾਸ ਲਈ OpenAI Java SDK ਨਾਲ GitHub Models ਨਾਲ ਕਨੈਕਟ ਕੀਤਾ
-- ਇੱਕ ਸਾਦਾ ਉਦਾਹਰਨ ਨਾਲ ਟੈਸਟ ਕੀਤਾ ਜੋ AI ਮਾਡਲਾਂ ਨਾਲ ਗੱਲ ਕਰਦਾ ਹੈ
+- Azure AI Foundry ਮਾਡਲਾਂ ਨੂੰ ਬਾਇਸਪ + `azd` ਨਾਲ ਕੋਡ ਦੇ ਤੌਰ 'ਤੇ ਪ੍ਰੋਵਿਜ਼ਨ ਕੀਤਾ  
+- ਆਪਣੇ ਜਾਵਾ ਵਿਕਾਸ ਮਾਹੌਲ ਨੂੰ ਚੱਲਾਉਣਾ ਸਿੱਖਿਆ (ਚਾਹੇ Codespaces, ਡੈਵ ਕੰਟੇਨਰ ਜਾਂ ਲੋਕਲ ਹੋਵੇ)  
+- Azure AI Foundry ਨਾਲ ਕੀਲੈੱਸ ਪ੍ਰਮਾਣਿਕਤਾ (Microsoft Entra ID) ਨਾਲ ਜੁੜਿਆ — ਕੋਈ API ਕੀ ਨਹੀਂ  
+- ਸਧਾਰਣ ਉਦਾਹਰਨ ਨਾਲ ਸਭ ਕੁਝ ਟੈਸਟ ਕੀਤਾ ਜੋ ਤੁਹਾਡੇ ਮਾਡਲ ਨਾਲ ਗੱਲ ਕਰਦਾ ਹੈ  
 
 ## ਅਗਲੇ ਕਦਮ
 
-[ਅਧਿਆਇ 3: ਕੋਰ ਜੇਨੇਰੇਟਿਵ ਏਆਈ ਤਕਨੀਕਾਂ](../03-CoreGenerativeAITechniques/README.md)
+[ਅਧਿਆਇ 3: ਕੋਰ ਜੇਨੇਰੇਟਿਵ ਏਆਈ ਤਕਨੀਕਾਂ](../03-CoreGenerativeAITechniques/README.md)  
 
-## ਸਮੱਸਿਆ ਸਮਾਧਾਨ
+## ਟ੍ਰਬਲਸ਼ੂਟਿੰਗ
 
-ਮੁਸ਼ਕਿਲ ਹੋ ਰਹੀ ਹੈ? ਇਹ ਸਭ ਤੋਂ ਆਮ ਸਮੱਸਿਆਵਾਂ ਅਤੇ ਹੱਲ ਹਨ:
+ਕੋਈ ਸਮੱਸਿਆ ਆ ਰਹੀ ਹੈ? ਇੱਥੇ ਆਮ ਸਮੱਸਿਆਵਾਂ ਅਤੇ ਉਨ੍ਹਾਂ ਦੇ ਹੱਲ ਹਨ:
 
-- **ਟੋਕਨ ਕੰਮ ਨਹੀਂ ਕਰ ਰਿਹਾ?** 
-  - ਪੂਰਾ ਟੋਕਨ ਕਾਪੀ ਕੀਤਾ ਹੈ ਬਿਨਾਂ ਕਿਸੇ ਵਾਧੂ ਖਾਲੀ ਥਾਂ ਦੇ
-  - ਟੋਕਨ ਸਹੀ ਤਰ੍ਹਾਂ ਵਾਤਾਵਰਣ ਵੈਰੀਏਬਲ ਵਿੱਚ ਸੈਟ ਹੈ ਜਾਂ ਨਹੀਂ ਜਾਂਚ ਕਰੋ
-  - ਆਪਣੇ ਟੋਕਨ ਦੀ ਅਧਿਕਾਰਾਂ (Models: Read-only) ਨੂੰ ਵੇਰੀਫਾਈ ਕਰੋ
+- **ਪ੍ਰਮਾਣਿਕਤਾ ਫੇਲ ਹੋ ਰਹੀ ਹੈ (401/403)?**  
+  - `az login` ਚਲਾਓ — ਪ੍ਰਮਾਣਿਕਤਾ ਕੀਲੈੱਸ ਹੈ, ਇਸ ਲਈ ਤੁਹਾਨੂੰ ਸਾਇਨ-ਇਨ ਕਰਨਾ ਲਾਜ਼ਮੀ ਹੈ  
+  - ਯਕੀਨੀ ਬਣਾਓ ਤੁਹਾਡੇ ਖਾਤੇ ਕੋਲ ਸਰੋਤ `Cognitive Services OpenAI User` ਦੀ ਭੂਮਿਕਾ ਹੈ  
+  - ਜੇ ਤੁਸੀਂ ਹਾਲ ਹੀ ਵਿੱਚ ਪ੍ਰੋਵਿਜ਼ਨ ਕੀਤਾ ਹੈ, ਤਾਂ ਭੂਮਿਕਾ ਅਸਾਈਨਮੈਂਟ ਲਾਗੂ ਹੋਣ ਲਈ ਕੁਝ ਸਮਾਂ ਉਡੀਕੋ  
 
-- **Maven ਨਹੀਂ ਮਿਲ ਰਿਹਾ?** 
-  - ਜੇ dev ਕਨਟੇਨਰ/ਕੋਡਸਪੇਸ ਵਰਤ ਰਹੇ ਹੋ ਤਾਂ Maven ਪਹਿਲਾਂ ਤੋਂ ਇੰਸਟਾਲ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ
-  - ਸਥਾਨਕ ਸੈਟਅਪ ਲਈ, Java 21+ ਅਤੇ Maven 3.9+ ਇੰਸਟਾਲ ਹੈ ਯਕੀਨੀ ਬਣਾਓ
-  - `mvn --version` ਚਲਾਕੇ ਇੰਸਟਾਲੇਸ਼ਨ ਚੈੱਕ ਕਰੋ
+- **Maven ਨਹੀਂ ਲੱਭ ਰਿਹਾ?**  
+  - ਜੇ ਤੁਸੀਂ ਡੈਵ ਕੰਟੇਨਰਸ/ਕੋਡਸਪੇਸਸ ਵਰਤ ਰਹੇ ਹੋ, ਤਾਂ Maven ਪਹਿਲਾਂ ਤੋਂ ਇੰਸਟਾਲ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ  
+  - ਲੋਕਲ ਸੈਟਅਪ ਲਈ Java 21+ ਅਤੇ Maven 3.9+ ਇੰਸਟਾਲ ਹੋਣ ਚਾਹੀਦੇ ਹਨ  
+  - ਇੰਸਟਾਲੇਸ਼ਨ ਦੀ ਪੁਸ਼ਟੀ ਲਈ `mvn --version` ਚਲਾਓ  
 
-- **ਕਨੈਕਸ਼ਨ ਸਮੱਸਿਆ?** 
-  - ਇੰਟਰਨੈੱਟ ਕਨੈਕਸ਼ਨ ਚੈੱਕ ਕਰੋ
-  - ਜਾਂਚੋ ਕਿ ਤੁਹਾਡੀ ਨੈੱਟਵਰਕ ਤੋਂ GitHub ਐਕਸੈਸਬਲ ਹੈ
-  - ਯਕੀਨ ਕਰੋ ਕਿ ਤੁਰੰਤ GitHub Models ਐਂਡਪੌਇੰਟ ਬੰਦ ਕਰਨ ਵਾਲਾ ਕੋਈ ਫਾਇਰਵਾਲ ਨਹੀਂ ਹੈ
+- **`azd` ਨਹੀਂ ਮਿਲ ਰਿਹਾ ਜਾਂ ਪ੍ਰੋਵਿਜ਼ਨ ਫੇਲ?**  
+  - [Azure Developer CLI](https://aka.ms/azure-dev/install) ਇੰਸਟਾਲ ਕਰਕੇ `azd auth login` ਚਲਾਓ  
+  - ਹੇਠਾਂ ਜਿਹੜੇ ਇਲਾਕੇ ਵਿੱਚ `gpt-4o-mini` ਹੈ ਉਹਨਾਂ ਚੋਂ ਕੋਈ ਇਲਾਕਾ ਚੁਣੋ (ਜਿਵੇਂ `eastus2`)  
+  - ਵੇਰਵਿਆਂ ਲਈ [Azure AI Foundry setup guide](getting-started-azure-openai.md) ਵੇਖੋ  
 
-- **ਡੇਵ ਕਨਟੇਨਰ ਸਟਾਰਟ ਨਹੀਂ ਹੋ ਰਿਹਾ?** 
-  - ਯਕੀਨ ਕਰੋ Docker Desktop ਚੱਲ ਰਿਹਾ ਹੈ (ਸਥਾਨਕ ਵਿਖਸਾਸ ਲਈ)
-  - ਕਨਟੇਨਰ ਨੂੰ ਦੁਬਾਰਾ ਬਣਾਉਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ: `Ctrl+Shift+P` → "Dev Containers: Rebuild Container"
+- **ਡੈਵ ਕੰਟੇਨਰ ਸ਼ੁਰੂ ਨਹੀਂ ਹੋ ਰਿਹਾ?**  
+  - ਯਕੀਨੀ ਬਣਾਓ Docker Desktop ਚੱਲ ਰਿਹਾ ਹੈ (ਲੋਕਲ ਵਿਕਾਸ ਲਈ)  
+  - ਕੰਟੇਨਰ ਨੂੰ ਦੁਬਾਰਾ ਬਣਾਉਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ: `Ctrl+Shift+P` → "Dev Containers: Rebuild Container"  
 
-- **ਐਪਲੀਕੇਸ਼ਨ ਕੰਪਾਈਲ ਕਰਨ 'ਚ ਗਲਤੀਆਂ?**
-  - ਯਕੀਨ ਕਰੋ ਕਿ ਤੁਸੀਂ ਸਹੀ ਡਾਇਰੈਕਟਰੀ 'ਚ ਹੋ: `02-SetupDevEnvironment/examples/github-models`
-  - ਸਾਫ਼ ਅਤੇ ਦੁਬਾਰਾ ਬਣਾਉਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ: `mvn clean compile`
+- **ਐਪਲੀਕੇਸ਼ਨ ਕੰਪਾਈਲ ਕਰੋ ਸਮੇਂ ਏਰਰ ਆ ਰਹੇ ਹਨ?**  
+  - ਯਕੀਨੀ ਬਣਾਓ ਕਿ ਤੁਸੀਂ ਸਹੀ ਡਾਇਰੈਕਟਰੀ `02-SetupDevEnvironment/examples/basic-chat-azure` ਵਿੱਚ ਹੋ  
+  - ਸਾਫ ਸਫਾਈ ਅਤੇ ਦੁਬਾਰਾ ਬਣਾਉਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ: `mvn clean compile`  
 
-> **ਮਦਦ ਚਾਹੀਦੀ ਹੈ?**: ਅਜੇ ਵੀ ਪ੍ਰਸ਼ਨ ਹਨ? ਰਿਪੋਜਿਟਰੀ ਵਿੱਚ ਇੱਕ ਮੁੱਦਾ ਖੋਲ੍ਹੋ ਅਤੇ ਅਸੀਂ ਤੁਹਾਡੀ ਮਦਦ ਕਰਾਂਗੇ।
+> **ਮਦਦ ਚਾਹੀਦੀ ਹੈ?**: ਅਜੇ ਵੀ ਸਮੱਸਿਆਵਾਂ? ਰੀਪੋਜ਼ਿਟਰੀ ਵਿੱਚ ਇੱਕ ਇਸ਼ੂ ਖੋਲ੍ਹੋ ਅਸੀਂ ਤੁਹਾਡੀ ਮਦਦ ਕਰਾਂਗੇ।
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**ਅਸਵੀਕਾਰੋਕ্তੀ**:  
-ਇਹ ਦਸਤਾਵੇਜ਼ AI ਅਨੁਵਾਦ ਸੇਵਾ [Co-op Translator](https://github.com/Azure/co-op-translator) ਦੀ ਵਰਤੋਂ ਕਰਕੇ ਅਨੁਵਾਦਿਤ ਕੀਤਾ ਗਿਆ ਹੈ। ਜਦੋਂ ਕਿ ਅਸੀਂ ਸਹੀਤਾ ਲਈ ਯਤਨਸ਼ੀਲ ਹਾਂ, ਕਿਰਪਾ ਕਰਕੇ ਧਿਆਨ ਦੇਵੋ ਕਿ ਆਟੋਮੈਟਿਕ ਅਨੁਵਾਦਾਂ ਵਿੱਚ ਗਲਤੀਆਂ ਜਾਂ ਅਣਸੁਚਿਤਤਾ ਹੋ ਸਕਦੀ ਹੈ। ਮੂਲ ਦਸਤਾਵੇਜ਼ ਆਪਣੀ ਮੂਲ ਭਾਸ਼ਾ ਵਿੱਚ ਹੀ ਪ੍ਰਮਾਣਿਕ ਸਰੋਤ ਮੰਨਿਆ ਜਾਣਾ ਚਾਹੀਦਾ ਹੈ। ਮਹੱਤਵਪੂਰਨ ਜਾਣਕਾਰੀ ਲਈ, ਪ੍ਰੋਫੈਸ਼ਨਲ ਮਨੁੱਖੀ ਅਨੁਵਾਦ ਦੀ ਸਿਫ਼ਾਰਸ਼ ਕੀਤੀ ਜਾਂਦੀ ਹੈ। ਇਸ ਅਨੁਵਾਦ ਦੀ ਵਰਤੋਂ ਕਰਕੇ ਪੈਦਾ ਹੋਣ ਵਾਲੇ ਕਿਸੇ ਵੀ ਗਲਤਫ਼ਹਮੀਆਂ ਜਾਂ ਵਿਵਾਦਾਂ ਲਈ ਅਸੀਂ ਜਵਾਬਦੇਹ ਨਹੀਂ ਹਾਂ।
+**ਅਸਵੀਕਾਰੋਪਣ**:
+ਇਸ ਦਸਤਾਵੇਜ਼ ਦਾ ਅਨੁਵਾਦ ਏਆਈ ਅਨੁਵਾਦ ਸੇਵਾ [Co-op Translator](https://github.com/Azure/co-op-translator) ਦੀ ਵਰਤੋਂ ਕਰਕੇ ਕੀਤਾ ਗਿਆ ਹੈ। ਜਦੋਂ ਕਿ ਅਸੀਂ ਸਹੀਤਾਵਾਂ ਲਈ ਯਤਨਸ਼ੀਲ ਹਾਂ, ਕਿਰਪਾ ਕਰਕੇ ਧਿਆਨ ਰੱਖੋ ਕਿ ਸਵੈਚਾਲਿਤ ਅਨੁਵਾਦਾਂ ਵਿੱਚ ਗਲਤੀਆਂ ਜਾਂ ਅਸਮੱਤਿਆਵਾਂ ਹੋ ਸਕਦੀਆਂ ਹਨ। ਮੂਲ ਦਸਤਾਵੇਜ਼ ਆਪਣੀ ਮੂਲ ਭਾਸ਼ਾ ਵਿੱਚ ਅਧਿਕਾਰਕ ਸਰੋਤ ਮੰਨਿਆ ਜਾਣਾ ਚਾਹੀਦਾ ਹੈ। ਜਰੂਰੀ ਜਾਣਕਾਰੀ ਲਈ, ਪੇਸ਼ੇਵਰ ਮਨੁੱਖੀ ਅਨੁਵਾਦ ਦੀ ਸਿਫ਼ਾਰਸ਼ ਕੀਤੀ ਜਾਂਦੀ ਹੈ। ਅਸੀਂ ਇਸ ਅਨੁਵਾਦ ਦੇ ਉਪਯੋਗ ਤੋਂ ਪੈਦਾ ਹੋਣ ਵਾਲੀਆਂ ਕਿਸੇ ਵੀ ਗਲਤਫਹਿਮੀਆਂ ਜਾਂ ਗਲਤ ਵਿਆਖਿਆਵਾਂ ਲਈ ਜਵਾਬਦੇਹ ਨਹੀਂ ਹਾਂ।
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

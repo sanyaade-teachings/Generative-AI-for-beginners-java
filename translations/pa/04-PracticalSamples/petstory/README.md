@@ -1,31 +1,31 @@
-# ਪਾਲਤੂ ਕਹਾਣੀ ਜਨਰੇਟਰ ਟਿਊਟੋਰਿਯਲ ਸ਼ੁਰੂਆਤੀਆਂ ਲਈ
+# ਪੇਟ ਸਟੋਰੀ ਜੈਨਰੇਟਰ ਟਿਊਟੋਰੀਅਲ ਸ਼ੁਰੂਆਤੀ ਲਈ
 
 ## ਸੂਚੀ
 
-- [ਪੂਰਵ ਸ਼ਰਤਾਂ](../../../../04-PracticalSamples/petstory)
-- [ਪਰਿਯੋਜਨਾ ਦੀ ਬਣਾਵਟ ਨੂੰ ਸਮਝਣਾ](../../../../04-PracticalSamples/petstory)
-- [ਮੁੱਖ ਹਿੱਸਿਆਂ ਦੀ ਵਿਆਖਿਆ](../../../../04-PracticalSamples/petstory)
-  - [1. ਮੁੱਖ ਐਪਲੀਕੇਸ਼ਨ](../../../../04-PracticalSamples/petstory)
-  - [2. ਵੈੱਬ ਕੰਟਰੋਲਰ](../../../../04-PracticalSamples/petstory)
-  - [3. ਕਹਾਣੀ ਸੇਵਾ](../../../../04-PracticalSamples/petstory)
-  - [4. ਵੈੱਬ ਟੈਂਪਲੇਟ](../../../../04-PracticalSamples/petstory)
-  - [5. ਸੰਰਚਨਾ](../../../../04-PracticalSamples/petstory)
-- [ਐਪਲੀਕੇਸ਼ਨ ਚਲਾਉਣਾ](../../../../04-PracticalSamples/petstory)
-- [ਇਹ ਸਾਰਾ ਕਿਵੇਂ ਕੰਮ ਕਰਦਾ ਹੈ](../../../../04-PracticalSamples/petstory)
-- [ਏਆਈ ਇੰਟੀਗ੍ਰੇਸ਼ਨ ਨੂੰ ਸਮਝਣਾ](../../../../04-PracticalSamples/petstory)
-- [ਅਗਲੇ ਕਦਮ](../../../../04-PracticalSamples/petstory)
+- [ਪੂਰਵ ਅਵਸ਼ਕਤਾ](#ਪੂਰਵ-ਅਵਸ਼ਕਤਾ)
+- [ਪ੍ਰੋਜੈਕਟ ਸਟ੍ਰੱਕਚਰ ਨੂੰ ਸਮਝਣਾ](#ਪ੍ਰੋਜੈਕਟ-ਸਟ੍ਰੱਕਚਰ-ਨੂੰ-ਸਮਝਣਾ)
+- [ਮੁੱਖ ਘਟਕਾਂ ਦੀ ਵਿਆਖਿਆ](#ਮੁੱਖ-ਘਟਕਾਂ-ਦੀ-ਵਿਆਖਿਆ)
+  - [1. ਮੁੱਖ ਐਪਲੀਕੇਸ਼ਨ](#1-ਮੁੱਖ-ਐਪਲੀਕੇਸ਼ਨ)
+  - [2. ਵੈੱਬ ਕੰਟਰੋਲਰ](#2-ਵੈੱਬ-ਕੰਟਰੋਲਰ)
+  - [3. ਸਟੋਰੀ ਸਰਵਿਸ](#3-ਸਟੋਰੀ-ਸਰਵਿਸ)
+  - [4. ਵੈੱਬ ਟੈਂਪਲੇਟਸ](#4-ਵੈੱਬ-ਟੈਂਪਲੇਟਸ)
+  - [5. ਕਾਂਫਿਗਰੇਸ਼ਨ](#5-ਕਾਂਫਿਗਰੇਸ਼ਨ)
+- [ਐਪਲੀਕੇਸ਼ਨ ਚਲਾਉਣਾ](#ਐਪਲੀਕੇਸ਼ਨ-ਚਲਾਉਣਾ)
+- [ਇਹ ਸਾਰਾ ਕੰਮ ਕਿਵੇਂ ਕਰਦਾ ਹੈ](#ਇਹ-ਸਾਰਾ-ਕੰਮ-ਕਿਵੇਂ-ਕਰਦਾ-ਹੈ)
+- [AI ਇੰਟਿਗ੍ਰੇਸ਼ਨ ਨੂੰ ਸਮਝਣਾ](#ai-ਇੰਟਿਗ੍ਰੇਸ਼ਨ-ਨੂੰ-ਸਮਝਣਾ)
+- [ਅਗਲੇ ਕਦਮ](#ਅਗਲੇ-ਕਦਮ)
 
-## ਪੂਰਵ ਸ਼ਰਤਾਂ
+## ਪੂਰਵ ਅਵਸ਼ਕਤਾ
 
-ਸ਼ੁਰੂ ਕਰਨ ਤੋਂ ਪਹਿਲਾਂ, ਇਹ ਯਕੀਨੀ ਬਣਾਓ ਕਿ ਤੁਹਾਡੇ ਕੋਲ ਇਹ ਹਨ:
-- ਜਾਵਾ 21 ਜਾਂ ਇਸ ਤੋਂ ਉੱਚਾ ਵਰਜਨ ਇੰਸਟਾਲ ਹੈ
-- Maven ਡਿਪੈਂਡੈਂਸੀ ਮੈਨੇਜਮੈਂਟ ਲਈ
-- ਇੱਕ GitHub ਖਾਤਾ ਜਿਸ ਵਿੱਚ `models:read` ਸਕੋਪ ਵਾਲਾ ਪੈਰਸਨਲ ਐਕਸੈਸ ਟੋਕਨ (PAT) ਹੈ
-- ਜਾਵਾ, ਸਪ੍ਰਿੰਗ ਬੂਟ, ਅਤੇ ਵੈੱਬ ਡਿਵੈਲਪਮੈਂਟ ਦੀ ਬੁਨਿਆਦੀ ਸਮਝ
+ਸ਼ੁਰੂ ਕਰਨ ਤੋਂ ਪਹਿਲਾਂ, ਇਹ ਯਕੀਨੀ ਬਣਾਓ ਕਿ ਤੁਹਾਡੇ ਕੋਲ ਹੈ:
+- ਜਾਵਾ 21 ਜਾਂ ਉੱਪਰ ਇੰਸਟਾਲਡ
+- ਡਿਪੈਂਡੇਨਸੀ ਪ੍ਰਬੰਧਨ ਲਈ ਮਾਵੇਨ
+- ਏਜ਼ੂਰ AI ਫਾਊਂਡਰੀ ਮਾਡਲ ਡਿਪਲੋਇਮੈਂਟ (ਉਦਾਹਰਨ ਲਈ `azd up` ਨਾਲ ਪ੍ਰੋਵਿਜ਼ਨ ਕਰੋ — ਦੇਖੋ [ਚੈਪਟਰ 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md)), `az login` (ਕੀਲੈੱਸ ਅਥੈਂਟੀਕੇਸ਼ਨ) ਨਾਲ ਸਾਇਨ ਇਨ
+- ਜਾਵਾ, ਸਪ੍ਰਿੰਗ ਬੂਟ ਅਤੇ ਵੈੱਬ ਡਿਵੈਲਪਮੈਂਟ ਦੀ ਬੁਨਿਆਦੀ ਸਮਝ
 
-## ਪਰਿਯੋਜਨਾ ਦੀ ਬਣਾਵਟ ਨੂੰ ਸਮਝਣਾ
+## ਪ੍ਰੋਜੈਕਟ ਸਟ੍ਰੱਕਚਰ ਨੂੰ ਸਮਝਣਾ
 
-ਪਾਲਤੂ ਕਹਾਣੀ ਪ੍ਰੋਜੈਕਟ ਵਿੱਚ ਕੁਝ ਮਹੱਤਵਪੂਰਨ ਫਾਈਲਾਂ ਸ਼ਾਮਲ ਹਨ:
+ਪੇਟ ਸਟੋਰੀ ਪ੍ਰੋਜੈਕਟ ਵਿੱਚ ਕੁਝ ਮਹੱਤਵਪੂਰਣ ਫਾਇਲਾਂ ਹਨ:
 
 ```
 petstory/
@@ -42,13 +42,13 @@ petstory/
 └── pom.xml                           # Maven dependencies
 ```
 
-## ਮੁੱਖ ਹਿੱਸਿਆਂ ਦੀ ਵਿਆਖਿਆ
+## ਮੁੱਖ ਘਟਕਾਂ ਦੀ ਵਿਆਖਿਆ
 
 ### 1. ਮੁੱਖ ਐਪਲੀਕੇਸ਼ਨ
 
-**ਫਾਈਲ:** `PetStoryApplication.java`
+**ਫਾਇਲ:** `PetStoryApplication.java`
 
-ਇਹ ਸਾਡੀ ਸਪ੍ਰਿੰਗ ਬੂਟ ਐਪਲੀਕੇਸ਼ਨ ਦਾ ਐਂਟਰੀ ਪੌਇੰਟ ਹੈ:
+ਇਹ ਸਾਡੇ ਸਪ੍ਰਿੰਗ ਬੂਟ ਐਪਲੀਕੇਸ਼ਨ ਲਈ ਐਂਟ੍ਰੀ ਪੁਆਇੰਟ ਹੈ:
 
 ```java
 @SpringBootApplication
@@ -60,15 +60,15 @@ public class PetStoryApplication {
 ```
 
 **ਇਹ ਕੀ ਕਰਦਾ ਹੈ:**
-- `@SpringBootApplication` ਐਨੋਟੇਸ਼ਨ ਆਟੋ-ਕੰਫਿਗਰੇਸ਼ਨ ਅਤੇ ਕੰਪੋਨੈਂਟ ਸਕੈਨਿੰਗ ਨੂੰ ਯੋਗ ਕਰਦਾ ਹੈ
-- ਪੋਰਟ 8080 'ਤੇ ਇੱਕ ਐਂਬੈਡਡ ਵੈੱਬ ਸਰਵਰ (Tomcat) ਸ਼ੁਰੂ ਕਰਦਾ ਹੈ
-- ਸਾਰੇ ਲੋੜੀਂਦੇ ਸਪ੍ਰਿੰਗ ਬੀਨ ਅਤੇ ਸੇਵਾਵਾਂ ਆਟੋਮੈਟਿਕ ਤੌਰ 'ਤੇ ਬਣਾਉਂਦਾ ਹੈ
+- `@SpringBootApplication` ਐਨੋਟੇਸ਼ਨ ਆਟੋ-ਕਾਂਫਿਗਰੇਸ਼ਨ ਅਤੇ ਕੰਪੋਨੈਂਟ ਸਕੈਨਿੰਗ ਨੂੰ ਯੋਗ ਕਰਦਾ ਹੈ
+- ਪੋਰਟ 8080 'ਤੇ ਐੰਬੈਡਡ ਵੈੱਬ ਸਰਵਰ (ਟੋਮਕੈਟ) ਚਲਾਉਂਦਾ ਹੈ
+- ਸਾਰੀਆਂ ਲੋੜੀਂਦੀਆਂ ਸਪ੍ਰਿੰਗ ਬੀਨਜ਼ ਅਤੇ ਸਰਵਿਸਜ਼ ਆਪਣੇ ਆਪ ਬਣਾਂਦਾ ਹੈ
 
 ### 2. ਵੈੱਬ ਕੰਟਰੋਲਰ
 
-**ਫਾਈਲ:** `PetController.java`
+**ਫਾਇਲ:** `PetController.java`
 
-ਇਹ ਸਾਰੇ ਵੈੱਬ ਰਿਕਵੈਸਟਾਂ ਅਤੇ ਯੂਜ਼ਰ ਇੰਟਰੈਕਸ਼ਨ ਨੂੰ ਸੰਭਾਲਦਾ ਹੈ:
+ਇਹ ਸਾਰੇ ਵੈੱਬ ਰਿਕਵੈਸਟਸ ਅਤੇ ਯੂਜ਼ਰ ਇੰਟਰੈਕਸ਼ਨ ਸੰਭਾਲਦਾ ਹੈ:
 
 ```java
 @Controller
@@ -82,7 +82,7 @@ public class PetController {
     
     @GetMapping("/")
     public String index() {
-        return "index";  // Returns index.html template
+        return "index";  // index.html ਟੈਮਪਲੇਟ ਵਾਪਸ ਕਰਦਾ ਹੈ
     }
     
     @PostMapping("/generate-story")
@@ -90,24 +90,24 @@ public class PetController {
                                Model model, 
                                RedirectAttributes redirectAttributes) {
         
-        // Input validation
+        // ਇਨਪੁੱਟ ਵੈਰੀਫਿਕੇਸ਼ਨ
         if (description.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please provide a description.");
             return "redirect:/";
         }
         
-        // Sanitize input for security
+        // ਸੁਰੱਖਿਆ ਲਈ ਇਨਪੁੱਟ ਸਾਫ਼ ਕਰੋ
         String sanitizedDescription = sanitizeInput(description);
         
-        // Generate story with error handling
+        // ਗਲਤੀ ਸੰਭਾਲ ਨਾਲ ਕਹਾਣੀ ਬਣਾਓ
         try {
             String story = storyService.generateStory(sanitizedDescription);
             model.addAttribute("caption", sanitizedDescription);
             model.addAttribute("story", story);
-            return "result";  // Returns result.html template
+            return "result";  // result.html ਟੈਮਪਲੇਟ ਵਾਪਸ ਕਰਦਾ ਹੈ
             
         } catch (Exception e) {
-            // Use fallback story if AI fails
+            // ਜੇ AI ਅਸਫਲ ਰਹਿੰਦਾ ਹੈ ਤਾਂ ਬੈਕਅੱਪ ਕਹਾਣੀ ਵਰਤੋ
             String fallbackStory = generateFallbackStory(sanitizedDescription);
             model.addAttribute("story", fallbackStory);
             return "result";
@@ -117,21 +117,21 @@ public class PetController {
     private String sanitizeInput(String input) {
         return input.replaceAll("[<>\"'&]", "")  // Remove dangerous characters
                    .trim()
-                   .substring(0, Math.min(input.length(), 500));  // Limit length
+                   .substring(0, Math.min(input.length(), 500));  // ਲੰਬਾਈ ਸੀਮਿਤ ਕਰੋ
     }
 }
 ```
 
 **ਮੁੱਖ ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ:**
 
-1. **ਰੂਟ ਹੈਂਡਲਿੰਗ**: `@GetMapping("/")` ਅੱਪਲੋਡ ਫਾਰਮ ਦਿਖਾਉਂਦਾ ਹੈ, `@PostMapping("/generate-story")` ਸਬਮਿਸ਼ਨ ਪ੍ਰੋਸੈਸ ਕਰਦਾ ਹੈ
-2. **ਇਨਪੁਟ ਵੈਲੀਡੇਸ਼ਨ**: ਖਾਲੀ ਵੇਰਵੇ ਅਤੇ ਲੰਬਾਈ ਦੀਆਂ ਸੀਮਾਵਾਂ ਦੀ ਜਾਂਚ ਕਰਦਾ ਹੈ
-3. **ਸੁਰੱਖਿਆ**: ਯੂਜ਼ਰ ਇਨਪੁਟ ਨੂੰ ਸੈਨੀਟਾਈਜ਼ ਕਰਦਾ ਹੈ ਤਾਂ ਜੋ XSS ਹਮਲਿਆਂ ਤੋਂ ਬਚਿਆ ਜਾ ਸਕੇ
-4. **ਗਲਤੀ ਸੰਭਾਲਣਾ**: ਜਦੋਂ AI ਸੇਵਾ ਅਸਫਲ ਹੁੰਦੀ ਹੈ ਤਾਂ ਬੈਕਅੱਪ ਕਹਾਣੀਆਂ ਪ੍ਰਦਾਨ ਕਰਦਾ ਹੈ
-5. **ਮਾਡਲ ਬਾਈਡਿੰਗ**: ਡਾਟਾ ਨੂੰ HTML ਟੈਂਪਲੇਟਾਂ ਵਿੱਚ ਪਾਸ ਕਰਦਾ ਹੈ ਸਪ੍ਰਿੰਗ ਦੇ `Model` ਦੀ ਵਰਤੋਂ ਕਰਕੇ
+1. **ਰੂਟ ਹੈਂਡਲਿੰਗ**: `@GetMapping("/")` ਅਪਲੋਡ ਫਾਰਮ ਦਿਖਾਉਂਦਾ ਹੈ, `@PostMapping("/generate-story")` ਸਬਮੀਸ਼ਨਾਂ ਨੂੰ ਪ੍ਰੋਸੈਸ ਕਰਦਾ ਹੈ
+2. **ਇਨਪੁੱਟ ਵੈਰੀਫਿਕੇਸ਼ਨ**: ਖਾਲੀ ਡਿਸਕ੍ਰਿਪਸ਼ਨ ਅਤੇ ਲੰਬਾਈ ਸੀਮਾਵਾਂ ਦੀ ਜਾਂਚ ਕਰਦਾ ਹੈ
+3. **ਸੁਰੱਖਿਆ**: XSS ਹਮਲਿਆਂ ਨੂੰ ਰੋਕਣ ਲਈ ਯੂਜ਼ਰ ਇੰਪੁੱਟ ਨੂੰ ਸੈਨਿਟਾਈਜ਼ ਕਰਦਾ ਹੈ
+4. **ਏਰਰ ਹੈਂਡਲਿੰਗ**: ਜਦੋਂ AI ਸਰਵਿਸ ਨਾਕਾਮ ਰਹਿੰਦੀ ਹੈ ਤਾਂ ਫਾਲਬੈਕ ਕਹਾਣੀਆਂ ਪ੍ਰਦਾਨ ਕਰਦਾ ਹੈ
+5. **ਮਾਡਲ ਬਾਇੰਡਿੰਗ**: ਸਪ੍ਰਿੰਗ ਦੇ `Model` ਦੀ ਵਰਤੋਂ ਕਰਕੇ ਡੇਟਾ HTML ਟੈਂਪਲੇਟਸ ਨੂੰ ਭੇਜਦਾ ਹੈ
 
-**ਬੈਕਅੱਪ ਸਿਸਟਮ:**
-ਕੰਟਰੋਲਰ ਵਿੱਚ ਪਹਿਲਾਂ ਤੋਂ ਲਿਖੀਆਂ ਕਹਾਣੀ ਟੈਂਪਲੇਟਾਂ ਸ਼ਾਮਲ ਹਨ ਜੋ AI ਸੇਵਾ ਉਪਲਬਧ ਨਾ ਹੋਣ 'ਤੇ ਵਰਤੀਆਂ ਜਾਂਦੀਆਂ ਹਨ:
+**ਫਾਲਬੈਕ ਸਿਸਟਮ:**
+ਕੰਟਰੋਲਰ ਵਿੱਚ ਪਹਿਲਾਂ ਲਿਖੀਆਂ ਕਹਾਣੀਆਂ ਦੇ ਟੈਂਪਲੇਟ ਸ਼ਾਮਲ ਹੁੰਦੇ ਹਨ ਜੋ AI ਸੇਵਾ ਦੇ ਅਣਉਪਲਬਧ ਹੋਣ 'ਤੇ ਵਰਤੇ ਜਾਂਦੇ ਹਨ:
 
 ```java
 private String generateFallbackStory(String description) {
@@ -141,17 +141,17 @@ private String generateFallbackStory(String description) {
         "In a cozy home filled with love, there lived an extraordinary pet..."
     };
     
-    // Use description hash for consistent responses
+    // ਲਗਾਤਾਰ ਜਵਾਬਾਂ ਲਈ ਵਰਣਨ ਹੈਸ਼ ਦੀ ਵਰਤੋਂ ਕਰੋ
     int index = Math.abs(description.hashCode() % storyTemplates.length);
     return storyTemplates[index];
 }
 ```
 
-### 3. ਕਹਾਣੀ ਸੇਵਾ
+### 3. ਸਟੋਰੀ ਸਰਵਿਸ
 
-**ਫਾਈਲ:** `StoryService.java`
+**ਫਾਇਲ:** `StoryService.java`
 
-ਇਹ ਸੇਵਾ GitHub ਮਾਡਲਾਂ ਨਾਲ ਸੰਚਾਰ ਕਰਦੀ ਹੈ ਤਾਂ ਜੋ ਕਹਾਣੀਆਂ ਬਣਾਈਆਂ ਜਾ ਸਕਣ:
+ਇਹ ਸਰਵਿਸ Azure AI Foundry ਨਾਲ ਸੰਪਰਕ ਕਰਦਾ ਹੈ ਅਤੇ ਕੀ-ਲੈੱਸ ਅਥੈਂਟੀਕੇਸ਼ਨ ਦੀ ਵਰਤੋਂ ਕਰਕੇ ਕਹਾਣੀਆਂ ਬਣਾਉਂਦਾ ਹੈ:
 
 ```java
 @Service
@@ -160,18 +160,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // Foundry ਦਾ OpenAI-ਅਨੁਰੂਪ ਐਂਡਪੌਇੰਟ /openai/v1/ ਦੇ ਹੇਠਾਂ ਹੈ
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // Microsoft Entra ID ਨਾਲ ਬਿਨਾਂ ਕੁੰਜੀ ਦੇ ਪ੍ਰਮਾਣੀਕਰਨ (ਕੋਈ API ਕੁੰਜੀ ਨਹੀਂ)
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -182,16 +186,16 @@ public class StoryService {
         
         String userPrompt = "Write a fun short story about a pet described as: " + description;
         
-        // Configure the AI request
+        // AI ਬੇਨਤੀ ਨੂੰ ਸੰਰਚਿਤ ਕਰੋ
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(modelName)
                 .addSystemMessage(systemPrompt)
                 .addUserMessage(userPrompt)
-                .maxCompletionTokens(500)  // Limit response length
-                .temperature(0.8)          // Control creativity (0.0-1.0)
+                .maxCompletionTokens(500)  // ਜਵਾਬ ਦੀ ਲੰਬਾਈ ਸੀਮਤ ਕਰੋ
+                .temperature(0.8)          // ਰਚਨਾਤਮਕਤਾ ਨੂੰ ਨਿਯੰਤਰਿਤ ਕਰੋ (0.0-1.0)
                 .build();
         
-        // Send request and get response
+        // ਬੇਨਤੀ ਭੇਜੋ ਅਤੇ ਜਵਾਬ ਪ੍ਰਾਪਤ ਕਰੋ
         ChatCompletion response = openAIClient.chat().completions().create(params);
         
         return response.choices().get(0).message().content().orElse("");
@@ -199,19 +203,19 @@ public class StoryService {
 }
 ```
 
-**ਮੁੱਖ ਹਿੱਸੇ:**
+**ਮੁੱਖ ਘਟਕ:**
 
-1. **OpenAI ਕਲਾਇੰਟ**: GitHub ਮਾਡਲਾਂ ਲਈ ਕਨਫਿਗਰ ਕੀਤੇ ਗਏ ਅਧਿਕਾਰਤ OpenAI ਜਾਵਾ SDK ਦੀ ਵਰਤੋਂ ਕਰਦਾ ਹੈ
-2. **ਸਿਸਟਮ ਪ੍ਰੌੰਪਟ**: AI ਦੇ ਵਿਵਹਾਰ ਨੂੰ ਪਰਿਵਾਰ-ਮਿਤ੍ਰ ਪਾਲਤੂ ਕਹਾਣੀਆਂ ਲਿਖਣ ਲਈ ਸੈਟ ਕਰਦਾ ਹੈ
-3. **ਯੂਜ਼ਰ ਪ੍ਰੌੰਪਟ**: AI ਨੂੰ ਸਪਸ਼ਟ ਦਿਸ਼ਾ ਦਿੰਦਾ ਹੈ ਕਿ ਕਿਹੜੀ ਕਹਾਣੀ ਲਿਖਣੀ ਹੈ
-4. **ਪੈਰਾਮੀਟਰ**: ਕਹਾਣੀ ਦੀ ਲੰਬਾਈ ਅਤੇ ਕ੍ਰੀਏਟਿਵ ਲੈਵਲ ਨੂੰ ਨਿਯੰਤਰਿਤ ਕਰਦਾ ਹੈ
-5. **ਗਲਤੀ ਸੰਭਾਲਣਾ**: ਐਕਸੈਪਸ਼ਨ ਸੁੱਟਦਾ ਹੈ ਜਿਸਨੂੰ ਕੰਟਰੋਲਰ ਫੜਦਾ ਹੈ ਅਤੇ ਸੰਭਾਲਦਾ ਹੈ
+1. **OpenAI ਕਲਾਇੰਟ**: ਅਧਿਕਾਰਿਤ OpenAI ਜਾਵਾ SDK ਜੋ Azure AI Foundry (ਕੀਲੈੱਸ) ਲਈ ਕੰਫਿਗਰ ਕੀਤਾ ਗਿਆ ਹੈ
+2. **ਸਿਸਟਮ ਪ੍ਰਾਂਪਟ**: AI ਦੇ ਵਿਵਹਾਰ ਨੂੰ ਪਰਿਵਾਰ-ਮੈਤਰ ਸਟੋਰੀਜ਼ ਲਿਖਣ ਲਈ ਸੈੱਟ ਕਰਦਾ ਹੈ
+3. **ਯੂਜ਼ਰ ਪ੍ਰਾਂਪਟ**: AI ਨੂੰ ਉਹ ਕਹਾਣੀ ਲਿਖਣ ਲਈ ਤਕਲੀਫ਼ ਦਿੰਦਾ ਹੈ ਜੋ ਵਰਣਨ 'ਤੇ ਅਧਾਰਿਤ ਹੈ
+4. **ਪੈਰਾਮੀਟਰਸ**: ਕਹਾਣੀ ਦੀ ਲੰਬਾਈ ਅਤੇ ਕ੍ਰੀਏਟਿਵਿਟੀ ਲੈਵਲ ਨੂੰ ਨਿਯੰਤਰਿਤ ਕਰਦਾ ਹੈ
+5. **ਏਰਰ ਹੈਂਡਲਿੰਗ**: ਐਸਪਸ਼ਨਾਂ ਨੂੰ ਥ੍ਰੋ ਕਰਦਾ ਹੈ ਜਿਨ੍ਹਾਂ ਨੂੰ ਕੰਟਰੋਲਰ ਫੜਦਾ ਅਤੇ ਸੰਭਾਲਦਾ ਹੈ
 
-### 4. ਵੈੱਬ ਟੈਂਪਲੇਟ
+### 4. ਵੈੱਬ ਟੈਂਪਲੇਟਸ
 
-**ਫਾਈਲ:** `index.html` (ਅੱਪਲੋਡ ਫਾਰਮ)
+**ਫਾਇਲ:** `index.html` (ਅਪਲੋਡ ਫਾਰਮ)
 
-ਮੁੱਖ ਪੰਨਾ ਜਿੱਥੇ ਯੂਜ਼ਰ ਆਪਣੇ ਪਾਲਤੂ ਜਾਨਵਰਾਂ ਦਾ ਵੇਰਵਾ ਦਿੰਦੇ ਹਨ:
+ਮੁੱਖ ਸਫ਼ਾ ਇੱਥੇ ਯੂਜ਼ਰ ਆਪਣੇ ਪੈਟ ਦਾ ਵੇਰਵਾ ਦਿੰਦੇ ਹਨ:
 
 ```html
 <!DOCTYPE html>
@@ -258,9 +262,9 @@ public class StoryService {
 </html>
 ```
 
-**ਫਾਈਲ:** `result.html` (ਕਹਾਣੀ ਪ੍ਰਦਰਸ਼ਨ)
+**ਫਾਇਲ:** `result.html` (ਸਟੋਰੀ ਦਿਖਾਉਣਾ)
 
-ਜਨਰੇਟ ਕੀਤੀ ਕਹਾਣੀ ਦਿਖਾਉਂਦਾ ਹੈ:
+ਉਤਪੰਨ ਕਹਾਣੀ ਦਿਖਾਉਂਦਾ ਹੈ:
 
 ```html
 <!DOCTYPE html>
@@ -295,16 +299,16 @@ public class StoryService {
 
 **ਟੈਂਪਲੇਟ ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ:**
 
-1. **Thymeleaf ਇੰਟੀਗ੍ਰੇਸ਼ਨ**: ਗਤੀਸ਼ੀਲ ਸਮੱਗਰੀ ਲਈ `th:` ਐਟ੍ਰਿਬਿਊਟ ਦੀ ਵਰਤੋਂ ਕਰਦਾ ਹੈ
-2. **ਰਿਸਪਾਂਸਿਵ ਡਿਜ਼ਾਈਨ**: CSS ਸਟਾਈਲਿੰਗ ਮੋਬਾਈਲ ਅਤੇ ਡੈਸਕਟਾਪ ਲਈ
-3. **ਗਲਤੀ ਸੰਭਾਲਣਾ**: ਯੂਜ਼ਰਾਂ ਨੂੰ ਵੈਲੀਡੇਸ਼ਨ ਗਲਤੀਆਂ ਦਿਖਾਉਂਦਾ ਹੈ
-4. **ਕਲਾਇੰਟ-ਸਾਈਡ ਪ੍ਰੋਸੈਸਿੰਗ**: ਚਿੱਤਰ ਵਿਸ਼ਲੇਸ਼ਣ ਲਈ ਜਾਵਾਸਕ੍ਰਿਪਟ (Transformers.js ਦੀ ਵਰਤੋਂ ਕਰਕੇ)
+1. **ਥਾਈਮਲੀਫ਼ ਇੰਟਿਗ੍ਰੇਸ਼ਨ**: ਡਾਇਨਾਮਿਕ ਸਮੱਗਰੀ ਲਈ `th:` ਐਟਰਿਬਿਊਟ ਦੀ ਵਰਤੋਂ
+2. **ਰੈਸਪਾਂਸਿਵ ਡਿਜ਼ਾਈਨ**: ਮੋਬਾਈਲ ਅਤੇ ਡੈਸਕਟਾਪ ਲਈ CSS ਸਟਾਈਲਿੰਗ
+3. **ਏਰਰ ਹੈਂਡਲਿੰਗ**: ਯੂਜ਼ਰਾਂ ਨੂੰ ਵੈਰੀਫਿਕੇਸ਼ਨ ਦੇ ਤ੍ਰੁੱਟੀਆਂ ਦਿਖਾਉਂਦਾ ਹੈ
+4. **ਕਲਾਇੰਟ-ਸਾਈਡ ਪ੍ਰੋਸੈਸਿੰਗ**: ਜਾਵਾਸਕ੍ਰਿਪਟ ਇਮੇਜ ਵਿਸ਼ਲੇਸ਼ਣ ਲਈ (Transformers.js ਦੀ ਵਰਤੋਂ ਨਾਲ)
 
-### 5. ਸੰਰਚਨਾ
+### 5. ਕਾਂਫਿਗਰੇਸ਼ਨ
 
-**ਫਾਈਲ:** `application.properties`
+**ਫਾਇਲ:** `application.properties`
 
-ਐਪਲੀਕੇਸ਼ਨ ਲਈ ਸੰਰਚਨਾ ਸੈਟਿੰਗਾਂ:
+ਐਪਲੀਕੇਸ਼ਨ ਲਈ ਕਾਂਫਿਗਰੇਸ਼ਨ ਸੈਟਿੰਗਜ਼:
 
 ```properties
 spring.application.name=pet-story-app
@@ -316,52 +320,55 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
-**ਸੰਰਚਨਾ ਦੀ ਵਿਆਖਿਆ:**
+**ਕਾਂਫਿਗਰੇਸ਼ਨ ਦੀ ਵਿਆਖਿਆ:**
 
-1. **ਫਾਈਲ ਅੱਪਲੋਡ**: 10MB ਤੱਕ ਦੀਆਂ ਚਿੱਤਰਾਂ ਦੀ ਆਗਿਆ ਦਿੰਦਾ ਹੈ
-2. **ਲੌਗਿੰਗ**: ਕਾਰਜ ਦੌਰਾਨ ਕੀ ਲੌਗ ਕੀਤਾ ਜਾਂਦਾ ਹੈ ਇਸਨੂੰ ਨਿਯੰਤਰਿਤ ਕਰਦਾ ਹੈ
-3. **GitHub ਮਾਡਲਾਂ**: ਕਿਹੜੇ AI ਮਾਡਲ ਅਤੇ ਐਂਡਪੌਇੰਟ ਦੀ ਵਰਤੋਂ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ ਇਹ ਦਰਸਾਉਂਦਾ ਹੈ
-4. **ਸੁਰੱਖਿਆ**: ਸੰਵੇਦਨਸ਼ੀਲ ਜਾਣਕਾਰੀ ਨੂੰ ਬਾਹਰ ਆਉਣ ਤੋਂ ਰੋਕਣ ਲਈ ਗਲਤੀ ਸੰਭਾਲਣ ਦੀ ਸੰਰਚਨਾ
+1. **ਫਾਇਲ ਅਪਲੋਡ**: 10MB ਤੱਕ ਦੀਆਂ ਇਮੇਜਾਂ ਦੀ ਆਗਿਆ
+2. **ਲਾਗਿੰਗ**: ਚਲਾਉਣ ਦੌਰਾਨ ਕਿੜ੍ਹਾ ਜਾਣਕਾਰੀ ਲਾਗ ਕੀਤੀ ਜਾਵੇ
+3. **Azure AI Foundry**: ਵਰਤਣ ਲਈ ਐਂਡਪੌਇੰਟ ਅਤੇ ਮਾਡਲ ਡਿਪਲੋਇਮੈਂਟ ਦਰਸਾਉਂਦਾ ਹੈ (ਕੀਲੈੱਸ ਅਥੈਂਟੀਕੇਸ਼ਨ)
+4. **ਸੁਰੱਖਿਆ**: ਸੈਂਸੀਟਿਵ ਜਾਣਕਾਰੀ ਪ੍ਰਗਟ ਨਾ ਹੋਣ ਨਾਲ ਸਮੰਬੰਧਤ ਏਰਰ ਹੈਂਡਲਿੰਗ
 
 ## ਐਪਲੀਕੇਸ਼ਨ ਚਲਾਉਣਾ
 
-### ਕਦਮ 1: ਆਪਣਾ GitHub ਟੋਕਨ ਸੈਟ ਕਰੋ
+### ਕਦਮ 1: ਸਾਇਨ ਇਨ ਕਰੋ ਅਤੇ ਆਪਣਾ ਐਂਡਪੌਇੰਟ ਸੈੱਟ ਕਰੋ
 
-ਸਭ ਤੋਂ ਪਹਿਲਾਂ, ਤੁਹਾਨੂੰ ਆਪਣਾ GitHub ਟੋਕਨ ਵਾਤਾਵਰਣ ਵੈਰੀਏਬਲ ਵਜੋਂ ਸੈਟ ਕਰਨਾ ਹੋਵੇਗਾ:
+ਅਥੈਂਟੀਕੇਸ਼ਨ ਕੀਲੈੱਸ (Microsoft Entra ID) ਹੈ, ਇਸ ਲਈ ਕੋਈ API ਕੀ ਨਹੀਂ। ਸਾਇਨ ਇਨ ਕਰੋ ਅਤੇ ਆਪਣਾ Foundry ਐਂਡਪੌਇੰਟ ਸੈੱਟ ਕਰੋ:
 
-**Windows (ਕਮਾਂਡ ਪ੍ਰਾਂਪਟ):**
+**ਵਿੰਡੋਜ਼ (ਕਮਾਂਡ ਪ੍ਰੰਪਟ):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-**Windows (ਪਾਵਰਸ਼ੈੱਲ):**
+**ਵਿੰਡੋਜ਼ (ਪਾਵਰਸ਼ੈੱਲ):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
-**Linux/macOS:**
+**ਲਿਨਕਸ/ਮੈਕਓਐਸ:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-**ਇਹ ਕਿਉਂ ਲੋੜੀਂਦਾ ਹੈ:**
-- GitHub ਮਾਡਲਾਂ ਨੂੰ AI ਮਾਡਲਾਂ ਤੱਕ ਪਹੁੰਚ ਲਈ ਪ੍ਰਮਾਣਿਕਤਾ ਦੀ ਲੋੜ ਹੁੰਦੀ ਹੈ
-- ਵਾਤਾਵਰਣ ਵੈਰੀਏਬਲ ਦੀ ਵਰਤੋਂ ਕਰਕੇ ਸੰਵੇਦਨਸ਼ੀਲ ਟੋਕਨ ਨੂੰ ਸਰੋਤ ਕੋਡ ਤੋਂ ਬਾਹਰ ਰੱਖਿਆ ਜਾਂਦਾ ਹੈ
-- `models:read` ਸਕੋਪ AI ਇੰਫਰੈਂਸ ਤੱਕ ਪਹੁੰਚ ਪ੍ਰਦਾਨ ਕਰਦਾ ਹੈ
+**ਇਸ ਦੀ ਲੋੜ ਕਿਉਂ:**
+- Azure AI Foundry Microsoft Entra ID ਨਾਲ ਇਨਫਰੰਸ ਰਿਕਵੈਸਟਾਂ ਦੀ ਪ੍ਰਮਾਣਿਕਤਾ ਕਰਦਾ ਹੈ
+- ਕੀਲੈੱਸ ਅਥੈਂਟੀਕੇਸ਼ਨ ਦਾ ਅਰਥ ਹੈ ਕਿ ਤੁਹਾਡੇ ਸੋਰਸ ਕੋਡ ਜਾਂ ਵਾਤਾਵਰਨ ਵਿੱਚ ਕੋਈ ਗੁਪਤਚਰ ਨਹੀਂ ਹੁੰਦੇ
+- ਤੁਹਾਡੇ ਖਾਤੇ ਨੂੰ ਸਰੋਤ 'ਤੇ **Cognitive Services OpenAI User** ਰੋਲ ਦੀ ਲੋੜ ਹੁੰਦੀ ਹੈ
 
-### ਕਦਮ 2: ਬਿਲਡ ਅਤੇ ਚਲਾਓ
+### ਕਦਮ 2: ਬਿਲਡ ਕਰੋ ਅਤੇ ਚਲਾਓ
 
 ਪ੍ਰੋਜੈਕਟ ਡਾਇਰੈਕਟਰੀ ਵਿੱਚ ਜਾਓ:
 ```bash
 cd 04-PracticalSamples/petstory
 ```
 
-ਐਪਲੀਕੇਸ਼ਨ ਬਿਲਡ ਕਰੋ:
+ਐਪਲੀਕੇਸ਼ਨ ਬਣਾਓ:
 ```bash
 mvn clean compile
 ```
@@ -371,51 +378,53 @@ mvn clean compile
 mvn spring-boot:run
 ```
 
-ਐਪਲੀਕੇਸ਼ਨ `http://localhost:8080` 'ਤੇ ਸ਼ੁਰੂ ਹੋ ਜਾਵੇਗਾ।
+ਐਪਲੀਕੇਸ਼ਨ `http://localhost:8080` 'ਤੇ ਚਲ਼ੇਗਾ।
 
-### ਕਦਮ 3: ਐਪਲੀਕੇਸ਼ਨ ਦੀ ਜਾਂਚ ਕਰੋ
+### ਕਦਮ 3: ਐਪਲੀਕੇਸ਼ਨ ਟੈਸਟ ਕਰੋ
 
-1. **ਖੋਲ੍ਹੋ** `http://localhost:8080` ਆਪਣੇ ਬ੍ਰਾਊਜ਼ਰ ਵਿੱਚ
-2. **ਵੇਰਵਾ ਦਿਓ** ਆਪਣੇ ਪਾਲਤੂ ਜਾਨਵਰ ਦਾ ਟੈਕਸਟ ਖੇਤਰ ਵਿੱਚ (ਜਿਵੇਂ, "ਇੱਕ ਖੇਡਣ ਵਾਲਾ ਗੋਲਡਨ ਰਿਟਰੀਵਰ ਜੋ ਫੈਚ ਖੇਡਣਾ ਪਸੰਦ ਕਰਦਾ ਹੈ")
-3. **ਕਲਿੱਕ ਕਰੋ** "ਕਹਾਣੀ ਜਨਰੇਟ ਕਰੋ" ਇੱਕ AI-ਜਨਰੇਟ ਕੀਤੀ ਕਹਾਣੀ ਪ੍ਰਾਪਤ ਕਰਨ ਲਈ
-4. **ਵਿਕਲਪਕ ਤੌਰ 'ਤੇ**, ਇੱਕ ਪਾਲਤੂ ਜਾਨਵਰ ਦੀ ਚਿੱਤਰ ਅੱਪਲੋਡ ਕਰੋ ਤਾਂ ਜੋ ਵੇਰਵਾ ਆਟੋਮੈਟਿਕ ਬਣ ਸਕੇ
-5. **ਦੇਖੋ** ਆਪਣੇ ਪਾਲਤੂ ਜਾਨਵਰ ਦੇ ਵੇਰਵੇ 'ਤੇ ਆਧਾਰਿਤ ਰਚਨਾਤਮਕ ਕਹਾਣੀ
+1. ਆਪਣੇ ਬ੍ਰਾਊਜ਼ਰ ਵਿੱਚ `http://localhost:8080` ਖੋਲ੍ਹੋ
+2. ਟੈਕਸਟ ਏਰੀਆ ਵਿੱਚ ਆਪਣੇ ਪੈਟ ਦਾ ਵੇਰਵਾ ਦਿਓ (ਜਿਵੇਂ, "ਇੱਕ ਖੇਡਾਂ ਵਾਲਾ ਗੋਲਡਨ ਰੀਟਰੀਵਰ ਜੋ ਲੈ ਜਾਨਾ ਪਸੰਦ ਕਰਦਾ ਹੈ")
+3. "Generate Story" 'ਤੇ ਕਲਿਕ ਕਰੋ ਤਾਂ ਜੋ AI ਵੱਲੋਂ ਕਹਾਣੀ ਬਣਾਈ ਜਾਵੇ
+4. ਅਲਟਰਨੇਟਿਵ ਤੌਰ 'ਤੇ, ਆਪਣੇ ਪੈਟ ਦੀ ਇਮੇਜ ਅਪਲੋਡ ਕਰੋ ਤਾਂ ਜੋ ਆਪਣੇ ਆਪ ਡਿਸਕ੍ਰਿਪਸ਼ਨ ਬਣ ਜਾਵੇ
+5. ਆਪਣੇ ਪੈਟ ਦੇ ਵੇਰਵੇ ਬਿਨਾ ਕ੍ਰੀਏਟਿਵ ਕਹਾਣੀ ਵੇਖੋ
 
-## ਇਹ ਸਾਰਾ ਕਿਵੇਂ ਕੰਮ ਕਰਦਾ ਹੈ
+## ਇਹ ਸਾਰਾ ਕੰਮ ਕਿਵੇਂ ਕਰਦਾ ਹੈ
 
-ਜਦੋਂ ਤੁਸੀਂ ਇੱਕ ਪਾਲਤੂ ਕਹਾਣੀ ਜਨਰੇਟ ਕਰਦੇ ਹੋ, ਤਾਂ ਪੂਰਾ ਪ੍ਰਕਿਰਿਆ ਇਹ ਹੈ:
+ਇਹ ਰਹੀ ਪੂਰੀ ਪ੍ਰਕਿਰਿਆ ਜਦੋਂ ਤੁਸੀਂ ਪੈਟ ਦੀ ਕਹਾਣੀ ਬਣਾਉਂਦੇ ਹੋ:
 
-1. **ਯੂਜ਼ਰ ਇਨਪੁਟ**: ਤੁਸੀਂ ਵੈੱਬ ਫਾਰਮ 'ਤੇ ਆਪਣੇ ਪਾਲਤੂ ਜਾਨਵਰ ਦਾ ਵੇਰਵਾ ਦਿੰਦੇ ਹੋ
-2. **ਫਾਰਮ ਸਬਮਿਸ਼ਨ**: ਬ੍ਰਾਊਜ਼ਰ `/generate-story` ਨੂੰ POST ਰਿਕਵੈਸਟ ਭੇਜਦਾ ਹੈ
-3. **ਕੰਟਰੋਲਰ ਪ੍ਰੋਸੈਸਿੰਗ**: `PetController` ਇਨਪੁਟ ਦੀ ਜਾਂਚ ਅਤੇ ਸੈਨੀਟਾਈਜ਼ ਕਰਦਾ ਹੈ
-4. **AI ਸੇਵਾ ਕਾਲ**: `StoryService` GitHub ਮਾਡਲਾਂ API ਨੂੰ ਰਿਕਵੈਸਟ ਭੇਜਦਾ ਹੈ
-5. **ਕਹਾਣੀ ਜਨਰੇਸ਼ਨ**: AI ਵੇਰਵੇ ਦੇ ਆਧਾਰ 'ਤੇ ਰਚਨਾਤਮਕ ਕਹਾਣੀ ਬਣਾਉਂਦਾ ਹੈ
-6. **ਰਿਸਪਾਂਸ ਹੈਂਡਲਿੰਗ**: ਕੰਟਰੋਲਰ ਕਹਾਣੀ ਪ੍ਰਾਪਤ ਕਰਦਾ ਹੈ ਅਤੇ ਮਾਡਲ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰਦਾ ਹੈ
-7. **ਟੈਂਪਲੇਟ ਰੈਂਡਰਿੰਗ**: Thymeleaf `result.html` ਨੂੰ ਕਹਾਣੀ ਨਾਲ ਰੈਂਡਰ ਕਰਦਾ ਹੈ
-8. **ਪ੍ਰਦਰਸ਼ਨ**: ਯੂਜ਼ਰ ਆਪਣੇ ਬ੍ਰਾਊਜ਼ਰ ਵਿੱਚ ਜਨਰੇਟ ਕੀਤੀ ਕਹਾਣੀ ਵੇਖਦਾ ਹੈ
+1. **ਯੂਜ਼ਰ ਇਨਪੁੱਟ**: ਤੁਸੀਂ ਵੈੱਬ ਫਾਰਮ ਤੇ ਆਪਣੇ ਪੈਟ ਦਾ ਵੇਰਵਾ ਦਿੰਦੇ ਹੋ
+2. **ਫਾਰਮ ਸਬਮੀਸ਼ਨ**: ਬ੍ਰਾਊਜ਼ਰ `/generate-story` ਨੂੰ POST ਬੇਨਤੀ ਭੇਜਦਾ ਹੈ
+3. **ਕੰਟਰੋਲਰ ਪ੍ਰੋਸੈਸਿੰਗ**: `PetController` ਇਨਪੁੱਟ ਨੂੰ ਵੈਲੀਡੇਟ ਅਤੇ ਸੈਨਿਟਾਈਜ਼ ਕਰਦਾ ਹੈ
+4. **AI ਸਰਵਿਸ ਕਾਲ**: `StoryService` Azure AI Foundry ਮਾਡਲ ਨੂੰ ਬੇਨਤੀ ਭੇਜਦਾ ਹੈ
+5. **ਸਟੋਰੀ ਜੈਨਰੇਸ਼ਨ**: AI ਵੇਰਵੇ ਦੇ ਅਧਾਰ 'ਤੇ ਇੱਕ ਕ੍ਰੀਏਟਿਵ ਕਹਾਣੀ ਬਣਾਉਂਦਾ ਹੈ
+6. **ਰਿਸਪਾਂਸ ਹੈਂਡਲਿੰਗ**: ਕੰਟਰੋਲਰ ਕਹਾਣੀ ਪ੍ਰਾਪਤ ਕਰਕੇ ਇਸ ਨੂੰ ਮਾਡਲ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰਦਾ ਹੈ
+7. **ਟੈਂਪਲੇਟ ਰੈਂਡਰਿੰਗ**: ਥਾਈਮਲੀਫ਼ `result.html` ਨੂੰ ਕਹਾਣੀ ਨਾਲ ਰੇਂਡਰ ਕਰਦਾ ਹੈ
+8. **ਦਿਖਾਈ ਦੇਣਾ**: ਯੂਜ਼ਰ ਆਪਣੇ ਬ੍ਰਾਊਜ਼ਰ ਵਿੱਚ ਬਣਾਈ ਗਈ ਕਹਾਣੀ ਵੇਖਦਾ ਹੈ
 
-**ਗਲਤੀ ਸੰਭਾਲਣ ਪ੍ਰਕਿਰਿਆ:**
-ਜੇ AI ਸੇਵਾ ਅਸਫਲ ਹੁੰਦੀ ਹੈ:
-1. ਕੰਟਰੋਲਰ ਐਕਸੈਪਸ਼ਨ ਫੜਦਾ ਹੈ
-2. ਪਹਿਲਾਂ ਤੋਂ ਲਿਖੀਆਂ ਟੈਂਪਲੇਟਾਂ ਦੀ ਵਰਤੋਂ ਕਰਕੇ ਬੈਕਅੱਪ ਕਹਾਣੀ ਬਣਾਉਂਦਾ ਹੈ
-3. AI ਦੀ ਉਪਲਬਧਤਾ ਬਾਰੇ ਨੋਟ ਦੇ ਨਾਲ ਬੈਕਅੱਪ ਕਹਾਣੀ ਦਿਖਾਉਂਦਾ ਹੈ
-4. ਯੂਜ਼ਰ ਨੂੰ ਫਿਰ ਵੀ ਇੱਕ ਕਹਾਣੀ ਮਿਲਦੀ ਹੈ, ਜੋ ਚੰਗੇ ਯੂਜ਼ਰ ਅਨੁਭਵ ਨੂੰ ਯਕੀਨੀ ਬਣਾਉਂਦਾ ਹੈ
+**ਏਰਰ ਹੈਂਡਲਿੰਗ ਫਲੋ:**
+ਜੇ AI ਸਰਵਿਸ ਫੇਲ ਹੁੰਦੀ ਹੈ:
+1. ਕੰਟਰੋਲਰ ਐਕਸਪਸ਼ਨ ਫੜਦਾ ਹੈ
+2. ਪਹਿਲਾਂ ਲਿਖੇ ਟੈਂਪਲੇਟਾਂ ਨਾਲ ਫਾਲਬੈਕ ਕਹਾਣੀ ਬਣਾਉਂਦਾ ਹੈ
+3. AI ਅਣਉਪਲਬਧਤਾ ਬਾਰੇ ਨੋਟ ਦੇ ਨਾਲ ਫਾਲਬੈਕ ਕਹਾਣੀ ਦਿਖਾਉਂਦਾ ਹੈ
+4. ਯੂਜ਼ਰ ਨੂੰ ਫਿਰ ਵੀ ਕਹਾਣੀ ਮਿਲਦੀ ਹੈ, ਜਿਸ ਨਾਲ ਉਨ੍ਹਾਂ ਦਾ ਬਿਹਤਰ ਅਨੁਭਵ ਯਕੀਨੀ ਬਣਦਾ ਹੈ
 
-## ਏਆਈ ਇੰਟੀਗ੍ਰੇਸ਼ਨ ਨੂੰ ਸਮਝਣਾ
+## AI ਇੰਟਿਗ੍ਰੇਸ਼ਨ ਨੂੰ ਸਮਝਣਾ
 
-### GitHub ਮਾਡਲਾਂ API
-ਐਪਲੀਕੇਸ਼ਨ GitHub ਮਾਡਲਾਂ ਦੀ ਵਰਤੋਂ ਕਰਦਾ ਹੈ, ਜੋ ਵੱਖ-ਵੱਖ AI ਮਾਡਲਾਂ ਤੱਕ ਮੁਫ਼ਤ ਪਹੁੰਚ ਪ੍ਰਦਾਨ ਕਰਦਾ ਹੈ:
+### Azure AI Foundry (ਕੀਲੈੱਸ)
+ਐਪਲੀਕੇਸ਼ਨ Microsoft Entra ID ਦੇ ਨਾਲ ਕੀਲੈੱਸ ਅਥੈਂਟੀਕੇਸ਼ਨ ਵਰਤਦਾ Azure AI Foundry ਵਰਤਦਾ ਹੈ:
 
 ```java
-// Authentication with GitHub token
+// ਕੀਲ ਰਹਿਤ ਪ੍ਰਮਾਣਿਕਤਾ - ਕੋਈ API ਕੀ ਨਹੀਂ
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
-### ਪ੍ਰੌੰਪਟ ਇੰਜੀਨੀਅਰਿੰਗ
-ਸੇਵਾ ਚੰਗੇ ਨਤੀਜੇ ਪ੍ਰਾਪਤ ਕਰਨ ਲਈ ਧਿਆਨਪੂਰਵਕ ਤਿਆਰ ਕੀਤੇ ਪ੍ਰੌੰਪਟ ਦੀ ਵਰਤੋਂ ਕਰਦੀ ਹੈ:
+### ਪ੍ਰਾਂਪਟ ਇੰਜੀਨੀਅਰਿੰਗ
+ਸਰਵਿਸ ਚੰਗੇ ਨਤੀਜੇ ਲਈ ਧਿਆਨ ਸਹਿਤ ਪ੍ਰਾਂਪਟ ਵਰਤਦੀ ਹੈ:
 
 ```java
 String systemPrompt = "You are a creative storyteller who writes fun, " +
@@ -424,7 +433,7 @@ String systemPrompt = "You are a creative storyteller who writes fun, " +
 ```
 
 ### ਰਿਸਪਾਂਸ ਪ੍ਰੋਸੈਸਿੰਗ
-AI ਰਿਸਪਾਂਸ ਨੂੰ ਕੱਢਿਆ ਅਤੇ ਵੈਲੀਡੇਟ ਕੀਤਾ ਜਾਂਦਾ ਹੈ:
+AI ਦਾ ਰਿਸਪਾਂਸ ਕੱਢਿਆ ਅਤੇ ਵੈਰੀਫਾਈ ਕੀਤਾ ਜਾਂਦਾ ਹੈ:
 
 ```java
 ChatCompletion response = openAIClient.chat().completions().create(params);
@@ -433,7 +442,11 @@ String story = response.choices().get(0).message().content().orElse("");
 
 ## ਅਗਲੇ ਕਦਮ
 
-ਹੋਰ ਉਦਾਹਰਣਾਂ ਲਈ, ਵੇਖੋ [ਚੈਪਟਰ 04: ਪ੍ਰੈਕਟਿਕਲ ਸੈਂਪਲ](../README.md)
+ਹੋਰ ਉਦਾਹਰਨਾਂ ਲਈ, ਦੇਖੋ [ਚੈਪਟਰ 04: ਪ੍ਰੈਕਟਿਕਲ ਨਮੂਨੇ](../README.md)
 
-**ਅਸਵੀਕਾਰਨਾ**:  
-ਇਹ ਦਸਤਾਵੇਜ਼ AI ਅਨੁਵਾਦ ਸੇਵਾ [Co-op Translator](https://github.com/Azure/co-op-translator) ਦੀ ਵਰਤੋਂ ਕਰਕੇ ਅਨੁਵਾਦ ਕੀਤਾ ਗਿਆ ਹੈ। ਜਦੋਂ ਕਿ ਅਸੀਂ ਸਹੀਤਾ ਲਈ ਯਤਨਸ਼ੀਲ ਹਾਂ, ਕਿਰਪਾ ਕਰਕੇ ਧਿਆਨ ਦਿਓ ਕਿ ਸਵੈਚਾਲਿਤ ਅਨੁਵਾਦਾਂ ਵਿੱਚ ਗਲਤੀਆਂ ਜਾਂ ਅਸੁਚੱਜੇਪਣ ਹੋ ਸਕਦੇ ਹਨ। ਮੂਲ ਦਸਤਾਵੇਜ਼ ਨੂੰ ਇਸਦੀ ਮੂਲ ਭਾਸ਼ਾ ਵਿੱਚ ਅਧਿਕਾਰਤ ਸਰੋਤ ਮੰਨਿਆ ਜਾਣਾ ਚਾਹੀਦਾ ਹੈ। ਮਹੱਤਵਪੂਰਨ ਜਾਣਕਾਰੀ ਲਈ, ਪੇਸ਼ੇਵਰ ਮਨੁੱਖੀ ਅਨੁਵਾਦ ਦੀ ਸਿਫਾਰਸ਼ ਕੀਤੀ ਜਾਂਦੀ ਹੈ। ਇਸ ਅਨੁਵਾਦ ਦੀ ਵਰਤੋਂ ਤੋਂ ਪੈਦਾ ਹੋਣ ਵਾਲੇ ਕਿਸੇ ਵੀ ਗਲਤਫਹਿਮੀ ਜਾਂ ਗਲਤ ਵਿਆਖਿਆ ਲਈ ਅਸੀਂ ਜ਼ਿੰਮੇਵਾਰ ਨਹੀਂ ਹਾਂ।
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**ਅਸਵੀਕਾਰੋਪਣ**:
+ਇਸ ਦਸਤਾਵੇਜ਼ ਦਾ ਅਨੁਵਾਦ ਏਆਈ ਅਨੁਵਾਦ ਸੇਵਾ [Co-op Translator](https://github.com/Azure/co-op-translator) ਦੀ ਵਰਤੋਂ ਕਰਕੇ ਕੀਤਾ ਗਿਆ ਹੈ। ਜਦੋਂ ਕਿ ਅਸੀਂ ਸਹੀਤਾਵਾਂ ਲਈ ਯਤਨਸ਼ੀਲ ਹਾਂ, ਕਿਰਪਾ ਕਰਕੇ ਧਿਆਨ ਰੱਖੋ ਕਿ ਸਵੈਚਾਲਿਤ ਅਨੁਵਾਦਾਂ ਵਿੱਚ ਗਲਤੀਆਂ ਜਾਂ ਅਸਮੱਤਿਆਵਾਂ ਹੋ ਸਕਦੀਆਂ ਹਨ। ਮੂਲ ਦਸਤਾਵੇਜ਼ ਆਪਣੀ ਮੂਲ ਭਾਸ਼ਾ ਵਿੱਚ ਅਧਿਕਾਰਕ ਸਰੋਤ ਮੰਨਿਆ ਜਾਣਾ ਚਾਹੀਦਾ ਹੈ। ਜਰੂਰੀ ਜਾਣਕਾਰੀ ਲਈ, ਪੇਸ਼ੇਵਰ ਮਨੁੱਖੀ ਅਨੁਵਾਦ ਦੀ ਸਿਫ਼ਾਰਸ਼ ਕੀਤੀ ਜਾਂਦੀ ਹੈ। ਅਸੀਂ ਇਸ ਅਨੁਵਾਦ ਦੇ ਉਪਯੋਗ ਤੋਂ ਪੈਦਾ ਹੋਣ ਵਾਲੀਆਂ ਕਿਸੇ ਵੀ ਗਲਤਫਹਿਮੀਆਂ ਜਾਂ ਗਲਤ ਵਿਆਖਿਆਵਾਂ ਲਈ ਜਵਾਬਦੇਹ ਨਹੀਂ ਹਾਂ।
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->
