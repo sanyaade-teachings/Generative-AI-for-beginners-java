@@ -1,39 +1,40 @@
-# מדריך למתחילים למחשבון MCP
+# מדריך מחשבון MCP למתחילים
 
-## תוכן עניינים
+## תוכן העניינים
 
-- [מה תלמדו](../../../../04-PracticalSamples/calculator)
-- [דרישות מקדימות](../../../../04-PracticalSamples/calculator)
-- [הבנת מבנה הפרויקט](../../../../04-PracticalSamples/calculator)
-- [הסבר על הרכיבים המרכזיים](../../../../04-PracticalSamples/calculator)
-  - [1. אפליקציה ראשית](../../../../04-PracticalSamples/calculator)
-  - [2. שירות מחשבון](../../../../04-PracticalSamples/calculator)
-  - [3. לקוח MCP ישיר](../../../../04-PracticalSamples/calculator)
-  - [4. לקוח מבוסס AI](../../../../04-PracticalSamples/calculator)
-- [הרצת הדוגמאות](../../../../04-PracticalSamples/calculator)
-- [איך הכל עובד יחד](../../../../04-PracticalSamples/calculator)
-- [השלבים הבאים](../../../../04-PracticalSamples/calculator)
+- [מה תלמדו](#מה-תלמדו)
+- [דרישות מוקדמות](#דרישות-מוקדמות)
+- [הבנת מבנה הפרויקט](#הבנת-מבנה-הפרויקט)
+- [הסבר על הרכיבים המרכזיים](#הסבר-על-הרכיבים-המרכזיים)
+  - [1. האפליקציה הראשית](#1-האפליקציה-הראשית)
+  - [2. שירות המחשבון](#2-שירות-המחשבון)
+  - [3. לקוח MCP ישיר](#3-לקוח-mcp-ישיר)
+  - [4. לקוח מבוסס בינה מלאכותית](#4-לקוח-מבוסס-בינה-מלאכותית)
+- [הרצת הדוגמאות](#הרצת-הדוגמאות)
+- [כיצד הכל עובד יחד](#כיצד-הכל-עובד-יחד)
+- [השלבים הבאים](#השלבים-הבאים)
 
 ## מה תלמדו
 
-מדריך זה מסביר כיצד לבנות שירות מחשבון באמצעות פרוטוקול Model Context Protocol (MCP). תלמדו:
+מדריך זה מסביר כיצד לבנות שירות מחשבון באמצעות پروטוקול הקשר מודל (MCP). תלמדו:
 
-- כיצד ליצור שירות שה-AI יכול להשתמש בו ככלי
+- כיצד ליצור שירות שהבינה המלאכותית יכולה להשתמש בו ככלי
 - כיצד להגדיר תקשורת ישירה עם שירותי MCP
-- כיצד מודלים של AI יכולים לבחור באופן אוטומטי אילו כלים להשתמש
+- כיצד דגמי AI יכולים לבחור באופן אוטומטי אילו כלים להשתמש
 - ההבדל בין קריאות פרוטוקול ישירות לבין אינטראקציות בסיוע AI
 
-## דרישות מקדימות
+## דרישות מוקדמות
 
 לפני שמתחילים, ודאו שיש לכם:
 - Java 21 או גרסה גבוהה יותר מותקנת
-- Maven לניהול תלות
-- חשבון GitHub עם אסימון גישה אישי (PAT)
-- הבנה בסיסית של Java ו-Spring Boot
+- Maven לניהול תלותים
+- פריסת דגם Azure AI Foundry (הפעילו אותו עם `azd up` — ראו [פרק 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
+- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) מחובר עם `az login` (אימות ללא מפתח)
+- הבנה בסיסית ב-Java ו-Spring Boot
 
 ## הבנת מבנה הפרויקט
 
-לפרויקט המחשבון יש מספר קבצים חשובים:
+לפרויקט המחשבון יש כמה קבצים חשובים:
 
 ```
 calculator/
@@ -48,11 +49,11 @@ calculator/
 
 ## הסבר על הרכיבים המרכזיים
 
-### 1. אפליקציה ראשית
+### 1. האפליקציה הראשית
 
 **קובץ:** `McpServerApplication.java`
 
-זהו נקודת הכניסה לשירות המחשבון שלנו. זו אפליקציית Spring Boot סטנדרטית עם תוספת מיוחדת:
+זוהי נקודת הכניסה של שירות המחשבון שלנו. זוהי אפליקציית Spring Boot סטנדרטית עם תוספת מיוחדת אחת:
 
 ```java
 @SpringBootApplication
@@ -70,15 +71,15 @@ public class McpServerApplication {
 ```
 
 **מה זה עושה:**
-- מפעיל שרת אינטרנט של Spring Boot על פורט 8080
-- יוצר `ToolCallbackProvider` שמאפשר לשיטות המחשבון שלנו להיות זמינות ככלי MCP
-- האנומציה `@Bean` אומרת ל-Spring לנהל את זה כרכיב ששאר החלקים יכולים להשתמש בו
+- מפעיל שרת ווב Spring Boot ב-port 8080
+- יוצר `ToolCallbackProvider` שהופך את שיטות המחשבון שלנו לזמינות ככלי MCP
+- התווית `@Bean` אומרת ל-Spring לנהל את זה כרכיב שיכולות להשתמש בו חלקים אחרים
 
-### 2. שירות מחשבון
+### 2. שירות המחשבון
 
 **קובץ:** `CalculatorService.java`
 
-כאן מתבצעים כל החישובים. כל שיטה מסומנת עם `@Tool` כדי להפוך אותה לזמינה דרך MCP:
+כאן מתרחשות כל הפעולות המתמטיות. כל שיטה מסומנת עם `@Tool` כדי להופיע דרך MCP:
 
 ```java
 @Service
@@ -96,7 +97,7 @@ public class CalculatorService {
         return formatResult(a, "-", b, result);
     }
     
-    // More calculator operations...
+    // פעולות מחשבון נוספות...
     
     private String formatResult(double a, String operator, double b, double result) {
         return String.format("%.2f %s %.2f = %.2f", a, operator, b, result);
@@ -104,29 +105,29 @@ public class CalculatorService {
 }
 ```
 
-**תכונות מרכזיות:**
+**מאפיינים מרכזיים:**
 
-1. **אנומציית `@Tool`**: זה אומר ל-MCP שהשיטה הזו יכולה להיקרא על ידי לקוחות חיצוניים
-2. **תיאורים ברורים**: לכל כלי יש תיאור שעוזר למודלים של AI להבין מתי להשתמש בו
-3. **פורמט החזרה עקבי**: כל הפעולות מחזירות מחרוזות קריאות כמו "5.00 + 3.00 = 8.00"
-4. **טיפול בשגיאות**: חלוקה באפס ושורש ריבועי שלילי מחזירים הודעות שגיאה
+1. **התווית `@Tool`**: מודיעה ל-MCP כי שיטה זו ניתנת לקריאה על ידי לקוחות חיצוניים
+2. **תיאורים ברורים**: לכל כלי יש תיאור שעוזר לדגמי AI להבין מתי להשתמש בו
+3. **פורמט החזרה עקבי**: כל הפעולות מחזירות מחרוזות קריאות לבני אדם כמו "5.00 + 3.00 = 8.00"
+4. **טיפול בשגיאות**: חילוק באפס ושורש ריבועי שלילי מחזירים הודעות שגיאה
 
 **פעולות זמינות:**
-- `add(a, b)` - חיבור שני מספרים
-- `subtract(a, b)` - חיסור השני מהראשון
-- `multiply(a, b)` - כפל שני מספרים
-- `divide(a, b)` - חלוקת הראשון בשני (עם בדיקת אפס)
-- `power(base, exponent)` - העלאת בסיס בחזקה
-- `squareRoot(number)` - חישוב שורש ריבועי (עם בדיקת שליליים)
-- `modulus(a, b)` - החזרת שארית מחלוקה
-- `absolute(number)` - החזרת ערך מוחלט
-- `help()` - החזרת מידע על כל הפעולות
+- `add(a, b)` - מחבר שני מספרים
+- `subtract(a, b)` - מחסיר את השני מהראשון
+- `multiply(a, b)` - מכפיל שני מספרים
+- `divide(a, b)` - מחלק את הראשון בשני (עם בדיקת אפס)
+- `power(base, exponent)` - מעלים בחזקה
+- `squareRoot(number)` - מחשב שורש ריבועי (עם בדיקה שלילי)
+- `modulus(a, b)` - מחזיר שארית חלוקה
+- `absolute(number)` - מחזיר ערך מוחלט
+- `help()` - מחזיר מידע על כל הפעולות
 
 ### 3. לקוח MCP ישיר
 
 **קובץ:** `SDKClient.java`
 
-לקוח זה מתקשר ישירות עם שרת MCP ללא שימוש ב-AI. הוא קורא ידנית לפונקציות מחשבון ספציפיות:
+לקוח זה מתקשר ישירות עם שרת MCP ללא שימוש ב-AI. הוא קורא ידנית לפונקציות ספציפיות של המחשבון:
 
 ```java
 public class SDKClient {
@@ -142,11 +143,11 @@ public class SDKClient {
         var client = McpClient.sync(this.transport).build();
         client.initialize();
         
-        // List available tools
+        // רשימת כלים זמינים
         ListToolsResult toolsList = client.listTools();
         System.out.println("Available Tools = " + toolsList);
         
-        // Call specific calculator functions
+        // קריאה לפונקציות מחשבון ספציפיות
         CallToolResult resultAdd = client.callTool(
             new CallToolRequest("add", Map.of("a", 5.0, "b", 3.0))
         );
@@ -163,36 +164,41 @@ public class SDKClient {
 ```
 
 **מה זה עושה:**
-1. **מתחבר** לשרת המחשבון בכתובת `http://localhost:8080` באמצעות תבנית Builder
-2. **מציג** את כל הכלים הזמינים (פונקציות המחשבון שלנו)
-3. **קורא** לפונקציות ספציפיות עם פרמטרים מדויקים
-4. **מדפיס** את התוצאות ישירות
+1. **מתחבר** לשרת המחשבון בכתובת `http://localhost:8080` באמצעות תבנית בנאי (builder)
+2. **מציג** רשימה של כל הכלים הזמינים (הפונקציות של המחשבון)
+3. **קורא** לפונקציות מסוימות עם פרמטרים מדויקים
+4. **מציג** את התוצאות ישירות
 
-**הערה:** דוגמה זו משתמשת בתלות Spring AI 1.1.0-SNAPSHOT, שהציגה תבנית Builder עבור `WebFluxSseClientTransport`. אם אתם משתמשים בגרסה יציבה ישנה יותר, ייתכן שתצטרכו להשתמש בבנאי ישיר במקום.
+**הערה:** דוגמה זו משתמשת בתלות Spring AI 1.1.0-SNAPSHOT, שהוסיפה תבנית בנאי עבור `WebFluxSseClientTransport`. אם אתם משתמשים בגרסה יציבה ישנה יותר, ייתכן ותצטרכו להשתמש בקונסטרקטור הישיר במקום.
 
-**מתי להשתמש בזה:** כשאתם יודעים בדיוק איזה חישוב אתם רוצים לבצע ורוצים לקרוא לו באופן תכנותי.
+**מתי להשתמש בזה:** כאשר אתם יודעים בדיוק איזה חישוב לבצע ורוצים לקרוא לו מתוכנית.
 
-### 4. לקוח מבוסס AI
+### 4. לקוח מבוסס בינה מלאכותית
 
 **קובץ:** `LangChain4jClient.java`
 
-לקוח זה משתמש במודל AI (GPT-4o-mini) שיכול להחליט באופן אוטומטי אילו כלים מחשבון להשתמש:
+לקוח זה משתמש בדגם AI (GPT-4o-mini) שיכול לבחור באופן אוטומטי אילו כלים של המחשבון להשתמש:
 
 ```java
 public class LangChain4jClient {
     
     public static void main(String[] args) throws Exception {
-        // Set up the AI model (using GitHub Models)
+        // הגדר את מודל ה-AI (Azure AI Foundry, אימות ללא מפתח דרך Microsoft Entra ID)
+        String endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1";
+        String token = new DefaultAzureCredentialBuilder().build()
+                .getToken(new TokenRequestContext().addScopes("https://ai.azure.com/.default"))
+                .block().getToken();
         ChatLanguageModel model = OpenAiOfficialChatModel.builder()
-                .isGitHubModels(true)
-                .apiKey(System.getenv("GITHUB_TOKEN"))
+                .baseUrl(baseUrl)
+                .apiKey(token)
                 .modelName("gpt-4o-mini")
                 .build();
 
-        // Connect to our calculator MCP server
+        // התחבר לשרת המחשבון MCP שלנו
         McpTransport transport = new HttpMcpTransport.Builder()
                 .sseUrl("http://localhost:8080/sse")
-                .logRequests(true)  // Shows what the AI is doing
+                .logRequests(true)  // מציג מה ה-AI עושה
                 .logResponses(true)
                 .build();
 
@@ -200,18 +206,18 @@ public class LangChain4jClient {
                 .transport(transport)
                 .build();
 
-        // Give the AI access to our calculator tools
+        // תן ל-AI גישה לכלי המחשבון שלנו
         ToolProvider toolProvider = McpToolProvider.builder()
                 .mcpClients(List.of(mcpClient))
                 .build();
 
-        // Create an AI bot that can use our calculator
+        // צור בוט AI שיכול להשתמש במחשבון שלנו
         Bot bot = AiServices.builder(Bot.class)
                 .chatLanguageModel(model)
                 .toolProvider(toolProvider)
                 .build();
 
-        // Now we can ask the AI to do calculations in natural language
+        // עכשיו אנחנו יכולים לבקש מה-AI לבצע חישובים בשפה טבעית
         String response = bot.chat("Calculate the sum of 24.5 and 17.3 using the calculator service");
         System.out.println(response);
 
@@ -222,12 +228,12 @@ public class LangChain4jClient {
 ```
 
 **מה זה עושה:**
-1. **יוצר** חיבור למודל AI באמצעות אסימון GitHub שלכם
-2. **מתחבר** ל-AI לשרת MCP של המחשבון שלנו
-3. **נותן** ל-AI גישה לכלי המחשבון שלנו
+1. **יוצר** חיבור לדגם AI באמצעות טוקן GitHub שלכם
+2. **מחבר** את ה-AI לשרת MCP של המחשבון שלנו
+3. **נותן** ל-AI גישה לכל כלי המחשבון שלנו
 4. **מאפשר** בקשות בשפה טבעית כמו "חשב את הסכום של 24.5 ו-17.3"
 
-**ה-AI באופן אוטומטי:**
+**ה-AI עושה באופן אוטומטי:**
 - מבין שאתם רוצים לחבר מספרים
 - בוחר את הכלי `add`
 - קורא ל-`add(24.5, 17.3)`
@@ -237,32 +243,34 @@ public class LangChain4jClient {
 
 ### שלב 1: הפעלת שרת המחשבון
 
-ראשית, הגדירו את אסימון GitHub שלכם (נדרש עבור לקוח ה-AI):
+ראשית, היכנסו והגדירו את נקודת הסיום של Azure AI Foundry (נדרש ללקוח AI — אימות ללא מפתח):
 
 **Windows:**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-הפעילו את השרת:
+הפעל את השרת:
 ```bash
 cd 04-PracticalSamples/calculator
 mvn clean spring-boot:run
 ```
 
-השרת יתחיל בכתובת `http://localhost:8080`. אתם אמורים לראות:
+השרת יפעל בכתובת `http://localhost:8080`. אמור להיראות כך:
 ```
 Started McpServerApplication in X.XXX seconds
 ```
 
-### שלב 2: בדיקה עם לקוח ישיר
+### שלב 2: בדיקה עם הלקוח הישיר
 
-בטרמינל **חדש** כשהשרת עדיין פועל, הריצו את לקוח MCP הישיר:
+בטרמינל **חדש** כשהשרת עדיין רץ, הריצו את הלקוח הישיר MCP:
 ```bash
 cd 04-PracticalSamples/calculator
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient" -Dexec.classpathScope=test
@@ -275,13 +283,13 @@ Add Result = 5.00 + 3.00 = 8.00
 Square Root Result = √16.00 = 4.00
 ```
 
-### שלב 3: בדיקה עם לקוח AI
+### שלב 3: בדיקה עם הלקוח AI
 
 ```bash
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient" -Dexec.classpathScope=test
 ```
 
-תראו שה-AI משתמש בכלים באופן אוטומטי:
+תראו שה-AI משתמש בכלים אוטומטית:
 ```
 The sum of 24.5 and 17.3 is 41.8.
 The square root of 144 is 12.
@@ -289,26 +297,28 @@ The square root of 144 is 12.
 
 ### שלב 4: סגירת שרת MCP
 
-כשסיימתם לבדוק, תוכלו לעצור את לקוח ה-AI על ידי לחיצה על `Ctrl+C` בטרמינל שלו. שרת MCP ימשיך לפעול עד שתעצרו אותו.
-כדי לעצור את השרת, לחצו על `Ctrl+C` בטרמינל שבו הוא פועל.
+כשתסיימו לבדוק, תוכלו לעצור את לקוח ה-AI על ידי לחיצה על `Ctrl+C` בטרמינל שלו. שרת MCP ימשיך לרוץ עד שתעצורוהו.
+כדי לעצור את השרת, לחצו על `Ctrl+C` בטרמינל שבו הוא רץ.
 
-## איך הכל עובד יחד
+## כיצד הכל עובד יחד
 
-הנה הזרימה המלאה כשאתם שואלים את ה-AI "מה זה 5 + 3?":
+זה הזרימה המלאה כאשר אתם שואלים את ה-AI "כמה זה 5 + 3?":
 
 1. **אתם** שואלים את ה-AI בשפה טבעית
-2. **ה-AI** מנתח את הבקשה שלכם ומבין שאתם רוצים חיבור
+2. **ה-AI** מנתח את הבקשה ומזהה שאתם רוצים חיבור
 3. **ה-AI** קורא לשרת MCP: `add(5.0, 3.0)`
 4. **שירות המחשבון** מבצע: `5.0 + 3.0 = 8.0`
 5. **שירות המחשבון** מחזיר: `"5.00 + 3.00 = 8.00"`
-6. **ה-AI** מקבל את התוצאה ומעצב תגובה טבעית
-7. **אתם** מקבלים: "הסכום של 5 ו-3 הוא 8"
+6. **ה-AI** מקבל את התוצאה ומנסח תגובה טבעית
+7. **אתם** מקבלים: "סכום 5 ו-3 הוא 8"
 
 ## השלבים הבאים
 
-לדוגמאות נוספות, ראו [פרק 04: דוגמאות מעשיות](../README.md)
+למידע נוסף, ראו [פרק 04: דוגמאות מעשיות](../README.md)
 
 ---
 
-**כתב ויתור**:  
-מסמך זה תורגם באמצעות שירות תרגום מבוסס בינה מלאכותית [Co-op Translator](https://github.com/Azure/co-op-translator). בעוד שאנו שואפים לדיוק, יש להיות מודעים לכך שתרגומים אוטומטיים עשויים להכיל שגיאות או אי דיוקים. המסמך המקורי בשפתו המקורית צריך להיחשב כמקור הסמכותי. עבור מידע קריטי, מומלץ להשתמש בתרגום מקצועי על ידי אדם. איננו נושאים באחריות לאי הבנות או לפרשנויות שגויות הנובעות משימוש בתרגום זה.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**כתב ויתור**:
+מסמך זה תורגם באמצעות שירות תרגום אוטומטי [Co-op Translator](https://github.com/Azure/co-op-translator). למרות שאנו שואפים לדיוק, יש לקחת בחשבון שתרגומים אוטומטיים עלולים להכיל שגיאות או אי-דיוקים. יש להחשיב את המסמך המקורי בשפתו הטבעית כמקור הסמכות. למידע קריטי מומלץ להשתמש בתרגום מקצועי על ידי מתרגם אדם. אנו לא אחראים לכל אי-הבנה או פירוש שגוי הנובע מהשימוש בתרגום זה.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

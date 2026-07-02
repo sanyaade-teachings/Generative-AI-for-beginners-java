@@ -1,31 +1,31 @@
-# Hướng Dẫn Sử Dụng Pet Story Generator Dành Cho Người Mới Bắt Đầu
+# Hướng Dẫn Tạo Truyện Thú Cưng Cho Người Mới Bắt Đầu
 
 ## Mục Lục
 
-- [Yêu Cầu Trước Khi Bắt Đầu](../../../../04-PracticalSamples/petstory)
-- [Hiểu Cấu Trúc Dự Án](../../../../04-PracticalSamples/petstory)
-- [Giải Thích Các Thành Phần Chính](../../../../04-PracticalSamples/petstory)
-  - [1. Ứng Dụng Chính](../../../../04-PracticalSamples/petstory)
-  - [2. Bộ Điều Khiển Web](../../../../04-PracticalSamples/petstory)
-  - [3. Dịch Vụ Tạo Câu Chuyện](../../../../04-PracticalSamples/petstory)
-  - [4. Mẫu Giao Diện Web](../../../../04-PracticalSamples/petstory)
-  - [5. Cấu Hình](../../../../04-PracticalSamples/petstory)
-- [Chạy Ứng Dụng](../../../../04-PracticalSamples/petstory)
-- [Cách Các Thành Phần Hoạt Động Cùng Nhau](../../../../04-PracticalSamples/petstory)
-- [Hiểu Tích Hợp AI](../../../../04-PracticalSamples/petstory)
-- [Bước Tiếp Theo](../../../../04-PracticalSamples/petstory)
+- [Yêu Cầu Trước](#yêu-cầu-trước)
+- [Hiểu Cấu Trúc Dự Án](#hiểu-cấu-trúc-dự-án)
+- [Giải Thích Các Thành Phần Chính](#giải-thích-các-thành-phần-chính)
+  - [1. Ứng Dụng Chính](#1-ứng-dụng-chính)
+  - [2. Bộ Điều Khiển Web](#2-bộ-điều-khiển-web)
+  - [3. Dịch Vụ Truyện](#3-dịch-vụ-truyện)
+  - [4. Mẫu Web](#4-mẫu-web)
+  - [5. Cấu Hình](#5-cấu-hình)
+- [Chạy Ứng Dụng](#chạy-ứng-dụng)
+- [Cách Tất Cả Hoạt Động Cùng Nhau](#cách-tất-cả-hoạt-động-cùng-nhau)
+- [Hiểu Về Tích Hợp AI](#hiểu-về-tích-hợp-ai)
+- [Bước Tiếp Theo](#bước-tiếp-theo)
 
-## Yêu Cầu Trước Khi Bắt Đầu
+## Yêu Cầu Trước
 
 Trước khi bắt đầu, hãy đảm bảo bạn đã có:
-- Java 21 hoặc phiên bản cao hơn
-- Maven để quản lý phụ thuộc
-- Tài khoản GitHub với token truy cập cá nhân (PAT) có quyền `models:read`
-- Hiểu biết cơ bản về Java, Spring Boot và phát triển web
+- Java 21 hoặc cao hơn đã cài đặt
+- Maven để quản lý các thư viện phụ thuộc
+- Một triển khai mô hình Azure AI Foundry (cấu hình với `azd up` — xem [Chương 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md)), đăng nhập bằng `az login` (xác thực không cần khóa)
+- Kiến thức cơ bản về Java, Spring Boot, và phát triển web
 
 ## Hiểu Cấu Trúc Dự Án
 
-Dự án Pet Story bao gồm một số tệp quan trọng:
+Dự án truyện thú cưng có một số tập tin quan trọng:
 
 ```
 petstory/
@@ -46,9 +46,9 @@ petstory/
 
 ### 1. Ứng Dụng Chính
 
-**Tệp:** `PetStoryApplication.java`
+**Tập tin:** `PetStoryApplication.java`
 
-Đây là điểm khởi đầu cho ứng dụng Spring Boot của chúng ta:
+Đây là điểm vào cho ứng dụng Spring Boot của chúng ta:
 
 ```java
 @SpringBootApplication
@@ -59,16 +59,16 @@ public class PetStoryApplication {
 }
 ```
 
-**Chức năng:**
-- Annotation `@SpringBootApplication` kích hoạt tự động cấu hình và quét thành phần
+**Công dụng của phần này:**
+- Chú thích `@SpringBootApplication` cho phép tự động cấu hình và quét các thành phần
 - Khởi động máy chủ web nhúng (Tomcat) trên cổng 8080
-- Tự động tạo tất cả các bean và dịch vụ cần thiết của Spring
+- Tự động tạo mọi bean và dịch vụ Spring cần thiết
 
 ### 2. Bộ Điều Khiển Web
 
-**Tệp:** `PetController.java`
+**Tập tin:** `PetController.java`
 
-Xử lý tất cả các yêu cầu web và tương tác với người dùng:
+Phần này xử lý tất cả yêu cầu web và tương tác của người dùng:
 
 ```java
 @Controller
@@ -82,7 +82,7 @@ public class PetController {
     
     @GetMapping("/")
     public String index() {
-        return "index";  // Returns index.html template
+        return "index";  // Trả về mẫu index.html
     }
     
     @PostMapping("/generate-story")
@@ -90,24 +90,24 @@ public class PetController {
                                Model model, 
                                RedirectAttributes redirectAttributes) {
         
-        // Input validation
+        // Kiểm tra đầu vào
         if (description.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please provide a description.");
             return "redirect:/";
         }
         
-        // Sanitize input for security
+        // Làm sạch đầu vào để đảm bảo an toàn
         String sanitizedDescription = sanitizeInput(description);
         
-        // Generate story with error handling
+        // Tạo câu chuyện với xử lý lỗi
         try {
             String story = storyService.generateStory(sanitizedDescription);
             model.addAttribute("caption", sanitizedDescription);
             model.addAttribute("story", story);
-            return "result";  // Returns result.html template
+            return "result";  // Trả về mẫu result.html
             
         } catch (Exception e) {
-            // Use fallback story if AI fails
+            // Sử dụng câu chuyện dự phòng nếu AI thất bại
             String fallbackStory = generateFallbackStory(sanitizedDescription);
             model.addAttribute("story", fallbackStory);
             return "result";
@@ -117,21 +117,21 @@ public class PetController {
     private String sanitizeInput(String input) {
         return input.replaceAll("[<>\"'&]", "")  // Remove dangerous characters
                    .trim()
-                   .substring(0, Math.min(input.length(), 500));  // Limit length
+                   .substring(0, Math.min(input.length(), 500));  // Giới hạn độ dài
     }
 }
 ```
 
 **Các tính năng chính:**
 
-1. **Xử Lý Đường Dẫn**: `@GetMapping("/")` hiển thị biểu mẫu tải lên, `@PostMapping("/generate-story")` xử lý các yêu cầu gửi
-2. **Xác Thực Dữ Liệu Đầu Vào**: Kiểm tra mô tả trống và giới hạn độ dài
-3. **Bảo Mật**: Làm sạch dữ liệu đầu vào của người dùng để ngăn chặn các cuộc tấn công XSS
-4. **Xử Lý Lỗi**: Cung cấp các câu chuyện dự phòng khi dịch vụ AI không hoạt động
-5. **Liên Kết Mô Hình**: Truyền dữ liệu đến các mẫu HTML bằng cách sử dụng `Model` của Spring
+1. **Xử lý tuyến đường**: `@GetMapping("/")` hiển thị form tải lên, `@PostMapping("/generate-story")` xử lý gửi dữ liệu
+2. **Kiểm tra đầu vào**: Kiểm tra mô tả có trống và giới hạn độ dài
+3. **Bảo mật**: Làm sạch dữ liệu người dùng để tránh tấn công XSS
+4. **Xử lý lỗi**: Cung cấp truyện dự phòng khi dịch vụ AI không hoạt động
+5. **Ràng buộc mô hình**: Truyền dữ liệu sang mẫu HTML bằng `Model` của Spring
 
 **Hệ Thống Dự Phòng:**
-Bộ điều khiển bao gồm các mẫu câu chuyện được viết sẵn để sử dụng khi dịch vụ AI không khả dụng:
+Bộ điều khiển bao gồm các mẫu truyện đã viết sẵn, được dùng khi dịch vụ AI không khả dụng:
 
 ```java
 private String generateFallbackStory(String description) {
@@ -141,17 +141,17 @@ private String generateFallbackStory(String description) {
         "In a cozy home filled with love, there lived an extraordinary pet..."
     };
     
-    // Use description hash for consistent responses
+    // Sử dụng băm mô tả để có phản hồi nhất quán
     int index = Math.abs(description.hashCode() % storyTemplates.length);
     return storyTemplates[index];
 }
 ```
 
-### 3. Dịch Vụ Tạo Câu Chuyện
+### 3. Dịch Vụ Truyện
 
-**Tệp:** `StoryService.java`
+**Tập tin:** `StoryService.java`
 
-Dịch vụ này giao tiếp với GitHub Models để tạo câu chuyện:
+Dịch vụ này giao tiếp với Azure AI Foundry để tạo truyện bằng xác thực không cần khóa:
 
 ```java
 @Service
@@ -160,18 +160,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // Điểm cuối tương thích OpenAI của Foundry nằm dưới /openai/v1/
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // Xác thực không cần khóa với Microsoft Entra ID (không cần khóa API)
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -182,16 +186,16 @@ public class StoryService {
         
         String userPrompt = "Write a fun short story about a pet described as: " + description;
         
-        // Configure the AI request
+        // Cấu hình yêu cầu AI
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(modelName)
                 .addSystemMessage(systemPrompt)
                 .addUserMessage(userPrompt)
-                .maxCompletionTokens(500)  // Limit response length
-                .temperature(0.8)          // Control creativity (0.0-1.0)
+                .maxCompletionTokens(500)  // Giới hạn độ dài phản hồi
+                .temperature(0.8)          // Kiểm soát độ sáng tạo (0.0-1.0)
                 .build();
         
-        // Send request and get response
+        // Gửi yêu cầu và nhận phản hồi
         ChatCompletion response = openAIClient.chat().completions().create(params);
         
         return response.choices().get(0).message().content().orElse("");
@@ -201,15 +205,15 @@ public class StoryService {
 
 **Các thành phần chính:**
 
-1. **OpenAI Client**: Sử dụng SDK Java chính thức của OpenAI được cấu hình cho GitHub Models
-2. **System Prompt**: Đặt hành vi của AI để viết các câu chuyện thân thiện với gia đình
-3. **User Prompt**: Hướng dẫn AI viết câu chuyện dựa trên mô tả
-4. **Tham Số**: Kiểm soát độ dài và mức độ sáng tạo của câu chuyện
-5. **Xử Lý Lỗi**: Ném ra các ngoại lệ mà bộ điều khiển sẽ bắt và xử lý
+1. **OpenAI Client**: Sử dụng SDK Java OpenAI chính thức được cấu hình cho Azure AI Foundry (xác thực không khóa)
+2. **Yêu cầu hệ thống**: Đặt hành vi của AI để viết truyện thân thiện với gia đình về thú cưng
+3. **Yêu cầu người dùng**: Hướng dẫn AI viết câu chuyện chính xác dựa trên mô tả
+4. **Tham số**: Điều khiển độ dài truyện và mức độ sáng tạo
+5. **Xử lý lỗi**: Ném ngoại lệ mà bộ điều khiển bắt và xử lý
 
-### 4. Mẫu Giao Diện Web
+### 4. Mẫu Web
 
-**Tệp:** `index.html` (Biểu Mẫu Tải Lên)
+**Tập tin:** `index.html` (Form Tải Lên)
 
 Trang chính nơi người dùng mô tả thú cưng của họ:
 
@@ -258,7 +262,7 @@ Trang chính nơi người dùng mô tả thú cưng của họ:
 </html>
 ```
 
-**Tệp:** `result.html` (Hiển Thị Câu Chuyện)
+**Tập tin:** `result.html` (Hiển Thị Truyện)
 
 Hiển thị câu chuyện được tạo:
 
@@ -293,16 +297,16 @@ Hiển thị câu chuyện được tạo:
 </html>
 ```
 
-**Các tính năng của mẫu:**
+**Tính năng mẫu:**
 
-1. **Tích Hợp Thymeleaf**: Sử dụng các thuộc tính `th:` để hiển thị nội dung động
-2. **Thiết Kế Đáp Ứng**: CSS được tối ưu hóa cho cả thiết bị di động và máy tính để bàn
-3. **Xử Lý Lỗi**: Hiển thị lỗi xác thực cho người dùng
-4. **Xử Lý Phía Khách Hàng**: JavaScript để phân tích hình ảnh (sử dụng Transformers.js)
+1. **Tích hợp Thymeleaf**: Sử dụng thuộc tính `th:` cho nội dung động
+2. **Thiết kế đáp ứng**: CSS cho điện thoại và máy tính để bàn
+3. **Xử lý lỗi**: Hiển thị lỗi kiểm tra cho người dùng
+4. **Xử lý phía client**: JavaScript để phân tích ảnh (dùng Transformers.js)
 
 ### 5. Cấu Hình
 
-**Tệp:** `application.properties`
+**Tập tin:** `application.properties`
 
 Cài đặt cấu hình cho ứng dụng:
 
@@ -316,52 +320,55 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 **Giải thích cấu hình:**
 
-1. **Tải Lên Tệp**: Cho phép tải lên hình ảnh tối đa 10MB
-2. **Ghi Nhật Ký**: Kiểm soát thông tin được ghi lại trong quá trình thực thi
-3. **GitHub Models**: Chỉ định mô hình AI và endpoint được sử dụng
-4. **Bảo Mật**: Cấu hình xử lý lỗi để tránh lộ thông tin nhạy cảm
+1. **Tải tập tin**: Cho phép hình ảnh lên đến 10MB
+2. **Ghi nhật ký**: Điều khiển thông tin được ghi lại trong quá trình chạy
+3. **Azure AI Foundry**: Chỉ định điểm cuối và triển khai mô hình sử dụng (xác thực không khóa)
+4. **Bảo mật**: Cấu hình xử lý lỗi để không tiết lộ thông tin nhạy cảm
 
 ## Chạy Ứng Dụng
 
-### Bước 1: Thiết Lập Token GitHub
+### Bước 1: Đăng Nhập và Đặt Điểm Cuối
 
-Đầu tiên, bạn cần thiết lập token GitHub của mình dưới dạng biến môi trường:
+Xác thực không khóa (Microsoft Entra ID), nên không có khoá API. Đăng nhập và đặt điểm cuối Foundry của bạn:
 
 **Windows (Command Prompt):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Tại sao cần điều này:**
-- GitHub Models yêu cầu xác thực để truy cập các mô hình AI
-- Sử dụng biến môi trường giúp giữ token nhạy cảm ngoài mã nguồn
-- Quyền `models:read` cung cấp quyền truy cập vào AI inference
+- Azure AI Foundry dùng Microsoft Entra ID để xác thực các yêu cầu suy luận
+- Xác thực không khóa nghĩa là không có bí mật trong mã nguồn hoặc môi trường của bạn
+- Tài khoản của bạn cần vai trò **Cognitive Services OpenAI User** trên tài nguyên
 
-### Bước 2: Build và Chạy
+### Bước 2: Biên Dịch và Chạy
 
 Đi đến thư mục dự án:
 ```bash
 cd 04-PracticalSamples/petstory
 ```
 
-Build ứng dụng:
+Biên dịch ứng dụng:
 ```bash
 mvn clean compile
 ```
@@ -371,51 +378,53 @@ Khởi động máy chủ:
 mvn spring-boot:run
 ```
 
-Ứng dụng sẽ chạy tại `http://localhost:8080`.
+Ứng dụng sẽ khởi chạy tại `http://localhost:8080`.
 
-### Bước 3: Kiểm Tra Ứng Dụng
+### Bước 3: Thử Ứng Dụng
 
-1. **Mở** `http://localhost:8080` trong trình duyệt
-2. **Mô tả** thú cưng của bạn trong ô văn bản (ví dụ: "Một chú chó golden retriever vui nhộn thích chơi ném bóng")
-3. **Nhấn** "Generate Story" để nhận câu chuyện được tạo bởi AI
-4. **Hoặc**, tải lên hình ảnh thú cưng để tự động tạo mô tả
+1. **Mở** `http://localhost:8080` trên trình duyệt
+2. **Mô tả** thú cưng của bạn trong ô văn bản (ví dụ: "Một chú chó golden retriever nghịch ngợm thích nhặt bóng")
+3. **Nhấn** "Generate Story" để nhận truyện do AI tạo
+4. **Hoặc** tải lên ảnh thú cưng để tự động tạo mô tả
 5. **Xem** câu chuyện sáng tạo dựa trên mô tả thú cưng của bạn
 
-## Cách Các Thành Phần Hoạt Động Cùng Nhau
+## Cách Tất Cả Hoạt Động Cùng Nhau
 
-Dưới đây là luồng hoạt động hoàn chỉnh khi bạn tạo một câu chuyện về thú cưng:
+Dưới đây là quy trình đầy đủ khi bạn tạo câu chuyện cho thú cưng:
 
-1. **Người Dùng Nhập Liệu**: Bạn mô tả thú cưng của mình trên biểu mẫu web
-2. **Gửi Biểu Mẫu**: Trình duyệt gửi yêu cầu POST đến `/generate-story`
-3. **Xử Lý Tại Bộ Điều Khiển**: `PetController` xác thực và làm sạch dữ liệu đầu vào
-4. **Gọi Dịch Vụ AI**: `StoryService` gửi yêu cầu đến API GitHub Models
-5. **Tạo Câu Chuyện**: AI tạo ra một câu chuyện sáng tạo dựa trên mô tả
-6. **Xử Lý Phản Hồi**: Bộ điều khiển nhận câu chuyện và thêm nó vào mô hình
-7. **Kết Xuất Mẫu**: Thymeleaf kết xuất `result.html` với câu chuyện
-8. **Hiển Thị**: Người dùng xem câu chuyện được tạo trong trình duyệt
+1. **Nhập liệu người dùng**: Bạn mô tả thú cưng trên form web
+2. **Gửi form**: Trình duyệt gửi yêu cầu POST tới `/generate-story`
+3. **Xử lý bộ điều khiển**: `PetController` kiểm tra và làm sạch đầu vào
+4. **Gọi dịch vụ AI**: `StoryService` gửi yêu cầu tới mô hình Azure AI Foundry
+5. **Tạo truyện**: AI tạo câu chuyện sáng tạo dựa trên mô tả
+6. **Xử lý phản hồi**: Bộ điều khiển nhận truyện và thêm vào mô hình
+7. **Kết xuất mẫu**: Thymeleaf hiển thị `result.html` với truyện
+8. **Hiển thị**: Người dùng xem truyện được tạo trên trình duyệt
 
-**Luồng Xử Lý Lỗi:**
-Nếu dịch vụ AI không hoạt động:
+**Quy trình xử lý lỗi:**
+Nếu dịch vụ AI không thành công:
 1. Bộ điều khiển bắt ngoại lệ
-2. Tạo câu chuyện dự phòng bằng các mẫu viết sẵn
-3. Hiển thị câu chuyện dự phòng với thông báo về việc AI không khả dụng
-4. Người dùng vẫn nhận được câu chuyện, đảm bảo trải nghiệm tốt
+2. Tạo truyện dự phòng dùng mẫu viết sẵn
+3. Hiển thị truyện dự phòng và ghi chú AI không khả dụng
+4. Người dùng vẫn nhận truyện, đảm bảo trải nghiệm tốt
 
-## Hiểu Tích Hợp AI
+## Hiểu Về Tích Hợp AI
 
-### API GitHub Models
-Ứng dụng sử dụng GitHub Models, cung cấp quyền truy cập miễn phí vào các mô hình AI khác nhau:
+### Azure AI Foundry (xác thực không khóa)
+Ứng dụng sử dụng Azure AI Foundry với xác thực không khóa (Microsoft Entra ID):
 
 ```java
-// Authentication with GitHub token
+// Xác thực không khóa - không cần khóa API
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
-### Kỹ Thuật Prompt
-Dịch vụ sử dụng các prompt được thiết kế cẩn thận để đạt kết quả tốt:
+### Kỹ thuật tạo yêu cầu (Prompt Engineering)
+Dịch vụ dùng các yêu cầu được thiết kế kỹ để có kết quả tốt:
 
 ```java
 String systemPrompt = "You are a creative storyteller who writes fun, " +
@@ -423,8 +432,8 @@ String systemPrompt = "You are a creative storyteller who writes fun, " +
                      "Keep stories under 500 words and appropriate for all ages.";
 ```
 
-### Xử Lý Phản Hồi
-Phản hồi từ AI được trích xuất và xác thực:
+### Xử lý phản hồi
+Phản hồi của AI được trích xuất và kiểm tra:
 
 ```java
 ChatCompletion response = openAIClient.chat().completions().create(params);
@@ -433,7 +442,11 @@ String story = response.choices().get(0).message().content().orElse("");
 
 ## Bước Tiếp Theo
 
-Để xem thêm ví dụ, hãy tham khảo [Chương 04: Các ví dụ thực tế](../README.md)
+Để xem thêm ví dụ, xem [Chương 04: Ví dụ thực tiễn](../README.md)
 
-**Tuyên bố miễn trừ trách nhiệm**:  
-Tài liệu này đã được dịch bằng dịch vụ dịch thuật AI [Co-op Translator](https://github.com/Azure/co-op-translator). Mặc dù chúng tôi cố gắng đảm bảo độ chính xác, xin lưu ý rằng các bản dịch tự động có thể chứa lỗi hoặc không chính xác. Tài liệu gốc bằng ngôn ngữ bản địa nên được coi là nguồn thông tin chính thức. Đối với các thông tin quan trọng, khuyến nghị sử dụng dịch vụ dịch thuật chuyên nghiệp bởi con người. Chúng tôi không chịu trách nhiệm cho bất kỳ sự hiểu lầm hoặc diễn giải sai nào phát sinh từ việc sử dụng bản dịch này.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Tuyên bố miễn trừ trách nhiệm**:
+Tài liệu này đã được dịch bằng dịch vụ dịch thuật AI [Co-op Translator](https://github.com/Azure/co-op-translator). Mặc dù chúng tôi cố gắng đảm bảo độ chính xác, xin lưu ý rằng bản dịch tự động có thể chứa lỗi hoặc sai sót. Tài liệu gốc bằng ngôn ngữ gốc nên được coi là nguồn tin chính thức. Đối với thông tin quan trọng, nên sử dụng dịch vụ dịch thuật chuyên nghiệp bởi con người. Chúng tôi không chịu trách nhiệm về bất kỳ hiểu lầm hoặc giải thích sai nào phát sinh từ việc sử dụng bản dịch này.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

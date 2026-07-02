@@ -2,7 +2,7 @@
 
 ## סקירת הפרויקט
 
-זהו מאגר חינוכי ללימוד פיתוח AI גנרטיבי עם Java. הוא מספק קורס מעשי מקיף המכסה מודלים של שפה גדולה (LLMs), הנדסת הנחיות, הטמעות, RAG (יצירה מוגברת על ידי אחזור) ופרוטוקול הקשר של מודל (MCP).
+זהו מאגר לימודי ללמידת פיתוח AI גנרטיבי עם Java. הוא מספק קורס מעשי מקיף המכסה מודלים לשוניים גדולים (LLMs), הנדסת פרומפטים, אמבדינגס, RAG (גירנציה משופרת בשליפה), ופרוטוקול הקשר המודל (MCP).
 
 **טכנולוגיות מרכזיות:**
 - Java 21
@@ -10,69 +10,72 @@
 - Spring AI 1.1.x
 - Maven
 - LangChain4j
-- מודלים של GitHub, Azure OpenAI ו-SDKs של OpenAI
+- Azure AI Foundry, Azure OpenAI, ו-SDKs של OpenAI
 
 **ארכיטקטורה:**
-- מספר אפליקציות עצמאיות של Spring Boot מאורגנות לפי פרקים
+- מספר אפליקציות Spring Boot עצמאיות הממוינות לפי פרקים
 - פרויקטים לדוגמה המדגימים דפוסי AI שונים
-- מוכן ל-GitHub Codespaces עם מכולות פיתוח מוגדרות מראש
+- מוכנות ל-GitHub Codespaces עם מיכלי פיתוח מוגדרים מראש
 
 ## פקודות התקנה
 
 ### דרישות מוקדמות
 - Java 21 או גרסה גבוהה יותר
 - Maven 3.x
-- אסימון גישה אישי ל-GitHub (עבור מודלים של GitHub)
-- אופציונלי: אישורי Azure OpenAI
+- מנוי Azure עם פריסה של מודל Azure AI Foundry (הגדרה עם `azd up`)
+- Azure CLI (`az`) ו-Azure Developer CLI (`azd`), מחוברים לאישור keyless
 
 ### הגדרת סביבה
 
 **אפשרות 1: GitHub Codespaces (מומלץ)**
 ```bash
-# Fork the repository and create a codespace from GitHub UI
-# The dev container will automatically install all dependencies
-# Wait ~2 minutes for environment setup
+# פצל את המאגר וצור סביבת קוד מ- GitHub UI
+# מכולת הפיתוח תתקין אוטומטית את כל התלויות
+# המתן כ-2 דקות להקמת הסביבה
 ```
 
-**אפשרות 2: מכולת פיתוח מקומית**
+**אפשרות 2: מיכל פיתוח מקומי**
 ```bash
-# Clone repository
+# שכפל מאגר
 git clone https://github.com/microsoft/Generative-AI-for-beginners-java.git
 cd Generative-AI-for-beginners-java
 
-# Open in VS Code with Dev Containers extension
-# Reopen in Container when prompted
+# פתח ב- VS Code עם תוסף Dev Containers
+# פתח מחדש במכולה כשהתבקש
 ```
 
-**אפשרות 3: התקנה מקומית**
+**אפשרות 3: הגדרה מקומית**
 ```bash
-# Install dependencies
+# התקן תלותים
 sudo apt-get update
 sudo apt-get install -y maven openjdk-21-jdk
 
-# Verify installation
+# אמת התקנה
 java -version
 mvn -version
 ```
 
-### תצורה
+### קונפיגורציה
 
-**הגדרת אסימון GitHub:**
+**הגדרת Azure AI Foundry (keyless, מומלץ):**
 ```bash
-# Create a GitHub Personal Access Token
-# Set environment variable
-export GITHUB_TOKEN="your-token-here"
+# פרוס את חשבון Foundry + פריסות מודל כקוד
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
+# azd כותב examples/basic-chat-azure/.env עם נקודת הקצה שלך (ללא מפתח)
 ```
 
-**הגדרת Azure OpenAI (אופציונלי):**
+**קונפיגורציית נקודת קצה ידנית:**
 ```bash
-# For examples using Azure OpenAI
+# אם לא השתמשת ב-azd, הגדיר את נקודת הקצה בעצמך (ההזדהות נשארת ללא מפתח דרך az login)
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# ערוך את .env: AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com/
 ```
 
-## זרימת עבודה לפיתוח
+## זרימת עבודה בפיתוח
 
 ### מבנה הפרויקט
 ```
@@ -103,89 +106,89 @@ cd [project-directory]
 mvn clean install
 ```
 
-**הפעלת שרת MCP Calculator:**
+**הפעלת שרת מחשבון MCP:**
 ```bash
 cd 04-PracticalSamples/calculator
 mvn spring-boot:run
-# Server runs on http://localhost:8080
+# השרת רץ על http://localhost:8080
 ```
 
 **הפעלת דוגמאות לקוח:**
 ```bash
-# After starting the server in another terminal
+# לאחר הפעלת השרת בטרמינל אחר
 cd 04-PracticalSamples/calculator
 
-# Direct MCP client
+# לקוח MCP ישיר
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient"
 
-# AI-powered client (requires GITHUB_TOKEN)
+# לקוח המופעל בעזרת בינה מלאכותית (דורש AZURE_OPENAI_ENDPOINT + az login)
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient"
 
-# Interactive bot
+# בוט אינטראקטיבי
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.Bot"
 ```
 
-### טעינה מחדש
-Spring Boot DevTools כלול בפרויקטים שתומכים בטעינה מחדש:
+### טעינה חמה (Hot Reload)
+Spring Boot DevTools כלול בפרויקטים שתומכים בטעינה חמה:
 ```bash
-# Changes to Java files will automatically reload when saved
+# שינויים בקבצי Java ייטענו מחדש אוטומטית בעת שמירה
 mvn spring-boot:run
 ```
 
 ## הוראות בדיקה
 
-### הפעלת בדיקות
+### הרצת בדיקות
 
-**הפעלת כל הבדיקות בפרויקט:**
+**הרץ את כל הבדיקות בפרויקט:**
 ```bash
 cd [project-directory]
 mvn test
 ```
 
-**הפעלת בדיקות עם פלט מפורט:**
+**הרץ בדיקות עם פלט מפורט:**
 ```bash
 mvn test -X
 ```
 
-**הפעלת מחלקת בדיקה ספציפית:**
+**הרץ מחלקת בדיקה ספציפית:**
 ```bash
 mvn test -Dtest=CalculatorServiceTest
 ```
 
-### מבנה הבדיקות
-- קבצי בדיקה משתמשים ב-JUnit 5 (Jupiter)
-- מחלקות בדיקה ממוקמות ב-`src/test/java/`
-- דוגמאות לקוח בפרויקט המחשבון נמצאות ב-`src/test/java/com/microsoft/mcp/sample/client/`
+### מבנה מבחנים
+- קבצי מבחן משתמשים ב-JUnit 5 (Jupiter)
+- מחלקות הבדיקה נמצאות ב- `src/test/java/`
+- דוגמאות לקוח בפרויקט המחשבון ב- `src/test/java/com/microsoft/mcp/sample/client/`
 
-### בדיקה ידנית
-דוגמאות רבות הן אפליקציות אינטראקטיביות הדורשות בדיקה ידנית:
+### בדיקות ידניות
+הרבה דוגמאות הן אפליקציות אינטראקטיביות שדורשות בדיקה ידנית:
 
 1. הפעל את האפליקציה עם `mvn spring-boot:run`
 2. בדוק נקודות קצה או אינטראקציה עם CLI
-3. ודא שההתנהגות הצפויה תואמת את התיעוד ב-README.md של כל פרויקט
+3. וודא שההתנהגות הצפויה תואמת את התיעוד ב- README.md של כל פרויקט
 
-### בדיקה עם מודלים של GitHub
-- מגבלות של התוכנית החינמית: 15 בקשות לדקה, 150 ביום
-- מקסימום 5 בקשות בו-זמנית
-- בדוק סינון תוכן עם דוגמאות AI אחראי
+### בדיקה עם Azure AI Foundry
+- התחבר עם `az login` לפני הרצת הדוגמאות (אישור keyless)
+- ודא שלחשבון שלך יש תפקיד Cognitive Services OpenAI User במשאב
+- בדוק סינון תוכן עם דוגמת AI אחראי בפרק 5
 
-## הנחיות לסגנון קוד
+## קווי הנחיה לסגנון קוד
 
-### מוסכמות Java
+### קונבנציות Java
 - **גרסת Java:** Java 21 עם תכונות מודרניות
-- **סגנון:** עקוב אחר מוסכמות Java סטנדרטיות
+- **סטייל:** עקוב אחרי הקונבנציות הסטנדרטיות של Java
 - **שמות:**
   - מחלקות: PascalCase
   - שיטות/משתנים: camelCase
   - קבועים: UPPER_SNAKE_CASE
-  - שמות חבילות: אותיות קטנות בלבד
+  - שמות חבילות: אותיות קטנות
 
 ### דפוסי Spring Boot
-- השתמש ב-`@Service` ללוגיקה עסקית
-- השתמש ב-`@RestController` לנקודות קצה של REST
-- תצורה דרך `application.yml` או `application.properties`
-- משתני סביבה מועדפים על פני ערכים קשיחים
-- השתמש ב-`@Tool` עבור שיטות שנחשפות על ידי MCP
+- השתמש ב-`@Service` ללוגיקת עסקים
+- השתמש ב-`@RestController` לנקודות קצה REST
+- קונפיגורציה דרך `application.yml` או `application.properties`
+- העדף משתני סביבה על פני ערכים קבועים בקוד
+- השתמש ב-`@Tool` עבור שיטות המוצגות דרך MCP
 
 ### ארגון קבצים
 ```
@@ -206,151 +209,157 @@ src/
         └── com/microsoft/[component]/
 ```
 
-### תלות
-- מנוהל דרך `pom.xml` של Maven
+### תלותים
+- מנוהלים דרך Maven `pom.xml`
 - Spring AI BOM לניהול גרסאות
 - LangChain4j לאינטגרציות AI
-- Spring Boot starter parent לתלות של Spring
+- Spring Boot starter parent לתלותות Spring
 
-### הערות קוד
+### הערות בקוד
 - הוסף JavaDoc ל-APIs ציבוריים
-- כלול הערות הסבר עבור אינטראקציות AI מורכבות
+- כלול הערות להסבר אינטראקציות AI מורכבות
 - תעד תיאורי כלים של MCP בצורה ברורה
 
 ## בנייה ופריסה
 
 ### בניית פרויקטים
 
-**בנייה ללא בדיקות:**
+**בנה ללא בדיקות:**
 ```bash
 mvn clean install -DskipTests
 ```
 
-**בנייה עם כל הבדיקות:**
+**בנה עם כל הבדיקות:**
 ```bash
 mvn clean install
 ```
 
-**אריזת אפליקציה:**
+**חבילה של אפליקציה:**
 ```bash
 mvn package
-# Creates JAR in target/ directory
+# יוצר קובץ JAR בתיקיית target/
 ```
 
 ### תיקיות פלט
-- קבצים מקומפלים: `target/classes/`
-- קבצי בדיקה: `target/test-classes/`
+- מחלקות מקומפלות: `target/classes/`
+- מחלקות בדיקה: `target/test-classes/`
 - קבצי JAR: `target/*.jar`
 - ארטיפקטים של Maven: `target/`
 
-### תצורה ספציפית לסביבה
+### קונפיגורציה סביבה-ספציפית
 
 **פיתוח:**
 ```yaml
-# application.yml
+# application.yml (keyless - no api-key; auth via DefaultAzureCredential)
 spring:
   ai:
-    openai:
-      api-key: ${GITHUB_TOKEN}
-      base-url: https://models.inference.ai.azure.com
+    azure:
+      openai:
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 **ייצור:**
-- השתמש במודלים של Azure AI Foundry במקום מודלים של GitHub
-- עדכן את base-url לנקודת הקצה של Azure OpenAI
-- נהל סודות דרך Azure Key Vault או משתני סביבה
+- השתמש בזהות מנוהלת במקום `az login` לאישור keyless
+- הצב את `AZURE_OPENAI_ENDPOINT` למשאב Foundry בייצור שלך
+- נהל קונפיגורציה דרך משתני סביבה או Azure Key Vault
 
 ### שיקולי פריסה
-- זהו מאגר חינוכי עם אפליקציות לדוגמה
-- לא מיועד לפריסה בייצור כפי שהוא
+- מאגר זה הוא למידה עם דוגמאות אפליקציות
+- לא מיועד לפריסה בייצור כמו שהוא
 - הדוגמאות מדגימות דפוסים להתאמה לשימוש בייצור
-- עיין ב-README של כל פרויקט להערות פריסה ספציפיות
+- ראה README של כל פרויקט לפרטים ספציפיים לפריסה
 
 ## הערות נוספות
 
-### מודלים של GitHub לעומת Azure OpenAI
-- **מודלים של GitHub:** תוכנית חינמית ללמידה, אין צורך בכרטיס אשראי
-- **Azure OpenAI:** מוכן לייצור, דורש מנוי Azure
-- הקוד תואם בין שניהם - פשוט שנה את נקודת הקצה ואת מפתח ה-API
+### Azure AI Foundry
+- **אישור keyless:** התחבר עם Microsoft Entra ID — אין צורך בניהול מפתחות API
+- **הגדרה כקוד:** Bicep + azd (`azd up`) יוצרים את החשבון ופריסות המודלים
+- קוד תואם OpenAI זהה פועל מקומית (`az login`) וב-Azure (זהות מנוהלת)
 
 ### עבודה עם מספר פרויקטים
-כל פרויקט לדוגמה הוא עצמאי:
+כל פרויקט דוגמה הוא עצמאי:
 ```bash
-# Navigate to specific project
+# לנווט לפרויקט ספציפי
 cd 04-PracticalSamples/[project-name]
 
-# Each has its own pom.xml and can be built independently
+# לכל אחד יש pom.xml משלו וניתן לבנות אותו באופן עצמאי
 mvn clean install
 ```
 
 ### בעיות נפוצות
 
-**אי התאמה בגרסת Java:**
+**אי התאמת גרסת Java:**
 ```bash
-# Verify Java 21
+# אמת Java 21
 java -version
-# Update JAVA_HOME if needed
+# עדכן את JAVA_HOME במידת הצורך
 export JAVA_HOME=/usr/lib/jvm/msopenjdk-current
 ```
 
-**בעיות בהורדת תלות:**
+**בעיות בהורדת תלותים:**
 ```bash
-# Clear Maven cache and retry
+# נקה את מטמון Maven ונסה מחדש
 rm -rf ~/.m2/repository
 mvn clean install
 ```
 
-**אסימון GitHub לא נמצא:**
+**נקודת קצה או התחברות לא נמצאו:**
 ```bash
-# Set in current session
-export GITHUB_TOKEN="your-token-here"
+# הגדר את נקודת הקצה במפגש הנוכחי והתחבר (ללא מפתח)
+export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
+az login
 
-# Or use .env file in project directory
-echo "GITHUB_TOKEN=your-token-here" > .env
+# או השתמש בקובץ .env בתיקיית הפרויקט
+echo "AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/" > .env
 ```
 
 **הפורט כבר בשימוש:**
 ```bash
-# Spring Boot uses port 8080 by default
-# Change in application.properties:
+# ספרינג בוט משתמש ביציאה 8080 כברירת מחדל
+# שינוי בקובץ application.properties:
 server.port=8081
 ```
 
-### תמיכה בריבוי שפות
-- תיעוד זמין ביותר מ-45 שפות דרך תרגום אוטומטי
+### תמיכה רב-לשונית
+- תיעוד זמין בלמעלה מ-45 שפות בתרגום אוטומטי
 - תרגומים בתיקיית `translations/`
-- תרגום מנוהל על ידי GitHub Actions workflow
+- ניהול תרגום על ידי GitHub Actions workflow
 
 ### מסלול למידה
 1. התחל עם [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md)
-2. עקוב אחר הפרקים לפי הסדר (01 → 05)
+2. עקוב אחר הפרקים בסדר (01 → 05)
 3. השלם דוגמאות מעשיות בכל פרק
 4. חקור פרויקטים לדוגמה בפרק 4
-5. למד שיטות AI אחראי בפרק 5
+5. למד פרקטיקות AI אחראי בפרק 5
 
-### מכולת פיתוח
+### מיכל פיתוח (Development Container)
 הקובץ `.devcontainer/devcontainer.json` מגדיר:
 - סביבת פיתוח Java 21
 - Maven מותקן מראש
 - הרחבות Java ל-VS Code
-- כלים ל-Spring Boot
-- אינטגרציה עם GitHub Copilot
+- כלי Spring Boot
+- אינטגרציית GitHub Copilot
 - תמיכה ב-Docker-in-Docker
 - Azure CLI
 
 ### שיקולי ביצועים
-- לתוכנית החינמית של מודלים של GitHub יש מגבלות קצב
-- השתמש בגודל אצווה מתאים להטמעות
-- שקול שימוש במטמון עבור קריאות API חוזרות
-- עקוב אחר שימוש בטוקנים לאופטימיזציה של עלויות
+- בפריסות Azure AI Foundry יש מגבלות טוקנים/בקשות לדקה
+- השתמש בגודל קבוצות מתאים לאמבדינגס
+- שקול מטמון לקריאות API חוזרות
+- נטר שימוש בטוקנים לאופטימיזציית עלויות
 
 ### הערות אבטחה
-- לעולם אל תתחייב קבצי `.env` (כבר ב-`.gitignore`)
-- השתמש במשתני סביבה עבור מפתחות API
-- אסימוני GitHub צריכים לכלול רק הרשאות מינימליות נדרשות
-- עקוב אחר הנחיות AI אחראי בפרק 5
+- לעולם אל תcommיט קבצי `.env` (כבר מרוחקים ב- `.gitignore`)
+- העדף אישור keyless (Microsoft Entra ID) על פני מפתחות API
+- השתמש בזהויות מנוהלות ב-Azure; `az login` לפיתוח מקומי
+- עקוב אחרי הנחיות AI אחראי בפרק 5
 
 ---
 
-**כתב ויתור**:  
-מסמך זה תורגם באמצעות שירות תרגום מבוסס בינה מלאכותית [Co-op Translator](https://github.com/Azure/co-op-translator). למרות שאנו שואפים לדיוק, יש לקחת בחשבון שתרגומים אוטומטיים עשויים להכיל שגיאות או אי דיוקים. המסמך המקורי בשפתו המקורית צריך להיחשב כמקור הסמכותי. עבור מידע קריטי, מומלץ להשתמש בתרגום מקצועי על ידי אדם. איננו נושאים באחריות לאי הבנות או לפרשנויות שגויות הנובעות משימוש בתרגום זה.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**כתב ויתור**:
+מסמך זה תורגם באמצעות שירות תרגום אוטומטי [Co-op Translator](https://github.com/Azure/co-op-translator). למרות שאנו שואפים לדיוק, יש לקחת בחשבון שתרגומים אוטומטיים עלולים להכיל שגיאות או אי-דיוקים. יש להחשיב את המסמך המקורי בשפתו הטבעית כמקור הסמכות. למידע קריטי מומלץ להשתמש בתרגום מקצועי על ידי מתרגם אדם. אנו לא אחראים לכל אי-הבנה או פירוש שגוי הנובע מהשימוש בתרגום זה.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

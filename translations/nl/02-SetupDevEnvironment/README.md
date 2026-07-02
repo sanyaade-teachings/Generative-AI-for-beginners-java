@@ -1,254 +1,224 @@
-# Het opzetten van de ontwikkelomgeving voor Generatieve AI voor Java
+# Het Ontwikkelomgeving Instellen voor Generative AI voor Java
 
-> **Snel aan de slag**: codeer in de cloud binnen 2 minuten - Ga naar [GitHub Codespaces Setup](../../../02-SetupDevEnvironment) - geen lokale installatie nodig en gebruikt GitHub-modellen!
+> **Snelle Start:** Voorzie je AI-modellen op **Azure AI Foundry** als code met Bicep + `azd` binnen enkele minuten — zie de [Azure AI Foundry Setup Guide](getting-started-azure-openai.md). Authenticatie is **keyless** (Microsoft Entra ID), dus er zijn geen API-sleutels om te beheren.
 
-> **Geïnteresseerd in Azure OpenAI?**, zie onze [Azure OpenAI Setup Guide](getting-started-azure-openai.md) met stappen om een nieuwe Azure OpenAI-resource aan te maken.
+## Wat Je Zal Leren
 
-## Wat je zult leren
-
-- Een Java-ontwikkelomgeving opzetten voor AI-toepassingen
-- Kies en configureer je voorkeursontwikkelomgeving (cloud-first met Codespaces, lokale devcontainer of volledige lokale setup)
-- Test je setup door verbinding te maken met GitHub Models
+- Een Java-ontwikkelomgeving instellen voor AI-toepassingen
+- Je voorkeursontwikkelomgeving kiezen en configureren (cloud-first met Codespaces, lokale dev-container of volledige lokale installatie)
+- Je setup testen door verbinding te maken met een Azure AI Foundry-model
 
 ## Inhoudsopgave
 
-- [Wat je zult leren](../../../02-SetupDevEnvironment)
-- [Introductie](../../../02-SetupDevEnvironment)
-- [Stap 1: Zet je ontwikkelomgeving op](../../../02-SetupDevEnvironment)
-  - [Optie A: GitHub Codespaces (Aanbevolen)](../../../02-SetupDevEnvironment)
-  - [Optie B: Lokale Dev Container](../../../02-SetupDevEnvironment)
-  - [Optie C: Gebruik je bestaande lokale installatie](../../../02-SetupDevEnvironment)
-- [Stap 2: Maak een GitHub Personal Access Token aan](../../../02-SetupDevEnvironment)
-- [Stap 3: Test je setup](../../../02-SetupDevEnvironment)
-- [Probleemoplossing](../../../02-SetupDevEnvironment)
-- [Samenvatting](../../../02-SetupDevEnvironment)
-- [Volgende stappen](../../../02-SetupDevEnvironment)
+- [Wat Je Zal Leren](#wat-je-zal-leren)
+- [Introductie](#introductie)
+- [Stap 1: Je Ontwikkelomgeving Instellen](#stap-1-je-ontwikkelomgeving-instellen)
+  - [Optie A: GitHub Codespaces (Aanbevolen)](#optie-a-github-codespaces-aanbevolen)
+  - [Optie B: Lokale Dev Container](#optie-b-lokale-dev-container)
+  - [Optie C: Gebruik Je Bestaande Lokale Installatie](#optie-c-gebruik-je-bestaande-lokale-installatie)
+- [Stap 2: Azure AI Foundry Voorzien](#stap-2-azure-ai-foundry-voorzien)
+- [Stap 3: Je Setup Testen](#stap-3-je-setup-testen)
+- [Probleemoplossing](#probleemoplossing)
+- [Samenvatting](#samenvatting)
+- [Volgende Stappen](#volgende-stappen)
 
 ## Introductie
 
-Dit hoofdstuk leidt je door het opzetten van een ontwikkelomgeving. We gebruiken **GitHub Models** als ons belangrijkste voorbeeld omdat het gratis is, gemakkelijk op te zetten met alleen een GitHub-account, geen creditcard vereist en toegang biedt tot meerdere modellen om te experimenteren.
+Dit hoofdstuk begeleidt je bij het opzetten van een ontwikkelomgeving. We gebruiken gedurende deze cursus **Azure AI Foundry** voor de modellen. Je voorziet de modellen als code met Bicep en de Azure Developer CLI (`azd`), en maakt vervolgens verbinding met **keyless authenticatie** (Microsoft Entra ID) — geen API-sleutels om te kopiëren of lekken.
 
-**Geen lokale installatie nodig!** Je kunt meteen beginnen met coderen via GitHub Codespaces, die een volledige ontwikkelomgeving in je browser levert.
+**Geen lokale setup vereist!** Je kunt GitHub Codespaces gebruiken, dat een volledige ontwikkelomgeving in je browser biedt, en Foundry daarvandaan voorzien.
 
-<img src="../../../translated_images/nl/models.cb07f8af0d724e4d.webp" alt="Screenshot: GitHub Models" width="50%">
+We gebruiken **Azure AI Foundry** voor deze cursus omdat het:
+- **Als code te voorzien is** — één `azd up` zet het account en de modeldeployments op
+- **Keyless** is — authenticeren met je Azure-aanmelding of een beheerde identiteit
+- **Productierijp** is — dezelfde code draait lokaal en in Azure
+- **Flexibel** is — verwissel modellen door alleen een deployment-naam te wijzigen, niet je code
 
-We raden aan om [**GitHub Models**](https://github.com/marketplace?type=models) te gebruiken voor deze cursus omdat het:
-- **Gratis** is om te starten
-- **Gemakkelijk** op te zetten met alleen een GitHub-account
-- **Geen creditcard** nodig heeft
-- **Meerdere modellen** beschikbaar heeft om mee te experimenteren
-
-> **Opmerking**: De GitHub Models die in deze training worden gebruikt hebben deze gratis limieten:
-> - 15 verzoeken per minuut (150 per dag)
-> - ~8.000 woorden in, ~4.000 woorden uit per verzoek
-> - 5 gelijktijdige verzoeken
-> 
-> Voor productiegebruik upgrade je naar Azure AI Foundry Models met je Azure-account. Je code hoeft niet te worden aangepast. Zie de [Azure AI Foundry documentatie](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/quickstart-github-models).
+> **Opmerking**: Azure AI Foundry-deployments worden per token gefactureerd (pay-as-you-go). Zie de [Azure AI Foundry setup guide](getting-started-azure-openai.md) voor details over provisioning, regio en kosten.
 
 
-## Stap 1: Zet je ontwikkelomgeving op
+## Stap 1: Je Ontwikkelomgeving Instellen
 
 <a name="quick-start-cloud"></a>
 
-We hebben een vooraf geconfigureerde ontwikkelcontainer gemaakt om de setup tijd te minimaliseren en ervoor te zorgen dat je alle benodigde tools hebt voor deze Generatieve AI voor Java cursus. Kies je voorkeursontwikkelwijze:
+We hebben een vooraf geconfigureerde ontwikkelcontainer gemaakt om de setup-tijd te minimaliseren en ervoor te zorgen dat je alle benodigde tools hebt voor deze Generative AI voor Java-cursus. Kies je voorkeursontwikkelwijze:
 
-### Opties voor omgevingssetup:
+### Opties voor Omgevingssetup:
 
 #### Optie A: GitHub Codespaces (Aanbevolen)
 
-**Begin met coderen in 2 minuten - geen lokale setup nodig!**
+**Begin binnen 2 minuten met coderen — geen lokale setup nodig!**
 
 1. Fork deze repository naar je GitHub-account
-   > **Opmerking**: Als je de basisconfiguratie wilt bewerken, kijk dan naar de [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
-2. Klik op **Code** → tabblad **Codespaces** → **...** → **Nieuw met opties...**
-3. Gebruik de standaardinstellingen – dit selecteert de **Dev container configuratie**: **Generative AI Java Development Environment** custom devcontainer gemaakt voor deze cursus
-4. Klik op **Codespace aanmaken**
-5. Wacht ~2 minuten tot de omgeving klaar is
-6. Ga verder naar [Stap 2: Maak GitHub Token aan](../../../02-SetupDevEnvironment)
+   > **Opmerking**: Wil je de basisconfiguratie aanpassen, kijk dan naar de [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
+2. Klik op **Code** → tabblad **Codespaces** → **...** → **New with options...**
+3. Gebruik de standaardinstellingen – hiermee wordt de **Dev container-configuratie** geselecteerd: **Generative AI Java Development Environment** custom devcontainer die voor deze cursus is gemaakt
+4. Klik op **Create codespace**
+5. Wacht ongeveer 2 minuten tot de omgeving klaar is
+6. Ga verder met [Stap 2: Azure AI Foundry Voorzien](#stap-2-azure-ai-foundry-voorzien)
 
 <img src="../../../translated_images/nl/codespaces.9945ded8ceb431a5.webp" alt="Screenshot: Codespaces submenu" width="50%">
 
-<img src="../../../translated_images/nl/image.833552b62eee7766.webp" alt="Screenshot: Nieuw met opties" width="50%">
+<img src="../../../translated_images/nl/image.833552b62eee7766.webp" alt="Screenshot: New with options" width="50%">
 
-<img src="../../../translated_images/nl/codespaces-create.b44a36f728660ab7.webp" alt="Screenshot: Maak codespace opties" width="50%">
+<img src="../../../translated_images/nl/codespaces-create.b44a36f728660ab7.webp" alt="Screenshot: Create codespace options" width="50%">
 
 
 > **Voordelen van Codespaces**:
 > - Geen lokale installatie nodig
 > - Werkt op elk apparaat met een browser
-> - Vooraf geconfigureerd met alle tools en afhankelijkheden
+> - Vooraf geconfigureerd met alle tools en dependencies
 > - Gratis 60 uur per maand voor persoonlijke accounts
 > - Consistente omgeving voor alle cursisten
 
 #### Optie B: Lokale Dev Container
 
-**Voor ontwikkelaars die lokaal met Docker willen werken**
+**Voor ontwikkelaars die lokaal willen ontwikkelen met Docker**
 
 1. Fork en clone deze repository naar je lokale machine
-   > **Opmerking**: Als je de basisconfiguratie wilt bewerken, kijk dan naar de [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
+   > **Opmerking**: Wil je de basisconfiguratie aanpassen, kijk dan naar de [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
 2. Installeer [Docker Desktop](https://www.docker.com/products/docker-desktop/) en [VS Code](https://code.visualstudio.com/)
 3. Installeer de [Dev Containers-extensie](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) in VS Code
-4. Open de repository-map in VS Code
-5. Wanneer gevraagd, klik op **Opnieuw openen in container** (of gebruik `Ctrl+Shift+P` → "Dev Containers: Opnieuw openen in container")
-6. Wacht tot de container wordt opgebouwd en gestart
-7. Ga verder naar [Stap 2: Maak GitHub Token aan](../../../02-SetupDevEnvironment)
+4. Open de repositorymap in VS Code
+5. Klik bij de prompt op **Reopen in Container** (of gebruik `Ctrl+Shift+P` → "Dev Containers: Reopen in Container")
+6. Wacht tot de container gebouwd is en gestart is
+7. Ga verder met [Stap 2: Azure AI Foundry Voorzien](#stap-2-azure-ai-foundry-voorzien)
 
 <img src="../../../translated_images/nl/devcontainer.21126c9d6de64494.webp" alt="Screenshot: Dev container setup" width="50%">
 
-<img src="../../../translated_images/nl/image-3.bf93d533bbc84268.webp" alt="Screenshot: Dev container build compleet" width="50%">
+<img src="../../../translated_images/nl/image-3.bf93d533bbc84268.webp" alt="Screenshot: Dev container build complete" width="50%">
 
-#### Optie C: Gebruik je bestaande lokale installatie
+#### Optie C: Gebruik Je Bestaande Lokale Installatie
 
 **Voor ontwikkelaars met bestaande Java-omgevingen**
 
 Vereisten:
-- [Java 21+](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html)
+- [Java 21+](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html) 
 - [Maven 3.9+](https://maven.apache.org/download.cgi)
 - [VS Code](https://code.visualstudio.com) of je favoriete IDE
 
 Stappen:
 1. Clone deze repository naar je lokale machine
 2. Open het project in je IDE
-3. Ga verder naar [Stap 2: Maak GitHub Token aan](../../../02-SetupDevEnvironment)
+3. Ga verder met [Stap 2: Azure AI Foundry Voorzien](#stap-2-azure-ai-foundry-voorzien)
 
-> **Protip**: Heb je een low-spec machine maar wil je VS Code lokaal gebruiken? Gebruik dan GitHub Codespaces! Je kunt je lokale VS Code verbinden met een cloud-gehoste Codespace voor het beste van twee werelden.
+> **Pro Tip**: Heb je een machine met lage specificaties maar wil je toch VS Code lokaal gebruiken, dan is GitHub Codespaces ideaal! Je kunt je lokale VS Code verbinden met een cloud-hosted Codespace voor het beste van twee werelden.
 
-<img src="../../../translated_images/nl/image-2.fc0da29a6e4d2aff.webp" alt="Screenshot: aangemaakte lokale devcontainer instance" width="50%">
+<img src="../../../translated_images/nl/image-2.fc0da29a6e4d2aff.webp" alt="Screenshot: created local devcontainer instance" width="50%">
 
 
-## Stap 2: Maak een GitHub Personal Access Token aan
+## Stap 2: Azure AI Foundry Voorzien
 
-1. Ga naar [GitHub Settings](https://github.com/settings/profile) en selecteer **Settings** in je profielmenu.
-2. Klik in de linkerzijbalk op **Developer settings** (meestal onderaan).
-3. Onder **Personal access tokens**, klik op **Fine-grained tokens** (of volg deze directe [link](https://github.com/settings/personal-access-tokens)).
-4. Klik op **Generate new token**.
-5. Geef onder "Token name" een beschrijvende naam op (bijv. `GenAI-Java-Course-Token`).
-6. Stel een vervaldatum in (aanbevolen: 7 dagen voor beveiligingsredenen).
-7. Onder "Resource owner" selecteer je je gebruikersaccount.
-8. Onder "Repository access" selecteer je de repositories die je wilt gebruiken met GitHub Models (of "All repositories" indien nodig).
-9. Onder "Account permissions" zoek **Models** en zet dit op **Read-only**.
-10. Klik op **Generate token**.
-11. **Kopieer en sla je token nu op** – je zult het daarna niet meer zien!
+Deploy de AI-modellen van de cursus naar Azure AI Foundry als code. Vanuit de root van de repository:
 
-> **Beveiligingstip**: Gebruik de minimaal vereiste scope en de kortst mogelijke vervaltijd voor je toegangstokens.
-
-## Stap 3: Test je setup met het GitHub Models voorbeeld
-
-Zodra je ontwikkelomgeving klaar is, testen we de GitHub Models-integratie met onze voorbeeldapplicatie in [`02-SetupDevEnvironment/examples/github-models`](../../../02-SetupDevEnvironment/examples/github-models).
-
-1. Open de terminal in je ontwikkelomgeving.
-2. Navigeer naar het GitHub Models voorbeeld:
-   ```bash
-   cd 02-SetupDevEnvironment/examples/github-models
-   ```
-3. Stel je GitHub-token in als omgevingsvariabele:
-   ```bash
-   # macOS/Linux
-   export GITHUB_TOKEN=your_token_here
-   
-   # Windows (Opdrachtprompt)
-   set GITHUB_TOKEN=your_token_here
-   
-   # Windows (PowerShell)
-   $env:GITHUB_TOKEN="your_token_here"
-   ```
-
-4. Start de applicatie:
-   ```bash
-   mvn compile exec:java -Dexec.mainClass="com.example.githubmodels.App"
-   ```
-
-Je zou een output moeten zien zoals:
-```text
-Using model: gpt-4.1-nano
-Sending request to GitHub Models...
-Response: Hello World!
+```bash
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
 ```
 
-### Het voorbeeldcode begrijpen
+`azd` vraagt om een omgevingsnaam en regio, voorziet een Azure AI Foundry-account met `gpt-4o-mini` en `text-embedding-3-small` deployments, en schrijft het endpoint weg in de `.env` van het voorbeeld — allemaal met **keyless** authenticatie (geen API-sleutels).
 
-Laten we eerst begrijpen wat we zojuist draaiden. Het voorbeeld in `examples/github-models` gebruikt de OpenAI Java SDK om verbinding te maken met GitHub Models:
+> **Volledige walkthrough:** Zie de [Azure AI Foundry Setup Guide](getting-started-azure-openai.md) voor vereisten, een handmatige (portaal) alternatieve methode, regiogids en kosten/opschoningsnotities.
+
+## Stap 3: Je Setup Testen
+
+Zodra je Foundry-modellen zijn voorzien, test je de verbinding met de voorbeeldapp in [`02-SetupDevEnvironment/examples/basic-chat-azure`](../../../02-SetupDevEnvironment/examples/basic-chat-azure).
+
+1. Open de terminal in je ontwikkelomgeving.
+2. Navigeer naar het voorbeeld:
+   ```bash
+   cd 02-SetupDevEnvironment/examples/basic-chat-azure
+   ```
+3. Zorg dat je bent aangemeld (keyless auth heeft een token nodig):
+   ```bash
+   az login
+   ```
+   > Als je `azd up` hebt uitgevoerd, is het `.env`-bestand met je endpoint al voor je geschreven.
+4. Start de applicatie:
+   ```bash
+   mvn clean spring-boot:run
+   ```
+
+Je zou een reactie van het `gpt-4o-mini` model moeten zien.
+
+### Het Begrijpen van de Voorbeeldcode
+
+De example onder `examples/basic-chat-azure` is een Spring Boot-app die **Spring AI** gebruikt om met keyless authenticatie verbinding te maken met Azure AI Foundry.
 
 **Wat deze code doet:**
-- **Verbindt** met GitHub Models met je personal access token
-- **Stuurt** een simpele "Say Hello World!"-boodschap naar het AI-model
-- **Ontvangt** en toont het antwoord van de AI
-- **Verifieert** dat je setup correct werkt
+- **Verbindt** met Azure AI Foundry met je Azure-aanmelding (Microsoft Entra ID) — geen API-sleutel nodig
+- **Verstuurt** een prompt naar het `gpt-4o-mini` model
+- **Ontvangt** en toont de AI-respons
+- **Valideert** dat je setup correct functioneert
 
-**Belangrijke afhankelijkheid** (in `pom.xml`):
+**Belangrijke Dependency** (in `pom.xml`):
 ```xml
 <dependency>
-    <groupId>com.openai</groupId>
-    <artifactId>openai-java</artifactId>
-    <version>2.12.0</version>
+    <groupId>org.springframework.ai</groupId>
+    <artifactId>spring-ai-starter-model-azure-openai</artifactId>
 </dependency>
 ```
 
-**Hoofdcode** (`App.java`):
-```java
-// Verbinden met GitHub-modellen met behulp van OpenAI Java SDK
-OpenAIClient client = OpenAIOkHttpClient.builder()
-    .apiKey(pat)
-    .baseUrl("https://models.inference.ai.azure.com")
-    .build();
-
-// Maak een chatvoltooiingsverzoek aan
-ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
-    .model(modelId)
-    .addSystemMessage("You are a concise assistant.")
-    .addUserMessage("Say Hello World!")
-    .build();
-
-// Krijg AI-antwoord
-ChatCompletion response = client.chat().completions().create(params);
-System.out.println("Response: " + response.choices().get(0).message().content().orElse("No response content"));
+**Configuratie** (`application.yml`):
+```yaml
+spring:
+  ai:
+    azure:
+      openai:
+        # Endpoint only - no api-key. Spring AI uses DefaultAzureCredential (keyless).
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 ## Samenvatting
 
-Geweldig! Je hebt nu alles opgezet:
+Geweldig! Je hebt nu alles ingesteld:
 
-- Een GitHub Personal Access Token aangemaakt met de juiste permissies voor AI-modeltoegang
-- Je Java-ontwikkelomgeving draaiende gekregen (of dat nu Codespaces, devcontainers of lokaal is)
-- Verbonden met GitHub Models via de OpenAI Java SDK voor gratis AI-ontwikkeling
-- Getest dat alles werkt met een eenvoudig voorbeeld dat met AI-modellen communiceert
+- Azure AI Foundry-modellen voorzien als code met Bicep + `azd`
+- Je Java-ontwikkelomgeving draaiende gekregen (of dat nu Codespaces, dev containers of lokaal is)
+- Verbonden met Azure AI Foundry met keyless authenticatie (Microsoft Entra ID) — geen API-sleutels
+- Alles getest met een eenvoudig voorbeeld dat met je model communiceert
 
-## Volgende stappen
+## Volgende Stappen
 
-[Hoofdstuk 3: Kerntechnieken van Generatieve AI](../03-CoreGenerativeAITechniques/README.md)
+[Hoofdstuk 3: Kerntechnieken van Generative AI](../03-CoreGenerativeAITechniques/README.md)
 
 ## Probleemoplossing
 
-Problemen? Hier zijn veelvoorkomende problemen en oplossingen:
+Problemen? Hier veelvoorkomende problemen en oplossingen:
 
-- **Token werkt niet?** 
-  - Controleer of je de volledige token hebt gekopieerd zonder extra spaties
-  - Controleer of de token correct als omgevingsvariabele is ingesteld
-  - Controleer of je token de juiste permissies heeft (Models: Read-only)
+- **Authenticatie mislukt (401/403)?** 
+  - Voer `az login` uit — authenticatie is keyless, je moet dus aangemeld zijn
+  - Controleer of je account de rol **Cognitive Services OpenAI User** op de resource heeft
+  - Als je net hebt voorzien, wacht een minuut voor roltoewijzing om door te komen
 
 - **Maven niet gevonden?** 
-  - Bij gebruik van devcontainers/Codespaces zou Maven vooraf geïnstalleerd moeten zijn
-  - Voor lokale setup, zorg dat Java 21+ en Maven 3.9+ geïnstalleerd zijn
-  - Probeer `mvn --version` om de installatie te verifiëren
+  - Bij gebruik van dev containers/Codespaces is Maven vooraf geïnstalleerd
+  - Voor lokale setup, zorg dat Java 21+ en Maven 3.9+ zijn geïnstalleerd
+  - Probeer `mvn --version` om installatie te controleren
 
-- **Verbindingsproblemen?** 
-  - Controleer je internetverbinding
-  - Controleer of GitHub bereikbaar is vanaf je netwerk
-  - Zorg dat je niet achter een firewall zit die het GitHub Models endpoint blokkeert
+- **`azd` niet gevonden of provisioning mislukt?** 
+  - Installeer de [Azure Developer CLI](https://aka.ms/azure-dev/install) en voer `azd auth login` uit
+  - Kies een regio waar `gpt-4o-mini` beschikbaar is (bijv. `eastus2`)
+  - Zie de [Azure AI Foundry setup guide](getting-started-azure-openai.md) voor details
 
 - **Dev container start niet?** 
   - Zorg dat Docker Desktop draait (voor lokale ontwikkeling)
   - Probeer de container opnieuw te bouwen: `Ctrl+Shift+P` → "Dev Containers: Rebuild Container"
 
-- **Applicatie compileerfouten?**
-  - Zorg dat je in de juiste map zit: `02-SetupDevEnvironment/examples/github-models`
+- **Compilatiefouten in applicatie?**
+  - Zorg dat je in de juiste directory bent: `02-SetupDevEnvironment/examples/basic-chat-azure`
   - Probeer schoon te maken en opnieuw te bouwen: `mvn clean compile`
 
-> **Hulp nodig?**: Heb je nog steeds problemen? Maak een issue aan in de repository en we helpen je graag verder.
+> **Hulp nodig?**: Nog steeds problemen? Open een issue in de repository en we helpen je verder.
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Disclaimer**:  
-Dit document is vertaald met behulp van de AI-vertalingsdienst [Co-op Translator](https://github.com/Azure/co-op-translator). Hoewel wij streven naar nauwkeurigheid, dient u er rekening mee te houden dat geautomatiseerde vertalingen fouten of onjuistheden kunnen bevatten. Het originele document in de oorspronkelijke taal wordt beschouwd als de gezaghebbende bron. Voor kritieke informatie wordt een professionele menselijke vertaling aanbevolen. Wij zijn niet aansprakelijk voor eventuele misverstanden of verkeerde interpretaties die voortvloeien uit het gebruik van deze vertaling.
+**Disclaimer**:
+Dit document is vertaald met behulp van de AI vertaaldienst [Co-op Translator](https://github.com/Azure/co-op-translator). Hoewel we streven naar nauwkeurigheid, dient u er rekening mee te houden dat geautomatiseerde vertalingen fouten of onnauwkeurigheden kunnen bevatten. Het originele document in de oorspronkelijke taal moet worden beschouwd als de gezaghebbende bron. Voor kritieke informatie wordt professionele menselijke vertaling aanbevolen. Wij zijn niet aansprakelijk voor eventuele misverstanden of verkeerde interpretaties die voortvloeien uit het gebruik van deze vertaling.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

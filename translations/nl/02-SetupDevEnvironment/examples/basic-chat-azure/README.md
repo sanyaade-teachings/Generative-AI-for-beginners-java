@@ -1,122 +1,77 @@
-# Basis Chat met Azure OpenAI - End-to-End Voorbeeld
+# Basis Chat met Azure AI Foundry - End-to-End Voorbeeld
 
-Dit voorbeeld laat zien hoe je een eenvoudige Spring Boot-applicatie maakt die verbinding maakt met Azure OpenAI en je setup test.
+Dit voorbeeld is een eenvoudige Spring Boot-applicatie die verbinding maakt met een **Azure AI Foundry**-model met behulp van **sleutelvrije authenticatie** (Microsoft Entra ID) en test je setup. Het gebruikt Spring AI's `ChatClient`.
 
 ## Inhoudsopgave
 
-- [Vereisten](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Snelle Start](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Configuratieopties](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Optie 1: Omgevingsvariabelen (.env-bestand) - Aanbevolen](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Optie 2: GitHub Codespace Secrets](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [De Applicatie Uitvoeren](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Met Maven](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Met VS Code](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Verwachte Output](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Configuratiereferentie](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Omgevingsvariabelen](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Spring Configuratie](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Problemen Oplossen](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Veelvoorkomende Problemen](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Debugmodus](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Volgende Stappen](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Bronnen](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
+- [Vereisten](#vereisten)
+- [Snel Starten](#snel-starten)
+- [Hoe Authenticatie Werkt](#hoe-authenticatie-werkt)
+- [De Applicatie Uitvoeren](#de-applicatie-uitvoeren)
+  - [Maven Gebruiken](#maven-gebruiken)
+  - [VS Code Gebruiken](#vs-code-gebruiken)
+  - [Verwachte Uitvoer](#verwachte-uitvoer)
+- [Configuratie Referentie](#configuratie-referentie)
+  - [Omgevingsvariabelen](#omgevingsvariabelen)
+  - [Spring Configuratie](#spring-configuratie)
+- [Probleemoplossing](#probleemoplossing)
+  - [Veelvoorkomende Problemen](#veelvoorkomende-problemen)
+  - [Debug Modus](#debug-modus)
+- [Volgende Stappen](#volgende-stappen)
+- [Bronnen](#bronnen)
 
 ## Vereisten
 
-Voordat je dit voorbeeld uitvoert, zorg ervoor dat je:
+Zorg ervoor dat je voor het uitvoeren van dit voorbeeld het volgende hebt:
 
-- De [Azure OpenAI setup-gids](../../getting-started-azure-openai.md) hebt voltooid  
-- Een Azure OpenAI-resource hebt gedeployed (via het Azure AI Foundry-portaal)  
-- Het gpt-4o-mini model (of alternatief) hebt gedeployed  
-- Een API-sleutel en endpoint-URL van Azure hebt  
+- Een Azure AI Foundry-resource met een `gpt-4o-mini`-implementatie — maak deze aan met `azd up` of handmatig via de [Azure AI Foundry setup gids](../../getting-started-azure-openai.md)
+- De **Cognitive Services OpenAI User** rol op die resource (de Bicep-sjablonen wijzen deze voor je toe)
+- De [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli), aangemeld met `az login`
+- Java 21+ en Maven 3.9+
 
-## Snelle Start
+> **Geen API-sleutel nodig** — authenticatie is sleutelvrij via Microsoft Entra ID.
+
+## Snel Starten
 
 ```bash
-# 1. Navigate to project
+# 1. Navigeer naar het project
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 
-# 2. Configure credentials
-cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# 2. Meld je aan zodat keyless authenticatie een token kan krijgen
+az login
 
-# 3. Run the application
+# 3. Configureer de endpoint
+#    - Als je `azd up` hebt uitgevoerd, is .env voor je geschreven (sla dit over).
+#    - Anders kopieer je de template en stel je AZURE_OPENAI_ENDPOINT in:
+cp .env.example .env
+
+# 4. Voer de toepassing uit
 mvn spring-boot:run
 ```
 
-## Configuratieopties
+## Hoe Authenticatie Werkt
 
-### Optie 1: Omgevingsvariabelen (.env-bestand) - Aanbevolen
+Dit voorbeeld authenticeert met **Microsoft Entra ID** — er is geen API-sleutel.
 
-**Stap 1: Maak je configuratiebestand**
-```bash
-cp .env.example .env
-```
-
-**Stap 2: Voeg je Azure OpenAI-credentials toe**
-```bash
-# Your Azure OpenAI API key (from Azure AI Foundry portal)
-AZURE_AI_KEY=your-actual-api-key-here
-
-# Your Azure OpenAI endpoint URL (e.g., https://your-hub-name.openai.azure.com/)
-AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-> **Beveiligingsnotitie**: 
-> - Commit je `.env`-bestand nooit naar versiebeheer
-> - Het `.env`-bestand staat al in `.gitignore`
-> - Houd je API-sleutels veilig en roteer ze regelmatig
-
-### Optie 2: GitHub Codespace Secrets
-
-Voor GitHub Codespaces, stel deze secrets in je repository in:
-- `AZURE_AI_KEY` - Je Azure OpenAI API-sleutel
-- `AZURE_AI_ENDPOINT` - Je Azure OpenAI endpoint-URL
-
-De applicatie detecteert en gebruikt deze secrets automatisch.
-
-### Alternatief: Directe Omgevingsvariabelen
-
-<details>
-<summary>Klik om platform-specifieke commando's te zien</summary>
-
-**Linux/macOS (bash/zsh):**
-```bash
-export AZURE_AI_KEY=your-actual-api-key-here
-export AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (Command Prompt):**
-```cmd
-set AZURE_AI_KEY=your-actual-api-key-here
-set AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (PowerShell):**
-```powershell
-$env:AZURE_AI_KEY="your-actual-api-key-here"
-$env:AZURE_AI_ENDPOINT="https://your-hub-name.openai.azure.com/"
-```
-</details>
+Wanneer alleen `spring.ai.azure.openai.endpoint` is ingesteld (en geen api-key), bouwt Spring AI de Azure OpenAI-client met [`DefaultAzureCredential`](https://learn.microsoft.com/java/api/com.azure.identity.defaultazurecredential). Die credential vindt automatisch een token uit je lokale `az login` sessie, of uit een beheerde identiteit wanneer het in Azure draait — dus dezelfde code werkt op beide plaatsen zonder wijzigingen.
 
 ## De Applicatie Uitvoeren
 
-### Met Maven
+### Maven Gebruiken
 
 ```bash
 mvn spring-boot:run
 ```
 
-### Met VS Code
+### VS Code Gebruiken
 
 1. Open het project in VS Code
-2. Druk op `F5` of gebruik het "Run and Debug"-paneel
+2. Druk op `F5` of gebruik het "Run and Debug" paneel
 3. Selecteer de configuratie "Spring Boot-BasicChatApplication"
 
-> **Notitie**: De VS Code-configuratie laadt automatisch je .env-bestand
+> **Opmerking**: De VS Code-configuratie laadt automatisch je .env-bestand
 
-### Verwachte Output
+### Verwachte Uitvoer
 
 ```
 Starting Basic Chat with Azure OpenAI...
@@ -132,65 +87,66 @@ AI, or Artificial Intelligence, is the simulation of human intelligence in machi
 Success! Azure OpenAI connection is working correctly.
 ```
 
-## Configuratiereferentie
+## Configuratie Referentie
 
 ### Omgevingsvariabelen
 
-| Variabele | Beschrijving | Vereist | Voorbeeld |
-|-----------|--------------|---------|-----------|
-| `AZURE_AI_KEY` | Azure OpenAI API-sleutel | Ja | `abc123...` |
-| `AZURE_AI_ENDPOINT` | Azure OpenAI endpoint-URL | Ja | `https://my-hub.openai.azure.com/` |
-| `AZURE_AI_MODEL_DEPLOYMENT` | Model deployment naam | Nee | `gpt-4o-mini` (standaard) |
+| Variabele | Beschrijving | Verplicht | Voorbeeld |
+|----------|-------------|----------|---------|
+| `AZURE_OPENAI_ENDPOINT` | Foundry (Azure OpenAI) endpoint URL | Ja | `https://my-resource.openai.azure.com/` |
+| `AZURE_OPENAI_DEPLOYMENT` | Chat model implementatienaam | Nee | `gpt-4o-mini` (standaard) |
+
+> Er is **geen** API-sleutelvariabele — authenticatie is sleutelvrij (Microsoft Entra ID via `az login`).
 
 ### Spring Configuratie
 
-Het `application.yml`-bestand configureert:
-- **API-sleutel**: `${AZURE_AI_KEY}` - Uit omgevingsvariabele
-- **Endpoint**: `${AZURE_AI_ENDPOINT}` - Uit omgevingsvariabele  
-- **Model**: `${AZURE_AI_MODEL_DEPLOYMENT:gpt-4o-mini}` - Uit omgevingsvariabele met fallback
-- **Temperatuur**: `0.7` - Bepaalt creativiteit (0.0 = deterministisch, 1.0 = creatief)
-- **Max Tokens**: `500` - Maximale lengte van de respons
+Het `application.yml` bestand configureert:
+- **Endpoint**: `${AZURE_OPENAI_ENDPOINT}` - Uit omgevingsvariabele
+- **Deployment**: `${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}` - Uit omgevingsvariabele met fallback
+- **Auth**: sleutelvrij — geen `api-key` ingesteld, dus Spring AI gebruikt `DefaultAzureCredential`
+- **Temperature**: `0.7` - Stuurt creativiteit (0.0 = deterministisch, 1.0 = creatief)
+- **Max Tokens**: `500` - Maximale responslengte
 
-## Problemen Oplossen
+## Probleemoplossing
 
 ### Veelvoorkomende Problemen
 
 <details>
-<summary><strong>Fout: "De API-sleutel is niet geldig"</strong></summary>
+<summary><strong>Fout: 401 / "PermissionDenied" / token fouten</strong></summary>
 
-- Controleer of je `AZURE_AI_KEY` correct is ingesteld in je `.env`-bestand
-- Verifieer dat de API-sleutel exact is gekopieerd van het Azure AI Foundry-portaal
-- Zorg ervoor dat er geen extra spaties of aanhalingstekens rond de sleutel staan
+- Voer `az login` uit — sleutelvrije authenticatie vereist een actieve aanmelding voor een token
+- Controleer of je account de rol **Cognitive Services OpenAI User** heeft op de resource
+- Als je net de rol hebt toegewezen, wacht een minuut tot deze is doorgevoerd
+- Controleer of je in de juiste tenant/abonnement bent (`az account show`)
 </details>
 
 <details>
-<summary><strong>Fout: "Het endpoint is niet geldig"</strong></summary>
+<summary><strong>Fout: "The endpoint is not valid" / verbindingsproblemen</strong></summary>
 
-- Zorg ervoor dat je `AZURE_AI_ENDPOINT` de volledige URL bevat (bijv. `https://your-hub-name.openai.azure.com/`)
-- Controleer de consistentie van de trailing slash
-- Verifieer dat het endpoint overeenkomt met je Azure deployment-regio
+- Zorg dat `AZURE_OPENAI_ENDPOINT` de volledige basis-URL is (bijv. `https://your-resource.openai.azure.com/`)
+- Controleer consistentie van eventuele schuine strepen aan het eind
+- Controleer of het endpoint overeenkomt met je geprovisioneerde resource (`azd env get-values`)
 </details>
 
 <details>
-<summary><strong>Fout: "De deployment is niet gevonden"</strong></summary>
+<summary><strong>Fout: "The deployment was not found"</strong></summary>
 
-- Verifieer dat de naam van je model deployment exact overeenkomt met wat is gedeployed in Azure
-- Controleer of het model succesvol is gedeployed en actief is
-- Probeer de standaard deployment naam: `gpt-4o-mini`
+- Controleer of `AZURE_OPENAI_DEPLOYMENT` overeenkomt met een implementatienaam in Azure
+- Controleer dat het model succesvol is geïmplementeerd en actief is
+- De standaard implementatienaam is `gpt-4o-mini`
 </details>
 
 <details>
-<summary><strong>VS Code: Omgevingsvariabelen worden niet geladen</strong></summary>
+<summary><strong>VS Code: Omgevingsvariabelen laden niet</strong></summary>
 
-- Zorg ervoor dat je `.env`-bestand in de projectrootdirectory staat (op hetzelfde niveau als `pom.xml`)
+- Zorg dat je `.env` bestand in de hoofdmap van het project staat (op gelijke hoogte met `pom.xml`)
 - Probeer `mvn spring-boot:run` uit te voeren in de geïntegreerde terminal van VS Code
-- Controleer of de VS Code Java-extensie correct is geïnstalleerd
-- Verifieer dat de launch-configuratie `"envFile": "${workspaceFolder}/.env"` bevat
+- Controleer of de Java-extensie van VS Code correct is geïnstalleerd
 </details>
 
-### Debugmodus
+### Debug Modus
 
-Om gedetailleerde logging in te schakelen, uncomment deze regels in `application.yml`:
+Om gedetailleerde logging in te schakelen, haal de commentaartekens weg bij deze regels in `application.yml`:
 
 ```yaml
 logging:
@@ -201,16 +157,20 @@ logging:
 
 ## Volgende Stappen
 
-**Setup Voltooid!** Ga verder met je leertraject:
+**Setup Voltooid!** Ga door met je leertraject:
 
-[Hoofdstuk 3: Kerntechnieken voor Generatieve AI](../../../03-CoreGenerativeAITechniques/README.md)
+[Hoofdstuk 3: Core Generative AI Techniques](../../../03-CoreGenerativeAITechniques/README.md)
 
 ## Bronnen
 
-- [Spring AI Azure OpenAI Documentatie](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
-- [Azure OpenAI Service Documentatie](https://learn.microsoft.com/azure/ai-services/openai/)
-- [Azure AI Foundry Portaal](https://ai.azure.com/)
-- [Azure AI Foundry Documentatie](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project)
+- [Spring AI Azure OpenAI Documentatie](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
+- [Sleutelvrije authenticatie met Microsoft Entra ID](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
+- [Azure AI Foundry Portal](https://ai.azure.com/)
+- [Azure AI Foundry Documentatie](https://learn.microsoft.com/azure/ai-foundry/)
 
-**Disclaimer**:  
-Dit document is vertaald met behulp van de AI-vertalingsservice [Co-op Translator](https://github.com/Azure/co-op-translator). Hoewel we streven naar nauwkeurigheid, dient u zich ervan bewust te zijn dat geautomatiseerde vertalingen fouten of onnauwkeurigheden kunnen bevatten. Het originele document in de oorspronkelijke taal moet worden beschouwd als de gezaghebbende bron. Voor cruciale informatie wordt professionele menselijke vertaling aanbevolen. Wij zijn niet aansprakelijk voor misverstanden of verkeerde interpretaties die voortvloeien uit het gebruik van deze vertaling.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Disclaimer**:
+Dit document is vertaald met behulp van de AI vertaaldienst [Co-op Translator](https://github.com/Azure/co-op-translator). Hoewel we streven naar nauwkeurigheid, dient u er rekening mee te houden dat geautomatiseerde vertalingen fouten of onnauwkeurigheden kunnen bevatten. Het originele document in de oorspronkelijke taal moet worden beschouwd als de gezaghebbende bron. Voor kritieke informatie wordt professionele menselijke vertaling aanbevolen. Wij zijn niet aansprakelijk voor eventuele misverstanden of verkeerde interpretaties die voortvloeien uit het gebruik van deze vertaling.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->
