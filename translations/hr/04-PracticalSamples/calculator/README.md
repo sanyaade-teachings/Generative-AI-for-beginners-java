@@ -1,40 +1,40 @@
-# MCP Kalkulator Vodič za Početnike
+# MCP Calculator Tutorial za Početnike
 
 ## Sadržaj
 
 - [Što ćete naučiti](#što-ćete-naučiti)
 - [Preduvjeti](#preduvjeti)
 - [Razumijevanje strukture projekta](#razumijevanje-strukture-projekta)
-- [Objašnjenje glavnih komponenti](#objašnjenje-glavnih-komponenti)
+- [Objašnjenje osnovnih komponenti](#objašnjenje-osnovnih-komponenti)
   - [1. Glavna aplikacija](#1-glavna-aplikacija)
   - [2. Kalkulatorska usluga](#2-kalkulatorska-usluga)
   - [3. Direktni MCP klijent](#3-direktni-mcp-klijent)
-  - [4. AI-pokretan klijent](#4-ai-pokretan-klijent)
+  - [4. Klijent koji koristi AI](#4-klijent-koji-koristi-ai)
 - [Pokretanje primjera](#pokretanje-primjera)
-- [Kako sve to zajedno funkcionira](#kako-sve-to-zajedno-funkcionira)
+- [Kako sve zajedno funkcionira](#kako-sve-zajedno-funkcionira)
 - [Sljedeći koraci](#sljedeći-koraci)
 
 ## Što ćete naučiti
 
 Ovaj vodič objašnjava kako izgraditi kalkulatorsku uslugu koristeći Model Context Protocol (MCP). Naučit ćete:
 
-- Kako stvoriti uslugu koju AI može koristiti kao alat
-- Kako postaviti izravnu komunikaciju s MCP uslugama
-- Kako AI modeli mogu automatski odabrati koje alate koristiti
-- Razliku između izravnih protokolskih poziva i AI-pomoću interakcija
+- Kako kreirati uslugu koju AI može koristiti kao alat
+- Kako uspostaviti direktnu komunikaciju s MCP uslugama
+- Kako AI modeli mogu automatski birati koje alate koristiti
+- Razliku između direktnih protokol poziva i interakcija uz pomoć AI
 
 ## Preduvjeti
 
-Prije početka, provjerite imate li:
-- Instaliran Java 21 ili noviju verziju
+Prije početka, osigurajte da imate:
+- Instaliranu Javu 21 ili noviju verziju
 - Maven za upravljanje ovisnostima
-- Azure AI Foundry model implementiran (provisionirajte ga s `azd up` — pogledajte [Poglavlje 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
-- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), prijavljen s `az login` (autentikacija bez ključa)
-- Osnovno razumijevanje Java i Spring Boot
+- Deployment modela Azure AI Foundry (dostavljen pomoću `azd up` — vidi [Poglavlje 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
+- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), prijavljeni s `az login` (autentifikacija bez ključa)
+- Osnovno razumijevanje Jave i Spring Boota
 
 ## Razumijevanje strukture projekta
 
-Projekt kalkulatora ima nekoliko važnih datoteka:
+Projekt kalkulatora sadrži nekoliko važnih datoteka:
 
 ```
 calculator/
@@ -47,13 +47,13 @@ calculator/
     └── Bot.java                          # Simple chat interface
 ```
 
-## Objašnjenje glavnih komponenti
+## Objašnjenje osnovnih komponenti
 
 ### 1. Glavna aplikacija
 
 **Datoteka:** `McpServerApplication.java`
 
-Ovo je ulazna točka naše kalkulatorske usluge. Standardna je Spring Boot aplikacija s jednim posebim dodatkom:
+Ovo je ulazna točka naše kalkulatorske usluge. To je standardna Spring Boot aplikacija s jednom posebnom dodatkom:
 
 ```java
 @SpringBootApplication
@@ -70,16 +70,16 @@ public class McpServerApplication {
 }
 ```
 
-**Ovo radi:**
-- Pokreće Spring Boot web poslužitelj na portu 8080
-- Stvara `ToolCallbackProvider` koji čini naše metode kalkulatora dostupnima kao MCP alate
-- `@Bean` anotacija govori Springu da ovo upravlja kao komponentom koju drugi dijelovi mogu koristiti
+**Što ovo radi:**
+- Pokreće Spring Boot web server na portu 8080
+- Stvara `ToolCallbackProvider` koji omogućuje naše kalkulatorske metode kao MCP alate
+- Oznaka `@Bean` govori Springu da upravlja ovim komponentama koje drugi dijelovi mogu koristiti
 
 ### 2. Kalkulatorska usluga
 
 **Datoteka:** `CalculatorService.java`
 
-Ovdje se odvijaju svi matematički izračuni. Svaka metoda označena je s `@Tool` kako bi bila dostupna putem MCP-a:
+Ovdje se odvijaju sve matematičke radnje. Svaka metoda je označena s `@Tool` kako bi bila dostupna putem MCP-a:
 
 ```java
 @Service
@@ -97,7 +97,7 @@ public class CalculatorService {
         return formatResult(a, "-", b, result);
     }
     
-    // Još operacija kalkulatora...
+    // Više operacija kalkulatora...
     
     private String formatResult(double a, String operator, double b, double result) {
         return String.format("%.2f %s %.2f = %.2f", a, operator, b, result);
@@ -107,18 +107,18 @@ public class CalculatorService {
 
 **Ključne značajke:**
 
-1. **`@Tool` anotacija**: Govori MCP-u da ova metoda može biti pozvana od strane vanjskih klijenata
-2. **Jasni opisi**: Svaki alat ima opis koji pomaže AI modelima da shvate kada ga koristiti
-3. **Konzistentan format rezultata**: Sve operacije vraćaju razumljive stringove poput "5.00 + 3.00 = 8.00"
-4. **Rukovanje pogreškama**: Dijeljenje s nulom i negativni korijen vraćaju poruke o pogrešci
+1. **`@Tool` oznaka**: Ovo govori MCP-u da ovu metodu mogu pozivati vanjski klijenti
+2. **Jasni opisi**: Svaki alat ima opis koji pomaže AI modelima razumjeti kada ga koristiti
+3. **Konzistentan format povratka**: Sve operacije vraćaju ljudski čitljive stringove poput "5.00 + 3.00 = 8.00"
+4. **Rukovanje greškama**: Dijeljenje s nulom i korijen ne-negativnog broja vraćaju poruke o grešci
 
 **Dostupne operacije:**
 - `add(a, b)` - Zbraja dva broja
 - `subtract(a, b)` - Oduzima drugi od prvog
 - `multiply(a, b)` - Množi dva broja
 - `divide(a, b)` - Dijeli prvi s drugim (s provjerom na nulu)
-- `power(base, exponent)` - Podigne bazu na potenciju
-- `squareRoot(number)` - Računa kvadratni korijen (s provjerom za negativne vrijednosti)
+- `power(base, exponent)` - Potencira bazu na eksponent
+- `squareRoot(number)` - Izračunava korijen (s provjerom na negativan broj)
 - `modulus(a, b)` - Vraća ostatak dijeljenja
 - `absolute(number)` - Vraća apsolutnu vrijednost
 - `help()` - Vraća informacije o svim operacijama
@@ -127,7 +127,7 @@ public class CalculatorService {
 
 **Datoteka:** `SDKClient.java`
 
-Ovaj klijent komunicira izravno s MCP poslužiteljem bez upotrebe AI. Ručno poziva određene funkcije kalkulatora:
+Ovaj klijent izravno komunicira s MCP serverom bez korištenja AI-ja. Ručno poziva specifične kalkulatorske funkcije:
 
 ```java
 public class SDKClient {
@@ -147,7 +147,7 @@ public class SDKClient {
         ListToolsResult toolsList = client.listTools();
         System.out.println("Available Tools = " + toolsList);
         
-        // Pozovi određene funkcije kalkulatora
+        // Pozovi specifične funkcije kalkulatora
         CallToolResult resultAdd = client.callTool(
             new CallToolRequest("add", Map.of("a", 5.0, "b", 3.0))
         );
@@ -163,17 +163,17 @@ public class SDKClient {
 }
 ```
 
-**Ovo radi:**
-1. **Povezuje se** s kalkulatorskim poslužiteljem na `http://localhost:8080` koristeći builder pattern
-2. **Popisuje** sve dostupne alate (naše funkcije kalkulatora)
+**Što ovo radi:**
+1. **Povezuje se** na kalkulatorski server na `http://localhost:8080` koristeći builder pattern
+2. **Nabavlja popis** svih dostupnih alata (naših kalkulatorskih funkcija)
 3. **Poziva** specifične funkcije s točnim parametrima
-4. **Ispisuje** rezultate izravno
+4. **Ispisuje** rezultate direktno
 
-**Napomena:** Ovaj primjer koristi Spring AI 1.1.0-SNAPSHOT ovisnost koja je uvela builder pattern za `WebFluxSseClientTransport`. Ako koristite stariju stabilnu verziju, možda ćete trebati koristiti izravan konstruktor.
+**Napomena:** Ovaj primjer koristi Spring AI verziju 1.1.0-SNAPSHOT, koja je uvela builder pattern za `WebFluxSseClientTransport`. Ako koristite stariju stabilnu verziju, možda ćete trebati koristiti direktni konstruktor.
 
-**Kada koristiti ovo:** Kada točno znate koju izračun želite i želite je pozvati programatski.
+**Kada koristiti:** Kad točno znate koju kalkulaciju želite napraviti i želite je pozvati programatski.
 
-### 4. AI-pokretan klijent
+### 4. Klijent koji koristi AI
 
 **Datoteka:** `LangChain4jClient.java`
 
@@ -183,7 +183,7 @@ Ovaj klijent koristi AI model (GPT-4o-mini) koji može automatski odlučiti koje
 public class LangChain4jClient {
     
     public static void main(String[] args) throws Exception {
-        // Postavite AI model (Azure AI Foundry, autentifikacija bez ključa preko Microsoft Entra ID)
+        // Postavite AI model (Azure AI Foundry, autentifikacija bez ključa putem Microsoft Entra ID)
         String endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1";
         String token = new DefaultAzureCredentialBuilder().build()
@@ -206,18 +206,18 @@ public class LangChain4jClient {
                 .transport(transport)
                 .build();
 
-        // Dajte AI pristup našim kalkulator alatima
+        // Dajte AI pristup našim alatima kalkulatora
         ToolProvider toolProvider = McpToolProvider.builder()
                 .mcpClients(List.of(mcpClient))
                 .build();
 
-        // Kreirajte AI bot koji može koristiti naš kalkulator
+        // Kreirajte AI bota koji može koristiti naš kalkulator
         Bot bot = AiServices.builder(Bot.class)
                 .chatLanguageModel(model)
                 .toolProvider(toolProvider)
                 .build();
 
-        // Sada možemo tražiti od AI-a da obavlja izračune na prirodnom jeziku
+        // Sada možemo zatražiti od AI-a da izvrši izračune na prirodnom jeziku
         String response = bot.chat("Calculate the sum of 24.5 and 17.3 using the calculator service");
         System.out.println(response);
 
@@ -227,23 +227,23 @@ public class LangChain4jClient {
 }
 ```
 
-**Ovo radi:**
-1. **Stvara** AI model koristeći vaš GitHub token
-2. **Povezuje** AI s našim kalkulatorskim MCP poslužiteljem
+**Što ovo radi:**
+1. **Stvara** AI model vezu koristeći autentifikaciju bez ključa (Microsoft Entra ID)
+2. **Povezuje** AI s našim MCP kalkulatorskim serverom
 3. **Daje** AI pristup svim našim kalkulatorskim alatima
-4. **Omogućava** prirodni jezik zahtjeva poput "Izračunaj zbroj 24.5 i 17.3"
+4. **Omogućava** zahtjeve na prirodnom jeziku poput "Izračunaj zbroj od 24.5 i 17.3"
 
 **AI automatski:**
 - Razumije da želite zbrojiti brojeve
-- Odabire `add` alat
+- Odabire alat `add`
 - Poziva `add(24.5, 17.3)`
 - Vraća rezultat u prirodnom odgovoru
 
 ## Pokretanje primjera
 
-### Korak 1: Pokrenite kalkulatorski poslužitelj
+### Korak 1: Pokrenite kalkulatorski server
 
-Prvo se prijavite i postavite svoj Azure AI Foundry endpoint (potrebno za AI klijenta — autentikacija bez ključa, bez API ključa):
+Prvo se prijavite i postavite svoj Azure AI Foundry endpoint (potrebno za AI klijent — autentifikacija bez ključa, bez API ključa):
 
 **Windows:**
 ```cmd
@@ -257,20 +257,20 @@ az login
 export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-Pokrenite poslužitelj:
+Pokrenite server:
 ```bash
 cd 04-PracticalSamples/calculator
 mvn clean spring-boot:run
 ```
 
-Poslužitelj će se pokrenuti na `http://localhost:8080`. Trebali biste vidjeti:
+Server će se pokrenuti na `http://localhost:8080`. Trebali biste vidjeti:
 ```
 Started McpServerApplication in X.XXX seconds
 ```
 
-### Korak 2: Test s direktnim klijentom
+### Korak 2: Testirajte s direktnim klijentom
 
-U **NOVOM** terminalu, dok je poslužitelj još pokrenut, pokrenite direktni MCP klijent:
+U **NOVOM** terminalu dok je server još pokrenut, pokrenite direktni MCP klijent:
 ```bash
 cd 04-PracticalSamples/calculator
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient" -Dexec.classpathScope=test
@@ -283,7 +283,7 @@ Add Result = 5.00 + 3.00 = 8.00
 Square Root Result = √16.00 = 4.00
 ```
 
-### Korak 3: Test s AI klijentom
+### Korak 3: Testirajte s AI klijentom
 
 ```bash
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient" -Dexec.classpathScope=test
@@ -295,26 +295,26 @@ The sum of 24.5 and 17.3 is 41.8.
 The square root of 144 is 12.
 ```
 
-### Korak 4: Zatvorite MCP poslužitelj
+### Korak 4: Zatvorite MCP server
 
-Kad završite s testiranjem, možete zaustaviti AI klijenta pritiskom `Ctrl+C` u njegovom terminalu. MCP poslužitelj će i dalje raditi dok ga ne zaustavite.
-Za zaustavljanje poslužitelja pritisnite `Ctrl+C` u terminalu u kojem je pokrenut.
+Kada završite s testiranjem, zaustavite AI klijent pritiskom na `Ctrl+C` u njegovom terminalu. MCP server će nastaviti raditi dok ga ne zaustavite.
+Za zaustavljanje servera pritisnite `Ctrl+C` u terminalu gdje je pokrenut.
 
-## Kako sve to zajedno funkcionira
+## Kako sve zajedno funkcionira
 
-Evo cijelog tijeka kad pitate AI "Koliko je 5 + 3?":
+Evo potpuni tijek kada pitate AI "Koliko je 5 + 3?":
 
-1. **Vi** postavite pitanje AI-ju na prirodnom jeziku
+1. **Vi** pitate AI na prirodnom jeziku
 2. **AI** analizira vaš zahtjev i shvati da želite zbrajanje
-3. **AI** poziva MCP poslužitelj: `add(5.0, 3.0)`
+3. **AI** poziva MCP server: `add(5.0, 3.0)`
 4. **Kalkulatorska usluga** izvršava: `5.0 + 3.0 = 8.0`
 5. **Kalkulatorska usluga** vraća: `"5.00 + 3.00 = 8.00"`
-6. **AI** prima rezultat i formatira prirodan odgovor
-7. **Vi** dobivate: "Zbroj 5 i 3 je 8"
+6. **AI** prima rezultat i formulira prirodan odgovor
+7. **Vi** dobivate: "Zbroj od 5 i 3 je 8"
 
 ## Sljedeći koraci
 
-Za više primjera, pogledajte [Poglavlje 04: Praktični primjeri](../README.md)
+Za više primjera, vidi [Poglavlje 04: Praktični primjeri](../README.md)
 
 ---
 
