@@ -1,40 +1,40 @@
-# MCP 計算機初學者教學
+# MCP 計算機教學入門
 
 ## 目錄
 
-- [您將學到什麼](#您將學到什麼)
+- [你將學到什麼](#你將學到什麼)
 - [先決條件](#先決條件)
 - [了解專案結構](#了解專案結構)
 - [核心元件說明](#核心元件說明)
-  - [1. 主應用程式](#1-主應用程式)
-  - [2. 計算機服務](#2-計算機服務)
+  - [1. 主要應用程式](#1-主要應用程式)
+  - [2. 計算服務](#2-計算服務)
   - [3. 直接 MCP 用戶端](#3-直接-mcp-用戶端)
   - [4. AI 驅動用戶端](#4-ai-驅動用戶端)
 - [執行範例](#執行範例)
-- [整體運作原理](#整體運作原理)
-- [後續步驟](#後續步驟)
+- [整合運作機制](#整合運作機制)
+- [下一步](#下一步)
 
-## 您將學到什麼
+## 你將學到什麼
 
-本教學說明如何使用 Model Context Protocol (MCP) 建立一個計算機服務。您將了解：
+本教學說明如何使用模型上下文協議（Model Context Protocol，MCP）構建計算服務。你將了解到：
 
-- 如何建立 AI 可用作工具的服務
-- 如何設定與 MCP 服務的直接通訊
-- AI 模型如何自動選擇使用哪些工具
-- 直接協議調用與 AI 協助互動的差異
+- 如何創建 AI 可用作工具的服務
+- 如何設定與 MCP 服務的直接通信
+- AI 模型如何自動選擇要使用的工具
+- 直接協議呼叫與 AI 輔助互動的差異
 
 ## 先決條件
 
-開始前請確保您擁有：
-- 已安裝 Java 21 或更高版本
-- Maven 用於依賴管理
-- 一個 Azure AI Foundry 模型部署（透過 `azd up` 設定 — 請參閱 [第 2 章](../../02-SetupDevEnvironment/getting-started-azure-openai.md)）
-- 已登入的 [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)，使用 `az login`（無需 API 金鑰）
-- 基本的 Java 與 Spring Boot 知識
+開始前，請確保你已具備：
+- 安裝 Java 21 或更高版本
+- 使用 Maven 進行依賴管理
+- 一個 Azure AI Foundry 模型部署（可透過 `azd up` 佈建 — 參考[第二章](../../02-SetupDevEnvironment/getting-started-azure-openai.md)）
+- 安裝 [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)，並使用 `az login` 登入（無需金鑰身份驗證）
+- 基本 Java 與 Spring Boot 知識
 
 ## 了解專案結構
 
-計算機專案包含數個重要檔案：
+計算機專案包含多個重要檔案：
 
 ```
 calculator/
@@ -49,11 +49,11 @@ calculator/
 
 ## 核心元件說明
 
-### 1. 主應用程式
+### 1. 主要應用程式
 
-**檔案：** `McpServerApplication.java`
+**檔案:** `McpServerApplication.java`
 
-這是我們計算機服務的入口點。它是一個標準的 Spring Boot 應用程式，並有一個特別的新增：
+這是我們計算機服務的進入點。它是一個標準的 Spring Boot 應用程式，並附加一個特別的功能：
 
 ```java
 @SpringBootApplication
@@ -70,16 +70,16 @@ public class McpServerApplication {
 }
 ```
 
-**此程式做的事：**
-- 啟動一個埠號為 8080 的 Spring Boot 網頁伺服器
-- 建立一個 `ToolCallbackProvider`，使我們的計算方法能作為 MCP 工具被外部調用
-- `@Bean` 註解讓 Spring 將它管理成一個其他元件可使用的組件
+**此段功能說明：**
+- 啟動在 8080 埠的 Spring Boot 網頁伺服器
+- 建立一個 `ToolCallbackProvider`，使我們的計算方法可作為 MCP 工具提供
+- `@Bean` 註解表示 Spring 將它管理為其他部分可使用的元件
 
-### 2. 計算機服務
+### 2. 計算服務
 
-**檔案：** `CalculatorService.java`
+**檔案:** `CalculatorService.java`
 
-這裡是所有數學運算的地方。每個方法都用 `@Tool` 標記，使其可透過 MCP 被調用：
+所有數學運算都在這裡完成。每個方法都標示 `@Tool`，使其透過 MCP 可用：
 
 ```java
 @Service
@@ -105,29 +105,29 @@ public class CalculatorService {
 }
 ```
 
-**關鍵特色：**
+**主要特點：**
 
-1. **`@Tool` 註解**：告訴 MCP 這些方法可被外部客戶端呼叫
-2. <strong>清楚的說明</strong>：每個工具都有說明，幫助 AI 模型判斷何時使用
-3. <strong>一致的回傳格式</strong>：所有運算回傳易讀的字串，例如 "5.00 + 3.00 = 8.00"
-4. <strong>錯誤處理</strong>：除以零和負數開根號會回傳錯誤訊息
+1. **`@Tool` 註解**：告訴 MCP 該方法可被外部用戶端呼叫
+2. <strong>明確描述</strong>：每個工具都有描述，協助 AI 模型判斷何時使用
+3. <strong>一致的回傳格式</strong>：所有操作均回傳如「5.00 + 3.00 = 8.00」的人類可讀字串
+4. <strong>錯誤處理</strong>：除以零與平方根負數會回傳錯誤訊息
 
-**可用的運算：**
-- `add(a, b)` - 加法運算
-- `subtract(a, b)` - 減法運算
-- `multiply(a, b)` - 乘法運算
-- `divide(a, b)` - 除法運算（含零除檢查）
-- `power(base, exponent)` - 次方計算
-- `squareRoot(number)` - 開平方（含負數檢查）
+**可用操作：**
+- `add(a, b)` - 加法
+- `subtract(a, b)` - 減法
+- `multiply(a, b)` - 乘法
+- `divide(a, b)` - 除法（含零檢查）
+- `power(base, exponent)` - 次方
+- `squareRoot(number)` - 開根號（含負數檢查）
 - `modulus(a, b)` - 取餘數
-- `absolute(number)` - 取絕對值
-- `help()` - 回傳所有運算說明
+- `absolute(number)` - 絕對值
+- `help()` - 回傳所有操作資訊
 
 ### 3. 直接 MCP 用戶端
 
-**檔案：** `SDKClient.java`
+**檔案:** `SDKClient.java`
 
-此用戶端直接與 MCP 伺服器通訊，不透過 AI。它手動呼叫特定的計算功能：
+此用戶端直接與 MCP 伺服器溝通，不使用 AI，自行呼叫特定計算功能：
 
 ```java
 public class SDKClient {
@@ -147,7 +147,7 @@ public class SDKClient {
         ListToolsResult toolsList = client.listTools();
         System.out.println("Available Tools = " + toolsList);
         
-        // 調用特定計算器功能
+        // 呼叫特定計算器函數
         CallToolResult resultAdd = client.callTool(
             new CallToolRequest("add", Map.of("a", 5.0, "b", 3.0))
         );
@@ -163,27 +163,27 @@ public class SDKClient {
 }
 ```
 
-**此程式做的事：**
-1. 使用建構者模式連接到 `http://localhost:8080` 的計算機伺服器
-2. 列出所有可用工具（我們的計算函式）
-3. 以精確參數呼叫特定函式
+**此段功能說明：**
+1. 使用建構者模式連接至 `http://localhost:8080` 的計算機伺服器
+2. 列出所有可用工具（即計算函式）
+3. 以明確參數呼叫指定函式
 4. 直接印出結果
 
-**注意事項：** 此範例使用 Spring AI 1.1.0-SNAPSHOT 版本，該版本引入了 `WebFluxSseClientTransport` 的建構者模式。如使用較舊穩定版，可能需要使用傳統建構子。
+**注意：** 此範例使用 Spring AI 1.1.0-SNAPSHOT 版本，引入了 `WebFluxSseClientTransport` 的建構者模式。如果你使用較舊穩定版，可能需要改用直接建構函式。
 
-**使用時機：** 適合當你明確知道要執行哪項計算，並以程式碼呼叫時。
+**使用時機：** 當你確定要執行哪個計算，並以程式化方式呼叫時。
 
 ### 4. AI 驅動用戶端
 
-**檔案：** `LangChain4jClient.java`
+**檔案:** `LangChain4jClient.java`
 
-此用戶端使用 AI 模型（GPT-4o-mini）能自動決定使用哪些計算工具：
+此用戶端使用 GPT-4o-mini AI 模型，自動判斷要使用哪些計算機工具：
 
 ```java
 public class LangChain4jClient {
     
     public static void main(String[] args) throws Exception {
-        // 設置 AI 模型（Azure AI Foundry，透過 Microsoft Entra ID 進行無金鑰驗證）
+        // 設定 AI 模型（Azure AI Foundry，透過 Microsoft Entra ID 進行無鑰匙驗證）
         String endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1";
         String token = new DefaultAzureCredentialBuilder().build()
@@ -198,7 +198,7 @@ public class LangChain4jClient {
         // 連接到我們的計算器 MCP 伺服器
         McpTransport transport = new HttpMcpTransport.Builder()
                 .sseUrl("http://localhost:8080/sse")
-                .logRequests(true)  // 顯示 AI 的動作
+                .logRequests(true)  // 顯示 AI 正在做什麼
                 .logResponses(true)
                 .build();
 
@@ -206,12 +206,12 @@ public class LangChain4jClient {
                 .transport(transport)
                 .build();
 
-        // 讓 AI 存取我們的計算器工具
+        // 給 AI 訪問我們的計算器工具
         ToolProvider toolProvider = McpToolProvider.builder()
                 .mcpClients(List.of(mcpClient))
                 .build();
 
-        // 建立一個能使用我們計算器的 AI 機器人
+        // 創建一個可以使用我們計算器的 AI 機器人
         Bot bot = AiServices.builder(Bot.class)
                 .chatLanguageModel(model)
                 .toolProvider(toolProvider)
@@ -227,31 +227,31 @@ public class LangChain4jClient {
 }
 ```
 
-**此程式做的事：**
-1. 用您的 GitHub 令牌建立 AI 模型連線
-2. 將 AI 連接到我們的計算機 MCP 伺服器
-3. 讓 AI 存取所有計算機工具
-4. 允許自然語言請求，例如「計算 24.5 和 17.3 的總和」
+**此段功能說明：**
+1. 建立使用無鍵驗證（Microsoft Entra ID）的 AI 模型連線
+2. 連接 AI 至我們的 MCP 計算機伺服器
+3. 賦予 AI 存取所有計算機工具的權限
+4. 允許自然語言請求，如「計算 24.5 與 17.3 的總和」
 
-**AI 自動：**
-- 理解您要執行加法
+**AI 自動流程：**
+- 理解你想執行加法
 - 選擇 `add` 工具
 - 呼叫 `add(24.5, 17.3)`
-- 以自然語言回應結果
+- 以自然回應方式回傳結果
 
 ## 執行範例
 
-### 第 1 步：啟動計算機伺服器
+### 步驟 1：啟動計算機伺服器
 
-先登入並設定您的 Azure AI Foundry 端點（AI 用戶端所需 — 無需 API 金鑰）：
+首先登入並設定 Azure AI Foundry 端點（AI 用戶端需求 — 無鍵驗證，無 API 金鑰）：
 
-**Windows：**
+**Windows:**
 ```cmd
 az login
 set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-**Linux/macOS：**
+**Linux/macOS:**
 ```bash
 az login
 export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
@@ -263,58 +263,58 @@ cd 04-PracticalSamples/calculator
 mvn clean spring-boot:run
 ```
 
-伺服器將在 `http://localhost:8080` 啟動。您應該會看到：
+伺服器將啟動於 `http://localhost:8080`，你應該會看到：
 ```
 Started McpServerApplication in X.XXX seconds
 ```
 
-### 第 2 步：使用直接用戶端測試
+### 步驟 2：使用直接用戶端測試
 
-在保留伺服器執行的<strong>新</strong>終端機中，執行直接 MCP 用戶端：
+在另一個<strong>新終端機</strong>，伺服器仍執行時，執行直接 MCP 用戶端：
 ```bash
 cd 04-PracticalSamples/calculator
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient" -Dexec.classpathScope=test
 ```
 
-您將看到類似輸出：
+你會看到類似輸出：
 ```
 Available Tools = [add, subtract, multiply, divide, power, squareRoot, modulus, absolute, help]
 Add Result = 5.00 + 3.00 = 8.00
 Square Root Result = √16.00 = 4.00
 ```
 
-### 第 3 步：使用 AI 用戶端測試
+### 步驟 3：使用 AI 用戶端測試
 
 ```bash
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient" -Dexec.classpathScope=test
 ```
 
-您將看到 AI 自動使用工具：
+你會看到 AI 自動使用工具：
 ```
 The sum of 24.5 and 17.3 is 41.8.
 The square root of 144 is 12.
 ```
 
-### 第 4 步：關閉 MCP 伺服器
+### 步驟 4：關閉 MCP 伺服器
 
-測試完成後，可在 AI 用戶端終端按 `Ctrl+C` 停止它。MCP 伺服器會持續運行，直到您手動停止。
-若要停止伺服器，請在執行它的終端按 `Ctrl+C`。
+測試完畢後，可在 AI 用戶端的終端機按下 `Ctrl+C` 停止它。MCP 伺服器將持續運行直到你手動停止。
+若要停止伺服器，在執行該伺服器的終端機中按下 `Ctrl+C`。
 
-## 整體運作原理
+## 整合運作機制
 
-當您問 AI「5 + 3 是多少？」時，完整流程如下：
+當你問 AI「5 + 3 等於多少？」時，完整流程如下：
 
-1. <strong>您</strong> 用自然語言詢問 AI
-2. **AI** 解析請求，判斷您要加法
-3. **AI** 呼叫 MCP 伺服器：`add(5.0, 3.0)`
-4. <strong>計算機服務</strong> 執行：`5.0 + 3.0 = 8.0`
-5. <strong>計算機服務</strong> 回傳：`"5.00 + 3.00 = 8.00"`
-6. **AI** 收到結果，生成自然語言回應
-7. <strong>您</strong> 收到：「5 與 3 的和是 8」
+1. <strong>你</strong>以自然語言向 AI 發問
+2. <strong>AI</strong>分析請求，判斷你想做加法
+3. <strong>AI</strong>呼叫 MCP 伺服器：`add(5.0, 3.0)`
+4. <strong>計算服務</strong>執行運算：`5.0 + 3.0 = 8.0`
+5. <strong>計算服務</strong>回傳字串：`"5.00 + 3.00 = 8.00"`
+6. <strong>AI</strong>接收結果並產生自然回應
+7. <strong>你</strong>收到回答：「5 與 3 的總和是 8」
 
-## 後續步驟
+## 下一步
 
-更多範例，請見 [第 04 章：實作範例](../README.md)
+更多範例請參考 [第四章：實用範例](../README.md)
 
 ---
 
