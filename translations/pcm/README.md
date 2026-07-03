@@ -3,16 +3,16 @@
 
 ![Generative AI for Beginners - Java Edition](../../translated_images/pcm/beg-genai-series.8b48be9951cc574c.webp)
 
-**Time Commitment**: Di whole workshop fit finish online witout local setup. Di environment setup dey take 2 minutes, wit exploring di samples go need 1-3 hours depend on how deep you wan explore.
+**Time Commitment**: Di complete workshop fit finish online without local setup. E go take 2 minutes to setup di environment, and to explore di samples fit take 1-3 hours depending on how deep you wan explore.
 
 > **Quick Start** 
 
 1. Fork dis repository go your GitHub account
 2. Click **Code** → **Codespaces** tab → **...** → **New with options...**
-3. Use di default dem – dis go select di Development container wey dem create for dis course
+3. Use di defaults – dis one go select di Development container wey dem create for dis course
 4. Click **Create codespace**
 5. Wait ~2 minutes make di environment ready
-6. Jump straight go [Di first example](./02-SetupDevEnvironment/README.md#step-2-create-a-github-personal-access-token)
+6. Jump straight go [Chapter 2: Provision Azure AI Foundry](./02-SetupDevEnvironment/README.md#step-2-provision-azure-ai-foundry)
 
 ## Multi-Language Support
 
@@ -23,7 +23,7 @@
 
 > **Prefer to Clone Locally?**
 >
-> Dis repository get pass 50 language translations wey go make di download size big. If you wan clone without translations, use sparse checkout:
+> Dis repository get over 50 language translations wey go make di download size big. To clone without di translations, use sparse checkout:
 >
 > **Bash / macOS / Linux:**
 > ```bash
@@ -39,7 +39,7 @@
 > git sparse-checkout set --no-cone "/*" "!translations" "!translated_images"
 > ```
 >
-> Dis go give you everytin wey you need to finish di course wit faster download.
+> Dis one go give you everything wey you need to complete di course with faster download.
 <!-- CO-OP TRANSLATOR LANGUAGES TABLE END -->
 
 ## Course Structure & Learning Path
@@ -47,33 +47,33 @@
 ### **Chapter 1: Introduction to Generative AI**
 - **Core Concepts**: Understand Large Language Models, tokens, embeddings, and AI capabilities
 - **Java AI Ecosystem**: Overview of Spring AI and OpenAI SDKs
-- **Model Context Protocol**: Introduction to MCP and how e take work for AI agent communication
-- **Practical Applications**: Real-world cases including chatbots and content generation
+- **Model Context Protocol**: Introduction to MCP and how e dey help AI agents communication
+- **Practical Applications**: Real-world tins like chatbots and content generation
 - **[→ Start Chapter 1](./01-IntroToGenAI/README.md)**
 
 ### **Chapter 2: Development Environment Setup**
-- **Azure AI Foundry**: Deploy model with code using Bicep and Azure Developer CLI (azd)
-- **Spring Boot + Spring AI**: Best way for enterprise AI app development
-- **Keyless Authentication**: Connect securely wit Microsoft Entra ID — no API keys to worry
-- **Development Tools**: Docker containers, VS Code, and GitHub Codespaces setup
+- **Azure AI Foundry**: Provision model deployments as code with Bicep and Azure Developer CLI (azd)
+- **Spring Boot + Spring AI**: Best practices for enterprise AI application development
+- **Keyless Authentication**: Connect secure with Microsoft Entra ID — no API keys to manage
+- **Development Tools**: Docker containers, VS Code, and GitHub Codespaces configuration
 - **[→ Start Chapter 2](./02-SetupDevEnvironment/README.md)**
 
 ### **Chapter 3: Core Generative AI Techniques**
-- **Prompt Engineering**: Ways to get best AI model answers
-- **Embeddings & Vector Operations**: Use semantic search and similarity matching
-- **Retrieval-Augmented Generation (RAG)**: Mix AI wit your own data sources
-- **Function Calling**: Grow AI powers wit custom tools and plugins
+- **Prompt Engineering**: Techniques for best AI model responses
+- **Embeddings & Vector Operations**: Implement semantic search and similarity matching
+- **Retrieval-Augmented Generation (RAG)**: Combine AI with your own data sources
+- **Function Calling**: Extend AI abilities with custom tools and plugins
 - **[→ Start Chapter 3](./03-CoreGenerativeAITechniques/README.md)**
 
 ### **Chapter 4: Practical Applications & Projects**
-- **Pet Story Generator** (`petstory/`): Creative content generation wit Azure AI Foundry
-- **Foundry Local Demo** (`foundrylocal/`): Local AI model integration wit OpenAI Java SDK
-- **MCP Calculator Service** (`calculator/`): Basic Model Context Protocol to work wit Spring AI
+- **Pet Story Generator** (`petstory/`): Creative content generation with Azure AI Foundry
+- **Foundry Local Demo** (`foundrylocal/`): Local AI model integration with OpenAI Java SDK
+- **MCP Calculator Service** (`calculator/`): Basic Model Context Protocol implementation with Spring AI
 - **[→ Start Chapter 4](./04-PracticalSamples/README.md)**
 
 ### **Chapter 5: Responsible AI Development**
-- **Azure AI Foundry Content Safety**: Try built-in content filtering and safety tools (hard blocks and soft refusals)
-- **Responsible AI Demo**: Hands-on example show how modern AI safety systems dey work for practice
+- **Azure AI Foundry Content Safety**: Test built-in content filtering and safety mechanisms (hard blocks and soft refusals)
+- **Responsible AI Demo**: Hands-on example wey show how modern AI safety systems dey work
 - **Best Practices**: Important rules for ethical AI development and deployment
 - **[→ Start Chapter 5](./05-ResponsibleGenAI/README.md)**
 
@@ -121,11 +121,11 @@
 
 ## Getting Help
 
-If you get stuck or get any question about build AI apps. Join other learners and experienced developers for discussion about MCP. Na supportive community wey questions dey welcome and knowledge dey shared free.
+If you get stuck or get any questions about how to build AI apps. Join other learners and people wey sabi well-well for development inside discussion about MCP. Na good community wey dey support, questions dey welcome and knowledge dey share freely.
 
 [![Microsoft Foundry Discord](https://dcbadge.limes.pink/api/server/nTYy5BXMWG)](https://discord.gg/nTYy5BXMWG)
 
-If you get product feedback or errors while you dey build, visit:
+If you get product feedback or errors wey show when you dey build, visit:
 
 [![Microsoft Foundry Developer Forum](https://img.shields.io/badge/GitHub-Microsoft_Foundry_Developer_Forum-blue?style=for-the-badge&logo=github&color=000000&logoColor=fff)](https://aka.ms/foundry/forum)
 
