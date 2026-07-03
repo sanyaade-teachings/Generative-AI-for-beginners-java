@@ -1,104 +1,59 @@
-# Βασική Συνομιλία με το Azure OpenAI - Παράδειγμα από Άκρη σε Άκρη
+# Βασική Συνομιλία με το Azure AI Foundry - Παράδειγμα Από Άκρη Σε Άκρη
 
-Αυτό το παράδειγμα δείχνει πώς να δημιουργήσετε μια απλή εφαρμογή Spring Boot που συνδέεται με το Azure OpenAI και δοκιμάζει τη ρύθμισή σας.
+Αυτό το παράδειγμα είναι μια απλή εφαρμογή Spring Boot που συνδέεται με ένα μοντέλο **Azure AI Foundry** χρησιμοποιώντας **αυθεντικοποίηση χωρίς κλειδί** (Microsoft Entra ID) και ελέγχει τη ρύθμισή σας. Χρησιμοποιεί το `ChatClient` του Spring AI.
 
-## Πίνακας Περιεχομένων
+## Περιεχόμενα
 
-- [Προαπαιτούμενα](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Γρήγορη Εκκίνηση](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Επιλογές Ρύθμισης](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Επιλογή 1: Μεταβλητές Περιβάλλοντος (.env αρχείο) - Συνιστάται](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Επιλογή 2: Μυστικά GitHub Codespace](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Εκτέλεση της Εφαρμογής](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Χρήση Maven](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Χρήση VS Code](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Αναμενόμενο Αποτέλεσμα](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Αναφορά Ρυθμίσεων](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Μεταβλητές Περιβάλλοντος](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Ρύθμιση Spring](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Αντιμετώπιση Προβλημάτων](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Συνηθισμένα Προβλήματα](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Λειτουργία Εντοπισμού Σφαλμάτων](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Επόμενα Βήματα](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Πόροι](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
+- [Προαπαιτούμενα](#προαπαιτούμενα)
+- [Γρήγορη Εκκίνηση](#γρήγορη-εκκίνηση)
+- [Πώς Λειτουργεί η Αυθεντικοποίηση](#πώς-λειτουργεί-η-αυθεντικοποίηση)
+- [Εκτέλεση της Εφαρμογής](#εκτέλεση-της-εφαρμογής)
+  - [Χρήση Maven](#χρήση-maven)
+  - [Χρήση VS Code](#χρήση-vs-code)
+  - [Αναμενόμενη Έξοδος](#αναμενόμενη-έξοδος)
+- [Αναφορά Ρύθμισης](#αναφορά-ρύθμισης)
+  - [Μεταβλητές Περιβάλλοντος](#μεταβλητές-περιβάλλοντος)
+  - [Ρύθμιση Spring](#ρύθμιση-spring)
+- [Αντιμετώπιση Προβλημάτων](#αντιμετώπιση-προβλημάτων)
+  - [Συνηθισμένα Προβλήματα](#συνηθισμένα-προβλήματα)
+  - [Λειτουργία Αποσφαλμάτωσης](#λειτουργία-αποσφαλμάτωσης)
+- [Επόμενα Βήματα](#επόμενα-βήματα)
+- [Πόροι](#πόροι)
 
 ## Προαπαιτούμενα
 
 Πριν εκτελέσετε αυτό το παράδειγμα, βεβαιωθείτε ότι έχετε:
 
-- Ολοκληρώσει τον [οδηγό ρύθμισης Azure OpenAI](../../getting-started-azure-openai.md)  
-- Αναπτύξει πόρο Azure OpenAI (μέσω της πύλης Azure AI Foundry)  
-- Αναπτύξει το μοντέλο gpt-4o-mini (ή εναλλακτικό)  
-- Κλειδί API και URL τελικού σημείου από το Azure  
+- Έναν πόρο Azure AI Foundry με μια ανάπτυξη `gpt-4o-mini` — δημιουργήστε τον με `azd up` ή χειροκίνητα μέσω του [οδηγού ρύθμισης Azure AI Foundry](../../getting-started-azure-openai.md)
+- Το ρόλο **Cognitive Services OpenAI User** σε αυτόν τον πόρο (τα πρότυπα Bicep το αναθέτουν για εσάς)
+- Το [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli), συνδεδεμένος με `az login`
+- Java 21+ και Maven 3.9+
+
+> **Δεν απαιτείται κλειδί API** — η αυθεντικοποίηση είναι χωρίς κλειδί μέσω Microsoft Entra ID.
 
 ## Γρήγορη Εκκίνηση
 
 ```bash
-# 1. Navigate to project
+# 1. Μεταβείτε στο έργο
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 
-# 2. Configure credentials
-cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# 2. Συνδεθείτε ώστε η πιστοποίηση χωρίς κλειδί να μπορεί να πάρει ένα διακριτικό
+az login
 
-# 3. Run the application
+# 3. Διαμορφώστε το τελικό σημείο
+#    - Εάν εκτελέσατε `azd up`, το .env γράφτηκε για εσάς (παραλείψτε αυτό).
+#    - Διαφορετικά αντιγράψτε το πρότυπο και ορίστε το AZURE_OPENAI_ENDPOINT:
+cp .env.example .env
+
+# 4. Εκτελέστε την εφαρμογή
 mvn spring-boot:run
 ```
 
-## Επιλογές Ρύθμισης
+## Πώς Λειτουργεί η Αυθεντικοποίηση
 
-### Επιλογή 1: Μεταβλητές Περιβάλλοντος (.env αρχείο) - Συνιστάται
+Αυτό το παράδειγμα αυθεντικοποιείται με **Microsoft Entra ID** — δεν υπάρχει κλειδί API.
 
-**Βήμα 1: Δημιουργήστε το αρχείο ρυθμίσεων σας**  
-```bash
-cp .env.example .env
-```
-
-**Βήμα 2: Προσθέστε τα διαπιστευτήρια Azure OpenAI**  
-```bash
-# Your Azure OpenAI API key (from Azure AI Foundry portal)
-AZURE_AI_KEY=your-actual-api-key-here
-
-# Your Azure OpenAI endpoint URL (e.g., https://your-hub-name.openai.azure.com/)
-AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-> **Σημείωση Ασφαλείας**: 
-> - Μην δεσμεύετε ποτέ το αρχείο `.env` στον έλεγχο εκδόσεων
-> - Το αρχείο `.env` είναι ήδη στη λίστα `.gitignore`
-> - Διατηρήστε τα κλειδιά API ασφαλή και ανανεώνετέ τα τακτικά
-
-### Επιλογή 2: Μυστικά GitHub Codespace
-
-Για GitHub Codespaces, ορίστε αυτά τα μυστικά στο αποθετήριό σας:
-- `AZURE_AI_KEY` - Το κλειδί API του Azure OpenAI
-- `AZURE_AI_ENDPOINT` - Το URL τελικού σημείου του Azure OpenAI
-
-Η εφαρμογή ανιχνεύει και χρησιμοποιεί αυτόματα αυτά τα μυστικά.
-
-### Εναλλακτική: Άμεσες Μεταβλητές Περιβάλλοντος
-
-<details>
-<summary>Κάντε κλικ για να δείτε εντολές ανά πλατφόρμα</summary>
-
-**Linux/macOS (bash/zsh):**  
-```bash
-export AZURE_AI_KEY=your-actual-api-key-here
-export AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (Command Prompt):**  
-```cmd
-set AZURE_AI_KEY=your-actual-api-key-here
-set AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (PowerShell):**  
-```powershell
-$env:AZURE_AI_KEY="your-actual-api-key-here"
-$env:AZURE_AI_ENDPOINT="https://your-hub-name.openai.azure.com/"
-```
-</details>
+Όταν έχει οριστεί μόνο το `spring.ai.azure.openai.endpoint` (και δεν υπάρχει api-key), το Spring AI δημιουργεί τον πελάτη Azure OpenAI με το [`DefaultAzureCredential`](https://learn.microsoft.com/java/api/com.azure.identity.defaultazurecredential). Αυτή η διαπίστευση βρίσκει αυτόματα ένα διακριτικό από τη συνεδρία `az login` τοπικά, ή από μια διαχειριζόμενη ταυτότητα όταν εκτελείται στο Azure — οπότε ο ίδιος κώδικας λειτουργεί και στα δύο περιβάλλοντα χωρίς αλλαγές.
 
 ## Εκτέλεση της Εφαρμογής
 
@@ -111,12 +66,12 @@ mvn spring-boot:run
 ### Χρήση VS Code
 
 1. Ανοίξτε το έργο στο VS Code  
-2. Πατήστε `F5` ή χρησιμοποιήστε τον πίνακα "Run and Debug"  
-3. Επιλέξτε τη ρύθμιση "Spring Boot-BasicChatApplication"  
+2. Πατήστε `F5` ή χρησιμοποιήστε το πάνελ "Εκτέλεση και Αποσφαλμάτωση"  
+3. Επιλέξτε τη ρύθμιση "Spring Boot-BasicChatApplication"
 
 > **Σημείωση**: Η ρύθμιση του VS Code φορτώνει αυτόματα το αρχείο .env σας
 
-### Αναμενόμενο Αποτέλεσμα
+### Αναμενόμενη Έξοδος
 
 ```
 Starting Basic Chat with Azure OpenAI...
@@ -132,65 +87,66 @@ AI, or Artificial Intelligence, is the simulation of human intelligence in machi
 Success! Azure OpenAI connection is working correctly.
 ```
 
-## Αναφορά Ρυθμίσεων
+## Αναφορά Ρύθμισης
 
 ### Μεταβλητές Περιβάλλοντος
 
-| Μεταβλητή | Περιγραφή | Υποχρεωτική | Παράδειγμα |
-|-----------|-----------|-------------|------------|
-| `AZURE_AI_KEY` | Κλειδί API του Azure OpenAI | Ναι | `abc123...` |
-| `AZURE_AI_ENDPOINT` | URL τελικού σημείου του Azure OpenAI | Ναι | `https://my-hub.openai.azure.com/` |
-| `AZURE_AI_MODEL_DEPLOYMENT` | Όνομα ανάπτυξης μοντέλου | Όχι | `gpt-4o-mini` (προεπιλογή) |
+| Μεταβλητή | Περιγραφή | Απαιτείται | Παράδειγμα |
+|----------|-------------|----------|---------|
+| `AZURE_OPENAI_ENDPOINT` | Διεύθυνση endpoint Foundry (Azure OpenAI) | Ναι | `https://my-resource.openai.azure.com/` |
+| `AZURE_OPENAI_DEPLOYMENT` | Όνομα ανάπτυξης μοντέλου συνομιλίας | Όχι | `gpt-4o-mini` (προεπιλογή) |
+
+> Δεν υπάρχει μεταβλητή κλειδιού API — η αυθεντικοποίηση είναι χωρίς κλειδί (Microsoft Entra ID μέσω `az login`).
 
 ### Ρύθμιση Spring
 
-Το αρχείο `application.yml` ρυθμίζει:
-- **Κλειδί API**: `${AZURE_AI_KEY}` - Από μεταβλητή περιβάλλοντος  
-- **Τελικό Σημείο**: `${AZURE_AI_ENDPOINT}` - Από μεταβλητή περιβάλλοντος  
-- **Μοντέλο**: `${AZURE_AI_MODEL_DEPLOYMENT:gpt-4o-mini}` - Από μεταβλητή περιβάλλοντος με εναλλακτική  
+Το αρχείο `application.yml` ρυθμίζει:  
+- **Endpoint**: `${AZURE_OPENAI_ENDPOINT}` - Από μεταβλητή περιβάλλοντος  
+- **Ανάπτυξη**: `${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}` - Από μεταβλητή περιβάλλοντος με εναλλακτική  
+- **Αυθεντικοποίηση**: χωρίς κλειδί — δεν ορίζεται `api-key`, οπότε το Spring AI χρησιμοποιεί `DefaultAzureCredential`  
 - **Θερμοκρασία**: `0.7` - Ελέγχει τη δημιουργικότητα (0.0 = ντετερμινιστικό, 1.0 = δημιουργικό)  
-- **Μέγιστοι Τόκενς**: `500` - Μέγιστο μήκος απόκρισης  
+- **Μέγιστος αριθμός tokens**: `500` - Μέγιστο μήκος απάντησης  
 
 ## Αντιμετώπιση Προβλημάτων
 
 ### Συνηθισμένα Προβλήματα
 
 <details>
-<summary><strong>Σφάλμα: "Το κλειδί API δεν είναι έγκυρο"</strong></summary>
+<summary><strong>Σφάλμα: 401 / "PermissionDenied" / σφάλματα διακριτικού</strong></summary>
 
-- Ελέγξτε ότι το `AZURE_AI_KEY` έχει οριστεί σωστά στο αρχείο `.env`  
-- Βεβαιωθείτε ότι το κλειδί API έχει αντιγραφεί ακριβώς από την πύλη Azure AI Foundry  
-- Ελέγξτε για επιπλέον κενά ή εισαγωγικά γύρω από το κλειδί  
+- Εκτελέστε `az login` — η αυθεντικοποίηση χωρίς κλειδί χρειάζεται ενεργή σύνδεση για να λάβει διακριτικό  
+- Επαληθεύστε ότι ο λογαριασμός σας έχει τον ρόλο **Cognitive Services OpenAI User** στον πόρο  
+- Αν μόλις αναθέσατε το ρόλο, περιμένετε ένα λεπτό για να εφαρμοστεί  
+- Επιβεβαιώστε ότι είστε στον σωστό tenant/συνδρομή (`az account show`)  
 </details>
 
 <details>
-<summary><strong>Σφάλμα: "Το τελικό σημείο δεν είναι έγκυρο"</strong></summary>
+<summary><strong>Σφάλμα: "Το endpoint δεν είναι έγκυρο" / σφάλματα σύνδεσης</strong></summary>
 
-- Βεβαιωθείτε ότι το `AZURE_AI_ENDPOINT` περιλαμβάνει το πλήρες URL (π.χ., `https://your-hub-name.openai.azure.com/`)  
-- Ελέγξτε για συνέπεια στις καταλήξεις `/`  
-- Επαληθεύστε ότι το τελικό σημείο ταιριάζει με την περιοχή ανάπτυξης του Azure  
+- Βεβαιωθείτε ότι το `AZURE_OPENAI_ENDPOINT` είναι η πλήρης βασική διεύθυνση URL (π.χ., `https://your-resource.openai.azure.com/`)  
+- Ελέγξτε για ομοιομορφία στο τελικό slash  
+- Επαληθεύστε ότι το endpoint ταιριάζει με τον πόρο που έχετε δημιουργήσει (`azd env get-values`)  
 </details>
 
 <details>
 <summary><strong>Σφάλμα: "Η ανάπτυξη δεν βρέθηκε"</strong></summary>
 
-- Επαληθεύστε ότι το όνομα ανάπτυξης του μοντέλου ταιριάζει ακριβώς με αυτό που έχει αναπτυχθεί στο Azure  
-- Ελέγξτε ότι το μοντέλο έχει αναπτυχθεί με επιτυχία και είναι ενεργό  
-- Δοκιμάστε να χρησιμοποιήσετε το προεπιλεγμένο όνομα ανάπτυξης: `gpt-4o-mini`  
+- Επαληθεύστε ότι το `AZURE_OPENAI_DEPLOYMENT` ταιριάζει με το όνομα μιας ανάπτυξης στο Azure  
+- Ελέγξτε ότι το μοντέλο έχει αναπτυχθεί επιτυχώς και είναι ενεργό  
+- Το προεπιλεγμένο όνομα ανάπτυξης είναι `gpt-4o-mini`  
 </details>
 
 <details>
-<summary><strong>VS Code: Οι μεταβλητές περιβάλλοντος δεν φορτώνονται</strong></summary>
+<summary><strong>VS Code: Δεν φορτώνονται οι μεταβλητές περιβάλλοντος</strong></summary>
 
-- Βεβαιωθείτε ότι το αρχείο `.env` βρίσκεται στον ριζικό κατάλογο του έργου (στο ίδιο επίπεδο με το `pom.xml`)  
+- Βεβαιωθείτε ότι το αρχείο `.env` βρίσκεται στον ριζικό φάκελο του έργου (στο ίδιο επίπεδο με το `pom.xml`)  
 - Δοκιμάστε να εκτελέσετε `mvn spring-boot:run` στο ενσωματωμένο τερματικό του VS Code  
-- Ελέγξτε ότι η επέκταση Java του VS Code είναι σωστά εγκατεστημένη  
-- Επαληθεύστε ότι η ρύθμιση εκκίνησης περιέχει `"envFile": "${workspaceFolder}/.env"`  
+- Ελέγξτε ότι η επέκταση Java του VS Code είναι εγκατεστημένη σωστά  
 </details>
 
-### Λειτουργία Εντοπισμού Σφαλμάτων
+### Λειτουργία Αποσφαλμάτωσης
 
-Για να ενεργοποιήσετε λεπτομερή καταγραφή, αποσχολιάστε αυτές τις γραμμές στο `application.yml`:
+Για να ενεργοποιήσετε λεπτομερείς καταγραφές, αποσχολιάστε αυτές τις γραμμές στο `application.yml`:
 
 ```yaml
 logging:
@@ -201,16 +157,20 @@ logging:
 
 ## Επόμενα Βήματα
 
-**Η Ρύθμιση Ολοκληρώθηκε!** Συνεχίστε το ταξίδι μάθησής σας:
+**Η Ρύθμισή σας Ολοκληρώθηκε!** Συνεχίστε το ταξίδι μάθησής σας:
 
-[Κεφάλαιο 3: Βασικές Τεχνικές Γενετικής Τεχνητής Νοημοσύνης](../../../03-CoreGenerativeAITechniques/README.md)
+[Κεφάλαιο 3: Κύριες Τεχνικές Παραγωγικής Τεχνητής Νοημοσύνης](../../../03-CoreGenerativeAITechniques/README.md)
 
 ## Πόροι
 
-- [Τεκμηρίωση Spring AI Azure OpenAI](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)  
-- [Τεκμηρίωση Υπηρεσίας Azure OpenAI](https://learn.microsoft.com/azure/ai-services/openai/)  
+- [Τεκμηρίωση Spring AI Azure OpenAI](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)  
+- [Αυθεντικοποίηση χωρίς κλειδί με Microsoft Entra ID](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)  
 - [Πύλη Azure AI Foundry](https://ai.azure.com/)  
-- [Τεκμηρίωση Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project)  
+- [Τεκμηρίωση Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/)
 
-**Αποποίηση ευθύνης**:  
-Αυτό το έγγραφο έχει μεταφραστεί χρησιμοποιώντας την υπηρεσία αυτόματης μετάφρασης [Co-op Translator](https://github.com/Azure/co-op-translator). Παρόλο που καταβάλλουμε προσπάθειες για ακρίβεια, παρακαλούμε να έχετε υπόψη ότι οι αυτόματες μεταφράσεις ενδέχεται να περιέχουν σφάλματα ή ανακρίβειες. Το πρωτότυπο έγγραφο στη μητρική του γλώσσα θα πρέπει να θεωρείται η αυθεντική πηγή. Για κρίσιμες πληροφορίες, συνιστάται επαγγελματική ανθρώπινη μετάφραση. Δεν φέρουμε ευθύνη για τυχόν παρεξηγήσεις ή εσφαλμένες ερμηνείες που προκύπτουν από τη χρήση αυτής της μετάφρασης.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Αποποίηση ευθυνών**:
+Αυτό το έγγραφο έχει μεταφραστεί χρησιμοποιώντας την υπηρεσία μετάφρασης με τεχνητή νοημοσύνη [Co-op Translator](https://github.com/Azure/co-op-translator). Ενώ επιδιώκουμε την ακρίβεια, παρακαλούμε να έχετε υπόψη ότι οι αυτοματοποιημένες μεταφράσεις ενδέχεται να περιέχουν λάθη ή ανακρίβειες. Το πρωτότυπο έγγραφο στη μητρική του γλώσσα πρέπει να θεωρείται η αυθεντική πηγή. Για κρίσιμες πληροφορίες, συνιστάται επαγγελματική ανθρώπινη μετάφραση. Δεν φέρουμε ευθύνη για τυχόν παρεξηγήσεις ή λανθασμένες ερμηνείες που προκύπτουν από τη χρήση αυτής της μετάφρασης.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

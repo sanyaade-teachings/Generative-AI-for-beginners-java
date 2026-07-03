@@ -1,37 +1,38 @@
-# Samouczek MCP Calculator dla Początkujących
+# Samouczek Kalkulatora MCP dla Początkujących
 
-## Spis Treści
+## Spis treści
 
-- [Czego się nauczysz](../../../../04-PracticalSamples/calculator)
-- [Wymagania wstępne](../../../../04-PracticalSamples/calculator)
-- [Zrozumienie struktury projektu](../../../../04-PracticalSamples/calculator)
-- [Wyjaśnienie kluczowych komponentów](../../../../04-PracticalSamples/calculator)
-  - [1. Główna aplikacja](../../../../04-PracticalSamples/calculator)
-  - [2. Serwis kalkulatora](../../../../04-PracticalSamples/calculator)
-  - [3. Bezpośredni klient MCP](../../../../04-PracticalSamples/calculator)
-  - [4. Klient oparty na AI](../../../../04-PracticalSamples/calculator)
-- [Uruchamianie przykładów](../../../../04-PracticalSamples/calculator)
-- [Jak wszystko działa razem](../../../../04-PracticalSamples/calculator)
-- [Kolejne kroki](../../../../04-PracticalSamples/calculator)
+- [Czego się Nauczysz](#czego-się-nauczysz)
+- [Wymagania Wstępne](#wymagania-wstępne)
+- [Zrozumienie Struktury Projektu](#zrozumienie-struktury-projektu)
+- [Omówienie Głównych Komponentów](#omówienie-głównych-komponentów)
+  - [1. Główna Aplikacja](#1-główna-aplikacja)
+  - [2. Serwis Kalkulatora](#2-serwis-kalkulatora)
+  - [3. Bezpośredni Klient MCP](#3-bezpośredni-klient-mcp)
+  - [4. Klient Zasilany SI](#4-klient-zasilany-si)
+- [Uruchamianie Przykładów](#uruchamianie-przykładów)
+- [Jak To Wszystko Współgra](#jak-to-wszystko-współgra)
+- [Kolejne Kroki](#kolejne-kroki)
 
-## Czego się nauczysz
+## Czego się Nauczysz
 
-Ten samouczek wyjaśnia, jak zbudować serwis kalkulatora przy użyciu Model Context Protocol (MCP). Dowiesz się:
+Ten samouczek wyjaśnia, jak zbudować usługę kalkulatora używając protokołu Model Context Protocol (MCP). Dowiesz się:
 
-- Jak stworzyć serwis, który AI może wykorzystać jako narzędzie
-- Jak skonfigurować bezpośrednią komunikację z serwisami MCP
-- Jak modele AI mogą automatycznie wybierać, które narzędzia użyć
-- Różnicę między bezpośrednimi wywołaniami protokołu a interakcjami wspomaganymi przez AI
+- Jak stworzyć usługę, której SI może używać jako narzędzia
+- Jak ustanowić bezpośrednią komunikację z usługami MCP
+- Jak modele SI mogą automatycznie wybierać, które narzędzia wykorzystać
+- Różnicę między bezpośrednimi wywołaniami protokołu a interakcjami wspomaganymi przez SI
 
-## Wymagania wstępne
+## Wymagania Wstępne
 
 Przed rozpoczęciem upewnij się, że masz:
-- Zainstalowaną Javę 21 lub nowszą
-- Maven do zarządzania zależnościami
-- Konto GitHub z tokenem dostępu osobistego (PAT)
-- Podstawową wiedzę o Javie i Spring Boot
+- Zainstalowaną Javę w wersji 21 lub wyższej
+- Mavena do zarządzania zależnościami
+- Deployment modelu Azure AI Foundry (uruchom go za pomocą `azd up` — zobacz [Rozdział 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
+- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) zalogowane poleceniem `az login` (uwierzytelnianie bezkluczowe)
+- Podstawową znajomość Java i Spring Boot
 
-## Zrozumienie struktury projektu
+## Zrozumienie Struktury Projektu
 
 Projekt kalkulatora zawiera kilka ważnych plików:
 
@@ -46,13 +47,13 @@ calculator/
     └── Bot.java                          # Simple chat interface
 ```
 
-## Wyjaśnienie kluczowych komponentów
+## Omówienie Głównych Komponentów
 
-### 1. Główna aplikacja
+### 1. Główna Aplikacja
 
 **Plik:** `McpServerApplication.java`
 
-To punkt wejścia do naszego serwisu kalkulatora. Jest to standardowa aplikacja Spring Boot z jednym specjalnym dodatkiem:
+To punkt startowy naszej usługi kalkulatora. To standardowa aplikacja Spring Boot z jednym specjalnym dodatkiem:
 
 ```java
 @SpringBootApplication
@@ -70,15 +71,15 @@ public class McpServerApplication {
 ```
 
 **Co to robi:**
-- Uruchamia serwer webowy Spring Boot na porcie 8080
+- Uruchamia serwer sieciowy Spring Boot na porcie 8080
 - Tworzy `ToolCallbackProvider`, który udostępnia nasze metody kalkulatora jako narzędzia MCP
-- Adnotacja `@Bean` informuje Spring, aby zarządzał tym jako komponentem, który inne części mogą używać
+- Adnotacja `@Bean` mówi Springowi, aby zarządzał tym jako komponentem, z którego mogą korzystać inne części
 
-### 2. Serwis kalkulatora
+### 2. Serwis Kalkulatora
 
 **Plik:** `CalculatorService.java`
 
-Tutaj odbywają się wszystkie obliczenia. Każda metoda jest oznaczona adnotacją `@Tool`, aby była dostępna przez MCP:
+Tu odbywają się wszystkie obliczenia matematyczne. Każda metoda oznaczona jest `@Tool`, aby była dostępna przez MCP:
 
 ```java
 @Service
@@ -96,7 +97,7 @@ public class CalculatorService {
         return formatResult(a, "-", b, result);
     }
     
-    // More calculator operations...
+    // Więcej operacji kalkulatora...
     
     private String formatResult(double a, String operator, double b, double result) {
         return String.format("%.2f %s %.2f = %.2f", a, operator, b, result);
@@ -106,27 +107,27 @@ public class CalculatorService {
 
 **Kluczowe cechy:**
 
-1. **Adnotacja `@Tool`**: Informuje MCP, że metoda może być wywoływana przez zewnętrznych klientów
-2. **Jasne opisy**: Każde narzędzie ma opis, który pomaga modelom AI zrozumieć, kiedy go użyć
-3. **Spójny format zwracania wyników**: Wszystkie operacje zwracają czytelne dla człowieka ciągi znaków, np. "5.00 + 3.00 = 8.00"
-4. **Obsługa błędów**: Dzielenie przez zero i pierwiastki kwadratowe z liczb ujemnych zwracają komunikaty o błędach
+1. **Adnotacja `@Tool`**: Informuje MCP, że metoda może być wywoływana przez klientów zewnętrznych
+2. **Jasne Opisy**: Każde narzędzie ma opis, który pomaga modelom SI zrozumieć, kiedy je użyć
+3. **Spójny Format Zwracany**: Wszystkie operacje zwracają czytelne dla człowieka ciągi tekstowe np. "5.00 + 3.00 = 8.00"
+4. **Obsługa Błędów**: Dzielenie przez zero i pierwiastek z liczby ujemnej zwracają komunikaty o błędach
 
-**Dostępne operacje:**
+**Dostępne Operacje:**
 - `add(a, b)` - Dodaje dwie liczby
-- `subtract(a, b)` - Odejmuje drugą liczbę od pierwszej
+- `subtract(a, b)` - Odejmuję drugą od pierwszej
 - `multiply(a, b)` - Mnoży dwie liczby
-- `divide(a, b)` - Dzieli pierwszą liczbę przez drugą (z kontrolą dzielenia przez zero)
-- `power(base, exponent)` - Podnosi podstawę do potęgi
-- `squareRoot(number)` - Oblicza pierwiastek kwadratowy (z kontrolą liczb ujemnych)
+- `divide(a, b)` - Dzieli pierwszą przez drugą (z kontrolą dzielenia przez zero)
+- `power(base, exponent)` - Potęguje bazę do wykładnika
+- `squareRoot(number)` - Oblicza pierwiastek kwadratowy (z kontrolą wartości ujemnej)
 - `modulus(a, b)` - Zwraca resztę z dzielenia
 - `absolute(number)` - Zwraca wartość bezwzględną
 - `help()` - Zwraca informacje o wszystkich operacjach
 
-### 3. Bezpośredni klient MCP
+### 3. Bezpośredni Klient MCP
 
 **Plik:** `SDKClient.java`
 
-Ten klient komunikuje się bezpośrednio z serwerem MCP, bez użycia AI. Ręcznie wywołuje konkretne funkcje kalkulatora:
+Ten klient komunikuje się bezpośrednio z serwerem MCP bez użycia SI. Ręcznie wywołuje konkretne funkcje kalkulatora:
 
 ```java
 public class SDKClient {
@@ -142,11 +143,11 @@ public class SDKClient {
         var client = McpClient.sync(this.transport).build();
         client.initialize();
         
-        // List available tools
+        // Wyświetl dostępne narzędzia
         ListToolsResult toolsList = client.listTools();
         System.out.println("Available Tools = " + toolsList);
         
-        // Call specific calculator functions
+        // Wywołaj konkretne funkcje kalkulatora
         CallToolResult resultAdd = client.callTool(
             new CallToolRequest("add", Map.of("a", 5.0, "b", 3.0))
         );
@@ -164,35 +165,40 @@ public class SDKClient {
 
 **Co to robi:**
 1. **Łączy się** z serwerem kalkulatora pod adresem `http://localhost:8080` używając wzorca buildera
-2. **Wyświetla** wszystkie dostępne narzędzia (nasze funkcje kalkulatora)
-3. **Wywołuje** konkretne funkcje z dokładnymi parametrami
-4. **Wyświetla** wyniki bezpośrednio
+2. **Wyświetla** listę dostępnych narzędzi (nasze funkcje kalkulatora)
+3. **Wywołuje** określone funkcje z podanymi parametrami
+4. **Wypisuje** wyniki bezpośrednio
 
-**Uwaga:** Ten przykład używa zależności Spring AI 1.1.0-SNAPSHOT, która wprowadziła wzorzec buildera dla `WebFluxSseClientTransport`. Jeśli używasz starszej stabilnej wersji, możesz potrzebować użyć bezpośredniego konstruktora.
+**Uwaga:** Ten przykład używa zależności Spring AI 1.1.0-SNAPSHOT, która wprowadziła wzorzec budowniczego dla `WebFluxSseClientTransport`. Jeśli używasz starszej stabilnej wersji, może być konieczne użycie bezpośredniego konstruktora.
 
-**Kiedy tego używać:** Gdy dokładnie wiesz, jakie obliczenie chcesz wykonać i chcesz je wywołać programowo.
+**Kiedy używać:** Gdy dokładnie wiesz, jakie obliczenie chcesz wykonać i chcesz wywołać je programowo.
 
-### 4. Klient oparty na AI
+### 4. Klient Zasilany SI
 
 **Plik:** `LangChain4jClient.java`
 
-Ten klient używa modelu AI (GPT-4o-mini), który może automatycznie zdecydować, które narzędzia kalkulatora użyć:
+Ten klient używa modelu SI (GPT-4o-mini), który potrafi automatycznie wybrać, które narzędzia kalkulatora użyć:
 
 ```java
 public class LangChain4jClient {
     
     public static void main(String[] args) throws Exception {
-        // Set up the AI model (using GitHub Models)
+        // Skonfiguruj model AI (Azure AI Foundry, uwierzytelnianie bezklucza przez Microsoft Entra ID)
+        String endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1";
+        String token = new DefaultAzureCredentialBuilder().build()
+                .getToken(new TokenRequestContext().addScopes("https://ai.azure.com/.default"))
+                .block().getToken();
         ChatLanguageModel model = OpenAiOfficialChatModel.builder()
-                .isGitHubModels(true)
-                .apiKey(System.getenv("GITHUB_TOKEN"))
+                .baseUrl(baseUrl)
+                .apiKey(token)
                 .modelName("gpt-4o-mini")
                 .build();
 
-        // Connect to our calculator MCP server
+        // Połącz się z naszym serwerem kalkulatora MCP
         McpTransport transport = new HttpMcpTransport.Builder()
                 .sseUrl("http://localhost:8080/sse")
-                .logRequests(true)  // Shows what the AI is doing
+                .logRequests(true)  // Pokazuje, co robi AI
                 .logResponses(true)
                 .build();
 
@@ -200,18 +206,18 @@ public class LangChain4jClient {
                 .transport(transport)
                 .build();
 
-        // Give the AI access to our calculator tools
+        // Daj AI dostęp do naszych narzędzi kalkulatora
         ToolProvider toolProvider = McpToolProvider.builder()
                 .mcpClients(List.of(mcpClient))
                 .build();
 
-        // Create an AI bot that can use our calculator
+        // Utwórz bota AI, który może korzystać z naszego kalkulatora
         Bot bot = AiServices.builder(Bot.class)
                 .chatLanguageModel(model)
                 .toolProvider(toolProvider)
                 .build();
 
-        // Now we can ask the AI to do calculations in natural language
+        // Teraz możemy prosić AI o wykonywanie obliczeń w języku naturalnym
         String response = bot.chat("Calculate the sum of 24.5 and 17.3 using the calculator service");
         System.out.println(response);
 
@@ -222,31 +228,33 @@ public class LangChain4jClient {
 ```
 
 **Co to robi:**
-1. **Tworzy** połączenie z modelem AI używając Twojego tokena GitHub
-2. **Łączy** AI z naszym serwerem MCP kalkulatora
-3. **Udostępnia** AI dostęp do wszystkich narzędzi kalkulatora
-4. **Pozwala** na naturalne zapytania, takie jak "Oblicz sumę 24.5 i 17.3"
+1. **Tworzy** połączenie z modelem SI używając Twojego tokena GitHub
+2. **Łączy** SI z naszym serwerem MCP kalkulatora
+3. **Daje** SI dostęp do wszystkich narzędzi kalkulatora
+4. **Pozwala** na zapytania w naturalnym języku, np. "Oblicz sumę 24.5 i 17.3"
 
-**AI automatycznie:**
+**SI automatycznie:**
 - Rozumie, że chcesz dodać liczby
 - Wybiera narzędzie `add`
 - Wywołuje `add(24.5, 17.3)`
 - Zwraca wynik w naturalnej odpowiedzi
 
-## Uruchamianie przykładów
+## Uruchamianie Przykładów
 
-### Krok 1: Uruchom serwer kalkulatora
+### Krok 1: Uruchom Serwer Kalkulatora
 
-Najpierw ustaw swój token GitHub (potrzebny dla klienta AI):
+Najpierw zaloguj się i ustaw punkt końcowy Azure AI Foundry (potrzebne dla klienta SI — uwierzytelnianie bezkluczowe, brak klucza API):
 
 **Windows:**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 Uruchom serwer:
@@ -255,59 +263,62 @@ cd 04-PracticalSamples/calculator
 mvn clean spring-boot:run
 ```
 
-Serwer uruchomi się pod adresem `http://localhost:8080`. Powinieneś zobaczyć:
+Serwer uruchomi się pod `http://localhost:8080`. Powinieneś zobaczyć:
 ```
 Started McpServerApplication in X.XXX seconds
 ```
 
-### Krok 2: Test z bezpośrednim klientem
+### Krok 2: Testuj z Bezpośrednim Klientem
 
-W **NOWYM** terminalu, z wciąż działającym serwerem, uruchom bezpośredni klient MCP:
+W **NOWYM** terminalu, przy nadal działającym serwerze, uruchom bezpośredniego klienta MCP:
 ```bash
 cd 04-PracticalSamples/calculator
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient" -Dexec.classpathScope=test
 ```
 
-Zobaczysz wynik podobny do:
+Zobaczysz wyjście podobne do:
 ```
 Available Tools = [add, subtract, multiply, divide, power, squareRoot, modulus, absolute, help]
 Add Result = 5.00 + 3.00 = 8.00
 Square Root Result = √16.00 = 4.00
 ```
 
-### Krok 3: Test z klientem AI
+### Krok 3: Testuj z Klientem SI
 
 ```bash
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient" -Dexec.classpathScope=test
 ```
 
-Zobaczysz, jak AI automatycznie używa narzędzi:
+Zobaczysz, jak SI automatycznie korzysta z narzędzi:
 ```
 The sum of 24.5 and 17.3 is 41.8.
 The square root of 144 is 12.
 ```
 
-### Krok 4: Zamknij serwer MCP
+### Krok 4: Zamknij Serwer MCP
 
-Gdy skończysz testowanie, możesz zatrzymać klienta AI, naciskając `Ctrl+C` w jego terminalu. Serwer MCP będzie działał, dopóki go nie zatrzymasz. Aby zatrzymać serwer, naciśnij `Ctrl+C` w terminalu, w którym działa.
+Po zakończeniu testów możesz zatrzymać klienta SI, naciskając `Ctrl+C` w jego terminalu. Serwer MCP będzie działał nadal, dopóki go nie zatrzymasz.
+Aby zatrzymać serwer, naciśnij `Ctrl+C` w terminalu, gdzie jest uruchomiony.
 
-## Jak wszystko działa razem
+## Jak To Wszystko Współgra
 
-Oto pełny przepływ, gdy pytasz AI "Ile to 5 + 3?":
+Oto cały przebieg, gdy pytasz SI "Ile to 5 + 3?":
 
-1. **Ty** pytasz AI w języku naturalnym
-2. **AI** analizuje Twoje zapytanie i rozumie, że chcesz dodać liczby
-3. **AI** wywołuje serwer MCP: `add(5.0, 3.0)`
-4. **Serwis kalkulatora** wykonuje: `5.0 + 3.0 = 8.0`
-5. **Serwis kalkulatora** zwraca: `"5.00 + 3.00 = 8.00"`
-6. **AI** otrzymuje wynik i formatuje naturalną odpowiedź
-7. **Ty** otrzymujesz: "Suma 5 i 3 wynosi 8"
+1. **Ty** zadajesz pytanie SI w naturalnym języku
+2. **SI** analizuje Twoje zapytanie i rozumie, że chcesz dodać liczby
+3. **SI** wywołuje serwer MCP: `add(5.0, 3.0)`
+4. **Serwis Kalkulatora** wykonuje: `5.0 + 3.0 = 8.0`
+5. **Serwis Kalkulatora** zwraca: `"5.00 + 3.00 = 8.00"`
+6. **SI** odbiera wynik i formatuje naturalną odpowiedź
+7. **Ty** otrzymujesz: "Suma 5 i 3 to 8"
 
-## Kolejne kroki
+## Kolejne Kroki
 
-Więcej przykładów znajdziesz w [Rozdziale 04: Praktyczne przykłady](../README.md)
+Aby zobaczyć więcej przykładów, zobacz [Rozdział 04: Praktyczne przykłady](../README.md)
 
 ---
 
-**Zastrzeżenie**:  
-Ten dokument został przetłumaczony za pomocą usługi tłumaczenia AI [Co-op Translator](https://github.com/Azure/co-op-translator). Chociaż dokładamy wszelkich starań, aby zapewnić poprawność tłumaczenia, prosimy pamiętać, że automatyczne tłumaczenia mogą zawierać błędy lub nieścisłości. Oryginalny dokument w jego języku źródłowym powinien być uznawany za autorytatywne źródło. W przypadku informacji o kluczowym znaczeniu zaleca się skorzystanie z profesjonalnego tłumaczenia przez człowieka. Nie ponosimy odpowiedzialności za jakiekolwiek nieporozumienia lub błędne interpretacje wynikające z użycia tego tłumaczenia.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Zastrzeżenie**:
+Niniejszy dokument został przetłumaczony za pomocą usługi tłumaczenia AI [Co-op Translator](https://github.com/Azure/co-op-translator). Choć dążymy do dokładności, prosimy pamiętać, że automatyczne tłumaczenia mogą zawierać błędy lub niedokładności. Oryginalny dokument w jego języku źródłowym należy uznawać za autorytatywne źródło. W przypadku informacji krytycznych zalecane jest skorzystanie z profesjonalnego tłumaczenia wykonanego przez człowieka. Nie ponosimy odpowiedzialności za jakiekolwiek nieporozumienia lub błędne interpretacje wynikające z użycia tego tłumaczenia.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

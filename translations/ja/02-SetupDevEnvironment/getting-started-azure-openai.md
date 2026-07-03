@@ -1,138 +1,152 @@
-# Azure OpenAI 開発環境のセットアップ
+# Azure AI Foundry の開発環境の設定
 
-> **クイックスタート**: このガイドは Azure OpenAI のセットアップ用です。無料モデルで即開始したい場合は [GitHub Models with Codespaces](./README.md#quick-start-cloud) を使用してください。
+> このガイドでは、本コースの Java AI アプリ用に **Azure AI Foundry** モデルを、<strong>キー管理不要</strong> (Microsoft Entra ID) の認証でセットアップします。ツールに不慣れな場合は、[開発環境ガイド](./README.md)から始めてください。
 
-このガイドでは、このコースで Java AI アプリを開発するための Azure AI Foundry モデルのセットアップ方法を説明します。
+このガイドでは、本コースの Java AI アプリのために **Azure AI Foundry** モデルをセットアップします。方法は二つあります:
+
+- **オプション A — `azd` + Bicep でプロビジョニング（推奨）:** ワンコマンドで Foundry アカウントとモデルをコードとしてデプロイ。ポータルでの操作不要。
+- **オプション B — Azure AI Foundry ポータルで手動でリソース作成。**
+
+どちらの方法も <strong>キー管理不要の認証</strong>（Microsoft Entra ID）を使用するため、API キーをコピーしたり漏えいの心配はありません。
 
 ## 目次
 
-- [クイックセットアップ概要](../../../02-SetupDevEnvironment)
-- [ステップ 1: Azure AI Foundry リソースを作成する](../../../02-SetupDevEnvironment)
-  - [ハブとプロジェクトを作成する](../../../02-SetupDevEnvironment)
-  - [GPT-4o-mini モデルをデプロイする](../../../02-SetupDevEnvironment)
-- [ステップ 2: Codespace を作成する](../../../02-SetupDevEnvironment)
-- [ステップ 3: 環境を構成する](../../../02-SetupDevEnvironment)
-- [ステップ 4: セットアップをテストする](../../../02-SetupDevEnvironment)
-- [次に進むべきこと](../../../02-SetupDevEnvironment)
-- [リソース](../../../02-SetupDevEnvironment)
-- [追加リソース](../../../02-SetupDevEnvironment)
+- [作成されるもの](#作成されるもの)
+- [前提条件](#前提条件)
+- [オプション A：azd + Bicep でプロビジョニング（推奨）](#option-a-provision-with-azd--bicep-recommended)
+- [オプション B：手動でリソース作成](#オプション-b：手動でリソース作成)
+- [環境の構成](#環境の構成)
+- [セットアップのテスト](#セットアップのテスト)
+- [次は？](#次は？)
+- [リソース](#リソース)
+- [追加リソース](#追加リソース)
 
-## クイックセットアップ概要
+## 作成されるもの
 
-1. Azure AI Foundry リソースを作成する (ハブ、プロジェクト、モデル)
-2. Java 開発コンテナを使用して Codespace を作成する
-3. Azure OpenAI の資格情報を含む .env ファイルを構成する
-4. サンプルプロジェクトでセットアップをテストする
+[`infra/`](../../../02-SetupDevEnvironment/infra) の Bicep テンプレートで以下をプロビジョニングします:
 
-## ステップ 1: Azure AI Foundry リソースを作成する
+- **Azure AI Foundry** アカウント (`Microsoft.CognitiveServices/accounts`、種別は `AIServices`) とプロジェクト
+- <strong>チャット</strong> 展開 — `gpt-4o-mini`
+- <strong>埋め込み</strong> 展開 — `text-embedding-3-small`（後の章で使用）
+- <strong>キー管理不要のロール割り当て</strong>（`Cognitive Services OpenAI User`）、`az login` でサインイン可能に
 
-### ハブとプロジェクトを作成する
+## 前提条件
 
-1. [Azure AI Foundry Portal](https://ai.azure.com/) にアクセスしてサインインします。
-2. **+ Create** → **New hub** をクリック (または **Management** → **All hubs** → **+ New hub** に移動)
-3. ハブを構成します:
-   - **Hub name**: 例: "MyAIHub"
-   - **Subscription**: Azure サブスクリプションを選択
-   - **Resource group**: 新規作成または既存のものを選択
-   - **Location**: 最寄りの場所を選択
-   - **Storage account**: デフォルトを使用するかカスタム設定
-   - **Key vault**: デフォルトを使用するかカスタム設定
-   - **Next** → **Review + create** → **Create** をクリック
-4. 作成後、**+ New project** をクリック (またはハブ概要から **Create project** を選択)
-   - **Project name**: 例: "GenAIJava"
-   - **Create** をクリック
+- [Azure サブスクリプション](https://azure.microsoft.com/free/)
+- [Azure Developer CLI (`azd`)](https://aka.ms/azure-dev/install)
+- [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli)
+- [Java 21+](https://learn.microsoft.com/java/openjdk/download) と [Maven 3.9+](https://maven.apache.org/download.cgi)
 
-### GPT-4o-mini モデルをデプロイする
+## オプション A：azd + Bicep でプロビジョニング（推奨）
 
-1. プロジェクト内で **Model catalog** に移動し、**gpt-4o-mini** を検索
-   - *代替手段: **Deployments** → **+ Create deployment** に移動*
-2. gpt-4o-mini モデルカードで **Deploy** をクリック
-3. デプロイメントを構成します:
-   - **Deployment name**: "gpt-4o-mini"
-   - **Model version**: 最新版を使用
-   - **Deployment type**: Standard
-4. **Deploy** をクリック
-5. デプロイ後、**Deployments** タブに移動し、以下の値をコピーします:
-   - **Deployment name** (例: "gpt-4o-mini")
-   - **Target URI** (例: `https://your-hub-name.openai.azure.com/`)  
-      > **重要**: フルエンドポイントパスではなく、ベース URL のみをコピーしてください (例: `https://myhub.openai.azure.com/`)。
-   - **Key** (Keys and Endpoint セクションから)
-
-> **まだ問題がありますか？** 公式の [Azure AI Foundry Documentation](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project) を参照してください。
-
-## ステップ 2: Codespace を作成する
-
-1. このリポジトリを GitHub アカウントにフォークします。
-   > **注意**: 基本設定を編集したい場合は [Dev Container Configuration](../../../.devcontainer/devcontainer.json) を確認してください。
-2. フォークしたリポジトリで **Code** → **Codespaces** タブをクリックします。
-3. **...** → **New with options...** をクリックします。
-![creating a codespace with options](../../../translated_images/ja/codespaces.9945ded8ceb431a5.webp)
-4. **Dev container configuration** を選択します: 
-   - **Generative AI Java Development Environment**
-5. **Create codespace** をクリックします。
-
-## ステップ 3: 環境を構成する
-
-Codespace が準備できたら、Azure OpenAI の資格情報を設定します:
-
-1. **リポジトリのルートからサンプルプロジェクトに移動します:**
-   ```bash
-   cd 02-SetupDevEnvironment/examples/basic-chat-azure
-   ```
-
-2. **.env ファイルを作成します:**
-   ```bash
-   cp .env.example .env
-   ```
-
-3. **.env ファイルを編集して Azure OpenAI の資格情報を入力します:**
-   ```bash
-   # Your Azure OpenAI API key (from Azure AI Foundry portal)
-   AZURE_AI_KEY=your-actual-api-key-here
-   
-   # Your Azure OpenAI endpoint URL (e.g., https://myhub.openai.azure.com/)
-   AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-   ```
-
-   > **セキュリティ注意**: 
-   > - `.env` ファイルをバージョン管理にコミットしないでください
-   > - `.env` ファイルはすでに `.gitignore` に含まれています
-   > - API キーを安全に保管し、定期的にローテーションしてください
-
-## ステップ 4: セットアップをテストする
-
-サンプルアプリケーションを実行して Azure OpenAI 接続をテストします:
+`02-SetupDevEnvironment` フォルダーから:
 
 ```bash
+cd 02-SetupDevEnvironment
+
+# サインイン（両方のツール）
+azd auth login
+az login
+
+# Foundryアカウントとモデルデプロイのプロビジョニング
+azd up
+```
+  
+`azd` は <strong>環境名</strong>（例: `genai-java`）と <strong>リージョン</strong>を入力するよう求めます。`gpt-4o-mini` と `text-embedding-3-small` が利用可能なリージョンを選択してください（例: `eastus2` または `swedencentral`）。
+
+プロビジョニング終了後、azd は次の処理を行います:
+
+1. [`infra/main.bicep`](../../../02-SetupDevEnvironment/infra/main.bicep) に定義されたすべてをデプロイします。
+2. エンドポイントと展開名を含む [`examples/basic-chat-azure/.env`](../../../02-SetupDevEnvironment/examples/basic-chat-azure) を生成する postprovision フックを実行します（シークレットは含まれません）。
+
+> **ヒント:** 変更を反映したい場合はいつでも `azd up` を再実行。すべて削除して料金発生を止めたい場合は `azd down` を使います。
+
+生成された設定を確認するには:
+
+```bash
+azd env get-values
+```
+  
+次に、[セットアップのテスト](#セットアップのテスト)に進んでください。
+
+## オプション B：手動でリソース作成
+
+ポータル操作を好む場合は、以下の手順でリソースを作成してください:
+
+1. [Azure AI Foundry ポータル](https://ai.azure.com/)にアクセスし、サインイン。
+2. <strong>プロジェクトを作成</strong>（同時に AI Foundry リソースも作成されます）。名前は例として `GenAIJava` にしてください。
+3. プロジェクト内の **Models + endpoints** → **Deploy model** → **Deploy base model** を開く。
+4. <strong>gpt-4o-mini</strong>をデプロイ（展開名は `gpt-4o-mini`）。埋め込み例を使いたい場合は **text-embedding-3-small** も同様にデプロイ。
+5. **Overview** から <strong>エンドポイント</strong>をコピー（例: `https://<resource>.openai.azure.com/`）。
+6. キー管理不要アクセスを付与: リソース左メニューの **Access control (IAM)** → **Add role assignment** → 自分のアカウントに **Cognitive Services OpenAI User** を割り当て。
+
+> **まだ問題がありますか？** [Azure AI Foundry ドキュメント](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects)を参照してください。
+
+## 環境の構成
+
+**オプション A (`azd up`) を使った場合**、設定ファイルは自動で作成済みなので、構成は不要です。[セットアップのテスト](#セットアップのテスト)へ進んでください。
+
+**オプション B（手動）の場合**、サンプルの `.env` ファイルを自分で作成してください:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+cp .env.example .env
+```
+  
+`.env` を編集し、エンドポイントを指定します（キーは不要、認証はキー管理不要）:
+
+```bash
+AZURE_OPENAI_ENDPOINT=https://<your-resource>.openai.azure.com/
+AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini
+```
+  
+> **セキュリティ注意:** API キーは保存しません。認証は `az login`（ローカル）または Azure のマネージド ID で Microsoft Entra ID を使います。`.env` ファイルはシークレットを含まない設定のみで、すでに `.gitignore` 管理下にあります。
+
+## セットアップのテスト
+
+キー管理不要認証用のトークン取得のためにサインインしたことを確認し、例を実行してください:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+
+az login          # まだサインインしていない場合
 mvn clean spring-boot:run
 ```
+  
+`gpt-4o-mini` モデルからの応答が表示されるはずです！
 
-GPT-4o-mini モデルからの応答が表示されるはずです！
+> **VS Code ユーザー:** `F5` キーで実行可能。アプリが `.env` を自動読み込みします。
 
-> **VS Code ユーザー**: VS Code で `F5` を押してアプリケーションを実行することもできます。起動構成は `.env` ファイルを自動的に読み込むように設定されています。
+> **完全な例:** 詳細やトラブルシューティングは [Azure AI Foundry を使った Basic Chat 例](./examples/basic-chat-azure/README.md)をご覧ください。
 
-> **完全な例**: 詳細な手順とトラブルシューティングについては [End-to-End Azure OpenAI Example](./examples/basic-chat-azure/README.md) を参照してください。
+## 次は？
 
-## 次に進むべきこと
+**セットアップ完了！**  
+以下の環境が整いました:
+- `gpt-4o-mini` と `text-embedding-3-small` をデプロイした Azure AI Foundry
+- キー管理不要認証（Microsoft Entra ID）
+- エンドポイントと展開名を含むローカル `.env`
+- Java 開発環境の準備完了
 
-**セットアップ完了！** 以下が準備できました:
-- gpt-4o-mini をデプロイした Azure OpenAI
-- ローカルの .env ファイル構成
-- Java 開発環境
-
-**次に進む** [第3章 コア生成AI技術](../03-CoreGenerativeAITechniques/README.md) で AI アプリケーションの構築を開始してください！
+<strong>続けて</strong> [第3章: コア生成AI技術](../03-CoreGenerativeAITechniques/README.md) にて AI アプリ構築を始めましょう！
 
 ## リソース
 
-- [Azure AI Foundry Documentation](https://learn.microsoft.com/azure/ai-services/)
-- [Spring AI Azure OpenAI Documentation](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
+- [Azure Developer CLI (azd)](https://aka.ms/azure-dev/install)
+- [Microsoft Entra ID を使ったキー管理不要認証](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
+- [Azure AI Foundry ドキュメント](https://learn.microsoft.com/azure/ai-foundry/)
+- [Spring AI Azure OpenAI ドキュメント](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
 - [Azure OpenAI Java SDK](https://learn.microsoft.com/java/api/overview/azure/ai-openai-readme)
 
 ## 追加リソース
 
 - [VS Code をダウンロード](https://code.visualstudio.com/Download)
 - [Docker Desktop を入手](https://www.docker.com/products/docker-desktop)
-- [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
+- [Dev Container 構成](../../../.devcontainer/devcontainer.json)
 
-**免責事項**:  
-この文書は、AI翻訳サービス [Co-op Translator](https://github.com/Azure/co-op-translator) を使用して翻訳されています。正確性を期すよう努めておりますが、自動翻訳には誤りや不正確な部分が含まれる可能性があります。元の言語で記載された原文が公式な情報源と見なされるべきです。重要な情報については、専門の人間による翻訳を推奨します。本翻訳の使用に起因する誤解や誤認について、当方は一切の責任を負いません。
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**免責事項**：
+本書類は AI 翻訳サービス [Co-op Translator](https://github.com/Azure/co-op-translator) を使用して翻訳されています。正確性を期していますが、自動翻訳には誤りや不正確な部分が含まれる可能性があることをご承知おきください。原文の原語版が正式な情報源とみなされるべきです。重要な情報については、専門の人間による翻訳を推奨します。本翻訳の利用により生じたいかなる誤解や解釈違いについても、当方は責任を負いかねます。
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

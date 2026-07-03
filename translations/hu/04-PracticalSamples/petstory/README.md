@@ -1,31 +1,31 @@
-# Kisállat Történet Generátor Kezdőknek
+# Pet Story Generator oktatóanyag kezdőknek
 
 ## Tartalomjegyzék
 
-- [Előfeltételek](../../../../04-PracticalSamples/petstory)
-- [A projekt struktúrájának megértése](../../../../04-PracticalSamples/petstory)
-- [Főbb komponensek magyarázata](../../../../04-PracticalSamples/petstory)
-  - [1. Fő alkalmazás](../../../../04-PracticalSamples/petstory)
-  - [2. Webes vezérlő](../../../../04-PracticalSamples/petstory)
-  - [3. Történet szolgáltatás](../../../../04-PracticalSamples/petstory)
-  - [4. Webes sablonok](../../../../04-PracticalSamples/petstory)
-  - [5. Konfiguráció](../../../../04-PracticalSamples/petstory)
-- [Az alkalmazás futtatása](../../../../04-PracticalSamples/petstory)
-- [Hogyan működik együtt minden](../../../../04-PracticalSamples/petstory)
-- [Az AI integráció megértése](../../../../04-PracticalSamples/petstory)
-- [Következő lépések](../../../../04-PracticalSamples/petstory)
+- [Előfeltételek](#előfeltételek)
+- [A projekt struktúrájának megértése](#a-projekt-struktúrájának-megértése)
+- [A fő komponensek magyarázata](#a-fő-komponensek-magyarázata)
+  - [1. Főalkalmazás](#1-főalkalmazás)
+  - [2. Web vezérlő](#2-web-vezérlő)
+  - [3. Történet szolgáltatás](#3-történet-szolgáltatás)
+  - [4. Web sablonok](#4-web-sablonok)
+  - [5. Konfiguráció](#5-konfiguráció)
+- [Az alkalmazás futtatása](#az-alkalmazás-futtatása)
+- [Hogyan működik minden együtt](#hogyan-működik-minden-együtt)
+- [Az AI integráció megértése](#az-ai-integráció-megértése)
+- [Következő lépések](#következő-lépések)
 
 ## Előfeltételek
 
-Mielőtt elkezdenéd, győződj meg róla, hogy rendelkezel az alábbiakkal:
-- Telepített Java 21 vagy újabb verzió
-- Maven a függőségek kezeléséhez
-- GitHub fiók személyes hozzáférési tokennel (PAT) `models:read` jogosultsággal
-- Alapvető ismeretek Java, Spring Boot és webfejlesztés terén
+A kezdés előtt győződjön meg arról, hogy rendelkezik:
+- Telepített Java 21 vagy újabb verzióval
+- Maven a függőségkezeléshez
+- Azure AI Foundry modell üzembe helyezéssel (províziós `azd up` parancsal — lásd [2. fejezet](../../02-SetupDevEnvironment/getting-started-azure-openai.md)), bejelentkezve `az login`-nal (kulcs nélküli hitelesítés)
+- Alapvető Java, Spring Boot és webfejlesztési ismeretekkel
 
 ## A projekt struktúrájának megértése
 
-A kisállat történet projekt több fontos fájlt tartalmaz:
+A pet story projekt több fontos fájlt tartalmaz:
 
 ```
 petstory/
@@ -42,13 +42,13 @@ petstory/
 └── pom.xml                           # Maven dependencies
 ```
 
-## Főbb komponensek magyarázata
+## A fő komponensek magyarázata
 
-### 1. Fő alkalmazás
+### 1. Főalkalmazás
 
 **Fájl:** `PetStoryApplication.java`
 
-Ez a Spring Boot alkalmazás belépési pontja:
+Ez a belépési pont a Spring Boot alkalmazásunkhoz:
 
 ```java
 @SpringBootApplication
@@ -60,11 +60,11 @@ public class PetStoryApplication {
 ```
 
 **Mit csinál ez:**
-- Az `@SpringBootApplication` annotáció engedélyezi az automatikus konfigurációt és a komponenskeresést
-- Beindít egy beágyazott webszervert (Tomcat) a 8080-as porton
-- Automatikusan létrehozza a szükséges Spring bean-eket és szolgáltatásokat
+- Az `@SpringBootApplication` annotáció engedélyezi az automatikus konfigurációt és a komponens-keresést
+- Elindít egy beágyazott webszervert (Tomcat) a 8080-as porton
+- Automatikusan létrehozza az összes szükséges Spring bean-t és szolgáltatást
 
-### 2. Webes vezérlő
+### 2. Web vezérlő
 
 **Fájl:** `PetController.java`
 
@@ -82,7 +82,7 @@ public class PetController {
     
     @GetMapping("/")
     public String index() {
-        return "index";  // Returns index.html template
+        return "index";  // Visszaadja az index.html sablont
     }
     
     @PostMapping("/generate-story")
@@ -90,24 +90,24 @@ public class PetController {
                                Model model, 
                                RedirectAttributes redirectAttributes) {
         
-        // Input validation
+        // Bemeneti érvényesítés
         if (description.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please provide a description.");
             return "redirect:/";
         }
         
-        // Sanitize input for security
+        // Bemenet megtisztítása a biztonság érdekében
         String sanitizedDescription = sanitizeInput(description);
         
-        // Generate story with error handling
+        // Történet generálása hibakezeléssel
         try {
             String story = storyService.generateStory(sanitizedDescription);
             model.addAttribute("caption", sanitizedDescription);
             model.addAttribute("story", story);
-            return "result";  // Returns result.html template
+            return "result";  // Visszaadja a result.html sablont
             
         } catch (Exception e) {
-            // Use fallback story if AI fails
+            // Visszaesési történet használata, ha az AI meghibásodik
             String fallbackStory = generateFallbackStory(sanitizedDescription);
             model.addAttribute("story", fallbackStory);
             return "result";
@@ -117,21 +117,21 @@ public class PetController {
     private String sanitizeInput(String input) {
         return input.replaceAll("[<>\"'&]", "")  // Remove dangerous characters
                    .trim()
-                   .substring(0, Math.min(input.length(), 500));  // Limit length
+                   .substring(0, Math.min(input.length(), 500));  // Hossz korlátozása
     }
 }
 ```
 
-**Főbb jellemzők:**
+**Fő jellemzők:**
 
-1. **Útvonalkezelés**: Az `@GetMapping("/")` megjeleníti a feltöltési űrlapot, az `@PostMapping("/generate-story")` feldolgozza a beküldéseket
-2. **Bemenet validálás**: Ellenőrzi az üres leírásokat és a hosszkorlátokat
-3. **Biztonság**: Tisztítja a felhasználói bemenetet az XSS támadások elkerülése érdekében
-4. **Hibakezelés**: Tartalék történeteket biztosít, ha az AI szolgáltatás nem elérhető
-5. **Model kötés**: Adatokat ad át a HTML sablonoknak a Spring `Model` segítségével
+1. **Útvonal kezelés**: A `@GetMapping("/")` megjeleníti a feltöltési űrlapot, a `@PostMapping("/generate-story")` feldolgozza a beküldéseket
+2. **Bemenet érvényesítés**: Ellenőrzi az üres leírásokat és a hosszkorlátokat
+3. **Biztonság**: Kitisztítja a felhasználói bemenetet XSS támadások ellen
+4. **Hiba kezelés**: Tartalék történeteket biztosít, ha az AI szolgáltatás nem működik
+5. **Modellek kötése**: Adatokat továbbít a HTML sablonok számára Spring `Model` segítségével
 
 **Tartalék rendszer:**
-A vezérlő előre megírt történetsablonokat tartalmaz, amelyeket akkor használ, ha az AI szolgáltatás nem elérhető:
+A vezérlő előre megírt történet sablonokat tartalmaz, amelyeket akkor használ, amikor az AI szolgáltatás nem elérhető:
 
 ```java
 private String generateFallbackStory(String description) {
@@ -141,7 +141,7 @@ private String generateFallbackStory(String description) {
         "In a cozy home filled with love, there lived an extraordinary pet..."
     };
     
-    // Use description hash for consistent responses
+    // Használja a leírás hash-t az egységes válaszokhoz
     int index = Math.abs(description.hashCode() % storyTemplates.length);
     return storyTemplates[index];
 }
@@ -151,7 +151,7 @@ private String generateFallbackStory(String description) {
 
 **Fájl:** `StoryService.java`
 
-Ez a szolgáltatás kommunikál a GitHub Models-szel történetek generálásához:
+Ez a szolgáltatás kommunikál az Azure AI Foundry-val, hogy kulcs nélküli hitelesítéssel generáljon történeteket:
 
 ```java
 @Service
@@ -160,18 +160,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // A Foundry OpenAI-kompatibilis végpontja az /openai/v1/ útvonalon található
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // Kulcs nélküli hitelesítés Microsoft Entra ID-vel (API kulcs nélkül)
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -182,16 +186,16 @@ public class StoryService {
         
         String userPrompt = "Write a fun short story about a pet described as: " + description;
         
-        // Configure the AI request
+        // Az AI kérés konfigurálása
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(modelName)
                 .addSystemMessage(systemPrompt)
                 .addUserMessage(userPrompt)
-                .maxCompletionTokens(500)  // Limit response length
-                .temperature(0.8)          // Control creativity (0.0-1.0)
+                .maxCompletionTokens(500)  // Válasz hosszának korlátozása
+                .temperature(0.8)          // Kreativitás szabályozása (0.0-1.0)
                 .build();
         
-        // Send request and get response
+        // Kérés elküldése és válasz fogadása
         ChatCompletion response = openAIClient.chat().completions().create(params);
         
         return response.choices().get(0).message().content().orElse("");
@@ -199,19 +203,19 @@ public class StoryService {
 }
 ```
 
-**Főbb elemek:**
+**Fő összetevők:**
 
-1. **OpenAI kliens**: Az OpenAI hivatalos Java SDK-ját használja, amely a GitHub Models-hez van konfigurálva
+1. **OpenAI kliens**: Használja az hivatalos OpenAI Java SDK-t, Azure AI Foundry konfigurációval (kulcs nélküli)
 2. **Rendszer prompt**: Beállítja az AI viselkedését családbarát kisállat történetek írására
-3. **Felhasználói prompt**: Pontosan megadja az AI-nak, hogy milyen történetet írjon a leírás alapján
+3. **Felhasználói prompt**: Pontosan megmondja az AI-nak, milyen történetet írjon a leírás alapján
 4. **Paraméterek**: Szabályozza a történet hosszát és kreativitási szintjét
-5. **Hibakezelés**: Kivételt dob, amelyet a vezérlő elkap és kezel
+5. **Hiba kezelés**: Kivételt dob, amelyet a vezérlő elkap és kezel
 
-### 4. Webes sablonok
+### 4. Web sablonok
 
-**Fájl:** `index.html` (Feltöltési űrlap)
+**Fájl:** `index.html` (feltöltési űrlap)
 
-A főoldal, ahol a felhasználók leírják kisállataikat:
+A fő oldal, ahol a felhasználók leírják a kisállataikat:
 
 ```html
 <!DOCTYPE html>
@@ -258,7 +262,7 @@ A főoldal, ahol a felhasználók leírják kisállataikat:
 </html>
 ```
 
-**Fájl:** `result.html` (Történet megjelenítése)
+**Fájl:** `result.html` (történet megjelenítése)
 
 Megjeleníti a generált történetet:
 
@@ -293,18 +297,18 @@ Megjeleníti a generált történetet:
 </html>
 ```
 
-**Sablon jellemzők:**
+**Sablon funkciók:**
 
-1. **Thymeleaf integráció**: `th:` attribútumokat használ a dinamikus tartalomhoz
-2. **Reszponzív dizájn**: CSS stílus mobilra és asztali gépre
-3. **Hibakezelés**: Megjeleníti a validációs hibákat a felhasználóknak
-4. **Kliensoldali feldolgozás**: JavaScript az képelemzéshez (Transformers.js használatával)
+1. **Thymeleaf integráció**: `th:` attribútumokat használ dinamukus tartalomhoz
+2. **Reszponzív design**: CSS stílusok mobilra és asztali gépre
+3. **Hiba kezelés**: Megjeleníti az érvényesítési hibákat a felhasználóknak
+4. **Kliens oldali feldolgozás**: JavaScript kép elemzéshez (Transformers.js használatával)
 
 ### 5. Konfiguráció
 
 **Fájl:** `application.properties`
 
-Az alkalmazás konfigurációs beállításai:
+Az alkalmazás beállításai:
 
 ```properties
 spring.application.name=pet-story-app
@@ -316,106 +320,111 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
-**Konfiguráció magyarázata:**
+**A konfiguráció magyarázata:**
 
-1. **Fájl feltöltés**: Legfeljebb 10MB méretű képeket engedélyez
-2. **Naplózás**: Szabályozza, hogy milyen információk kerüljenek naplózásra a futás során
-3. **GitHub Models**: Meghatározza, hogy melyik AI modellt és végpontot használja
-4. **Biztonság**: Hibakezelési beállítások az érzékeny információk elkerülése érdekében
+1. **Fájl feltöltés**: Engedélyezi a maximum 10MB méretű képfeltöltést
+2. **Naplózás**: Szabályozza a futás közbeni információk naplózását
+3. **Azure AI Foundry**: Megadja a végpontot és a modell bevetést (kulcs nélküli hitelesítés)
+4. **Biztonság**: Hiba kezelés konfiguráció, hogy elkerülje az érzékeny adatok nyilvánosságra kerülését
 
 ## Az alkalmazás futtatása
 
-### 1. lépés: Állítsd be a GitHub tokent
+### 1. lépés: Jelentkezzen be és állítsa be a végpontját
 
-Először állítsd be a GitHub tokenedet környezeti változóként:
+A hitelesítés kulcs nélküli (Microsoft Entra ID), így nincs API kulcs. Jelentkezzen be és állítsa be a Foundry végpontját:
 
 **Windows (Parancssor):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Miért van erre szükség:**
-- A GitHub Models hitelesítést igényel az AI modellek eléréséhez
-- A környezeti változók használata megakadályozza, hogy az érzékeny tokenek a forráskódban legyenek
-- A `models:read` jogosultság hozzáférést biztosít az AI inferenciához
+- Az Azure AI Foundry Microsoft Entra ID-t használ a kérések hitelesítéséhez
+- Kulcs nélküli hitelesítés azt jelenti, hogy nincs titok a forráskódban vagy a környezetben
+- Fiókjának rendelkeznie kell a **Cognitive Services OpenAI User** szerepkörrel az erőforráson
 
-### 2. lépés: Építés és futtatás
+### 2. lépés: Build és futtatás
 
-Navigálj a projekt könyvtárába:
+Lépjen a projekt mappába:
 ```bash
 cd 04-PracticalSamples/petstory
 ```
 
-Építsd meg az alkalmazást:
+Építse meg az alkalmazást:
 ```bash
 mvn clean compile
 ```
 
-Indítsd el a szervert:
+Indítsa el a szervert:
 ```bash
 mvn spring-boot:run
 ```
 
-Az alkalmazás elindul a `http://localhost:8080` címen.
+Az alkalmazás a `http://localhost:8080` címen indul el.
 
-### 3. lépés: Teszteld az alkalmazást
+### 3. lépés: Tesztelje az alkalmazást
 
-1. **Nyisd meg** a `http://localhost:8080` címet a böngésződben
-2. **Írd le** a kisállatodat a szövegmezőben (pl. "Egy játékos golden retriever, aki imád apportírozni")
-3. **Kattints** a "Történet generálása" gombra, hogy AI által generált történetet kapj
-4. **Alternatívaként**, tölts fel egy kisállat képet, hogy automatikusan generáljon egy leírást
-5. **Tekintsd meg** a kreatív történetet a kisállatod leírása alapján
+1. **Nyissa meg** a `http://localhost:8080` címet a böngészőjében
+2. **Írja le** a kisállatát a szövegdobozba (pl. "Egy játékos golden retriever, aki imád apportírozni")
+3. **Kattintson** a "Generate Story" gombra, hogy AI által generált történetet kapjon
+4. **Vagy** töltsön fel egy kisállat képet, hogy automatikusan generálódjon leírás
+5. **Nézze meg** a kreatív történetet a kisállat leírása alapján
 
-## Hogyan működik együtt minden
+## Hogyan működik minden együtt
 
-Így néz ki a teljes folyamat, amikor egy kisállat történetet generálsz:
+Íme a teljes folyamat, amikor kisállat történetet generál:
 
-1. **Felhasználói bemenet**: Leírod a kisállatodat a webes űrlapon
-2. **Űrlap beküldése**: A böngésző POST kérést küld a `/generate-story` végpontra
-3. **Vezérlő feldolgozás**: A `PetController` validálja és tisztítja a bemenetet
-4. **AI szolgáltatás hívás**: A `StoryService` kérést küld a GitHub Models API-hoz
+1. **Felhasználói bemenet**: Ön leírja a kisállatát a webes űrlapon
+2. **Űrlap beküldése**: A böngésző POST kérést küld a `/generate-story` címre
+3. **Vezérlő feldolgozás**: A `PetController` érvényesíti és kitisztítja a bemenetet
+4. **AI szolgáltatás hívás**: A `StoryService` kérést küld az Azure AI Foundry modellnek
 5. **Történet generálás**: Az AI kreatív történetet generál a leírás alapján
-6. **Válasz feldolgozás**: A vezérlő megkapja a történetet, és hozzáadja a modellhez
-7. **Sablon renderelés**: A Thymeleaf rendereli a `result.html`-t a történettel
+6. **Válasz feldolgozás**: A vezérlő megkapja a történetet és hozzáadja a modellhez
+7. **Sablon feldolgozás**: A Thymeleaf kirajzolja a `result.html`-t a történettel
 8. **Megjelenítés**: A felhasználó látja a generált történetet a böngészőjében
 
-**Hibakezelési folyamat:**
-Ha az AI szolgáltatás nem működik:
+**Hiba kezelési folyamat:**
+Ha az AI szolgáltatás hibát jelez:
 1. A vezérlő elkapja a kivételt
-2. Tartalék történetet generál az előre megírt sablonok segítségével
+2. Tartalék történetet generál előre megírt sablonokból
 3. Megjeleníti a tartalék történetet egy megjegyzéssel az AI elérhetetlenségéről
-4. A felhasználó továbbra is kap egy történetet, biztosítva a jó felhasználói élményt
+4. A felhasználó így is kap történetet, ami jó felhasználói élményt biztosít
 
 ## Az AI integráció megértése
 
-### GitHub Models API
-Az alkalmazás a GitHub Models-t használja, amely ingyenes hozzáférést biztosít különböző AI modellekhez:
+### Azure AI Foundry (kulcs nélküli)
+Az alkalmazás Azure AI Foundry-t használ kulcs nélküli hitelesítéssel (Microsoft Entra ID):
 
 ```java
-// Authentication with GitHub token
+// Kulcs nélküli hitelesítés - nincs API-kulcs
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
-### Prompt tervezés
-A szolgáltatás gondosan megtervezett promptokat használ a jó eredmények érdekében:
+### Prompt készítés
+A szolgáltatás gondosan megírt promptokat használ a jó eredmények érdekében:
 
 ```java
 String systemPrompt = "You are a creative storyteller who writes fun, " +
@@ -424,7 +433,7 @@ String systemPrompt = "You are a creative storyteller who writes fun, " +
 ```
 
 ### Válasz feldolgozás
-Az AI válaszát kinyeri és validálja:
+Az AI választ kinyeri és ellenőrzi:
 
 ```java
 ChatCompletion response = openAIClient.chat().completions().create(params);
@@ -433,7 +442,11 @@ String story = response.choices().get(0).message().content().orElse("");
 
 ## Következő lépések
 
-További példákért lásd: [Chapter 04: Practical samples](../README.md)
+További példákért lásd [4. fejezet: Gyakorlati példák](../README.md)
 
-**Felelősség kizárása**:  
-Ez a dokumentum az AI fordítási szolgáltatás [Co-op Translator](https://github.com/Azure/co-op-translator) segítségével lett lefordítva. Bár törekszünk a pontosságra, kérjük, vegye figyelembe, hogy az automatikus fordítások hibákat vagy pontatlanságokat tartalmazhatnak. Az eredeti dokumentum az eredeti nyelvén tekintendő hiteles forrásnak. Kritikus információk esetén javasolt professzionális emberi fordítást igénybe venni. Nem vállalunk felelősséget semmilyen félreértésért vagy téves értelmezésért, amely a fordítás használatából eredhet.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Jogi nyilatkozat**:
+Ez a dokumentum az AI fordítási szolgáltatás, a [Co-op Translator](https://github.com/Azure/co-op-translator) segítségével készült. Bár az pontosságra törekszünk, kérjük, vegye figyelembe, hogy az automatikus fordítások hibákat vagy pontatlanságokat tartalmazhatnak. Az eredeti dokumentum az anyanyelvén tekintendő hiteles forrásnak. Fontos információk esetén professzionális emberi fordítást javasolunk. Nem vállalunk felelősséget semmilyen félreértésért vagy téves értelmezésért, amely ebből a fordításból ered.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

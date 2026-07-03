@@ -1,31 +1,31 @@
-# Tutorial del Generatore di Storie per Animali Domestici per Principianti
+# Guida al Generatore di Storie di Animali Domestici per Principianti
 
 ## Indice
 
-- [Prerequisiti](../../../../04-PracticalSamples/petstory)
-- [Comprendere la Struttura del Progetto](../../../../04-PracticalSamples/petstory)
-- [Componenti Principali Spiegati](../../../../04-PracticalSamples/petstory)
-  - [1. Applicazione Principale](../../../../04-PracticalSamples/petstory)
-  - [2. Controller Web](../../../../04-PracticalSamples/petstory)
-  - [3. Servizio Storie](../../../../04-PracticalSamples/petstory)
-  - [4. Template Web](../../../../04-PracticalSamples/petstory)
-  - [5. Configurazione](../../../../04-PracticalSamples/petstory)
-- [Esecuzione dell'Applicazione](../../../../04-PracticalSamples/petstory)
-- [Come Funziona Tutto Insieme](../../../../04-PracticalSamples/petstory)
-- [Comprendere l'Integrazione con l'IA](../../../../04-PracticalSamples/petstory)
-- [Prossimi Passi](../../../../04-PracticalSamples/petstory)
+- [Prerequisiti](#prerequisiti)
+- [Comprendere la Struttura del Progetto](#comprendere-la-struttura-del-progetto)
+- [Componenti Principali Spiegati](#componenti-principali-spiegati)
+  - [1. Applicazione Principale](#1-applicazione-principale)
+  - [2. Controller Web](#2-controller-web)
+  - [3. Servizio Storie](#3-servizio-storie)
+  - [4. Template Web](#4-template-web)
+  - [5. Configurazione](#5-configurazione)
+- [Esecuzione dell'Applicazione](#esecuzione-dellapplicazione)
+- [Come Funziona Tutto Insieme](#come-funziona-tutto-insieme)
+- [Comprendere l'Integrazione AI](#comprendere-lintegrazione-ai)
+- [Passi Successivi](#passi-successivi)
 
 ## Prerequisiti
 
 Prima di iniziare, assicurati di avere:
-- Java 21 o versione successiva installata
+- Java 21 o versioni superiori installato
 - Maven per la gestione delle dipendenze
-- Un account GitHub con un token di accesso personale (PAT) con ambito `models:read`
-- Conoscenze di base di Java, Spring Boot e sviluppo web
+- Un modello Azure AI Foundry distribuito (configuralo con `azd up` — vedi [Capitolo 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md)), autenticato con `az login` (autenticazione senza chiave)
+- Comprensione base di Java, Spring Boot e sviluppo web
 
 ## Comprendere la Struttura del Progetto
 
-Il progetto del generatore di storie per animali domestici include diversi file importanti:
+Il progetto per la storia sugli animali domestici ha diversi file importanti:
 
 ```
 petstory/
@@ -48,7 +48,7 @@ petstory/
 
 **File:** `PetStoryApplication.java`
 
-Questo è il punto di ingresso per la nostra applicazione Spring Boot:
+Questo è il punto di ingresso della nostra applicazione Spring Boot:
 
 ```java
 @SpringBootApplication
@@ -60,15 +60,15 @@ public class PetStoryApplication {
 ```
 
 **Cosa fa:**
-- L'annotazione `@SpringBootApplication` abilita la configurazione automatica e la scansione dei componenti
-- Avvia un server web incorporato (Tomcat) sulla porta 8080
-- Crea automaticamente tutti i bean e i servizi Spring necessari
+- L'annotazione `@SpringBootApplication` abilita l'auto-configurazione e la scansione dei componenti
+- Avvia un server web embedded (Tomcat) sulla porta 8080
+- Crea automaticamente tutti i bean e servizi necessari di Spring
 
 ### 2. Controller Web
 
 **File:** `PetController.java`
 
-Gestisce tutte le richieste web e le interazioni con l'utente:
+Gestisce tutte le richieste web e le interazioni utente:
 
 ```java
 @Controller
@@ -82,7 +82,7 @@ public class PetController {
     
     @GetMapping("/")
     public String index() {
-        return "index";  // Returns index.html template
+        return "index";  // Restituisce il template index.html
     }
     
     @PostMapping("/generate-story")
@@ -90,24 +90,24 @@ public class PetController {
                                Model model, 
                                RedirectAttributes redirectAttributes) {
         
-        // Input validation
+        // Validazione dell'input
         if (description.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please provide a description.");
             return "redirect:/";
         }
         
-        // Sanitize input for security
+        // Sanitizza l'input per la sicurezza
         String sanitizedDescription = sanitizeInput(description);
         
-        // Generate story with error handling
+        // Genera la storia con gestione degli errori
         try {
             String story = storyService.generateStory(sanitizedDescription);
             model.addAttribute("caption", sanitizedDescription);
             model.addAttribute("story", story);
-            return "result";  // Returns result.html template
+            return "result";  // Restituisce il template result.html
             
         } catch (Exception e) {
-            // Use fallback story if AI fails
+            // Usa una storia di riserva se l'IA fallisce
             String fallbackStory = generateFallbackStory(sanitizedDescription);
             model.addAttribute("story", fallbackStory);
             return "result";
@@ -117,21 +117,21 @@ public class PetController {
     private String sanitizeInput(String input) {
         return input.replaceAll("[<>\"'&]", "")  // Remove dangerous characters
                    .trim()
-                   .substring(0, Math.min(input.length(), 500));  // Limit length
+                   .substring(0, Math.min(input.length(), 500));  // Limita la lunghezza
     }
 }
 ```
 
 **Caratteristiche principali:**
 
-1. **Gestione delle Rotte**: `@GetMapping("/")` mostra il modulo di caricamento, `@PostMapping("/generate-story")` elabora le richieste
-2. **Validazione dell'Input**: Controlla descrizioni vuote e limiti di lunghezza
-3. **Sicurezza**: Sanitizza l'input dell'utente per prevenire attacchi XSS
-4. **Gestione degli Errori**: Fornisce storie di fallback quando il servizio IA non è disponibile
-5. **Binding del Modello**: Passa i dati ai template HTML utilizzando il `Model` di Spring
+1. **Gestione delle rotte**: `@GetMapping("/")` mostra il modulo di upload, `@PostMapping("/generate-story")` elabora le sottomissioni
+2. **Validazione Input**: Controlla descrizioni vuote e limiti di lunghezza
+3. **Sicurezza**: Sanifica l'input utente per prevenire attacchi XSS
+4. **Gestione Errori**: Fornisce storie alternative quando il servizio AI fallisce
+5. **Binding Modello**: Passa i dati ai template HTML usando il `Model` di Spring
 
-**Sistema di Fallback:**
-Il controller include template di storie pre-scritte che vengono utilizzati quando il servizio IA non è disponibile:
+**Sistema di fallback:**
+Il controller include template di storie pre-scritte che vengono usate quando il servizio AI non è disponibile:
 
 ```java
 private String generateFallbackStory(String description) {
@@ -141,7 +141,7 @@ private String generateFallbackStory(String description) {
         "In a cozy home filled with love, there lived an extraordinary pet..."
     };
     
-    // Use description hash for consistent responses
+    // Usa l'hash della descrizione per risposte coerenti
     int index = Math.abs(description.hashCode() % storyTemplates.length);
     return storyTemplates[index];
 }
@@ -151,7 +151,7 @@ private String generateFallbackStory(String description) {
 
 **File:** `StoryService.java`
 
-Questo servizio comunica con GitHub Models per generare storie:
+Questo servizio comunica con Azure AI Foundry per generare storie usando l'autenticazione senza chiave:
 
 ```java
 @Service
@@ -160,18 +160,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // L'endpoint compatibile con OpenAI di Foundry si trova sotto /openai/v1/
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // Autenticazione senza chiave con Microsoft Entra ID (nessuna chiave API)
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -182,16 +186,16 @@ public class StoryService {
         
         String userPrompt = "Write a fun short story about a pet described as: " + description;
         
-        // Configure the AI request
+        // Configura la richiesta AI
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(modelName)
                 .addSystemMessage(systemPrompt)
                 .addUserMessage(userPrompt)
-                .maxCompletionTokens(500)  // Limit response length
-                .temperature(0.8)          // Control creativity (0.0-1.0)
+                .maxCompletionTokens(500)  // Limita la lunghezza della risposta
+                .temperature(0.8)          // Controlla la creatività (0.0-1.0)
                 .build();
         
-        // Send request and get response
+        // Invia la richiesta e ottieni la risposta
         ChatCompletion response = openAIClient.chat().completions().create(params);
         
         return response.choices().get(0).message().content().orElse("");
@@ -199,19 +203,19 @@ public class StoryService {
 }
 ```
 
-**Componenti principali:**
+**Componenti chiave:**
 
-1. **Client OpenAI**: Utilizza l'SDK Java ufficiale di OpenAI configurato per GitHub Models
-2. **Prompt di Sistema**: Imposta il comportamento dell'IA per scrivere storie per famiglie
-3. **Prompt Utente**: Indica all'IA esattamente quale storia scrivere in base alla descrizione
+1. **Client OpenAI**: Usa l'SDK ufficiale OpenAI Java configurato per Azure AI Foundry (keyless)
+2. **Prompt di sistema**: Imposta il comportamento dell'AI per scrivere storie di animali domestici adatte alle famiglie
+3. **Prompt utente**: Indica all'AI esattamente quale storia scrivere basandosi sulla descrizione
 4. **Parametri**: Controlla la lunghezza della storia e il livello di creatività
-5. **Gestione degli Errori**: Lancia eccezioni che il controller intercetta e gestisce
+5. **Gestione errori**: Lancia eccezioni che il controller cattura e gestisce
 
 ### 4. Template Web
 
-**File:** `index.html` (Modulo di Caricamento)
+**File:** `index.html` (Modulo di caricamento)
 
-La pagina principale dove gli utenti descrivono i loro animali domestici:
+La pagina principale dove gli utenti descrivono i loro animali:
 
 ```html
 <!DOCTYPE html>
@@ -258,7 +262,7 @@ La pagina principale dove gli utenti descrivono i loro animali domestici:
 </html>
 ```
 
-**File:** `result.html` (Visualizzazione della Storia)
+**File:** `result.html` (Visualizzazione della storia)
 
 Mostra la storia generata:
 
@@ -293,12 +297,12 @@ Mostra la storia generata:
 </html>
 ```
 
-**Caratteristiche dei Template:**
+**Caratteristiche del template:**
 
-1. **Integrazione Thymeleaf**: Utilizza attributi `th:` per contenuti dinamici
-2. **Design Responsivo**: Stile CSS per dispositivi mobili e desktop
-3. **Gestione degli Errori**: Mostra errori di validazione agli utenti
-4. **Elaborazione Lato Client**: JavaScript per l'analisi delle immagini (usando Transformers.js)
+1. **Integrazione Thymeleaf**: Usa attributi `th:` per contenuto dinamico
+2. **Design responsive**: Stile CSS per dispositivi mobili e desktop
+3. **Gestione errori**: Mostra agli utenti errori di validazione
+4. **Elaborazione client-side**: JavaScript per analisi immagini (con Transformers.js)
 
 ### 5. Configurazione
 
@@ -316,47 +320,50 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
-**Configurazione spiegata:**
+**Spiegazione della configurazione:**
 
-1. **Caricamento File**: Consente immagini fino a 10MB
-2. **Logging**: Controlla quali informazioni vengono registrate durante l'esecuzione
-3. **GitHub Models**: Specifica quale modello IA e endpoint utilizzare
-4. **Sicurezza**: Configurazione per la gestione degli errori per evitare di esporre informazioni sensibili
+1. **Upload file**: Consente immagini fino a 10MB
+2. **Logging**: Controlla quali informazioni vengono loggate durante l'esecuzione
+3. **Azure AI Foundry**: Specifica endpoint e modello da utilizzare (autenticazione senza chiave)
+4. **Sicurezza**: Configurazione per la gestione degli errori in modo da non esporre informazioni sensibili
 
 ## Esecuzione dell'Applicazione
 
-### Passo 1: Imposta il tuo Token GitHub
+### Passo 1: Accedi e Imposta il Tuo Endpoint
 
-Per prima cosa, devi impostare il tuo token GitHub come variabile d'ambiente:
+L'autenticazione è senza chiave (Microsoft Entra ID), quindi non c'è nessuna chiave API. Accedi e imposta il tuo endpoint Foundry:
 
-**Windows (Prompt dei Comandi):**
+**Windows (Prompt dei comandi):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Perché è necessario:**
-- GitHub Models richiede l'autenticazione per accedere ai modelli IA
-- Utilizzare variabili d'ambiente mantiene i token sensibili fuori dal codice sorgente
-- L'ambito `models:read` fornisce accesso all'inferenza IA
+- Azure AI Foundry usa Microsoft Entra ID per autenticare le richieste di inferenza
+- L'autenticazione keyless significa niente segreti nel codice sorgente o nell'ambiente
+- Il tuo account deve avere il ruolo **Cognitive Services OpenAI User** sulla risorsa
 
 ### Passo 2: Compila ed Esegui
 
-Vai nella directory del progetto:
+Spostati nella directory del progetto:
 ```bash
 cd 04-PracticalSamples/petstory
 ```
@@ -371,51 +378,53 @@ Avvia il server:
 mvn spring-boot:run
 ```
 
-L'applicazione sarà avviata su `http://localhost:8080`.
+L'applicazione partirà su `http://localhost:8080`.
 
 ### Passo 3: Testa l'Applicazione
 
-1. **Apri** `http://localhost:8080` nel tuo browser
-2. **Descrivi** il tuo animale domestico nell'area di testo (es. "Un golden retriever giocherellone che ama riportare oggetti")
-3. **Clicca** su "Genera Storia" per ottenere una storia generata dall'IA
+1. **Apri** `http://localhost:8080` nel browser
+2. **Descrivi** il tuo animale domestico nell'area di testo (es. "Un golden retriever giocoso che ama riportare la palla")
+3. **Clicca** su "Generate Story" per ottenere una storia generata dall'AI
 4. **In alternativa**, carica un'immagine del tuo animale per generare automaticamente una descrizione
-5. **Visualizza** la storia creativa basata sulla descrizione del tuo animale
+5. **Visualizza** la storia creativa generata basata sulla descrizione del tuo animale
 
 ## Come Funziona Tutto Insieme
 
-Ecco il flusso completo quando generi una storia per animali domestici:
+Ecco il flusso completo quando generi una storia di animali:
 
 1. **Input Utente**: Descrivi il tuo animale nel modulo web
-2. **Invio del Modulo**: Il browser invia una richiesta POST a `/generate-story`
-3. **Elaborazione del Controller**: `PetController` valida e sanitizza l'input
-4. **Chiamata al Servizio IA**: `StoryService` invia una richiesta all'API GitHub Models
-5. **Generazione della Storia**: L'IA genera una storia creativa basata sulla descrizione
-6. **Gestione della Risposta**: Il controller riceve la storia e la aggiunge al modello
-7. **Rendering del Template**: Thymeleaf rende `result.html` con la storia
+2. **Invio Modulo**: Il browser invia una richiesta POST a `/generate-story`
+3. **Elaborazione dal Controller**: `PetController` valida e sanifica l'input
+4. **Chiamata al Servizio AI**: `StoryService` invia la richiesta al modello Azure AI Foundry
+5. **Generazione Storia**: L'AI genera una storia creativa basata sulla descrizione
+6. **Gestione Risposta**: Il controller riceve la storia e la aggiunge al modello
+7. **Rendering Template**: Thymeleaf rende `result.html` con la storia
 8. **Visualizzazione**: L'utente vede la storia generata nel browser
 
-**Flusso di Gestione degli Errori:**
-Se il servizio IA fallisce:
-1. Il controller intercetta l'eccezione
-2. Genera una storia di fallback utilizzando template pre-scritti
-3. Mostra la storia di fallback con una nota sull'indisponibilità dell'IA
-4. L'utente riceve comunque una storia, garantendo una buona esperienza utente
+**Flusso di Gestione Errori:**
+Se il servizio AI fallisce:
+1. Il controller cattura l'eccezione
+2. Genera una storia di fallback usando template pre-scritti
+3. Mostra la storia di fallback con una nota sull'indisponibilità dell'AI
+4. L'utente riceve comunque una storia, garantendo una buona esperienza
 
-## Comprendere l'Integrazione con l'IA
+## Comprendere l'Integrazione AI
 
-### API GitHub Models
-L'applicazione utilizza GitHub Models, che fornisce accesso gratuito a vari modelli IA:
+### Azure AI Foundry (senza chiave)
+L'applicazione usa Azure AI Foundry con autenticazione senza chiave (Microsoft Entra ID):
 
 ```java
-// Authentication with GitHub token
+// Autenticazione senza chiave - nessuna chiave API
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
-### Prompt Engineering
-Il servizio utilizza prompt attentamente progettati per ottenere buoni risultati:
+### Ingegneria del Prompt
+Il servizio usa prompt creati con cura per ottenere buoni risultati:
 
 ```java
 String systemPrompt = "You are a creative storyteller who writes fun, " +
@@ -424,16 +433,20 @@ String systemPrompt = "You are a creative storyteller who writes fun, " +
 ```
 
 ### Elaborazione della Risposta
-La risposta dell'IA viene estratta e validata:
+La risposta AI è estratta e validata:
 
 ```java
 ChatCompletion response = openAIClient.chat().completions().create(params);
 String story = response.choices().get(0).message().content().orElse("");
 ```
 
-## Prossimi Passi
+## Passi Successivi
 
-Per ulteriori esempi, consulta [Capitolo 04: Esempi pratici](../README.md)
+Per ulteriori esempi, vedi [Capitolo 04: Esempi pratici](../README.md)
 
-**Disclaimer**:  
-Questo documento è stato tradotto utilizzando il servizio di traduzione AI [Co-op Translator](https://github.com/Azure/co-op-translator). Sebbene ci impegniamo per garantire l'accuratezza, si prega di notare che le traduzioni automatiche possono contenere errori o imprecisioni. Il documento originale nella sua lingua nativa dovrebbe essere considerato la fonte autorevole. Per informazioni critiche, si raccomanda una traduzione professionale effettuata da un esperto umano. Non siamo responsabili per eventuali incomprensioni o interpretazioni errate derivanti dall'uso di questa traduzione.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Disclaimer**:
+Questo documento è stato tradotto utilizzando il servizio di traduzione AI [Co-op Translator](https://github.com/Azure/co-op-translator). Sebbene ci impegniamo per garantire la precisione, si prega di notare che le traduzioni automatizzate possono contenere errori o imprecisioni. Il documento originale nella sua lingua nativa deve essere considerato la fonte autorevole. Per informazioni critiche, si raccomanda una traduzione professionale effettuata da un essere umano. Non siamo responsabili per eventuali malintesi o interpretazioni errate derivanti dall’uso di questa traduzione.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

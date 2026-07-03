@@ -1,39 +1,40 @@
 # MCP Calculator Tutorial para sa mga Baguhan
 
-## Nilalaman
+## Table of Contents
 
-- [Ano ang Matututunan Mo](../../../../04-PracticalSamples/calculator)
-- [Mga Kinakailangan](../../../../04-PracticalSamples/calculator)
-- [Pag-unawa sa Estruktura ng Proyekto](../../../../04-PracticalSamples/calculator)
-- [Paliwanag sa Mga Pangunahing Komponent](../../../../04-PracticalSamples/calculator)
-  - [1. Pangunahing Aplikasyon](../../../../04-PracticalSamples/calculator)
-  - [2. Calculator Service](../../../../04-PracticalSamples/calculator)
-  - [3. Direktang MCP Client](../../../../04-PracticalSamples/calculator)
-  - [4. AI-Powered Client](../../../../04-PracticalSamples/calculator)
-- [Pagpapatakbo ng Mga Halimbawa](../../../../04-PracticalSamples/calculator)
-- [Paano Nagtutulungan ang Lahat](../../../../04-PracticalSamples/calculator)
-- [Mga Susunod na Hakbang](../../../../04-PracticalSamples/calculator)
+- [Ano ang Matututunan Mo](#ano-ang-matututunan-mo)
+- [Mga Kinakailangan](#mga-kinakailangan)
+- [Pag-unawa sa Istruktura ng Proyekto](#pag-unawa-sa-istruktura-ng-proyekto)
+- [Paliwanag sa Mga Pangunahing Bahagi](#paliwanag-sa-mga-pangunahing-bahagi)
+  - [1. Pangunahing Aplikasyon](#1-pangunahing-aplikasyon)
+  - [2. Calculator Service](#2-calculator-service)
+  - [3. Direktang MCP Client](#3-direktang-mcp-client)
+  - [4. AI-Powered Client](#4-ai-powered-client)
+- [Pagpapatakbo ng Mga Halimbawa](#pagpapatakbo-ng-mga-halimbawa)
+- [Paano Ito Nagtratrabaho Nang Sama-sama](#paano-ito-nagtratrabaho-nang-sama-sama)
+- [Mga Susunod na Hakbang](#mga-susunod-na-hakbang)
 
 ## Ano ang Matututunan Mo
 
-Ipinaliwanag sa tutorial na ito kung paano bumuo ng calculator service gamit ang Model Context Protocol (MCP). Malalaman mo:
+Ipinaliwanag sa tutorial na ito kung paano bumuo ng calculator service gamit ang Model Context Protocol (MCP). Maiintindihan mo kung paano:
 
-- Paano gumawa ng serbisyo na magagamit ng AI bilang tool
-- Paano mag-set up ng direktang komunikasyon sa MCP services
-- Paano awtomatikong pumili ang AI models kung aling tools ang gagamitin
-- Ang pagkakaiba ng direktang protocol calls at AI-assisted interactions
+- Gumawa ng serbisyo na magagamit ng AI bilang isang tool
+- Mag-setup ng diretsong komunikasyon sa mga MCP services
+- Paano awtomatikong pumipili ng mga tool ang mga AI model
+- Ang pagkakaiba ng direktang tawag ng protocol at pag-interak gamit ang AI
 
 ## Mga Kinakailangan
 
-Bago magsimula, siguraduhing mayroon ka ng mga sumusunod:
-- Nakainstall na Java 21 o mas mataas
-- Maven para sa pamamahala ng dependencies
-- Isang GitHub account na may personal access token (PAT)
+Bago magsimula, siguraduhing mayroon kang:
+- Java 21 o mas mataas na naka-install
+- Maven para sa pamamahala ng dependency
+- Isang Azure AI Foundry model deployment (iprovide gamit ang `azd up` — tingnan ang [Kabanata 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
+- Ang [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), naka-sign in gamit ang `az login` (keyless auth)
 - Pangunahing kaalaman sa Java at Spring Boot
 
-## Pag-unawa sa Estruktura ng Proyekto
+## Pag-unawa sa Istruktura ng Proyekto
 
-Ang calculator project ay may ilang mahahalagang file:
+Ang proyekto ng calculator ay may ilang mahahalagang files:
 
 ```
 calculator/
@@ -46,13 +47,13 @@ calculator/
     └── Bot.java                          # Simple chat interface
 ```
 
-## Paliwanag sa Mga Pangunahing Komponent
+## Paliwanag sa Mga Pangunahing Bahagi
 
 ### 1. Pangunahing Aplikasyon
 
 **File:** `McpServerApplication.java`
 
-Ito ang entry point ng ating calculator service. Isa itong standard na Spring Boot application na may espesyal na karagdagan:
+Ito ang entry point ng aming calculator service. Isa itong standard Spring Boot application na may isang espesyal na dagdag:
 
 ```java
 @SpringBootApplication
@@ -71,14 +72,14 @@ public class McpServerApplication {
 
 **Ano ang ginagawa nito:**
 - Pinapatakbo ang Spring Boot web server sa port 8080
-- Gumagawa ng `ToolCallbackProvider` na ginagawang available ang ating calculator methods bilang MCP tools
-- Ang `@Bean` annotation ay nagsasabi sa Spring na pamahalaan ito bilang isang component na magagamit ng ibang bahagi
+- Lumilikha ng `ToolCallbackProvider` na ginagawang available ang mga method ng calculator bilang mga MCP tool
+- Ang `@Bean` annotation ay nagsasabi sa Spring na pangasiwaan ito bilang isang component na magagamit ng iba pang bahagi
 
 ### 2. Calculator Service
 
 **File:** `CalculatorService.java`
 
-Dito nagaganap ang lahat ng kalkulasyon. Ang bawat method ay may markang `@Tool` upang magamit ito sa pamamagitan ng MCP:
+Dito nangyayari lahat ng matematika. Bawat method ay may markang `@Tool` para maging available sa MCP:
 
 ```java
 @Service
@@ -96,7 +97,7 @@ public class CalculatorService {
         return formatResult(a, "-", b, result);
     }
     
-    // More calculator operations...
+    // Maraming mga operasyon ng calculator pa...
     
     private String formatResult(double a, String operator, double b, double result) {
         return String.format("%.2f %s %.2f = %.2f", a, operator, b, result);
@@ -104,21 +105,21 @@ public class CalculatorService {
 }
 ```
 
-**Mga Pangunahing Tampok:**
+**Pangunahing katangian:**
 
-1. **`@Tool` Annotation**: Nagsasabi sa MCP na ang method na ito ay maaaring tawagin ng external clients
-2. **Malinaw na Deskripsyon**: Ang bawat tool ay may deskripsyon na tumutulong sa AI models na maunawaan kung kailan ito gagamitin
-3. **Pare-parehong Format ng Resulta**: Lahat ng operasyon ay nagbabalik ng human-readable strings tulad ng "5.00 + 3.00 = 8.00"
-4. **Error Handling**: Ang division by zero at negative square roots ay nagbabalik ng error messages
+1. **`@Tool` Annotation**: Sinusabi nito sa MCP na maaaring tawagin ang method na ito ng mga external client
+2. **Malinaw na Deskripsyon**: Bawat tool ay may paliwanag na tumutulong sa AI models na maintindihan kung kailan ito gagamitin
+3. **Pare-parehong Format ng Output**: Lahat ng operations ay nagbabalik ng human-readable na strings gaya ng "5.00 + 3.00 = 8.00"
+4. **Pag-handle ng Error**: Ang paghahati sa zero at negatibong square roots ay nagbabalik ng mga mensahe ng error
 
-**Mga Available na Operasyon:**
+**Mga Available na Operation:**
 - `add(a, b)` - Nagdadagdag ng dalawang numero
-- `subtract(a, b)` - Binabawas ang pangalawa mula sa una
-- `multiply(a, b)` - Pinaparami ang dalawang numero
-- `divide(a, b)` - Hinahati ang una sa pangalawa (may zero-check)
-- `power(base, exponent)` - Itinataas ang base sa power ng exponent
-- `squareRoot(number)` - Kinukwenta ang square root (may negative check)
-- `modulus(a, b)` - Nagbabalik ng remainder ng division
+- `subtract(a, b)` - Binabawas ang pangalawa sa unang numero
+- `multiply(a, b)` - Nagmumultiply ng dalawang numero
+- `divide(a, b)` - Hinahati ang una sa pangalawa (may check sa zero)
+- `power(base, exponent)` - Inaangat ang base sa power ng exponent
+- `squareRoot(number)` - Kinakalkula ang square root (may check sa negatibo)
+- `modulus(a, b)` - Nagbabalik ng remainder ng paghati
 - `absolute(number)` - Nagbabalik ng absolute value
 - `help()` - Nagbabalik ng impormasyon tungkol sa lahat ng operasyon
 
@@ -126,7 +127,7 @@ public class CalculatorService {
 
 **File:** `SDKClient.java`
 
-Ang client na ito ay direktang nakikipag-usap sa MCP server nang hindi gumagamit ng AI. Manu-manong tinatawag nito ang mga partikular na calculator functions:
+Ang client na ito ay direktang nakikipag-usap sa MCP server nang hindi gumagamit ng AI. Pinapatawag nito nang mano-mano ang mga partikular na function ng calculator:
 
 ```java
 public class SDKClient {
@@ -142,11 +143,11 @@ public class SDKClient {
         var client = McpClient.sync(this.transport).build();
         client.initialize();
         
-        // List available tools
+        // Ilista ang mga magagamit na kasangkapan
         ListToolsResult toolsList = client.listTools();
         System.out.println("Available Tools = " + toolsList);
         
-        // Call specific calculator functions
+        // Tawagin ang mga partikular na function ng kalkuladora
         CallToolResult resultAdd = client.callTool(
             new CallToolRequest("add", Map.of("a", 5.0, "b", 3.0))
         );
@@ -163,36 +164,41 @@ public class SDKClient {
 ```
 
 **Ano ang ginagawa nito:**
-1. **Kumokonekta** sa calculator server sa `http://localhost:8080` gamit ang builder pattern
-2. **Naglalista** ng lahat ng available na tools (ang ating calculator functions)
-3. **Tumatawag** ng partikular na functions gamit ang eksaktong parameters
-4. **Nagpi-print** ng mga resulta nang direkta
+1. **Kinokonekta** sa calculator server sa `http://localhost:8080` gamit ang builder pattern
+2. **Naililista** ang lahat ng magagamit na tools (mga function ng calculator)
+3. **Tinutawag** ang mga partikular na function na may eksaktong parameters
+4. **Piniprint** ang resulta nang direkta
 
-**Tandaan:** Ang halimbawang ito ay gumagamit ng Spring AI 1.1.0-SNAPSHOT dependency, na nagpakilala ng builder pattern para sa `WebFluxSseClientTransport`. Kung gumagamit ka ng mas lumang stable na bersyon, maaaring kailanganin mong gamitin ang direktang constructor.
+**Tandaan:** Ginagamit ng halimbawang ito ang Spring AI 1.1.0-SNAPSHOT dependency, na nagpakilala ng builder pattern para sa `WebFluxSseClientTransport`. Kung gumagamit ka ng mas lumang stable na bersyon, baka kailangan mong gamitin ang direktang constructor.
 
-**Kailan ito gagamitin:** Kapag alam mo na ang eksaktong kalkulasyon na nais mong gawin at nais mo itong tawagin programmatically.
+**Kailan ito gagamitin:** Kapag alam mo nang eksakto kung anong kalkulasyon ang gusto mong gawin at gusto mo itong tawagin programmatically.
 
 ### 4. AI-Powered Client
 
 **File:** `LangChain4jClient.java`
 
-Ang client na ito ay gumagamit ng AI model (GPT-4o-mini) na awtomatikong nakakapagdesisyon kung aling calculator tools ang gagamitin:
+Ang client na ito ay gumagamit ng AI model (GPT-4o-mini) na awtomatikong nagpapasya kung aling mga calculator tools ang gagamitin:
 
 ```java
 public class LangChain4jClient {
     
     public static void main(String[] args) throws Exception {
-        // Set up the AI model (using GitHub Models)
+        // Isaayos ang AI model (Azure AI Foundry, keyless auth sa pamamagitan ng Microsoft Entra ID)
+        String endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1";
+        String token = new DefaultAzureCredentialBuilder().build()
+                .getToken(new TokenRequestContext().addScopes("https://ai.azure.com/.default"))
+                .block().getToken();
         ChatLanguageModel model = OpenAiOfficialChatModel.builder()
-                .isGitHubModels(true)
-                .apiKey(System.getenv("GITHUB_TOKEN"))
+                .baseUrl(baseUrl)
+                .apiKey(token)
                 .modelName("gpt-4o-mini")
                 .build();
 
-        // Connect to our calculator MCP server
+        // Kumonekta sa aming calculator MCP server
         McpTransport transport = new HttpMcpTransport.Builder()
                 .sseUrl("http://localhost:8080/sse")
-                .logRequests(true)  // Shows what the AI is doing
+                .logRequests(true)  // Ipinapakita kung ano ang ginagawa ng AI
                 .logResponses(true)
                 .build();
 
@@ -200,18 +206,18 @@ public class LangChain4jClient {
                 .transport(transport)
                 .build();
 
-        // Give the AI access to our calculator tools
+        // Bigyan ang AI ng akses sa aming mga calculator tool
         ToolProvider toolProvider = McpToolProvider.builder()
                 .mcpClients(List.of(mcpClient))
                 .build();
 
-        // Create an AI bot that can use our calculator
+        // Gumawa ng AI bot na kayang gumamit ng aming calculator
         Bot bot = AiServices.builder(Bot.class)
                 .chatLanguageModel(model)
                 .toolProvider(toolProvider)
                 .build();
 
-        // Now we can ask the AI to do calculations in natural language
+        // Ngayon maaari na nating hilingin sa AI na magsagawa ng mga kalkulasyon gamit ang natural na wika
         String response = bot.chat("Calculate the sum of 24.5 and 17.3 using the calculator service");
         System.out.println(response);
 
@@ -222,53 +228,55 @@ public class LangChain4jClient {
 ```
 
 **Ano ang ginagawa nito:**
-1. **Gumagawa** ng koneksyon sa AI model gamit ang iyong GitHub token
-2. **Kumokonekta** ang AI sa ating calculator MCP server
-3. **Binibigyan** ang AI ng access sa lahat ng ating calculator tools
-4. **Pinapayagan** ang natural language requests tulad ng "Ikwenta ang kabuuan ng 24.5 at 17.3"
+1. **Lumilikha** ng koneksyon sa AI model gamit ang iyong GitHub token
+2. **Kinokonekta** ang AI sa aming calculator MCP server
+3. **Binibigyan** ang AI ng access sa lahat ng calculator tools namin
+4. **Pinapayagan** ang natural na mga kahilingan sa wika gaya ng "Calculate the sum of 24.5 and 17.3"
 
 **Awtomatikong ginagawa ng AI:**
-- Nauunawaan na gusto mong magdagdag ng mga numero
-- Pinipili ang `add` tool
-- Tumatawag ng `add(24.5, 17.3)`
-- Nagbabalik ng resulta sa natural na sagot
+- Naiintindihan na gusto mong magdagdag ng mga numero
+- Pinipili ang `add` na tool
+- Tinutawag ang `add(24.5, 17.3)`
+- Nagbabalik ng resulta sa natural na tugon
 
 ## Pagpapatakbo ng Mga Halimbawa
 
-### Hakbang 1: Patakbuhin ang Calculator Server
+### Hakbang 1: Simulan ang Calculator Server
 
-Una, itakda ang iyong GitHub token (kailangan para sa AI client):
+Una, mag-sign in at itakda ang iyong Azure AI Foundry endpoint (kailangan para sa AI client — keyless auth, walang API key):
 
 **Windows:**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-Patakbuhin ang server:
+Simulan ang server:
 ```bash
 cd 04-PracticalSamples/calculator
 mvn clean spring-boot:run
 ```
 
-Magsisimula ang server sa `http://localhost:8080`. Makikita mo:
+Ang server ay magsisimula sa `http://localhost:8080`. Makikita mo ang:
 ```
 Started McpServerApplication in X.XXX seconds
 ```
 
 ### Hakbang 2: Subukan gamit ang Direktang Client
 
-Sa isang **BAGONG** terminal habang tumatakbo pa ang Server, patakbuhin ang direktang MCP client:
+Sa isang **BAGONG** terminal habang patuloy na tumatakbo ang Server, patakbuhin ang direktang MCP client:
 ```bash
 cd 04-PracticalSamples/calculator
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient" -Dexec.classpathScope=test
 ```
 
-Makikita mo ang output tulad ng:
+Makikita mo ang output na:
 ```
 Available Tools = [add, subtract, multiply, divide, power, squareRoot, modulus, absolute, help]
 Add Result = 5.00 + 3.00 = 8.00
@@ -281,7 +289,7 @@ Square Root Result = √16.00 = 4.00
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient" -Dexec.classpathScope=test
 ```
 
-Makikita mo ang AI na awtomatikong gumagamit ng tools:
+Makikita mong awtomatikong ginagamit ng AI ang mga tool:
 ```
 The sum of 24.5 and 17.3 is 41.8.
 The square root of 144 is 12.
@@ -289,26 +297,28 @@ The square root of 144 is 12.
 
 ### Hakbang 4: Isara ang MCP Server
 
-Kapag tapos ka na sa pagsubok, maaari mong ihinto ang AI client sa pamamagitan ng pagpindot sa `Ctrl+C` sa terminal nito. Ang MCP server ay patuloy na tatakbo hanggang sa ihinto mo ito.
-Upang ihinto ang server, pindutin ang `Ctrl+C` sa terminal kung saan ito tumatakbo.
+Kapag natapos mo na ang pagsubok, maaari mong itigil ang AI client sa pamamagitan ng pagpindot ng `Ctrl+C` sa terminal nito. Patuloy na tatakbo ang MCP server hanggang itigil mo ito.
+Para itigil ang server, pindutin ang `Ctrl+C` sa terminal kung saan ito tumatakbo.
 
-## Paano Nagtutulungan ang Lahat
+## Paano Ito Nagtratrabaho Nang Sama-sama
 
-Narito ang kumpletong daloy kapag tinanong mo ang AI ng "Ano ang 5 + 3?":
+Narito ang buong daloy kapag tinanong mo ang AI ng "Ano ang 5 + 3?":
 
-1. **Ikaw** ay nagtatanong sa AI gamit ang natural na wika
-2. **AI** ay sinusuri ang iyong tanong at nauunawaan na gusto mo ng addition
-3. **AI** ay tumatawag sa MCP server: `add(5.0, 3.0)`
-4. **Calculator Service** ay gumagawa ng: `5.0 + 3.0 = 8.0`
-5. **Calculator Service** ay nagbabalik ng: `"5.00 + 3.00 = 8.00"`
-6. **AI** ay tumatanggap ng resulta at inaayos ito sa natural na sagot
+1. **Ikaw** ang nagtatanong sa AI sa natural na wika
+2. **AI** sinusuri ang iyong kahilingan at namamalayan na gusto mong magdagdag
+3. **AI** tinatawag ang MCP server: `add(5.0, 3.0)`
+4. **Calculator Service** ginagampanan ang: `5.0 + 3.0 = 8.0`
+5. **Calculator Service** nagbabalik: `"5.00 + 3.00 = 8.00"`
+6. **AI** natatanggap ang resulta at nagfo-format ng natural na tugon
 7. **Ikaw** ay nakakatanggap ng: "Ang kabuuan ng 5 at 3 ay 8"
 
 ## Mga Susunod na Hakbang
 
-Para sa higit pang mga halimbawa, tingnan ang [Chapter 04: Practical samples](../README.md)
+Para sa karagdagang mga halimbawa, tingnan ang [Kabanata 04: Mga Praktikal na Halimbawa](../README.md)
 
 ---
 
-**Paunawa**:  
-Ang dokumentong ito ay isinalin gamit ang AI translation service na [Co-op Translator](https://github.com/Azure/co-op-translator). Bagama't sinisikap naming maging tumpak, tandaan na ang mga awtomatikong pagsasalin ay maaaring maglaman ng mga pagkakamali o hindi pagkakatugma. Ang orihinal na dokumento sa kanyang katutubong wika ang dapat ituring na opisyal na sanggunian. Para sa mahalagang impormasyon, inirerekomenda ang propesyonal na pagsasalin ng tao. Hindi kami mananagot sa anumang hindi pagkakaunawaan o maling interpretasyon na dulot ng paggamit ng pagsasaling ito.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Pagtatanggi**:
+Ang dokumentong ito ay isinalin gamit ang serbisyo ng AI translation na [Co-op Translator](https://github.com/Azure/co-op-translator). Bagama't nagsusumikap kami para sa katumpakan, pakatandaan na ang awtomatikong pagsasalin ay maaaring maglaman ng mga pagkakamali o hindi pagkakatugma. Ang orihinal na dokumento sa orihinal nitong wika ang dapat ituring na pangunahing sanggunian. Para sa mahahalagang impormasyon, inirerekomenda ang propesyonal na pagsasalin ng tao. Hindi kami mananagot sa anumang maling pagkakaintindi o maling interpretasyon na nagmula sa paggamit ng pagsasaling ito.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

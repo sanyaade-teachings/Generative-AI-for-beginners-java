@@ -1,138 +1,151 @@
-# 設置 Azure OpenAI 開發環境
+# 設定 Azure AI Foundry 的開發環境
 
-> **快速開始**：本指南適用於 Azure OpenAI 的設置。如果想立即使用免費模型，請參考 [GitHub Models with Codespaces](./README.md#quick-start-cloud)。
+> 本指南使用 **keyless** 認證（Microsoft Entra ID）為本課程中的 Java AI 應用程式設置 **Azure AI Foundry** 模型 — 無需管理 API 金鑰。對此工具不熟悉？請從[開發環境指南](./README.md)開始。
 
-本指南將幫助您在本課程中為 Java AI 應用設置 Azure AI Foundry 模型。
+本指南為本課程中的 Java AI 應用程式設置 **Azure AI Foundry** 模型。你有兩條途徑：
+
+- **方案 A — 使用 `azd` + Bicep 進行佈建（推薦）：** 一條命令以程式碼形式部署 Foundry 帳戶和模型。無需點擊入口網站。
+- **方案 B — 在 Azure AI Foundry 入口網站手動建立資源**。
+
+兩條途徑都使用 **keyless 認證**（Microsoft Entra ID）— 無需複製或洩漏 API 金鑰。
 
 ## 目錄
 
-- [快速設置概述](../../../02-SetupDevEnvironment)
-- [步驟 1：創建 Azure AI Foundry 資源](../../../02-SetupDevEnvironment)
-  - [創建 Hub 和 Project](../../../02-SetupDevEnvironment)
-  - [部署 GPT-4o-mini 模型](../../../02-SetupDevEnvironment)
-- [步驟 2：創建 Codespace](../../../02-SetupDevEnvironment)
-- [步驟 3：配置您的環境](../../../02-SetupDevEnvironment)
-- [步驟 4：測試您的設置](../../../02-SetupDevEnvironment)
-- [下一步是什麼？](../../../02-SetupDevEnvironment)
-- [資源](../../../02-SetupDevEnvironment)
-- [其他資源](../../../02-SetupDevEnvironment)
+- [建立了哪些資源](#建立了哪些資源)
+- [先決條件](#先決條件)
+- [方案 A：使用 azd + Bicep 佈建（推薦）](#option-a-provision-with-azd--bicep-recommended)
+- [方案 B：手動建立資源](#方案-b：手動建立資源)
+- [配置你的環境](#配置你的環境)
+- [測試你的設置](#測試你的設置)
+- [接下來呢？](#接下來呢？)
+- [資源](#資源)
+- [更多資源](#更多資源)
 
-## 快速設置概述
+## 建立了哪些資源
 
-1. 創建 Azure AI Foundry 資源（Hub、Project、Model）
-2. 使用 Java 開發容器創建 Codespace
-3. 使用 Azure OpenAI 憑據配置您的 .env 文件
-4. 使用示例項目測試您的設置
+[`infra/`](../../../02-SetupDevEnvironment/infra) 中的 Bicep 範本會佈建：
 
-## 步驟 1：創建 Azure AI Foundry 資源
+- 一個 **Azure AI Foundry** 帳戶（`Microsoft.CognitiveServices/accounts`，種類為 `AIServices`）及一個專案
+- 一個 <strong>聊天</strong> 部署 — `gpt-4o-mini`
+- 一個 <strong>嵌入</strong> 部署 — `text-embedding-3-small`（後續章節會用到）
+- 一個 **keyless 角色指派**（`Cognitive Services OpenAI User`），讓你用 `az login` 登入，而非管理金鑰
 
-### 創建 Hub 和 Project
+## 先決條件
 
-1. 前往 [Azure AI Foundry Portal](https://ai.azure.com/) 並登錄
-2. 點擊 **+ Create** → **New hub**（或導航至 **Management** → **All hubs** → **+ New hub**）
-3. 配置您的 Hub：
-   - **Hub 名稱**：例如 "MyAIHub"
-   - **訂閱**：選擇您的 Azure 訂閱
-   - **資源組**：創建新的或選擇現有的
-   - **位置**：選擇離您最近的地點
-   - **存儲帳戶**：使用默認或配置自定義
-   - **密鑰保管庫**：使用默認或配置自定義
-   - 點擊 **Next** → **Review + create** → **Create**
-4. 創建完成後，點擊 **+ New project**（或從 Hub 概覽中點擊 **Create project**）
-   - **Project 名稱**：例如 "GenAIJava"
-   - 點擊 **Create**
+- 一個 [Azure 訂閱](https://azure.microsoft.com/free/)
+- [Azure Developer CLI (`azd`)](https://aka.ms/azure-dev/install)
+- [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli)
+- [Java 21+](https://learn.microsoft.com/java/openjdk/download) 與 [Maven 3.9+](https://maven.apache.org/download.cgi)
 
-### 部署 GPT-4o-mini 模型
+## 方案 A：使用 azd + Bicep 佈建（推薦）
 
-1. 在您的 Project 中，前往 **Model catalog** 並搜索 **gpt-4o-mini**
-   - *替代方法：前往 **Deployments** → **+ Create deployment***
-2. 點擊 gpt-4o-mini 模型卡上的 **Deploy**
-3. 配置部署：
-   - **部署名稱**："gpt-4o-mini"
-   - **模型版本**：使用最新版本
-   - **部署類型**：標準
-4. 點擊 **Deploy**
-5. 部署完成後，前往 **Deployments** 標籤並複製以下值：
-   - **部署名稱**（例如 "gpt-4o-mini"）
-   - **目標 URI**（例如 `https://your-hub-name.openai.azure.com/`）  
-      > **重要**：僅複製基礎 URL（例如 `https://myhub.openai.azure.com/`），不要包含完整的端點路徑。
-   - **密鑰**（從 Keys 和 Endpoint 部分獲取）
-
-> **仍有疑問？** 請參考官方 [Azure AI Foundry Documentation](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project)
-
-## 步驟 2：創建 Codespace
-
-1. 將此存儲庫 Fork 到您的 GitHub 帳戶
-   > **注意**：如果您想編輯基本配置，請查看 [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
-2. 在您的 Fork 存儲庫中，點擊 **Code** → **Codespaces** 標籤
-3. 點擊 **...** → **New with options...**
-![使用選項創建 Codespace](../../../translated_images/zh-MO/codespaces.9945ded8ceb431a5.webp)
-4. 選擇 **Dev container configuration**： 
-   - **Generative AI Java Development Environment**
-5. 點擊 **Create codespace**
-
-## 步驟 3：配置您的環境
-
-當您的 Codespace 準備好後，設置您的 Azure OpenAI 憑據：
-
-1. **從存儲庫根目錄導航到示例項目：**
-   ```bash
-   cd 02-SetupDevEnvironment/examples/basic-chat-azure
-   ```
-
-2. **創建您的 .env 文件：**
-   ```bash
-   cp .env.example .env
-   ```
-
-3. **使用您的 Azure OpenAI 憑據編輯 .env 文件：**
-   ```bash
-   # Your Azure OpenAI API key (from Azure AI Foundry portal)
-   AZURE_AI_KEY=your-actual-api-key-here
-   
-   # Your Azure OpenAI endpoint URL (e.g., https://myhub.openai.azure.com/)
-   AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-   ```
-
-   > **安全提示**： 
-   > - 切勿將 `.env` 文件提交到版本控制
-   > - `.env` 文件已包含在 `.gitignore` 中
-   > - 保持您的 API 密鑰安全並定期更換
-
-## 步驟 4：測試您的設置
-
-運行示例應用程序以測試您的 Azure OpenAI 連接：
+在 `02-SetupDevEnvironment` 資料夾中：
 
 ```bash
+cd 02-SetupDevEnvironment
+
+# 登入（兩種工具）
+azd auth login
+az login
+
+# 設置 Foundry 帳戶及模型部署
+azd up
+```
+
+`azd` 會提示輸入 <strong>環境名稱</strong>（例如 `genai-java`）和 <strong>區域</strong>。請選擇支援 `gpt-4o-mini` 與 `text-embedding-3-small` 的區域，例如 `eastus2` 或 `swedencentral`。
+
+完成佈建後，azd：
+
+1. 部署 [`infra/main.bicep`](../../../02-SetupDevEnvironment/infra/main.bicep) 中定義的所有資源。
+2. 執行後置佈建掛鉤，將你的端點和部署名稱寫入 [`examples/basic-chat-azure/.env`](../../../02-SetupDevEnvironment/examples/basic-chat-azure)（無秘密資訊）。
+
+> **提示：** 任何時候可重新執行 `azd up` 以應用變更。執行 `azd down` 刪除所有並停用計費。
+
+查看產生的設定：
+
+```bash
+azd env get-values
+```
+
+現在跳至[測試你的設置](#測試你的設置)。
+
+## 方案 B：手動建立資源
+
+偏好使用入口網站？請手動建立資源：
+
+1. 前往 [Azure AI Foundry 入口網站](https://ai.azure.com/) 並登入。
+2. <strong>建立專案</strong>（同時會建立 AI Foundry 資源）。為專案命名，例如 `GenAIJava`。
+3. 在專案中，打開 **Models + endpoints** → **Deploy model** → **Deploy base model**。
+4. 部署 **gpt-4o-mini**（部署名稱為 `gpt-4o-mini`）。如需嵌入範例，請重複部署 **text-embedding-3-small**。
+5. 在 **Overview** 中複製 **endpoint**（例如 `https://<resource>.openai.azure.com/`）。
+6. 授予自己 keyless 存取權：在資源上打開 **Access control (IAM)** → **Add role assignment** → 指派 **Cognitive Services OpenAI User** 權限給你的帳戶。
+
+> **仍有問題？** 請參考 [Azure AI Foundry 文件](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects)。
+
+## 配置你的環境
+
+**如果你使用方案 A（`azd up`）**，你的設定檔已自動完成，無需額外設定。請直接跳到[測試你的設置](#測試你的設置)。
+
+**如果你使用方案 B（手動）**，請自行建立範例的 `.env` 檔案：
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+cp .env.example .env
+```
+
+以你的端點編輯 `.env`（無需金鑰，因為認證是 keyless）：
+
+```bash
+AZURE_OPENAI_ENDPOINT=https://<your-resource>.openai.azure.com/
+AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini
+```
+
+> **安全提示：** 無 API 金鑰需儲存。你透過 `az login`（本機）或 Azure 中的管理身分驗證進行 Microsoft Entra ID 認證。`.env` 檔案僅包含非祕密設定，且已在 `.gitignore` 中保護。
+
+## 測試你的設置
+
+請確保已登入，讓 keyless 認證能取得 token，然後執行範例：
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+
+az login          # 如果你尚未登入
 mvn clean spring-boot:run
 ```
 
-您應該能看到來自 GPT-4o-mini 模型的響應！
+你應該會看到來自 `gpt-4o-mini` 模型的回應！
 
-> **VS Code 使用者**：您也可以在 VS Code 中按 `F5` 運行應用程序。啟動配置已設置為自動加載您的 `.env` 文件。
+> **VS Code 使用者：** 按 `F5` 運行。應用程式會自動載入你的 `.env`。
 
-> **完整示例**：請參考 [End-to-End Azure OpenAI Example](./examples/basic-chat-azure/README.md) 以獲取詳細指導和故障排除。
+> **完整範例：** 詳情及疑難排解請參閱 [與 Azure AI Foundry 的 Basic Chat 範例](./examples/basic-chat-azure/README.md)。
 
-## 下一步是什麼？
+## 接下來呢？
 
-**設置完成！** 您現在擁有：
-- 部署了 gpt-4o-mini 的 Azure OpenAI
-- 本地 .env 文件配置
+**設置完成！** 你現在擁有：
+- 部署好的 Azure AI Foundry，包含 `gpt-4o-mini` 與 `text-embedding-3-small`
+- Keyless 認證（Microsoft Entra ID）— 無需管理金鑰
+- 包含你的端點及部署名稱的本地 `.env`
 - 準備好的 Java 開發環境
 
-**繼續前往** [第 3 章：核心生成式 AI 技術](../03-CoreGenerativeAITechniques/README.md) 開始構建 AI 應用程序！
+<strong>繼續前往</strong> [第3章：核心生成式 AI 技術](../03-CoreGenerativeAITechniques/README.md) 開始建立 AI 應用程式！
 
 ## 資源
 
-- [Azure AI Foundry Documentation](https://learn.microsoft.com/azure/ai-services/)
-- [Spring AI Azure OpenAI Documentation](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
+- [Azure Developer CLI (azd)](https://aka.ms/azure-dev/install)
+- [使用 Microsoft Entra ID 的 keyless 認證](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
+- [Azure AI Foundry 文件](https://learn.microsoft.com/azure/ai-foundry/)
+- [Spring AI Azure OpenAI 文件](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
 - [Azure OpenAI Java SDK](https://learn.microsoft.com/java/api/overview/azure/ai-openai-readme)
 
-## 其他資源
+## 更多資源
 
 - [下載 VS Code](https://code.visualstudio.com/Download)
-- [獲取 Docker Desktop](https://www.docker.com/products/docker-desktop)
-- [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
+- [下載 Docker Desktop](https://www.docker.com/products/docker-desktop)
+- [開發容器設定](../../../.devcontainer/devcontainer.json)
 
-**免責聲明**：  
-本文件使用 AI 翻譯服務 [Co-op Translator](https://github.com/Azure/co-op-translator) 進行翻譯。我們致力於提供準確的翻譯，但請注意，自動翻譯可能包含錯誤或不準確之處。應以原始語言的文件作為權威來源。對於關鍵資訊，建議尋求專業人工翻譯。我們對因使用此翻譯而引起的任何誤解或誤釋不承擔責任。
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**免責聲明**：
+本文件使用 AI 翻譯服務 [Co-op Translator](https://github.com/Azure/co-op-translator) 進行翻譯。雖然我們力求準確，但請注意，自動翻譯可能包含錯誤或不準確之處。原始文件的母語版本應被視為權威來源。對於重要資訊，建議尋求專業人工翻譯。我們不對因使用本翻譯而引起的任何誤解或曲解承擔責任。
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

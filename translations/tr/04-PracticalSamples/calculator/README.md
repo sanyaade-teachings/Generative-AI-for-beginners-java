@@ -1,39 +1,40 @@
-# MCP Hesap Makinesi Eğitimi Yeni Başlayanlar İçin
+# Yeni Başlayanlar için MCP Hesaplayıcı Eğitimi
 
 ## İçindekiler
 
-- [Neler Öğreneceksiniz](../../../../04-PracticalSamples/calculator)
-- [Ön Koşullar](../../../../04-PracticalSamples/calculator)
-- [Proje Yapısını Anlamak](../../../../04-PracticalSamples/calculator)
-- [Temel Bileşenlerin Açıklaması](../../../../04-PracticalSamples/calculator)
-  - [1. Ana Uygulama](../../../../04-PracticalSamples/calculator)
-  - [2. Hesap Makinesi Servisi](../../../../04-PracticalSamples/calculator)
-  - [3. Doğrudan MCP İstemcisi](../../../../04-PracticalSamples/calculator)
-  - [4. Yapay Zeka Destekli İstemci](../../../../04-PracticalSamples/calculator)
-- [Örnekleri Çalıştırma](../../../../04-PracticalSamples/calculator)
-- [Her Şey Nasıl Birlikte Çalışıyor](../../../../04-PracticalSamples/calculator)
-- [Sonraki Adımlar](../../../../04-PracticalSamples/calculator)
+- [Neler Öğreneceksiniz](#neler-öğreneceksiniz)
+- [Ön Koşullar](#ön-koşullar)
+- [Proje Yapısını Anlamak](#proje-yapısını-anlamak)
+- [Temel Bileşenlerin Açıklaması](#temel-bileşenlerin-açıklaması)
+  - [1. Ana Uygulama](#1-ana-uygulama)
+  - [2. Hesaplayıcı Servisi](#2-hesaplayıcı-servisi)
+  - [3. Doğrudan MCP İstemcisi](#3-doğrudan-mcp-istemcisi)
+  - [4. Yapay Zekâ Destekli İstemci](#4-yapay-zekâ-destekli-istemci)
+- [Örneklerin Çalıştırılması](#örneklerin-çalıştırılması)
+- [Hepsi Birlikte Nasıl Çalışır](#hepsi-birlikte-nasıl-çalışır)
+- [Sonraki Adımlar](#sonraki-adımlar)
 
 ## Neler Öğreneceksiniz
 
-Bu eğitim, Model Context Protocol (MCP) kullanarak bir hesap makinesi servisi oluşturmayı açıklar. Şunları öğreneceksiniz:
+Bu eğitim, Model Context Protocol (MCP) kullanarak bir hesaplayıcı servisi nasıl oluşturacağınızı açıklar. Şunları anlayacaksınız:
 
-- Yapay zekanın bir araç olarak kullanabileceği bir servis nasıl oluşturulur
+- Yapay zekanın araç olarak kullanabileceği bir servis nasıl oluşturulur
 - MCP servisleriyle doğrudan iletişim nasıl kurulur
-- Yapay zeka modellerinin hangi araçları kullanacağını otomatik olarak nasıl seçtiği
-- Doğrudan protokol çağrıları ile yapay zeka destekli etkileşimler arasındaki fark
+- Yapay zekâ modellerinin hangi araçları otomatik olarak seçebileceği
+- Doğrudan protokol çağrıları ile yapay zekâ destekli etkileşimler arasındaki fark
 
 ## Ön Koşullar
 
-Başlamadan önce, aşağıdakilere sahip olduğunuzdan emin olun:
-- Java 21 veya üstü yüklü
-- Maven bağımlılık yönetimi için
-- Kişisel erişim tokeni (PAT) olan bir GitHub hesabı
+Başlamadan önce emin olun:
+- Java 21 veya üzeri yüklü
+- Bağımlılık yönetimi için Maven
+- Bir Azure AI Foundry model dağıtımı (tezgahda `azd up` ile oluşturun — bkz. [Bölüm 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
+- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) yüklü ve `az login` ile giriş yapılmış (anahtarsız kimlik doğrulama)
 - Java ve Spring Boot hakkında temel bilgi
 
 ## Proje Yapısını Anlamak
 
-Hesap makinesi projesinde birkaç önemli dosya bulunmaktadır:
+Hesaplayıcı projesinin birkaç önemli dosyası vardır:
 
 ```
 calculator/
@@ -52,7 +53,7 @@ calculator/
 
 **Dosya:** `McpServerApplication.java`
 
-Bu, hesap makinesi servisimizin giriş noktasıdır. Standart bir Spring Boot uygulamasıdır ve özel bir ekleme içerir:
+Bu, hesaplayıcı servisimizin giriş noktasıdır. Standart bir Spring Boot uygulaması olup bir özel ek içerir:
 
 ```java
 @SpringBootApplication
@@ -69,16 +70,16 @@ public class McpServerApplication {
 }
 ```
 
-**Bu ne yapar:**
+**Yaptığı:**
 - 8080 portunda bir Spring Boot web sunucusu başlatır
-- Hesap makinesi yöntemlerimizi MCP araçları olarak kullanılabilir hale getiren bir `ToolCallbackProvider` oluşturur
-- `@Bean` anotasyonu, Spring'in bunu diğer bileşenlerin kullanabileceği bir bileşen olarak yönetmesini sağlar
+- Hesaplayıcı yöntemlerimizi MCP araçları olarak kullanılabilir yapan bir `ToolCallbackProvider` oluşturur
+- `@Bean` notasyonu, Spring'in bunu diğer bileşenler tarafından kullanılacak bir bileşen olarak yönetmesini sağlar
 
-### 2. Hesap Makinesi Servisi
+### 2. Hesaplayıcı Servisi
 
 **Dosya:** `CalculatorService.java`
 
-Tüm matematik işlemleri burada gerçekleşir. Her yöntem, MCP aracılığıyla kullanılabilir hale getirmek için `@Tool` ile işaretlenmiştir:
+Bütün matematik işlemlerinin yapıldığı yerdir. Her yöntem `@Tool` ile işaretlenmiştir ve MCP üzerinden erişilebilir:
 
 ```java
 @Service
@@ -96,7 +97,7 @@ public class CalculatorService {
         return formatResult(a, "-", b, result);
     }
     
-    // More calculator operations...
+    // Daha fazla hesap makinesi işlemi...
     
     private String formatResult(double a, String operator, double b, double result) {
         return String.format("%.2f %s %.2f = %.2f", a, operator, b, result);
@@ -104,29 +105,29 @@ public class CalculatorService {
 }
 ```
 
-**Ana özellikler:**
+**Öne çıkan özellikler:**
 
-1. **`@Tool` Anotasyonu**: Bu, MCP'ye bu yöntemin harici istemciler tarafından çağrılabileceğini söyler
-2. **Açık Açıklamalar**: Her araç, yapay zeka modellerinin ne zaman kullanacağını anlamasına yardımcı olan bir açıklamaya sahiptir
-3. **Tutarlı Dönüş Formatı**: Tüm işlemler "5.00 + 3.00 = 8.00" gibi insan tarafından okunabilir metinler döner
-4. **Hata Yönetimi**: Sıfıra bölme ve negatif karekökler hata mesajları döner
+1. **`@Tool` Notasyonu**: Dış istemcilerin bu yöntemi çağırabileceğini MCP'ye bildirir
+2. **Anlaşılır Açıklamalar**: Her aracın, yapay zekâ modellerinin ne zaman kullanacağını anlamasına yardımcı olan açıklaması vardır
+3. **Tutarlı Dönen Format**: Tüm işlemler, "5.00 + 3.00 = 8.00" gibi insan tarafından okunabilir stringler döner
+4. **Hata Yönetimi**: Sıfıra bölme ve negatif karekök için hata mesajları döner
 
 **Mevcut İşlemler:**
 - `add(a, b)` - İki sayıyı toplar
-- `subtract(a, b)` - İkinciyi birinciden çıkarır
+- `subtract(a, b)` - İkinci sayıdan birincisini çıkarır
 - `multiply(a, b)` - İki sayıyı çarpar
-- `divide(a, b)` - Birinciyi ikinciye böler (sıfır kontrolü ile)
-- `power(base, exponent)` - Tabanı üssüne yükseltir
-- `squareRoot(number)` - Karekök hesaplar (negatif kontrolü ile)
-- `modulus(a, b)` - Bölme işleminin kalanını döner
-- `absolute(number)` - Mutlak değeri döner
-- `help()` - Tüm işlemler hakkında bilgi döner
+- `divide(a, b)` - Birinci sayıyı ikinciye böler (sıfır kontrolü ile)
+- `power(base, exponent)` - Tabanı üs kuvvetine yükseltir
+- `squareRoot(number)` - Kare kökünü hesaplar (negatif kontrolü ile)
+- `modulus(a, b)` - Bölümden kalanını verir
+- `absolute(number)` - Mutlak değeri verir
+- `help()` - Tüm işlemler hakkında bilgi verir
 
 ### 3. Doğrudan MCP İstemcisi
 
 **Dosya:** `SDKClient.java`
 
-Bu istemci, yapay zeka kullanmadan MCP sunucusuyla doğrudan iletişim kurar. Belirli hesap makinesi işlevlerini manuel olarak çağırır:
+Bu istemci, yapay zekâ kullanmadan doğrudan MCP sunucusuyla konuşur. Belirli hesaplayıcı fonksiyonlarını manuel olarak çağırır:
 
 ```java
 public class SDKClient {
@@ -142,11 +143,11 @@ public class SDKClient {
         var client = McpClient.sync(this.transport).build();
         client.initialize();
         
-        // List available tools
+        // Mevcut araçları listele
         ListToolsResult toolsList = client.listTools();
         System.out.println("Available Tools = " + toolsList);
         
-        // Call specific calculator functions
+        // Belirli hesap makinesi fonksiyonlarını çağır
         CallToolResult resultAdd = client.callTool(
             new CallToolRequest("add", Map.of("a", 5.0, "b", 3.0))
         );
@@ -162,37 +163,42 @@ public class SDKClient {
 }
 ```
 
-**Bu ne yapar:**
-1. **Bağlanır**: `http://localhost:8080` adresindeki hesap makinesi sunucusuna builder pattern kullanarak bağlanır
-2. **Listele**: Tüm mevcut araçları (hesap makinesi işlevlerimizi) listeler
-3. **Çağırır**: Belirli işlevleri kesin parametrelerle çağırır
-4. **Sonuçları Yazdırır**: Sonuçları doğrudan yazdırır
+**Yaptığı:**
+1. `http://localhost:8080` adresindeki hesaplayıcı sunucusuna builder deseni ile bağlanır
+2. Tüm kullanılabilir araçları (hesaplayıcı fonksiyonlarımız) listeler
+3. Belirli fonksiyonları tam parametrelerle çağırır
+4. Sonuçları doğrudan yazdırır
 
-**Not:** Bu örnek, Spring AI 1.1.0-SNAPSHOT bağımlılığını kullanır ve `WebFluxSseClientTransport` için bir builder pattern tanıtmıştır. Daha eski bir kararlı sürüm kullanıyorsanız, doğrudan yapıcıyı kullanmanız gerekebilir.
+**Not:** Bu örnek, `WebFluxSseClientTransport` için bir builder deseni getiren Spring AI 1.1.0-SNAPSHOT bağımlılığını kullanır. Daha eski kararlı sürüm kullanıyorsanız doğrudan yapıcıyı kullanmanız gerekebilir.
 
-**Ne zaman kullanılır:** Hangi hesaplama işlemini yapmak istediğinizi tam olarak bildiğinizde ve bunu programlı olarak çağırmak istediğinizde.
+**Ne zaman kullanılır:** Hangi hesaplamayı yapmak istediğinizi tam olarak bildiğinizde ve programatik olarak çağırmak istediğinizde.
 
-### 4. Yapay Zeka Destekli İstemci
+### 4. Yapay Zekâ Destekli İstemci
 
 **Dosya:** `LangChain4jClient.java`
 
-Bu istemci, hangi hesap makinesi araçlarını kullanacağına otomatik olarak karar verebilen bir yapay zeka modeli (GPT-4o-mini) kullanır:
+Bu istemci, hangi hesaplayıcı araçlarının kullanılacağına otomatik karar verebilen GPT-4o-mini AI modelini kullanır:
 
 ```java
 public class LangChain4jClient {
     
     public static void main(String[] args) throws Exception {
-        // Set up the AI model (using GitHub Models)
+        // AI modelini kurun (Azure AI Foundry, Microsoft Entra ID ile anahtarsız kimlik doğrulama)
+        String endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1";
+        String token = new DefaultAzureCredentialBuilder().build()
+                .getToken(new TokenRequestContext().addScopes("https://ai.azure.com/.default"))
+                .block().getToken();
         ChatLanguageModel model = OpenAiOfficialChatModel.builder()
-                .isGitHubModels(true)
-                .apiKey(System.getenv("GITHUB_TOKEN"))
+                .baseUrl(baseUrl)
+                .apiKey(token)
                 .modelName("gpt-4o-mini")
                 .build();
 
-        // Connect to our calculator MCP server
+        // Hesap makinesi MCP sunucumuza bağlanın
         McpTransport transport = new HttpMcpTransport.Builder()
                 .sseUrl("http://localhost:8080/sse")
-                .logRequests(true)  // Shows what the AI is doing
+                .logRequests(true)  // AI'nın ne yaptığını gösterir
                 .logResponses(true)
                 .build();
 
@@ -200,18 +206,18 @@ public class LangChain4jClient {
                 .transport(transport)
                 .build();
 
-        // Give the AI access to our calculator tools
+        // AI'ya hesap makinesi araçlarımıza erişim verin
         ToolProvider toolProvider = McpToolProvider.builder()
                 .mcpClients(List.of(mcpClient))
                 .build();
 
-        // Create an AI bot that can use our calculator
+        // Hesap makinemizi kullanabilen bir AI botu oluşturun
         Bot bot = AiServices.builder(Bot.class)
                 .chatLanguageModel(model)
                 .toolProvider(toolProvider)
                 .build();
 
-        // Now we can ask the AI to do calculations in natural language
+        // Artık AI'dan doğal dilde hesaplamalar yapmasını isteyebiliriz
         String response = bot.chat("Calculate the sum of 24.5 and 17.3 using the calculator service");
         System.out.println(response);
 
@@ -221,32 +227,34 @@ public class LangChain4jClient {
 }
 ```
 
-**Bu ne yapar:**
-1. **Bir yapay zeka modeli bağlantısı oluşturur**: GitHub tokeninizi kullanarak
-2. **Yapay zekayı hesap makinesi MCP sunucumuza bağlar**
-3. **Yapay zekaya tüm hesap makinesi araçlarımıza erişim sağlar**
-4. **Doğal dil taleplerine izin verir**: Örneğin, "24.5 ve 17.3'ün toplamını hesapla"
+**Yaptığı:**
+1. GitHub token'ınızla bir yapay zeka model bağlantısı oluşturur
+2. Yapay zekayı hesaplayıcı MCP sunucumuza bağlar
+3. Yapay zekaya tüm hesaplayıcı araçlarımıza erişim verir
+4. "24.5 ile 17.3'ün toplamını hesapla" gibi doğal dilde istekleri kabul eder
 
-**Yapay zeka otomatik olarak:**
+**Yapay zekâ otomatik olarak:**
 - Toplama işlemi istediğinizi anlar
 - `add` aracını seçer
-- `add(24.5, 17.3)` çağrısını yapar
-- Sonucu doğal bir yanıtla döner
+- `add(24.5, 17.3)` çağrısı yapar
+- Sonucu doğal bir cevap olarak döner
 
-## Örnekleri Çalıştırma
+## Örneklerin Çalıştırılması
 
-### Adım 1: Hesap Makinesi Sunucusunu Başlatma
+### 1. Adım: Hesaplayıcı Sunucusunu Başlatın
 
-Öncelikle GitHub tokeninizi ayarlayın (yapay zeka istemcisi için gerekli):
+Öncelikle oturum açın ve Azure AI Foundry uç noktanızı ayarlayın (AI istemcisi için gerekli — anahtarsız kimlik doğrulama, API anahtarı yok):
 
 **Windows:**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 Sunucuyu başlatın:
@@ -255,60 +263,62 @@ cd 04-PracticalSamples/calculator
 mvn clean spring-boot:run
 ```
 
-Sunucu `http://localhost:8080` adresinde başlayacaktır. Şunu görmelisiniz:
+Sunucu `http://localhost:8080` adresinde başlatılacak. Şunu görmelisiniz:
 ```
 Started McpServerApplication in X.XXX seconds
 ```
 
-### Adım 2: Doğrudan İstemci ile Test Etme
+### 2. Adım: Doğrudan İstemci ile Test Edin
 
-Sunucu hala çalışırken **YENİ** bir terminalde doğrudan MCP istemcisini çalıştırın:
+Sunucu çalışırken **yeni** bir terminalde doğrudan MCP istemcisini çalıştırın:
 ```bash
 cd 04-PracticalSamples/calculator
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient" -Dexec.classpathScope=test
 ```
 
-Şuna benzer bir çıktı göreceksiniz:
+Aşağıdakine benzer çıktı göreceksiniz:
 ```
 Available Tools = [add, subtract, multiply, divide, power, squareRoot, modulus, absolute, help]
 Add Result = 5.00 + 3.00 = 8.00
 Square Root Result = √16.00 = 4.00
 ```
 
-### Adım 3: Yapay Zeka İstemcisi ile Test Etme
+### 3. Adım: Yapay Zekâ İstemcisiyle Test Edin
 
 ```bash
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient" -Dexec.classpathScope=test
 ```
 
-Yapay zekanın araçları otomatik olarak kullandığını göreceksiniz:
+Yapay zekânın otomatik araç kullanımını göreceksiniz:
 ```
 The sum of 24.5 and 17.3 is 41.8.
 The square root of 144 is 12.
 ```
 
-### Adım 4: MCP Sunucusunu Kapatma
+### 4. Adım: MCP Sunucusunu Kapatın
 
-Testi tamamladığınızda, yapay zeka istemcisini kapatmak için terminalde `Ctrl+C` tuşlarına basabilirsiniz. MCP sunucusu, siz durdurana kadar çalışmaya devam eder.
-Sunucuyu durdurmak için çalıştığı terminalde `Ctrl+C` tuşlarına basın.
+Testiniz tamamlandığında, yapay zekâ istemcisini terminalinde `Ctrl+C` ile durdurabilirsiniz. MCP sunucusu siz kapatana kadar çalışmaya devam eder.
+Sunucuyu durdurmak için, çalıştığı terminalde `Ctrl+C` tuşlayın.
 
-## Her Şey Nasıl Birlikte Çalışıyor
+## Hepsi Birlikte Nasıl Çalışır
 
-Yapay zekaya "5 + 3 nedir?" diye sorduğunuzda, işleyiş şu şekildedir:
+Yapay zekâya "5 + 3 nedir?" diye sorduğunuzda tam akış şu şekildedir:
 
-1. **Siz** yapay zekaya doğal dilde bir soru sorarsınız
-2. **Yapay zeka** isteğinizi analiz eder ve toplama işlemi istediğinizi anlar
-3. **Yapay zeka** MCP sunucusuna şu çağrıyı yapar: `add(5.0, 3.0)`
-4. **Hesap Makinesi Servisi** şu işlemi gerçekleştirir: `5.0 + 3.0 = 8.0`
-5. **Hesap Makinesi Servisi** şu sonucu döner: `"5.00 + 3.00 = 8.00"`
-6. **Yapay zeka** sonucu alır ve doğal bir yanıt olarak biçimlendirir
-7. **Siz** şu yanıtı alırsınız: "5 ve 3'ün toplamı 8'dir"
+1. **Siz** yapay zekâya doğal dilde sorarsınız
+2. **Yapay zekâ** isteğinizi analiz edip toplama istediğinizi anlar
+3. **Yapay zekâ** MCP sunucusunu çağırır: `add(5.0, 3.0)`
+4. **Hesaplayıcı Servisi** işlemi yapar: `5.0 + 3.0 = 8.0`
+5. **Hesaplayıcı Servisi** sonucu döner: `"5.00 + 3.00 = 8.00"`
+6. **Yapay zekâ** sonucu alır ve doğal bir yanıt oluşturur
+7. **Siz** alırsınız: "5 ile 3'ün toplamı 8'dir"
 
 ## Sonraki Adımlar
 
-Daha fazla örnek için [Bölüm 04: Pratik örnekler](../README.md) bölümüne bakın.
+Daha fazla örnek için bakınız [Bölüm 04: Pratik örnekler](../README.md)
 
 ---
 
-**Feragatname**:  
-Bu belge, AI çeviri hizmeti [Co-op Translator](https://github.com/Azure/co-op-translator) kullanılarak çevrilmiştir. Doğruluk için çaba göstersek de, otomatik çevirilerin hata veya yanlışlıklar içerebileceğini lütfen unutmayın. Belgenin orijinal dili, yetkili kaynak olarak kabul edilmelidir. Kritik bilgiler için profesyonel insan çevirisi önerilir. Bu çevirinin kullanımından kaynaklanan yanlış anlamalar veya yanlış yorumlamalar için sorumluluk kabul etmiyoruz.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Feragatname**:
+Bu belge, AI çeviri hizmeti [Co-op Translator](https://github.com/Azure/co-op-translator) kullanılarak çevrilmiştir. Doğruluk için çaba sarf etsek de, otomatik çevirilerin hata veya yanlışlık içerebileceğini lütfen unutmayınız. Orijinal belge, kendi dilinde yetkili kaynak olarak kabul edilmelidir. Kritik bilgiler için profesyonel insan çevirisi önerilir. Bu çevirinin kullanımı sonucu ortaya çıkabilecek yanlış anlamalardan veya yanlış yorumlamalardan sorumlu değiliz.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

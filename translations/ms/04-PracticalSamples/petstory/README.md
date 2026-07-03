@@ -1,31 +1,31 @@
 # Tutorial Penjana Cerita Haiwan Peliharaan untuk Pemula
 
-## Kandungan
+## Jadual Kandungan
 
-- [Keperluan Asas](../../../../04-PracticalSamples/petstory)
-- [Memahami Struktur Projek](../../../../04-PracticalSamples/petstory)
-- [Komponen Utama Dijelaskan](../../../../04-PracticalSamples/petstory)
-  - [1. Aplikasi Utama](../../../../04-PracticalSamples/petstory)
-  - [2. Pengawal Web](../../../../04-PracticalSamples/petstory)
-  - [3. Perkhidmatan Cerita](../../../../04-PracticalSamples/petstory)
-  - [4. Templat Web](../../../../04-PracticalSamples/petstory)
-  - [5. Konfigurasi](../../../../04-PracticalSamples/petstory)
-- [Menjalankan Aplikasi](../../../../04-PracticalSamples/petstory)
-- [Bagaimana Semua Ini Berfungsi Bersama](../../../../04-PracticalSamples/petstory)
-- [Memahami Integrasi AI](../../../../04-PracticalSamples/petstory)
-- [Langkah Seterusnya](../../../../04-PracticalSamples/petstory)
+- [Prasyarat](#prasyarat)
+- [Memahami Struktur Projek](#memahami-struktur-projek)
+- [Komponen Teras Diterangkan](#komponen-teras-diterangkan)
+  - [1. Aplikasi Utama](#1-aplikasi-utama)
+  - [2. Pengawal Web](#2-pengawal-web)
+  - [3. Perkhidmatan Cerita](#3-perkhidmatan-cerita)
+  - [4. Templat Web](#4-templat-web)
+  - [5. Konfigurasi](#5-konfigurasi)
+- [Menjalankan Aplikasi](#menjalankan-aplikasi)
+- [Bagaimana Kesemuanya Berfungsi Bersama](#bagaimana-kesemuanya-berfungsi-bersama)
+- [Memahami Integrasi AI](#memahami-integrasi-ai)
+- [Langkah Seterusnya](#langkah-seterusnya)
 
-## Keperluan Asas
+## Prasyarat
 
-Sebelum memulakan, pastikan anda mempunyai:
+Sebelum bermula, pastikan anda mempunyai:
 - Java 21 atau lebih tinggi dipasang
-- Maven untuk pengurusan kebergantungan
-- Akaun GitHub dengan token akses peribadi (PAT) dengan skop `models:read`
+- Maven untuk pengurusan pergantungan
+- Penempatan model Azure AI Foundry (sediakan dengan `azd up` — lihat [Bab 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md)), log masuk dengan `az login` (pengesahan tanpa kunci)
 - Pemahaman asas tentang Java, Spring Boot, dan pembangunan web
 
 ## Memahami Struktur Projek
 
-Projek cerita haiwan peliharaan ini mempunyai beberapa fail penting:
+Projek cerita haiwan peliharaan mempunyai beberapa fail penting:
 
 ```
 petstory/
@@ -42,13 +42,13 @@ petstory/
 └── pom.xml                           # Maven dependencies
 ```
 
-## Komponen Utama Dijelaskan
+## Komponen Teras Diterangkan
 
 ### 1. Aplikasi Utama
 
 **Fail:** `PetStoryApplication.java`
 
-Ini adalah titik permulaan untuk aplikasi Spring Boot kita:
+Ini adalah titik masuk untuk aplikasi Spring Boot kami:
 
 ```java
 @SpringBootApplication
@@ -59,10 +59,10 @@ public class PetStoryApplication {
 }
 ```
 
-**Apa yang dilakukan:**
+**Apa yang dilakukan ini:**
 - Anotasi `@SpringBootApplication` mengaktifkan konfigurasi automatik dan pengimbasan komponen
-- Memulakan pelayan web terbenam (Tomcat) pada port 8080
-- Secara automatik mencipta semua bean dan perkhidmatan Spring yang diperlukan
+- Memulakan pelayan web terbina dalam (Tomcat) di port 8080
+- Membuat semua bean dan perkhidmatan Spring yang diperlukan secara automatik
 
 ### 2. Pengawal Web
 
@@ -82,7 +82,7 @@ public class PetController {
     
     @GetMapping("/")
     public String index() {
-        return "index";  // Returns index.html template
+        return "index";  // Memulangkan templat index.html
     }
     
     @PostMapping("/generate-story")
@@ -90,24 +90,24 @@ public class PetController {
                                Model model, 
                                RedirectAttributes redirectAttributes) {
         
-        // Input validation
+        // Pengesahan input
         if (description.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please provide a description.");
             return "redirect:/";
         }
         
-        // Sanitize input for security
+        // Membersihkan input untuk keselamatan
         String sanitizedDescription = sanitizeInput(description);
         
-        // Generate story with error handling
+        // Jana cerita dengan pengendalian ralat
         try {
             String story = storyService.generateStory(sanitizedDescription);
             model.addAttribute("caption", sanitizedDescription);
             model.addAttribute("story", story);
-            return "result";  // Returns result.html template
+            return "result";  // Memulangkan templat result.html
             
         } catch (Exception e) {
-            // Use fallback story if AI fails
+            // Gunakan cerita gantian jika AI gagal
             String fallbackStory = generateFallbackStory(sanitizedDescription);
             model.addAttribute("story", fallbackStory);
             return "result";
@@ -117,21 +117,21 @@ public class PetController {
     private String sanitizeInput(String input) {
         return input.replaceAll("[<>\"'&]", "")  // Remove dangerous characters
                    .trim()
-                   .substring(0, Math.min(input.length(), 500));  // Limit length
+                   .substring(0, Math.min(input.length(), 500));  // Hadkan panjang
     }
 }
 ```
 
 **Ciri utama:**
 
-1. **Pengendalian Laluan**: `@GetMapping("/")` memaparkan borang muat naik, `@PostMapping("/generate-story")` memproses penghantaran
+1. **Pengurusan Laluan**: `@GetMapping("/")` memaparkan borang muat naik, `@PostMapping("/generate-story")` memproses penghantaran
 2. **Pengesahan Input**: Memeriksa keterangan kosong dan had panjang
-3. **Keselamatan**: Membersihkan input pengguna untuk mencegah serangan XSS
-4. **Pengendalian Ralat**: Menyediakan cerita sandaran apabila perkhidmatan AI gagal
-5. **Pengikatan Model**: Menyampaikan data kepada templat HTML menggunakan `Model` Spring
+3. **Keselamatan**: Membersihkan input pengguna untuk mengelakkan serangan XSS
+4. **Pengendalian Ralat**: Menyediakan cerita gantian apabila perkhidmatan AI gagal
+5. **Pengesahan Model**: Memindahkan data ke templat HTML menggunakan Spring `Model`
 
-**Sistem Sandaran:**
-Pengawal ini termasuk templat cerita yang telah ditulis terlebih dahulu yang digunakan apabila perkhidmatan AI tidak tersedia:
+**Sistem Gantian:**
+Pengawal termasuk templat cerita siap guna yang digunakan apabila perkhidmatan AI tidak tersedia:
 
 ```java
 private String generateFallbackStory(String description) {
@@ -141,7 +141,7 @@ private String generateFallbackStory(String description) {
         "In a cozy home filled with love, there lived an extraordinary pet..."
     };
     
-    // Use description hash for consistent responses
+    // Gunakan hash keterangan untuk respons yang konsisten
     int index = Math.abs(description.hashCode() % storyTemplates.length);
     return storyTemplates[index];
 }
@@ -151,7 +151,7 @@ private String generateFallbackStory(String description) {
 
 **Fail:** `StoryService.java`
 
-Perkhidmatan ini berkomunikasi dengan GitHub Models untuk menjana cerita:
+Perkhidmatan ini berkomunikasi dengan Azure AI Foundry untuk menjana cerita menggunakan pengesahan tanpa kunci:
 
 ```java
 @Service
@@ -160,18 +160,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // Titik akhir OpenAI yang serasi dengan Foundry terletak di bawah /openai/v1/
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // Pengesahan tanpa kunci dengan Microsoft Entra ID (tiada kunci API)
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -182,16 +186,16 @@ public class StoryService {
         
         String userPrompt = "Write a fun short story about a pet described as: " + description;
         
-        // Configure the AI request
+        // Konfigurasikan permintaan AI
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(modelName)
                 .addSystemMessage(systemPrompt)
                 .addUserMessage(userPrompt)
-                .maxCompletionTokens(500)  // Limit response length
-                .temperature(0.8)          // Control creativity (0.0-1.0)
+                .maxCompletionTokens(500)  // Hadkan panjang respons
+                .temperature(0.8)          // Kawal kreativiti (0.0-1.0)
                 .build();
         
-        // Send request and get response
+        // Hantar permintaan dan dapatkan respons
         ChatCompletion response = openAIClient.chat().completions().create(params);
         
         return response.choices().get(0).message().content().orElse("");
@@ -201,11 +205,11 @@ public class StoryService {
 
 **Komponen utama:**
 
-1. **Klien OpenAI**: Menggunakan SDK Java rasmi OpenAI yang dikonfigurasi untuk GitHub Models
-2. **Prompt Sistem**: Menetapkan tingkah laku AI untuk menulis cerita haiwan peliharaan yang mesra keluarga
-3. **Prompt Pengguna**: Memberitahu AI dengan tepat cerita apa yang perlu ditulis berdasarkan keterangan
+1. **Klien OpenAI**: Menggunakan SDK rasmi OpenAI Java yang dikonfigurasikan untuk Azure AI Foundry (tanpa kunci)
+2. **Prompt Sistem**: Menetapkan tingkah laku AI untuk menulis cerita haiwan peliharaan mesra keluarga
+3. **Prompt Pengguna**: Memberitahu AI tepat apa cerita yang hendak ditulis berdasarkan keterangan
 4. **Parameter**: Mengawal panjang cerita dan tahap kreativiti
-5. **Pengendalian Ralat**: Melemparkan pengecualian yang ditangkap dan dikendalikan oleh pengawal
+5. **Pengendalian Ralat**: Melempar pengecualian yang ditangkap dan diurus oleh pengawal
 
 ### 4. Templat Web
 
@@ -260,7 +264,7 @@ Halaman utama di mana pengguna menerangkan haiwan peliharaan mereka:
 
 **Fail:** `result.html` (Paparan Cerita)
 
-Memaparkan cerita yang dijana:
+Memaparkan cerita yang dihasilkan:
 
 ```html
 <!DOCTYPE html>
@@ -293,12 +297,12 @@ Memaparkan cerita yang dijana:
 </html>
 ```
 
-**Ciri Templat:**
+**Ciri templat:**
 
 1. **Integrasi Thymeleaf**: Menggunakan atribut `th:` untuk kandungan dinamik
 2. **Reka Bentuk Responsif**: Gaya CSS untuk mudah alih dan desktop
 3. **Pengendalian Ralat**: Memaparkan ralat pengesahan kepada pengguna
-4. **Pemprosesan di Sisi Klien**: JavaScript untuk analisis imej (menggunakan Transformers.js)
+4. **Pemprosesan Pihak Klien**: JavaScript untuk analisis imej (menggunakan Transformers.js)
 
 ### 5. Konfigurasi
 
@@ -316,43 +320,46 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
-**Konfigurasi dijelaskan:**
+**Konfigurasi diterangkan:**
 
 1. **Muat Naik Fail**: Membenarkan imej sehingga 10MB
-2. **Log**: Mengawal maklumat apa yang direkodkan semasa pelaksanaan
-3. **GitHub Models**: Menentukan model AI dan titik akhir yang digunakan
+2. **Pencatatan**: Mengawal maklumat yang dicatat semasa pelaksanaan
+3. **Azure AI Foundry**: Menentukan titik hujung dan penempatan model yang digunakan (pengesahan tanpa kunci)
 4. **Keselamatan**: Konfigurasi pengendalian ralat untuk mengelakkan pendedahan maklumat sensitif
 
 ## Menjalankan Aplikasi
 
-### Langkah 1: Tetapkan Token GitHub Anda
+### Langkah 1: Log Masuk dan Tetapkan Titik Hujung Anda
 
-Pertama, anda perlu menetapkan token GitHub anda sebagai pembolehubah persekitaran:
+Pengesahan adalah tanpa kunci (Microsoft Entra ID), jadi tiada kunci API. Log masuk dan tetapkan titik hujung Foundry anda:
 
 **Windows (Command Prompt):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Mengapa ini diperlukan:**
-- GitHub Models memerlukan pengesahan untuk mengakses model AI
-- Menggunakan pembolehubah persekitaran memastikan token sensitif tidak berada dalam kod sumber
-- Skop `models:read` memberikan akses kepada inferens AI
+- Azure AI Foundry menggunakan Microsoft Entra ID untuk mengesahkan permintaan inferens
+- Pengesahan tanpa kunci bermaksud tiada rahsia dalam kod sumber atau persekitaran anda
+- Akaun anda perlu mempunyai peranan **Cognitive Services OpenAI User** pada sumber tersebut
 
 ### Langkah 2: Bina dan Jalankan
 
@@ -371,51 +378,53 @@ Mulakan pelayan:
 mvn spring-boot:run
 ```
 
-Aplikasi akan bermula pada `http://localhost:8080`.
+Aplikasi akan bermula di `http://localhost:8080`.
 
 ### Langkah 3: Uji Aplikasi
 
 1. **Buka** `http://localhost:8080` dalam pelayar anda
-2. **Terangkan** haiwan peliharaan anda dalam kawasan teks (contoh: "Golden retriever yang suka bermain dan mengambil barang")
+2. **Terangkan** haiwan peliharaan anda dalam ruang teks (contoh, "Seekor golden retriever yang suka bermain dan ambil barang")
 3. **Klik** "Generate Story" untuk mendapatkan cerita yang dijana AI
-4. **Sebagai alternatif**, muat naik imej haiwan peliharaan untuk menjana keterangan secara automatik
+4. **Atau**, muat naik imej haiwan peliharaan untuk menjana keterangan secara automatik
 5. **Lihat** cerita kreatif berdasarkan keterangan haiwan peliharaan anda
 
-## Bagaimana Semua Ini Berfungsi Bersama
+## Bagaimana Kesemuanya Berfungsi Bersama
 
 Berikut adalah aliran lengkap apabila anda menjana cerita haiwan peliharaan:
 
-1. **Input Pengguna**: Anda menerangkan haiwan peliharaan anda pada borang web
+1. **Input Pengguna**: Anda menerangkan haiwan peliharaan pada borang web
 2. **Penghantaran Borang**: Pelayar menghantar permintaan POST ke `/generate-story`
 3. **Pemprosesan Pengawal**: `PetController` mengesahkan dan membersihkan input
-4. **Panggilan Perkhidmatan AI**: `StoryService` menghantar permintaan ke API GitHub Models
+4. **Panggilan Perkhidmatan AI**: `StoryService` menghantar permintaan ke model Azure AI Foundry
 5. **Penjanaan Cerita**: AI menjana cerita kreatif berdasarkan keterangan
-6. **Pengendalian Respons**: Pengawal menerima cerita dan menambahnya ke model
-7. **Rendering Templat**: Thymeleaf merender `result.html` dengan cerita
+6. **Pengendalian Respons**: Pengawal menerima cerita dan menambahkannya ke model
+7. **Penjanaan Templat**: Thymeleaf memaparkan `result.html` dengan cerita tersebut
 8. **Paparan**: Pengguna melihat cerita yang dijana dalam pelayar mereka
 
 **Aliran Pengendalian Ralat:**
 Jika perkhidmatan AI gagal:
 1. Pengawal menangkap pengecualian
-2. Menjana cerita sandaran menggunakan templat yang telah ditulis terlebih dahulu
-3. Memaparkan cerita sandaran dengan nota tentang ketidaktersediaan AI
+2. Menjana cerita gantian menggunakan templat siap
+3. Memaparkan cerita gantian dengan nota tentang ketidaktersediaan AI
 4. Pengguna masih mendapat cerita, memastikan pengalaman pengguna yang baik
 
 ## Memahami Integrasi AI
 
-### API GitHub Models
-Aplikasi ini menggunakan GitHub Models, yang menyediakan akses percuma kepada pelbagai model AI:
+### Azure AI Foundry (tanpa kunci)
+Aplikasi menggunakan Azure AI Foundry dengan pengesahan tanpa kunci (Microsoft Entra ID):
 
 ```java
-// Authentication with GitHub token
+// Pengesahan tanpa kunci - tiada kunci API
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
 ### Kejuruteraan Prompt
-Perkhidmatan ini menggunakan prompt yang direka dengan teliti untuk mendapatkan hasil yang baik:
+Perkhidmatan menggunakan prompt yang direka dengan teliti untuk mendapatkan hasil yang baik:
 
 ```java
 String systemPrompt = "You are a creative storyteller who writes fun, " +
@@ -433,7 +442,11 @@ String story = response.choices().get(0).message().content().orElse("");
 
 ## Langkah Seterusnya
 
-Untuk lebih banyak contoh, lihat [Bab 04: Contoh Praktikal](../README.md)
+Untuk lebih banyak contoh, lihat [Bab 04: Contoh praktikal](../README.md)
 
-**Penafian**:  
-Dokumen ini telah diterjemahkan menggunakan perkhidmatan terjemahan AI [Co-op Translator](https://github.com/Azure/co-op-translator). Walaupun kami berusaha untuk memastikan ketepatan, sila ambil perhatian bahawa terjemahan automatik mungkin mengandungi kesilapan atau ketidaktepatan. Dokumen asal dalam bahasa asalnya harus dianggap sebagai sumber yang berwibawa. Untuk maklumat yang kritikal, terjemahan manusia profesional adalah disyorkan. Kami tidak bertanggungjawab atas sebarang salah faham atau salah tafsir yang timbul daripada penggunaan terjemahan ini.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Penafian**:
+Dokumen ini telah diterjemahkan menggunakan perkhidmatan terjemahan AI [Co-op Translator](https://github.com/Azure/co-op-translator). Walaupun kami berusaha untuk ketepatan, sila ambil maklum bahawa terjemahan automatik mungkin mengandungi kesilapan atau ketidaktepatan. Dokumen asal dalam bahasa asalnya harus dianggap sebagai sumber yang sahih. Untuk maklumat penting, terjemahan oleh manusia profesional adalah disyorkan. Kami tidak bertanggungjawab terhadap sebarang salah faham atau salah tafsir yang timbul daripada penggunaan terjemahan ini.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

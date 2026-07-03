@@ -1,138 +1,151 @@
-# ایزور اوپن اے آئی کے لیے ڈیولپمنٹ ماحول ترتیب دینا
+# Azure AI Foundry کے لیے ترقیاتی ماحول مرتب کرنا
 
-> **جلدی شروع کریں**: یہ گائیڈ ایزور اوپن اے آئی سیٹ اپ کے لیے ہے۔ مفت ماڈلز کے ساتھ فوری آغاز کے لیے [GitHub Models with Codespaces](./README.md#quick-start-cloud) استعمال کریں۔
+> یہ رہنما اس کورس میں جاوا AI ایپس کے لیے **Azure AI Foundry** ماڈلز کو **keyless** تصدیق (Microsoft Entra ID) کے استعمال سے سیٹ اپ کرتا ہے — کوئی API کیز منیج کرنے کی ضرورت نہیں۔ ٹولنگ کے بارے میں نیا ہیں؟ [ترقیاتی ماحول کی رہنما](./README.md) سے شروع کریں۔
 
-یہ گائیڈ آپ کو اس کورس میں جاوا اے آئی ایپلیکیشنز کے لیے ایزور اے آئی فاؤنڈری ماڈلز ترتیب دینے میں مدد دے گا۔
+یہ رہنما اس کورس میں جاوا AI ایپس کے لیے **Azure AI Foundry** ماڈلز کو سیٹ اپ کرتا ہے۔ آپ کے پاس دو راستے ہیں:
 
-## مواد کی فہرست
+- **آپشن A — `azd` + Bicep کے ساتھ پرویژنس کریں (تجویز کردہ):** ایک کمانڈ سے Foundry اکاؤنٹ اور ماڈلز کو بطور کوڈ ڈیپلائے کرتا ہے۔ کوئی پورٹل کلک کرنے کی ضرورت نہیں۔
+- **آپشن B — Azure AI Foundry پورٹل میں دستی طور پر وسائل بنائیں۔**
 
-- [جلدی سیٹ اپ کا جائزہ](../../../02-SetupDevEnvironment)
-- [مرحلہ 1: ایزور اے آئی فاؤنڈری ریسورسز بنائیں](../../../02-SetupDevEnvironment)
-  - [ہب اور پروجیکٹ بنائیں](../../../02-SetupDevEnvironment)
-  - [GPT-4o-mini ماڈل ڈیپلائے کریں](../../../02-SetupDevEnvironment)
-- [مرحلہ 2: اپنا کوڈ اسپیس بنائیں](../../../02-SetupDevEnvironment)
-- [مرحلہ 3: اپنا ماحول ترتیب دیں](../../../02-SetupDevEnvironment)
-- [مرحلہ 4: اپنی سیٹ اپ کو ٹیسٹ کریں](../../../02-SetupDevEnvironment)
-- [آگے کیا کرنا ہے؟](../../../02-SetupDevEnvironment)
-- [وسائل](../../../02-SetupDevEnvironment)
-- [اضافی وسائل](../../../02-SetupDevEnvironment)
+دونوں راستے **keyless تصدیق** (Microsoft Entra ID) استعمال کرتے ہیں — کوئی API کیز کاپی یا لیک نہیں ہوں گی۔
 
-## جلدی سیٹ اپ کا جائزہ
+## فہرست مضامین
 
-1. ایزور اے آئی فاؤنڈری ریسورسز بنائیں (ہب، پروجیکٹ، ماڈل)
-2. جاوا ڈیولپمنٹ کنٹینر کے ساتھ کوڈ اسپیس بنائیں
-3. اپنی .env فائل کو ایزور اوپن اے آئی کی اسناد کے ساتھ ترتیب دیں
-4. مثال پروجیکٹ کے ساتھ اپنی سیٹ اپ کو ٹیسٹ کریں
+- [کیا بنایا جاتا ہے](#کیا-بنایا-جاتا-ہے)
+- [ضروریات](#ضروریات)
+- [آپشن A: azd + Bicep کے ساتھ پرویژنس (تجویز کردہ)](#option-a-provision-with-azd--bicep-recommended)
+- [آپشن B: دستی طور پر وسائل بنائیں](#آپشن-b-دستی-طور-پر-وسائل-بنائیں)
+- [اپنا ماحول ترتیب دیں](#اپنا-ماحول-ترتیب-دیں)
+- [اپنے سیٹ اپ کی جانچ کریں](#اپنے-سیٹ-اپ-کی-جانچ-کریں)
+- [اگلا کیا ہے؟](#اگلا-کیا-ہے؟)
+- [وسائل](#وسائل)
+- [اضافی وسائل](#اضافی-وسائل)
 
-## مرحلہ 1: ایزور اے آئی فاؤنڈری ریسورسز بنائیں
+## کیا بنایا جاتا ہے
 
-### ہب اور پروجیکٹ بنائیں
+[`infra/`](../../../02-SetupDevEnvironment/infra) میں موجود Bicep ٹیمپلیٹس درج ذیل چیزیں فراہم کرتے ہیں:
 
-1. [ایزور اے آئی فاؤنڈری پورٹل](https://ai.azure.com/) پر جائیں اور سائن ان کریں
-2. **+ Create** → **New hub** پر کلک کریں (یا **Management** → **All hubs** → **+ New hub** پر جائیں)
-3. اپنے ہب کو ترتیب دیں:
-   - **ہب کا نام**: مثلاً، "MyAIHub"
-   - **سبسکرپشن**: اپنی ایزور سبسکرپشن منتخب کریں
-   - **ریسورس گروپ**: نیا بنائیں یا موجودہ منتخب کریں
-   - **مقام**: اپنے قریب ترین مقام کا انتخاب کریں
-   - **اسٹوریج اکاؤنٹ**: ڈیفالٹ استعمال کریں یا اپنی مرضی کے مطابق ترتیب دیں
-   - **کی والٹ**: ڈیفالٹ استعمال کریں یا اپنی مرضی کے مطابق ترتیب دیں
-   - **Next** → **Review + create** → **Create** پر کلک کریں
-4. بننے کے بعد، **+ New project** پر کلک کریں (یا ہب کے جائزہ صفحے سے **Create project** پر کلک کریں)
-   - **پروجیکٹ کا نام**: مثلاً، "GenAIJava"
-   - **Create** پر کلک کریں
+- ایک **Azure AI Foundry** اکاؤنٹ (`Microsoft.CognitiveServices/accounts`, قسم `AIServices`) جس میں ایک پروجیکٹ
+- ایک **چیٹ** ڈیپلائمنٹ — `gpt-4o-mini`
+- ایک **ایمبیڈنگ** ڈیپلائمنٹ — `text-embedding-3-small` (جو بعد کے ابواب میں استعمال ہوگی)
+- ایک **keyless رول تفویض** (`Cognitive Services OpenAI User`) تاکہ آپ `az login` کے ذریعے سائن ان کریں بغیر کیز کے انتظام کے
 
-### GPT-4o-mini ماڈل ڈیپلائے کریں
+## ضروریات
 
-1. اپنے پروجیکٹ میں، **Model catalog** پر جائیں اور **gpt-4o-mini** تلاش کریں
-   - *متبادل: **Deployments** → **+ Create deployment** پر جائیں*
-2. gpt-4o-mini ماڈل کارڈ پر **Deploy** پر کلک کریں
-3. ڈیپلائمنٹ کو ترتیب دیں:
-   - **ڈیپلائمنٹ کا نام**: "gpt-4o-mini"
-   - **ماڈل ورژن**: تازہ ترین استعمال کریں
-   - **ڈیپلائمنٹ کی قسم**: اسٹینڈرڈ
-4. **Deploy** پر کلک کریں
-5. ڈیپلائمنٹ کے بعد، **Deployments** ٹیب پر جائیں اور یہ ویلیوز کاپی کریں:
-   - **ڈیپلائمنٹ کا نام** (مثلاً، "gpt-4o-mini")
-   - **ٹارگٹ یو آر آئی** (مثلاً، `https://your-hub-name.openai.azure.com/`)  
-      > **اہم**: صرف بیس یو آر ایل کاپی کریں (مثلاً، `https://myhub.openai.azure.com/`) مکمل اینڈ پوائنٹ پاتھ نہیں۔
-   - **کی** (Keys and Endpoint سیکشن سے)
+- ایک [Azure سبسکرپشن](https://azure.microsoft.com/free/)
+- [Azure ڈویلپر CLI (`azd`)](https://aka.ms/azure-dev/install)
+- [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli)
+- [Java 21+](https://learn.microsoft.com/java/openjdk/download) اور [Maven 3.9+](https://maven.apache.org/download.cgi)
 
-> **اب بھی مسئلہ ہے؟** آفیشل [ایزور اے آئی فاؤنڈری ڈاکیومنٹیشن](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project) دیکھیں
+## آپشن A: azd + Bicep کے ساتھ پرویژنس (تجویز کردہ)
 
-## مرحلہ 2: اپنا کوڈ اسپیس بنائیں
-
-1. اس ریپوزٹری کو اپنے GitHub اکاؤنٹ میں فورک کریں
-   > **نوٹ**: اگر آپ بنیادی کنفیگریشن میں ترمیم کرنا چاہتے ہیں تو [Dev Container Configuration](../../../.devcontainer/devcontainer.json) دیکھیں
-2. اپنی فورک شدہ ریپوزٹری میں، **Code** → **Codespaces** ٹیب پر کلک کریں
-3. **...** → **New with options...** پر کلک کریں  
-![کوڈ اسپیس آپشنز کے ساتھ بنانا](../../../translated_images/ur/codespaces.9945ded8ceb431a5.webp)
-4. **Dev container configuration** منتخب کریں: 
-   - **Generative AI Java Development Environment**
-5. **Create codespace** پر کلک کریں
-
-## مرحلہ 3: اپنا ماحول ترتیب دیں
-
-جب آپ کا کوڈ اسپیس تیار ہو جائے، تو اپنی ایزور اوپن اے آئی کی اسناد ترتیب دیں:
-
-1. **ریپوزٹری روٹ سے مثال پروجیکٹ پر جائیں:**
-   ```bash
-   cd 02-SetupDevEnvironment/examples/basic-chat-azure
-   ```
-
-2. **اپنی .env فائل بنائیں:**
-   ```bash
-   cp .env.example .env
-   ```
-
-3. **اپنی .env فائل کو ایزور اوپن اے آئی کی اسناد کے ساتھ ایڈٹ کریں:**
-   ```bash
-   # Your Azure OpenAI API key (from Azure AI Foundry portal)
-   AZURE_AI_KEY=your-actual-api-key-here
-   
-   # Your Azure OpenAI endpoint URL (e.g., https://myhub.openai.azure.com/)
-   AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-   ```
-
-   > **سیکیورٹی نوٹ**: 
-   > - اپنی `.env` فائل کو ورژن کنٹرول میں کبھی کمیٹ نہ کریں
-   > - `.env` فائل پہلے ہی `.gitignore` میں شامل ہے
-   > - اپنی API کیز کو محفوظ رکھیں اور انہیں باقاعدگی سے تبدیل کریں
-
-## مرحلہ 4: اپنی سیٹ اپ کو ٹیسٹ کریں
-
-اپنی ایزور اوپن اے آئی کنکشن کو ٹیسٹ کرنے کے لیے مثال ایپلیکیشن چلائیں:
+`02-SetupDevEnvironment` فولڈر سے:
 
 ```bash
+cd 02-SetupDevEnvironment
+
+# سائن ان کریں (دونوں ٹولز)
+azd auth login
+az login
+
+# فاؤنڈری اکاؤنٹ + ماڈل کی تعیناتی فراہم کریں
+azd up
+```
+  
+`azd` آپ سے ایک **ماحول کا نام** (مثلاً `genai-java`) اور ایک **علاقہ** پوچھتا ہے۔ ایسا علاقہ منتخب کریں جہاں `gpt-4o-mini` اور `text-embedding-3-small` دستیاب ہوں — مثلاً `eastus2` یا `swedencentral`۔
+
+پرویژنس مکمل ہونے پر، azd:
+
+1. سب کچھ جو [`infra/main.bicep`](../../../02-SetupDevEnvironment/infra/main.bicep) میں ڈیفائن کیا گیا ہے، ڈیپلائے کرتا ہے۔
+2. ایک پوسٹ پروویژن ہک چلتا ہے جو آپ کے اینڈپوائنٹ اور ڈیپلائمنٹ ناموں کے ساتھ [`examples/basic-chat-azure/.env`](../../../02-SetupDevEnvironment/examples/basic-chat-azure) لکھتا ہے (کوئی سیکریٹس نہیں)۔
+
+> **مشورہ:** تبدیلیوں کو لاگو کرنے کے لیے کسی بھی وقت `azd up` دوبارہ چلائیں۔ سب کچھ حذف کرنے اور خرچ روکنے کے لیے `azd down` چلائیں۔
+
+بنائی گئی ترتیبات دیکھنے کے لیے:
+
+```bash
+azd env get-values
+```
+  
+اب [اپنے سیٹ اپ کی جانچ کریں](#اپنے-سیٹ-اپ-کی-جانچ-کریں) پر جائیں۔
+
+## آپشن B: دستی طور پر وسائل بنائیں
+
+پورٹل استعمال کرنا پسند ہے؟ تو وسائل خود بنائیں:
+
+1. [Azure AI Foundry پورٹل](https://ai.azure.com/) پر جائیں اور سائن ان کریں۔
+2. **پروجیکٹ بنائیں** (یہ AI Foundry ریسورس بھی بناتا ہے)۔ اسے `GenAIJava` جیسا کوئی نام دیں۔
+3. اپنے پروجیکٹ میں، **Models + endpoints** → **Deploy model** → **Deploy base model** کھولیں۔
+4. **gpt-4o-mini** (ڈیپلائمنٹ نام `gpt-4o-mini`) کو ڈیپلائے کریں۔ اگر ایمبیڈنگ کی مثالیں چاہییں تو **text-embedding-3-small** کے لیے بھی یہی کریں۔
+5. **Overview** سے **endpoint** کاپی کریں (مثلاً `https://<resource>.openai.azure.com/`)۔
+6. خود کو keyless رسائی دیں: ریسورس پر جائیں، **Access control (IAM)** → **Add role assignment** → **Cognitive Services OpenAI User** کو اپنے اکاؤنٹ کو تفویض کریں۔
+
+> **ابھی بھی مسئلہ ہے؟** [Azure AI Foundry کی دستاویزات](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects) دیکھیں۔
+
+## اپنا ماحول ترتیب دیں
+
+**اگر آپ نے آپشن A (`azd up`) استعمال کیا ہے** تو آپ کی سیٹنگ فائل پہلے ہی لکھی جا چکی ہے — ترتیب دینے کی ضرورت نہیں۔ [اپنے سیٹ اپ کی جانچ کریں](#اپنے-سیٹ-اپ-کی-جانچ-کریں) پر جائیں۔
+
+**اگر آپ نے آپشن B (دستی) استعمال کیا ہے** تو مثال کا `.env` فائل خود بنائیں:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+cp .env.example .env
+```
+  
+اپنے اینڈپوائنٹ کے ساتھ `.env` ایڈیٹ کریں (کوئی کی نہیں — تصدیق keyless ہے):
+
+```bash
+AZURE_OPENAI_ENDPOINT=https://<your-resource>.openai.azure.com/
+AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini
+```
+  
+> **سیکورٹی نوٹ:** کوئی API کی اسٹور کرنے کی ضرورت نہیں۔ آپ Microsoft Entra ID کے ذریعے `az login` (لوکل) یا managed identity (Azure میں) سے تصدیق کرتے ہیں۔ `.env` میں صرف غیر خفیہ ترتیبات ہوتی ہیں اور یہ پہلے ہی `.gitignore` میں شامل ہے۔
+
+## اپنے سیٹ اپ کی جانچ کریں
+
+یقینی بنائیں کہ آپ سائن ان ہیں تاکہ keyless تصدیق ٹوکن حاصل کر سکے، پھر مثال چلائیں:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+
+az login          # اگر آپ پہلے سے سائن ان نہیں ہیں
 mvn clean spring-boot:run
 ```
+  
+آپ کو `gpt-4o-mini` ماڈل سے ردعمل دیکھنا چاہئے!
 
-آپ کو GPT-4o-mini ماڈل سے ایک جواب نظر آنا چاہیے!
+> **VS Code استعمال کرنے والے:** چلانے کے لیے `F5` دبائیں۔ ایپ خودکار طریقے سے آپ کی `.env` لوڈ کر لیتی ہے۔
 
-> **VS کوڈ صارفین**: آپ `F5` دباکر بھی ایپلیکیشن چلا سکتے ہیں۔ لانچ کنفیگریشن پہلے ہی آپ کی `.env` فائل کو خودکار طور پر لوڈ کرنے کے لیے سیٹ ہے۔
+> **مکمل مثال:** تفصیلات اور مسئلے حل کرنے کے لیے [Basic Chat with Azure AI Foundry example](./examples/basic-chat-azure/README.md) دیکھیں۔
 
-> **مکمل مثال**: تفصیلی ہدایات اور مسئلہ حل کرنے کے لیے [End-to-End Azure OpenAI Example](./examples/basic-chat-azure/README.md) دیکھیں۔
+## اگلا کیا ہے؟
 
-## آگے کیا کرنا ہے؟
+**سیٹ اپ مکمل ہو گیا!** اب آپ کے پاس ہے:  
+- Azure AI Foundry جس میں `gpt-4o-mini` اور `text-embedding-3-small` تعینات ہیں  
+- Keyless تصدیق (Microsoft Entra ID) — کوئی کیز منیج کرنے کی ضرورت نہیں  
+- ایک مقامی `.env` جس میں آپ کے اینڈپوائنٹ اور ڈیپلائمنٹ کے نام ہیں  
+- تیار جاوا ترقیاتی ماحول  
 
-**سیٹ اپ مکمل!** آپ کے پاس اب:
-- gpt-4o-mini کے ساتھ ایزور اوپن اے آئی ڈیپلائےڈ
-- مقامی .env فائل کنفیگریشن
-- جاوا ڈیولپمنٹ ماحول تیار
-
-**جاری رکھیں** [باب 3: بنیادی جنریٹیو اے آئی تکنیکیں](../03-CoreGenerativeAITechniques/README.md) پر، اور اے آئی ایپلیکیشنز بنانا شروع کریں!
+**چلیں اگلے مرحلے کی طرف** [باب 3: کور جنریٹو AI تکنیکیں](../03-CoreGenerativeAITechniques/README.md) تاکہ AI ایپلیکیشنز بنانا شروع کریں!
 
 ## وسائل
 
-- [ایزور اے آئی فاؤنڈری ڈاکیومنٹیشن](https://learn.microsoft.com/azure/ai-services/)
-- [Spring AI Azure OpenAI ڈاکیومنٹیشن](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
-- [ایزور اوپن اے آئی جاوا SDK](https://learn.microsoft.com/java/api/overview/azure/ai-openai-readme)
+- [Azure Developer CLI (azd)](https://aka.ms/azure-dev/install)
+- [Microsoft Entra ID کے ساتھ Keyless تصدیق](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
+- [Azure AI Foundry دستاویزات](https://learn.microsoft.com/azure/ai-foundry/)
+- [Spring AI Azure OpenAI دستاویزات](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
+- [Azure OpenAI جاوا SDK](https://learn.microsoft.com/java/api/overview/azure/ai-openai-readme)
 
 ## اضافی وسائل
 
-- [VS کوڈ ڈاؤنلوڈ کریں](https://code.visualstudio.com/Download)
-- [ڈوکر ڈیسک ٹاپ حاصل کریں](https://www.docker.com/products/docker-desktop)
-- [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
+- [VS Code ڈاؤن لوڈ کریں](https://code.visualstudio.com/Download)
+- [Docker Desktop حاصل کریں](https://www.docker.com/products/docker-desktop)
+- [Dev Container کی ترتیب](../../../.devcontainer/devcontainer.json)
 
-**ڈسکلیمر**:  
-یہ دستاویز AI ترجمہ سروس [Co-op Translator](https://github.com/Azure/co-op-translator) کا استعمال کرتے ہوئے ترجمہ کی گئی ہے۔ ہم درستگی کے لیے کوشش کرتے ہیں، لیکن براہ کرم آگاہ رہیں کہ خودکار ترجمے میں غلطیاں یا غیر درستیاں ہو سکتی ہیں۔ اصل دستاویز کو اس کی اصل زبان میں مستند ذریعہ سمجھا جانا چاہیے۔ اہم معلومات کے لیے، پیشہ ور انسانی ترجمہ کی سفارش کی جاتی ہے۔ ہم اس ترجمے کے استعمال سے پیدا ہونے والی کسی بھی غلط فہمی یا غلط تشریح کے ذمہ دار نہیں ہیں۔
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**ڈس کلیمر**:
+یہ دستاویز AI ترجمہ سروس [Co-op Translator](https://github.com/Azure/co-op-translator) کے ذریعے ترجمہ کی گئی ہے۔ جبکہ ہم درستگی کے لیے کوشاں ہیں، براہ کرم اس بات سے آگاہ رہیں کہ خودکار ترجمے میں غلطیاں یا عدم درستیاں ہو سکتی ہیں۔ اصل دستاویز اپنے مادری زبان میں مستند ماخذ سمجھی جائے گی۔ حساس معلومات کے لیے پیشہ ور انسانی ترجمہ کی سفارش کی جاتی ہے۔ اس ترجمے کے استعمال سے پیدا ہونے والی کسی بھی غلط فہمی یا غلط تشریح کی ذمہ داری ہم قبول نہیں کرتے۔
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

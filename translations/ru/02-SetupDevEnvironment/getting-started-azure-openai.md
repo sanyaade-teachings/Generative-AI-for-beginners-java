@@ -1,138 +1,151 @@
-# Настройка среды разработки для Azure OpenAI
+# Настройка среды разработки для Azure AI Foundry
 
-> **Быстрый старт**: Это руководство предназначено для настройки Azure OpenAI. Для быстрого начала с бесплатными моделями используйте [GitHub Models with Codespaces](./README.md#quick-start-cloud).
+> В этом руководстве описывается настройка моделей **Azure AI Foundry** для Java AI приложений из этого курса с использованием **аутентификации без ключей** (Microsoft Entra ID) — никаких ключей API для управления. Новичок в инструментах? Начните с [руководства по настройке среды разработки](./README.md).
 
-Это руководство поможет вам настроить модели Azure AI Foundry для ваших Java AI приложений в рамках этого курса.
+Это руководство настраивает модели **Azure AI Foundry** для Java AI приложений этого курса. У вас есть два варианта:
+
+- **Вариант A — Provision с помощью `azd` + Bicep (рекомендуется):** одна команда развертывает учетную запись Foundry и модели как код. Никаких кликов в портале.
+- **Вариант B — Создать ресурсы вручную** в портале Azure AI Foundry.
+
+Оба варианта используют **аутентификацию без ключей** (Microsoft Entra ID) — нет необходимости копировать или раскрывать ключи API.
 
 ## Содержание
 
-- [Обзор быстрой настройки](../../../02-SetupDevEnvironment)
-- [Шаг 1: Создание ресурсов Azure AI Foundry](../../../02-SetupDevEnvironment)
-  - [Создание хаба и проекта](../../../02-SetupDevEnvironment)
-  - [Развертывание модели GPT-4o-mini](../../../02-SetupDevEnvironment)
-- [Шаг 2: Создание Codespace](../../../02-SetupDevEnvironment)
-- [Шаг 3: Настройка среды](../../../02-SetupDevEnvironment)
-- [Шаг 4: Тестирование настройки](../../../02-SetupDevEnvironment)
-- [Что дальше?](../../../02-SetupDevEnvironment)
-- [Ресурсы](../../../02-SetupDevEnvironment)
-- [Дополнительные ресурсы](../../../02-SetupDevEnvironment)
+- [Что создается](#что-создается)
+- [Требования](#требования)
+- [Вариант A: Provision с azd + Bicep (рекомендуется)](#option-a-provision-with-azd--bicep-recommended)
+- [Вариант B: Создание ресурсов вручную](#вариант-b-создание-ресурсов-вручную)
+- [Настройка вашей среды](#настройка-вашей-среды)
+- [Проверка настройки](#проверка-настройки)
+- [Что дальше?](#что-дальше)
+- [Ресурсы](#ресурсы)
+- [Дополнительные ресурсы](#дополнительные-ресурсы)
 
-## Обзор быстрой настройки
+## Что создается
 
-1. Создайте ресурсы Azure AI Foundry (хаб, проект, модель)
-2. Создайте Codespace с контейнером для разработки на Java
-3. Настройте файл .env с учетными данными Azure OpenAI
-4. Протестируйте настройку с помощью примерного проекта
+Bicep-шаблоны из [`infra/`](../../../02-SetupDevEnvironment/infra) развертывают:
 
-## Шаг 1: Создание ресурсов Azure AI Foundry
+- Учетную запись **Azure AI Foundry** (`Microsoft.CognitiveServices/accounts`, тип `AIServices`) с проектом
+- Развертывание **чата** — `gpt-4o-mini`
+- Развертывание **встраивания** — `text-embedding-3-small` (используется в последующих главах)
+- Назначение роли **без ключей** (`Cognitive Services OpenAI User`), чтобы вы могли входить с помощью `az login` вместо управления ключами
 
-### Создание хаба и проекта
+## Требования
 
-1. Перейдите на [портал Azure AI Foundry](https://ai.azure.com/) и войдите в систему
-2. Нажмите **+ Create** → **New hub** (или перейдите в **Management** → **All hubs** → **+ New hub**)
-3. Настройте ваш хаб:
-   - **Hub name**: например, "MyAIHub"
-   - **Subscription**: выберите вашу подписку Azure
-   - **Resource group**: создайте новую или выберите существующую
-   - **Location**: выберите ближайший к вам регион
-   - **Storage account**: используйте стандартный или настройте свой
-   - **Key vault**: используйте стандартный или настройте свой
-   - Нажмите **Next** → **Review + create** → **Create**
-4. После создания нажмите **+ New project** (или **Create project** на странице обзора хаба)
-   - **Project name**: например, "GenAIJava"
-   - Нажмите **Create**
+- [Подписка Azure](https://azure.microsoft.com/free/)
+- [Azure Developer CLI (`azd`)](https://aka.ms/azure-dev/install)
+- [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli)
+- [Java 21+](https://learn.microsoft.com/java/openjdk/download) и [Maven 3.9+](https://maven.apache.org/download.cgi)
 
-### Развертывание модели GPT-4o-mini
+## Вариант A: Provision с azd + Bicep (рекомендуется)
 
-1. В вашем проекте перейдите в **Model catalog** и найдите **gpt-4o-mini**
-   - *Альтернатива: Перейдите в **Deployments** → **+ Create deployment***
-2. Нажмите **Deploy** на карточке модели gpt-4o-mini
-3. Настройте развертывание:
-   - **Deployment name**: "gpt-4o-mini"
-   - **Model version**: используйте последнюю версию
-   - **Deployment type**: Standard
-4. Нажмите **Deploy**
-5. После развертывания перейдите на вкладку **Deployments** и скопируйте следующие значения:
-   - **Deployment name** (например, "gpt-4o-mini")
-   - **Target URI** (например, `https://your-hub-name.openai.azure.com/`)  
-      > **Важно**: Скопируйте только базовый URL (например, `https://myhub.openai.azure.com/`), а не полный путь к конечной точке.
-   - **Key** (из раздела Keys and Endpoint)
-
-> **Все еще есть вопросы?** Посетите официальную [документацию Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project)
-
-## Шаг 2: Создание Codespace
-
-1. Форкните этот репозиторий в свой аккаунт GitHub
-   > **Примечание**: Если вы хотите изменить базовую конфигурацию, ознакомьтесь с [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
-2. В вашем форкнутом репозитории нажмите **Code** → вкладка **Codespaces**
-3. Нажмите **...** → **New with options...**
-![создание codespace с опциями](../../../translated_images/ru/codespaces.9945ded8ceb431a5.webp)
-4. Выберите **Dev container configuration**: 
-   - **Generative AI Java Development Environment**
-5. Нажмите **Create codespace**
-
-## Шаг 3: Настройка среды
-
-После создания Codespace настройте учетные данные Azure OpenAI:
-
-1. **Перейдите в примерный проект из корня репозитория:**
-   ```bash
-   cd 02-SetupDevEnvironment/examples/basic-chat-azure
-   ```
-
-2. **Создайте файл .env:**
-   ```bash
-   cp .env.example .env
-   ```
-
-3. **Отредактируйте файл .env, добавив учетные данные Azure OpenAI:**
-   ```bash
-   # Your Azure OpenAI API key (from Azure AI Foundry portal)
-   AZURE_AI_KEY=your-actual-api-key-here
-   
-   # Your Azure OpenAI endpoint URL (e.g., https://myhub.openai.azure.com/)
-   AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-   ```
-
-   > **Примечание по безопасности**: 
-   > - Никогда не добавляйте файл `.env` в систему контроля версий
-   > - Файл `.env` уже включен в `.gitignore`
-   > - Храните свои API-ключи в безопасности и регулярно их обновляйте
-
-## Шаг 4: Тестирование настройки
-
-Запустите примерное приложение, чтобы проверить подключение к Azure OpenAI:
+Из папки `02-SetupDevEnvironment`:
 
 ```bash
+cd 02-SetupDevEnvironment
+
+# Войти в систему (для обоих инструментов)
+azd auth login
+az login
+
+# Настройка учетной записи Foundry и развертывание моделей
+azd up
+```
+
+`azd` запросит **имя среды** (например, `genai-java`) и **регион**. Выберите регион, где доступны `gpt-4o-mini` и `text-embedding-3-small` — например, `eastus2` или `swedencentral`.
+
+После завершения развертывания azd:
+
+1. Развертывает всё, что определено в [`infra/main.bicep`](../../../02-SetupDevEnvironment/infra/main.bicep).
+2. Выполняет postprovision hook, который записывает [`examples/basic-chat-azure/.env`](../../../02-SetupDevEnvironment/examples/basic-chat-azure) с вашим endpoint и именами развертываний (без секретов).
+
+> **Совет:** Повторно запускайте `azd up` для применения изменений. Запустите `azd down` чтобы удалить все и прекратить начисление затрат.
+
+Чтобы увидеть сгенерированные настройки:
+
+```bash
+azd env get-values
+```
+
+Теперь перейдите к разделу [Проверка настройки](#проверка-настройки).
+
+## Вариант B: Создание ресурсов вручную
+
+Предпочитаете портал? Создайте ресурсы вручную:
+
+1. Перейдите на [портал Azure AI Foundry](https://ai.azure.com/) и войдите.
+2. **Создайте проект** (это также создаст ресурс AI Foundry). Дайте ему имя, например, `GenAIJava`.
+3. В вашем проекте откройте **Models + endpoints** → **Deploy model** → **Deploy base model**.
+4. Разверните **gpt-4o-mini** (имя развертывания `gpt-4o-mini`). Повторите для **text-embedding-3-small**, если хотите использовать примеры с встраиванием.
+5. В разделе **Overview** скопируйте **endpoint** (например, `https://<resource>.openai.azure.com/`).
+6. Предоставьте себе доступ без ключей: в ресурсе откройте **Access control (IAM)** → **Add role assignment** → назначьте **Cognitive Services OpenAI User** вашей учетной записи.
+
+> **Возникают проблемы?** См. [документацию Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects).
+
+## Настройка вашей среды
+
+**Если вы использовали Вариант A (`azd up`)**, ваш файл настроек уже создан — ничего не нужно настраивать. Перейдите к [Проверке настройки](#проверка-настройки).
+
+**Если вы использовали Вариант B (вручную)**, создайте файл `.env` для примера самостоятельно:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+cp .env.example .env
+```
+
+Отредактируйте `.env`, указав ваш endpoint (без ключа — аутентификация без ключей):
+
+```bash
+AZURE_OPENAI_ENDPOINT=https://<your-resource>.openai.azure.com/
+AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini
+```
+
+> **Примечание по безопасности:** API ключ хранить не нужно. Аутентификация происходит с помощью Microsoft Entra ID через `az login` (локально) или управляемую идентичность (в Azure). Файл `.env` содержит только не секретные настройки и уже исключен из контроля версий через `.gitignore`.
+
+## Проверка настройки
+
+Убедитесь, что вы вошли в систему, чтобы аутентификация без ключей могла получить токен, затем запустите пример:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+
+az login          # если вы еще не вошли в систему
 mvn clean spring-boot:run
 ```
 
-Вы должны увидеть ответ от модели GPT-4o-mini!
+Вы должны увидеть ответ от модели `gpt-4o-mini`!
 
-> **Пользователи VS Code**: Вы также можете нажать `F5` в VS Code, чтобы запустить приложение. Конфигурация запуска уже настроена для автоматической загрузки вашего файла `.env`.
+> **Пользователи VS Code:** Нажмите `F5` для запуска. Приложение автоматически загрузит ваш `.env`.
 
-> **Полный пример**: Ознакомьтесь с [End-to-End Azure OpenAI Example](./examples/basic-chat-azure/README.md) для подробных инструкций и устранения неполадок.
+> **Полный пример:** Смотрите [Пример базового чата с Azure AI Foundry](./examples/basic-chat-azure/README.md) для подробностей и устранения неполадок.
 
 ## Что дальше?
 
 **Настройка завершена!** Теперь у вас есть:
-- Azure OpenAI с развернутой моделью gpt-4o-mini
-- Локальная конфигурация файла .env
-- Готовая среда разработки на Java
+- Azure AI Foundry с развернутыми `gpt-4o-mini` и `text-embedding-3-small`
+- Аутентификация без ключей (Microsoft Entra ID) — никаких ключей для управления
+- Локальный `.env` с вашим endpoint и именами развертываний
+- Готовая к работе Java-среда разработки
 
-**Продолжайте к** [Главе 3: Основные техники генеративного ИИ](../03-CoreGenerativeAITechniques/README.md), чтобы начать создавать AI-приложения!
+**Продолжайте в** [Глава 3: Основные техники генеративного ИИ](../03-CoreGenerativeAITechniques/README.md), чтобы начать создание AI приложений!
 
 ## Ресурсы
 
-- [Документация Azure AI Foundry](https://learn.microsoft.com/azure/ai-services/)
-- [Документация Spring AI Azure OpenAI](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
-- [Java SDK для Azure OpenAI](https://learn.microsoft.com/java/api/overview/azure/ai-openai-readme)
+- [Azure Developer CLI (azd)](https://aka.ms/azure-dev/install)
+- [Аутентификация без ключей с Microsoft Entra ID](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
+- [Документация Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/)
+- [Spring AI Azure OpenAI Documentation](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
+- [Azure OpenAI Java SDK](https://learn.microsoft.com/java/api/overview/azure/ai-openai-readme)
 
 ## Дополнительные ресурсы
 
 - [Скачать VS Code](https://code.visualstudio.com/Download)
-- [Скачать Docker Desktop](https://www.docker.com/products/docker-desktop)
+- [Получить Docker Desktop](https://www.docker.com/products/docker-desktop)
 - [Конфигурация Dev Container](../../../.devcontainer/devcontainer.json)
 
-**Отказ от ответственности**:  
-Этот документ был переведен с помощью сервиса автоматического перевода [Co-op Translator](https://github.com/Azure/co-op-translator). Хотя мы стремимся к точности, пожалуйста, учитывайте, что автоматические переводы могут содержать ошибки или неточности. Оригинальный документ на его родном языке следует считать авторитетным источником. Для получения критически важной информации рекомендуется профессиональный перевод человеком. Мы не несем ответственности за любые недоразумения или неправильные интерпретации, возникающие в результате использования данного перевода.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Отказ от ответственности**:
+Этот документ был переведен с использованием сервиса машинного перевода [Co-op Translator](https://github.com/Azure/co-op-translator). Несмотря на наши усилия по обеспечению точности, имейте в виду, что автоматический перевод может содержать ошибки или неточности. Оригинальный документ на его исходном языке следует считать авторитетным источником. Для получения критически важной информации рекомендуется обратиться к профессиональному человеческому переводу. Мы не несем ответственности за любые недоразумения или неправильные толкования, возникшие в результате использования этого перевода.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

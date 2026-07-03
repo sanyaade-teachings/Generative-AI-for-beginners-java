@@ -1,31 +1,31 @@
-# Generátor příběhů o mazlíčcích - tutoriál pro začátečníky
+# Průvodce generátorem příběhů o mazlíčcích pro začátečníky
 
 ## Obsah
 
-- [Předpoklady](../../../../04-PracticalSamples/petstory)
-- [Porozumění struktuře projektu](../../../../04-PracticalSamples/petstory)
-- [Vysvětlení hlavních komponent](../../../../04-PracticalSamples/petstory)
-  - [1. Hlavní aplikace](../../../../04-PracticalSamples/petstory)
-  - [2. Webový kontroler](../../../../04-PracticalSamples/petstory)
-  - [3. Služba pro příběhy](../../../../04-PracticalSamples/petstory)
-  - [4. Webové šablony](../../../../04-PracticalSamples/petstory)
-  - [5. Konfigurace](../../../../04-PracticalSamples/petstory)
-- [Spuštění aplikace](../../../../04-PracticalSamples/petstory)
-- [Jak vše funguje dohromady](../../../../04-PracticalSamples/petstory)
-- [Porozumění integraci AI](../../../../04-PracticalSamples/petstory)
-- [Další kroky](../../../../04-PracticalSamples/petstory)
+- [Předpoklady](#prerekvizity)
+- [Pochopení struktury projektu](#pochopeni-struktury-projektu)
+- [Vysvětlení hlavních komponent](#vysvetleni-hlavnich-komponent)
+  - [1. Hlavní aplikace](#1-hlavni-aplikace)
+  - [2. Webový kontroler](#2-webovy-kontroler)
+  - [3. Služba pro příběhy](#3-sluzba-pro-pribehy)
+  - [4. Webové šablony](#4-webove-sablony)
+  - [5. Konfigurace](#5-konfigurace)
+- [Spuštění aplikace](#spusteni-aplikace)
+- [Jak to vše spolu funguje](#jak-to-vse-spolu-funguje)
+- [Pochopení AI integrace](#pochopeni-ai-integrace)
+- [Další kroky](#dalsi-kroky)
 
-## Předpoklady
+## Prerekvizity
 
-Než začnete, ujistěte se, že máte:
-- Nainstalovaný Java 21 nebo novější
+Před zahájením se ujistěte, že máte:
+- Nainstalováno Java 21 nebo vyšší
 - Maven pro správu závislostí
-- GitHub účet s osobním přístupovým tokenem (PAT) s oprávněním `models:read`
-- Základní znalosti Java, Spring Boot a webového vývoje
+- Nasazený model Azure AI Foundry (zprovozněte pomocí `azd up` — viz [Kapitola 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md)), přihlášený přes `az login` (autentizace bez klíče)
+- Základní znalosti Javy, Spring Boot a webového vývoje
 
-## Porozumění struktuře projektu
+## Pochopení struktury projektu
 
-Projekt generátoru příběhů o mazlíčcích obsahuje několik důležitých souborů:
+Projekt příběhů o mazlíčcích obsahuje několik důležitých souborů:
 
 ```
 petstory/
@@ -59,16 +59,16 @@ public class PetStoryApplication {
 }
 ```
 
-**Co dělá:**
-- Anotace `@SpringBootApplication` umožňuje automatickou konfiguraci a skenování komponent
-- Spouští vestavěný webový server (Tomcat) na portu 8080
-- Automaticky vytváří všechny potřebné Spring bean a služby
+**Co toto dělá:**
+- Anotace `@SpringBootApplication` povoluje automatickou konfiguraci a skenování komponent
+- Spouští zabudovaný webový server (Tomcat) na portu 8080
+- Automaticky vytváří všechny potřebné Spring beany a služby
 
 ### 2. Webový kontroler
 
 **Soubor:** `PetController.java`
 
-Zpracovává všechny webové požadavky a interakce s uživatelem:
+Tento zpracovává všechny webové požadavky a interakce uživatele:
 
 ```java
 @Controller
@@ -82,7 +82,7 @@ public class PetController {
     
     @GetMapping("/")
     public String index() {
-        return "index";  // Returns index.html template
+        return "index";  // Vrací šablonu index.html
     }
     
     @PostMapping("/generate-story")
@@ -90,24 +90,24 @@ public class PetController {
                                Model model, 
                                RedirectAttributes redirectAttributes) {
         
-        // Input validation
+        // Kontrola vstupních dat
         if (description.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please provide a description.");
             return "redirect:/";
         }
         
-        // Sanitize input for security
+        // Očistit vstup pro bezpečnost
         String sanitizedDescription = sanitizeInput(description);
         
-        // Generate story with error handling
+        // Generovat příběh s ošetřením chyb
         try {
             String story = storyService.generateStory(sanitizedDescription);
             model.addAttribute("caption", sanitizedDescription);
             model.addAttribute("story", story);
-            return "result";  // Returns result.html template
+            return "result";  // Vrací šablonu result.html
             
         } catch (Exception e) {
-            // Use fallback story if AI fails
+            // Použít záložní příběh, pokud AI selže
             String fallbackStory = generateFallbackStory(sanitizedDescription);
             model.addAttribute("story", fallbackStory);
             return "result";
@@ -117,21 +117,21 @@ public class PetController {
     private String sanitizeInput(String input) {
         return input.replaceAll("[<>\"'&]", "")  // Remove dangerous characters
                    .trim()
-                   .substring(0, Math.min(input.length(), 500));  // Limit length
+                   .substring(0, Math.min(input.length(), 500));  // Omezit délku
     }
 }
 ```
 
 **Klíčové vlastnosti:**
 
-1. **Zpracování tras**: `@GetMapping("/")` zobrazí formulář pro nahrávání, `@PostMapping("/generate-story")` zpracovává odeslané údaje
-2. **Validace vstupu**: Kontroluje prázdné popisy a délkové limity
-3. **Bezpečnost**: Sanitizuje uživatelský vstup, aby zabránil XSS útokům
-4. **Zpracování chyb**: Poskytuje záložní příběhy, když služba AI selže
-5. **Vazba modelu**: Předává data do HTML šablon pomocí Spring `Model`
+1. **Zpracování tras:** `@GetMapping("/")` zobrazí formulář pro nahrání, `@PostMapping("/generate-story")` zpracuje odeslaná data
+2. **Validace vstupů:** Kontroluje prázdné popisy a omezení délky
+3. **Bezpečnost:** Čistí uživatelský vstup, aby předešel útokům XSS
+4. **Zpracování chyb:** Poskytuje záložní příběhy, když AI služba selže
+5. **Vazba modelu:** Předává data do HTML šablon pomocí Spring `Model`
 
 **Záložní systém:**
-Kontroler obsahuje předem napsané šablony příběhů, které se použijí, když služba AI není dostupná:
+Kontroler obsahuje předpřipravené šablony příběhů, které se použijí, pokud není AI služba dostupná:
 
 ```java
 private String generateFallbackStory(String description) {
@@ -141,7 +141,7 @@ private String generateFallbackStory(String description) {
         "In a cozy home filled with love, there lived an extraordinary pet..."
     };
     
-    // Use description hash for consistent responses
+    // Použijte hash popisu pro konzistentní odpovědi
     int index = Math.abs(description.hashCode() % storyTemplates.length);
     return storyTemplates[index];
 }
@@ -151,7 +151,7 @@ private String generateFallbackStory(String description) {
 
 **Soubor:** `StoryService.java`
 
-Tato služba komunikuje s GitHub Models pro generování příběhů:
+Tato služba komunikuje s Azure AI Foundry pro generování příběhů s autentizací bez klíče:
 
 ```java
 @Service
@@ -160,18 +160,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // OpenAI-kompatibilní konec Foundry se nachází pod /openai/v1/
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // Autentizace bez klíče pomocí Microsoft Entra ID (žádný API klíč)
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -182,16 +186,16 @@ public class StoryService {
         
         String userPrompt = "Write a fun short story about a pet described as: " + description;
         
-        // Configure the AI request
+        // Nakonfigurujte požadavek AI
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(modelName)
                 .addSystemMessage(systemPrompt)
                 .addUserMessage(userPrompt)
-                .maxCompletionTokens(500)  // Limit response length
-                .temperature(0.8)          // Control creativity (0.0-1.0)
+                .maxCompletionTokens(500)  // Omezte délku odpovědi
+                .temperature(0.8)          // Řiďte kreativitu (0.0-1.0)
                 .build();
         
-        // Send request and get response
+        // Odešlete požadavek a získejte odpověď
         ChatCompletion response = openAIClient.chat().completions().create(params);
         
         return response.choices().get(0).message().content().orElse("");
@@ -199,17 +203,17 @@ public class StoryService {
 }
 ```
 
-**Klíčové komponenty:**
+**Klíčové složky:**
 
-1. **OpenAI klient**: Používá oficiální OpenAI Java SDK nakonfigurované pro GitHub Models
-2. **Systémový prompt**: Nastavuje chování AI na psaní rodinných příběhů o mazlíčcích
-3. **Uživatelský prompt**: Říká AI přesně, jaký příběh má napsat na základě popisu
-4. **Parametry**: Řídí délku příběhu a úroveň kreativity
-5. **Zpracování chyb**: Vyvolává výjimky, které kontroler zachytí a zpracuje
+1. **OpenAI klient:** Používá oficiální OpenAI Java SDK nakonfigurované pro Azure AI Foundry (bezklíčová autentizace)
+2. **Systémový prompt:** Určuje chování AI, aby psala příběhy o mazlíčcích vhodné pro rodiny
+3. **Uživatelský prompt:** Říká AI, jaký příběh má napsat na základě popisu
+4. **Parametry:** Řídí délku a kreativitu příběhu
+5. **Zpracování chyb:** Vyvolává výjimky, které kontroler zachytí a zpracuje
 
 ### 4. Webové šablony
 
-**Soubor:** `index.html` (Formulář pro nahrávání)
+**Soubor:** `index.html` (Formulář pro nahrání)
 
 Hlavní stránka, kde uživatelé popisují své mazlíčky:
 
@@ -293,18 +297,18 @@ Zobrazuje vygenerovaný příběh:
 </html>
 ```
 
-**Vlastnosti šablon:**
+**Vlastnosti šablony:**
 
-1. **Integrace Thymeleaf**: Používá atributy `th:` pro dynamický obsah
-2. **Responzivní design**: CSS stylování pro mobilní a desktopové zařízení
-3. **Zpracování chyb**: Zobrazuje validační chyby uživatelům
-4. **Zpracování na straně klienta**: JavaScript pro analýzu obrázků (pomocí Transformers.js)
+1. **Integrace Thymeleaf:** Používá atributy `th:` pro dynamický obsah
+2. **Responzivní design:** CSS stylování pro mobily i desktop
+3. **Zpracování chyb:** Zobrazuje uživateli chyby validace
+4. **Zpracování na klientovi:** JavaScript pro analýzu obrázků (pomocí Transformers.js)
 
 ### 5. Konfigurace
 
 **Soubor:** `application.properties`
 
-Konfigurační nastavení aplikace:
+Nastavení konfigurace aplikace:
 
 ```properties
 spring.application.name=pet-story-app
@@ -316,47 +320,50 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 **Vysvětlení konfigurace:**
 
-1. **Nahrávání souborů**: Umožňuje obrázky do velikosti 10MB
-2. **Logování**: Řídí, jaké informace se logují během běhu aplikace
-3. **GitHub Models**: Určuje, který AI model a endpoint se použije
-4. **Bezpečnost**: Konfigurace zpracování chyb, aby se zabránilo odhalení citlivých informací
+1. **Nahrávání souborů:** Povolení obrázků do 10MB
+2. **Protokolování:** Řízení, jaké informace se logují při běhu
+3. **Azure AI Foundry:** Specifikace endpointu a modelu (bezklíčová autentizace)
+4. **Bezpečnost:** Konfigurace zpracování chyb, aby se nezobrazovaly citlivé informace
 
 ## Spuštění aplikace
 
-### Krok 1: Nastavte svůj GitHub token
+### Krok 1: Přihlaste se a nastavte endpoint
 
-Nejprve musíte nastavit svůj GitHub token jako proměnnou prostředí:
+Autentizace probíhá bez klíče (Microsoft Entra ID), proto se nepoužívá API klíč. Přihlaste se a nastavte svůj Foundry endpoint:
 
-**Windows (Command Prompt):**
+**Windows (Příkazový řádek):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Proč je to potřeba:**
-- GitHub Models vyžaduje autentizaci pro přístup k AI modelům
-- Použití proměnných prostředí udržuje citlivé tokeny mimo zdrojový kód
-- Oprávnění `models:read` poskytuje přístup k AI inferenci
+- Azure AI Foundry používá Microsoft Entra ID pro autentizaci požadavků na inference
+- Bezklíčová autentizace znamená, že v kódu ani prostředí nejsou žádná tajemství
+- Váš účet potřebuje roli **Cognitive Services OpenAI User** na zdroji
 
-### Krok 2: Sestavení a spuštění
+### Krok 2: Sestavte a spusťte
 
-Přejděte do adresáře projektu:
+Přejděte do složky projektu:
 ```bash
 cd 04-PracticalSamples/petstory
 ```
@@ -371,51 +378,53 @@ Spusťte server:
 mvn spring-boot:run
 ```
 
-Aplikace se spustí na `http://localhost:8080`.
+Aplikace se spustí na adrese `http://localhost:8080`.
 
-### Krok 3: Testování aplikace
+### Krok 3: Testujte aplikaci
 
 1. **Otevřete** `http://localhost:8080` ve svém prohlížeči
-2. **Popište** svého mazlíčka v textovém poli (např. "Hravý zlatý retrívr, který rád aportuje")
-3. **Klikněte** na "Vygenerovat příběh" pro získání příběhu vytvořeného AI
-4. **Alternativně**, nahrajte obrázek mazlíčka pro automatické generování popisu
-5. **Zobrazte** kreativní příběh na základě popisu vašeho mazlíčka
+2. **Popište** svého mazlíčka do textového pole (např. "Hrníček hravý zlatý retrívr, který rád aportuje")
+3. **Klikněte** na "Generate Story", aby vám AI vytvořila příběh
+4. **Alternativně** nahrajte obrázek mazlíčka pro automatické vygenerování popisu
+5. **Prohlédněte** si kreativní příběh založený na vámi zadaném popisu mazlíčka
 
-## Jak vše funguje dohromady
+## Jak to vše spolu funguje
 
-Zde je kompletní tok při generování příběhu o mazlíčkovi:
+Tady je celý proces, když vygenerujete příběh o mazlíčkovi:
 
-1. **Vstup uživatele**: Popíšete svého mazlíčka na webovém formuláři
-2. **Odeslání formuláře**: Prohlížeč odešle POST požadavek na `/generate-story`
-3. **Zpracování kontrolerem**: `PetController` validuje a sanitizuje vstup
-4. **Volání AI služby**: `StoryService` odešle požadavek na GitHub Models API
-5. **Generování příběhu**: AI vytvoří kreativní příběh na základě popisu
-6. **Zpracování odpovědi**: Kontroler obdrží příběh a přidá ho do modelu
-7. **Renderování šablony**: Thymeleaf vykreslí `result.html` s příběhem
-8. **Zobrazení**: Uživatel vidí vygenerovaný příběh ve svém prohlížeči
+1. **Uživatelský vstup:** Vy popíšete mazlíčka ve webovém formuláři
+2. **Odeslání formuláře:** Prohlížeč pošle POST požadavek na `/generate-story`
+3. **Zpracování kontrolerem:** `PetController` vstup validuje a čistí
+4. **Volání AI služby:** `StoryService` odešle požadavek modelu Azure AI Foundry
+5. **Generování příběhu:** AI vygeneruje kreativní příběh podle popisu
+6. **Zpracování odpovědi:** Kontroler obdrží příběh a vloží ho do modelu
+7. **Rendrování šablony:** Thymeleaf vykreslí `result.html` s příběhem
+8. **Zobrazení:** Uživatel uvidí vygenerovaný příběh ve svém prohlížeči
 
-**Tok zpracování chyb:**
-Pokud služba AI selže:
+**Zpracování chyb:**
+Pokud AI služba selže:
 1. Kontroler zachytí výjimku
-2. Vygeneruje záložní příběh pomocí předem napsaných šablon
-3. Zobrazí záložní příběh s poznámkou o nedostupnosti AI
-4. Uživatel stále obdrží příběh, což zajišťuje dobrou uživatelskou zkušenost
+2. Vygeneruje záložní příběh pomocí předpřipravených šablon
+3. Zobrazí záložní příběh s upozorněním, že AI není dostupná
+4. Uživatel stále obdrží příběh, aby byla zajištěna dobrá uživatelská zkušenost
 
-## Porozumění integraci AI
+## Pochopení AI integrace
 
-### GitHub Models API
-Aplikace používá GitHub Models, které poskytují bezplatný přístup k různým AI modelům:
+### Azure AI Foundry (bez klíče)
+Aplikace používá Azure AI Foundry s bezklíčovou autentizací (Microsoft Entra ID):
 
 ```java
-// Authentication with GitHub token
+// Autentizace bez klíče - bez API klíče
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
-### Prompt Engineering
-Služba používá pečlivě vytvořené prompty pro dosažení kvalitních výsledků:
+### Tvorba promptů
+Služba používá pečlivě navržené prompty pro dosažení dobrých výsledků:
 
 ```java
 String systemPrompt = "You are a creative storyteller who writes fun, " +
@@ -423,8 +432,8 @@ String systemPrompt = "You are a creative storyteller who writes fun, " +
                      "Keep stories under 500 words and appropriate for all ages.";
 ```
 
-### Zpracování odpovědí
-Odpověď AI je extrahována a validována:
+### Zpracování odpovědi
+Odpověď AI se extrahuje a validuje:
 
 ```java
 ChatCompletion response = openAIClient.chat().completions().create(params);
@@ -435,5 +444,9 @@ String story = response.choices().get(0).message().content().orElse("");
 
 Pro více příkladů viz [Kapitola 04: Praktické ukázky](../README.md)
 
-**Prohlášení:**  
-Tento dokument byl přeložen pomocí služby pro automatický překlad [Co-op Translator](https://github.com/Azure/co-op-translator). Ačkoli se snažíme o přesnost, mějte na paměti, že automatické překlady mohou obsahovat chyby nebo nepřesnosti. Původní dokument v jeho původním jazyce by měl být považován za autoritativní zdroj. Pro důležité informace doporučujeme profesionální lidský překlad. Neodpovídáme za žádná nedorozumění nebo nesprávné interpretace vyplývající z použití tohoto překladu.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Prohlášení o omezení odpovědnosti**:
+Tento dokument byl přeložen pomocí AI překladatelské služby [Co-op Translator](https://github.com/Azure/co-op-translator). Přestože usilujeme o co největší přesnost, mějte prosím na paměti, že automatizované překlady mohou obsahovat chyby nebo nepřesnosti. Originální dokument v jeho mateřském jazyce by měl být považován za autoritativní zdroj. Pro kritické informace se doporučuje profesionální lidský překlad. Nejsme odpovědní za jakékoli nedorozumění nebo nesprávné interpretace vzniklé použitím tohoto překladu.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

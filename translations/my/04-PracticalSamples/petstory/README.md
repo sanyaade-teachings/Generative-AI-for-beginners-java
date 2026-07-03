@@ -1,31 +1,31 @@
-# သင်ကြားမှုအတွက် စတင်သူများအတွက် အိမ်မွေးတိရစ္ဆာန်ပုံပြင် ဖန်တီးရေးစနစ်
+# စောင့်ရှောက်ရန်တိရစ္ဆာန် कहानी ဂျင်နရေးတာ သင်ခန်းစာ တ初心者向け
 
-## အကြောင်းအရာများ
+## အကြောင်းအရာ စာရင်း
 
-- [လိုအပ်ချက်များ](../../../../04-PracticalSamples/petstory)
-- [ပရောဂျက်ဖွဲ့စည်းမှုကို နားလည်ခြင်း](../../../../04-PracticalSamples/petstory)
-- [အဓိကအစိတ်အပိုင်းများ ရှင်းပြချက်](../../../../04-PracticalSamples/petstory)
-  - [1. အဓိကအပလီကေးရှင်း](../../../../04-PracticalSamples/petstory)
-  - [2. Web Controller](../../../../04-PracticalSamples/petstory)
-  - [3. Story Service](../../../../04-PracticalSamples/petstory)
-  - [4. Web Templates](../../../../04-PracticalSamples/petstory)
-  - [5. Configuration](../../../../04-PracticalSamples/petstory)
-- [အပလီကေးရှင်းကို အလုပ်လုပ်စေခြင်း](../../../../04-PracticalSamples/petstory)
-- [အားလုံးပေါင်းစပ်ပြီး ဘယ်လိုအလုပ်လုပ်သလဲ](../../../../04-PracticalSamples/petstory)
-- [AI ပေါင်းစပ်မှုကို နားလည်ခြင်း](../../../../04-PracticalSamples/petstory)
-- [နောက်ထပ်အဆင့်များ](../../../../04-PracticalSamples/petstory)
+- [လိုအပ်ချက်များ](#လိုအပ်ချက်များ)
+- [ပရောဂျက် ဖွဲ့စည်းမှု ကို နားလည်ခြင်း](#ပရောဂျက်-ဖွဲ့စည်းမှု-ကို-နားလည်ခြင်း)
+- [အဓိက အစိတ်အပိုင်းများ ရှင်းလင်းချက်](#အဓိက-အစိတ်အပိုင်းများ-ရှင်းလင်းချက်)
+  - [1. မိမိ အသုံးပြုနေသော အက်ပ်ပလီကေးရှင်း](#၁။-မိမိ-အသုံးပြုနေသော-အက်ပ်ပလီကေးရှင်း)
+  - [2. ဝက်ဘ် ထိန်းချုပ်ရေးသူ](#၂။-ဝက်ဘ်-ထိန်းချုပ်ရေးသူ)
+  - [3. ပုံပြင်ဝန်ဆောင်မှု](#၃။-ပုံပြင်-ဝန်ဆောင်မှု)
+  - [4. ဝက်ဘ် ပုံစံများ](#၄။-ဝက်ဘ်-ပုံစံများ)
+  - [5. ဖွဲ့စည်းတပ်ဆင်မှု](#၅။-ဖွဲ့စည်းတပ်ဆင်မှု)
+- [အက်ပ်ပလီကေးရှင်း စတင်လည်ပတ်ခြင်း](#အက်ပ်ပလီကေးရှင်း-စတင်လည်ပတ်ခြင်း)
+- [ဒါအားလုံး ဘယ်လိုပေါင်းစည်း လည်ပတ်သလဲ](#ဒါအားလုံး-ဘယ်လိုပေါင်းစည်း-လည်ပတ်သလဲ)
+- [AI ပေါင်းစည်းမှု ကို နားလည်မြင်သာခြင်း](#ai-ပေါင်းစည်းမှု-ကို-နားလည်မြင်သာခြင်း)
+- [နောက်တစ်ခုပြုလုပ်ရန် အဆင့်များ](#နောက်တစ်ခုပြုလုပ်ရန်-အဆင့်များ)
 
 ## လိုအပ်ချက်များ
 
-စတင်မီ သင်မှာ အောက်ပါအရာများရှိရမည်ဖြစ်သည် -
-- Java 21 သို့မဟုတ် အထက်ရှိထားခြင်း
-- Maven ကို အခြေခံလိုအပ်ချက်များ စီမံရန်
-- `models:read` scope ပါဝင်သော personal access token (PAT) ရှိသော GitHub အကောင့်
-- Java, Spring Boot, နှင့် web development အခြေခံကို နားလည်ထားခြင်း
+စတင်ရန်အရင်မှာ သေချာစွာ သင်မှာရှိထားရမည့် အရာများ -
+- Java 21 သို့မဟုတ် ထို့အထက် ထည့်သွင်းထား
+- လိုအပ်သော dependencies များကို စီမံရန် Maven
+- Azure AI Foundry မော်ဒယ် ဖြန့်ကျက်မှု ( `azd up` ဖြင့် provision လုပ်ပါ — ကြည့်ရန် [အခန်း 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))၊ `az login` ဖြင့် သွင်းပေးထားပြီး (keyless authentication)
+- Java, Spring Boot နှင့် ဝက်ဘ် ဖွံ့ဖြိုးရေး၏ မူလ အခြေခံ နားလည်မှု
 
-## ပရောဂျက်ဖွဲ့စည်းမှုကို နားလည်ခြင်း
+## ပရောဂျက် ဖွဲ့စည်းမှု ကို နားလည်ခြင်း
 
-အိမ်မွေးတိရစ္ဆာန်ပုံပြင်ပရောဂျက်တွင် အရေးကြီးသော ဖိုင်အချို့ပါဝင်သည် -
+တိရစ္ဆာန် ပုံပြင် ပရောဂျက်တွင် အရေးပါသော ဖိုင် အချို့ပါရှိသည် -
 
 ```
 petstory/
@@ -42,13 +42,14 @@ petstory/
 └── pom.xml                           # Maven dependencies
 ```
 
-## အဓိကအစိတ်အပိုင်းများ ရှင်းပြချက်
 
-### 1. အဓိကအပလီကေးရှင်း
+## အဓိက အစိတ်အပိုင်းများ ရှင်းလင်းချက်
+
+### ၁။ မိမိ အသုံးပြုနေသော အက်ပ်ပလီကေးရှင်း
 
 **ဖိုင်:** `PetStoryApplication.java`
 
-ဤသည်မှာ Spring Boot အပလီကေးရှင်း၏ စတင်ဝင်ပေါက်ဖြစ်သည် -
+ဤသည်သည် ကျွန်ုပ်တို့၏ Spring Boot အက်ပ်ပလီကေးရှင်း၏ ဝင်ခွင့် နေရာဖြစ်သည် -
 
 ```java
 @SpringBootApplication
@@ -59,16 +60,16 @@ public class PetStoryApplication {
 }
 ```
 
-**ဤအရာက ဘာလုပ်သလဲ:**
-- `@SpringBootApplication` annotation သည် auto-configuration နှင့် component scanning ကို ဖွင့်စင်ပေးသည်
-- Port 8080 တွင် embedded web server (Tomcat) ကို စတင်ပေးသည်
-- လိုအပ်သော Spring beans နှင့် services အားလုံးကို အလိုအလျောက် ဖန်တီးပေးသည်
+**ဤအရာများ လုပ်ဆောင်ပုံ:**  
+- `@SpringBootApplication` annotation က auto-configuration နှင့် component scanning ကို ဖွင့်လှစ်ပေးသည်  
+- 8080 ပေါ့(Port) တွင် embedded web server (Tomcat) စတင်လည်ပတ်သည်  
+- အလိုအလျောက် လိုအပ်သော Spring beans နှင့် ဝန်ဆောင်မှုများကို ဖန်တီးပေးသည်  
 
-### 2. Web Controller
+### ၂။ ဝက်ဘ် ထိန်းချုပ်ရေးသူ
 
 **ဖိုင်:** `PetController.java`
 
-ဤသည်မှာ web request များနှင့် အသုံးပြုသူအပြန်အလှန်များကို ကိုင်တွယ်ပေးသည် -
+တစ်ခုချင်းလုပ်ဆောင်ချက်များနှင့် အသုံးပြုသူ သက်ဆိုင်ရာ မေးခွန်းများကို အုပ်ချုပ်သည် -
 
 ```java
 @Controller
@@ -82,7 +83,7 @@ public class PetController {
     
     @GetMapping("/")
     public String index() {
-        return "index";  // Returns index.html template
+        return "index";  // index.html စာမျက်နှာပုံစံ ပြန်လည်ပေးပို့သည်
     }
     
     @PostMapping("/generate-story")
@@ -90,24 +91,24 @@ public class PetController {
                                Model model, 
                                RedirectAttributes redirectAttributes) {
         
-        // Input validation
+        // အချက်အလက် ထည့်သွင်းမှု စစ်ဆေးခြင်း
         if (description.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please provide a description.");
             return "redirect:/";
         }
         
-        // Sanitize input for security
+        // လုံခြုံမှုအတွက် အချက်အလက် သန့်စင်ခြင်း
         String sanitizedDescription = sanitizeInput(description);
         
-        // Generate story with error handling
+        // အမှားကို ကိုင်တွယ်၍ ပုံပြင် ဖန်တီးခြင်း
         try {
             String story = storyService.generateStory(sanitizedDescription);
             model.addAttribute("caption", sanitizedDescription);
             model.addAttribute("story", story);
-            return "result";  // Returns result.html template
+            return "result";  // result.html စာမျက်နှာပုံစံ ပြန်လည်ပေးပို့သည်
             
         } catch (Exception e) {
-            // Use fallback story if AI fails
+            // AI မအောင်မြင်လျှင် အစားထိုး ပုံပြင် အသုံးပြုပါ
             String fallbackStory = generateFallbackStory(sanitizedDescription);
             model.addAttribute("story", fallbackStory);
             return "result";
@@ -117,21 +118,21 @@ public class PetController {
     private String sanitizeInput(String input) {
         return input.replaceAll("[<>\"'&]", "")  // Remove dangerous characters
                    .trim()
-                   .substring(0, Math.min(input.length(), 500));  // Limit length
+                   .substring(0, Math.min(input.length(), 500));  // အရှည်ကို ကန့်သတ်ပါ
     }
 }
 ```
 
-**အဓိကအင်္ဂါရပ်များ:**
+**အဓိက လက္ခဏာများ:**
 
-1. **Route Handling**: `@GetMapping("/")` သည် upload form ကို ပြသပေးပြီး၊ `@PostMapping("/generate-story")` သည် တင်သွင်းမှုများကို ကိုင်တွယ်ပေးသည်
-2. **Input Validation**: ဖော်ပြချက်များအတွက် အလျားကန့်သတ်နှင့် အလွတ်မရှိကြောင်း စစ်ဆေးပေးသည်
-3. **Security**: အသုံးပြုသူ၏ input ကို sanitize လုပ်ပြီး XSS တိုက်ခိုက်မှုများကို ကာကွယ်ပေးသည်
-4. **Error Handling**: AI service မအောင်မြင်ပါက fallback stories များကို ပေးစွမ်းသည်
-5. **Model Binding**: Spring ၏ `Model` ကို အသုံးပြု၍ HTML templates သို့ ဒေတာများ ပေးပို့သည်
+1. **လမ်းကြောင်း ကိုင်တွယ်မှု**: `@GetMapping("/")` မှာ upload form ကိုပြသသည်၊ `@PostMapping("/generate-story")` မှာ ပုံပြင်ထုတ်လွှင့်ရန် စာတင်ပြုလုပ်ခြင်း  
+2. **ထည့်သွင်းချက် စစ်ဆေးမှု**: ဖော်ပြချက်များ မရှိခြင်း၊ အရှည် ကန့်သတ်မှု စစ်ဆေး  
+3. **လုံခြုံရေး**: အသုံးပြုသူ ထည့်သွင်းချက်များကို XSS ကျိုးပဲ့မှုမှ ကာကွယ်ရန် စနစ်တကျ သန့်ရှင်း  
+4. **အမှား ကင်းရှင်းမှု**: AI ဝန်ဆောင်မှု မအောင်မြင်သောအခါ ရှေ့ပြေး ပုံပြင်များ ပေးသွင်း  
+5. **မော်ဒယ် ချိတ်ဆက်မှု**: Spring ၏ `Model` ကို အသုံးပြု၍ ဒေတာများကို HTML ပုံစံများတွင် ပေးပို့
 
-**Fallback System:**
-Controller တွင် AI service မရရှိနိုင်ပါက အသုံးပြုရန် ကြိုတင်ရေးသားထားသော ပုံပြင် template များပါဝင်သည် -
+**ရှေ့ပြေး စနစ်:**
+controller တွင် AI ဝန်ဆောင်မှု မရရှိနိုင်သောအခါ အသုံးပြုသည့် ရေးသားပြီးသား ပုံပြင်ပုံစံများ ပါဝင်သည် -
 
 ```java
 private String generateFallbackStory(String description) {
@@ -141,17 +142,18 @@ private String generateFallbackStory(String description) {
         "In a cozy home filled with love, there lived an extraordinary pet..."
     };
     
-    // Use description hash for consistent responses
+    // တူညီသောတုံ့ပြန်မှုများအတွက် ဖော်ပြချက်ဟက်ကို အသုံးပြုပါ
     int index = Math.abs(description.hashCode() % storyTemplates.length);
     return storyTemplates[index];
 }
 ```
 
-### 3. Story Service
+
+### ၃။ ပုံပြင် ဝန်ဆောင်မှု
 
 **ဖိုင်:** `StoryService.java`
 
-ဤ service သည် GitHub Models နှင့် ဆက်သွယ်ပြီး ပုံပြင်များ ဖန်တီးပေးသည် -
+ဤဝန်ဆောင်မှုသည် keyless authentication ဖြင့် Azure AI Foundry နှင့် ဆက်သွယ်ကာ ပုံပြင်များ ဖန်တီးပေးသည် -
 
 ```java
 @Service
@@ -160,18 +162,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // Foundry ၏ OpenAI ကိုသင့်တော်သော endpoint သည် /openai/v1/ အောက်တွင် တည်ရှိသည်
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // Microsoft Entra ID ဖြင့် Key ဂုဏ်ပြုခြင်း (API key မလိုအပ်ပါ)
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -182,16 +188,16 @@ public class StoryService {
         
         String userPrompt = "Write a fun short story about a pet described as: " + description;
         
-        // Configure the AI request
+        // AI အတွက် တောင်းဆိုမှုကို ဖွဲ့စည်းစီစဉ်ပါ
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(modelName)
                 .addSystemMessage(systemPrompt)
                 .addUserMessage(userPrompt)
-                .maxCompletionTokens(500)  // Limit response length
-                .temperature(0.8)          // Control creativity (0.0-1.0)
+                .maxCompletionTokens(500)  // တုံ့ပြန်မှု အရှည်ကို ကန့်သတ်ပါ
+                .temperature(0.8)          // ဖန်တီးမှု ထိန်းချုပ်မှု (0.0-1.0)
                 .build();
         
-        // Send request and get response
+        // တောင်းဆိုမှု ပေးပို့ပြီး တုံ့ပြန်မှု ရယူပါ
         ChatCompletion response = openAIClient.chat().completions().create(params);
         
         return response.choices().get(0).message().content().orElse("");
@@ -199,19 +205,19 @@ public class StoryService {
 }
 ```
 
-**အဓိကအစိတ်အပိုင်းများ:**
+**အဓိက အစိတ်အပိုင်းများ:**
 
-1. **OpenAI Client**: GitHub Models အတွက် အတည်ပြုထားသော OpenAI Java SDK ကို အသုံးပြုသည်
-2. **System Prompt**: AI ကို မိသားစုနှင့်သင့်တော်သော အိမ်မွေးတိရစ္ဆာန်ပုံပြင်များရေးရန် စနစ်တကျ ပြင်ဆင်ပေးသည်
-3. **User Prompt**: ဖော်ပြချက်အပေါ်မူတည်၍ AI ကို ဘာရေးရမည်ကို ပြောပြပေးသည်
-4. **Parameters**: ပုံပြင်အလျားနှင့် ဖန်တီးမှုအဆင့်ကို ထိန်းချုပ်ပေးသည်
-5. **Error Handling**: Controller မှ ဖမ်းဆီးနိုင်သော အထွေထွေ အမှားများကို ပေးပို့သည်
+1. **OpenAI Client**: Azure AI Foundry အတွက် official OpenAI Java SDK ကို (keyless) ကိုသုံး  
+2. **System Prompt**: AI ကို မိသားစုအတွက် သင့်တော်သော တိရစ္ဆာန် ပုံပြင်များ ရေးရန် အပြုသဘောသတ်မှတ်  
+3. **User Prompt**: ဖော်ပြချက်အတိုင်း AI ကိုပုံပြင် ရေးရန် တိတိကျကျ ပြောဆို  
+4. **ပမာဏများ**: ပုံပြင် အရှည်နှင့် ဖန်တီးမှု အဆင့်ကို ထိန်းချုပ်  
+5. **အမှား ကင်းရှင်းမှု**: controller ဖြင့် ဖမ်းဆီးစစ်ဆေးသည့် exceptions များကို ပေါက်ခတ်ပေး
 
-### 4. Web Templates
+### ၄။ ဝက်ဘ် ပုံစံများ
 
 **ဖိုင်:** `index.html` (Upload Form)
 
-အသုံးပြုသူများ အိမ်မွေးတိရစ္ဆာန်များကို ဖော်ပြရန် အဓိကစာမျက်နှာ -
+အသုံးပြုသူများ ၌ သူတို့၏ တိရစ္ဆာန်ကို ဖော်ပြနိုင်သော မူလစာမျက်နှာ -
 
 ```html
 <!DOCTYPE html>
@@ -258,9 +264,9 @@ public class StoryService {
 </html>
 ```
 
-**ဖိုင်:** `result.html` (Story Display)
+**ဖိုင်:** `result.html` (ပုံပြင် ပြသမှု)
 
-ဖန်တီးထားသော ပုံပြင်ကို ပြသပေးသည် -
+ဖန်တီးပြီး ပုံပြင်ကိုပြသသည် -
 
 ```html
 <!DOCTYPE html>
@@ -293,18 +299,18 @@ public class StoryService {
 </html>
 ```
 
-**Template အင်္ဂါရပ်များ:**
+**ပုံစံ လက္ခဏာများ:**
 
-1. **Thymeleaf Integration**: `th:` attributes ကို အသုံးပြု၍ dynamic content ကို ထည့်သွင်းပေးသည်
-2. **Responsive Design**: CSS ကို အသုံးပြု၍ မိုဘိုင်းနှင့် desktop အတွက် သင့်တော်သော ဒီဇိုင်း
-3. **Error Handling**: အသုံးပြုသူများကို validation error များ ပြသပေးသည်
-4. **Client-side Processing**: JavaScript ကို အသုံးပြု၍ image analysis (Transformers.js) ပြုလုပ်သည်
+1. **Thymeleaf ပေါင်းစည်းမှု**: dynamic content အတွက် `th:` attribute များကို အသုံးပြု  
+2. **တုံ့ပြန်ခြင်း ဒီဇိုင်း**: မိုဘိုင်း နှင့် ဒီစကတော့ နှစ်မျိုးစလုံးအတွက် CSS style  
+3. **အမှား ကင်းရှင်းမှု**: လက်ခံရိုက်ထည့်မှု အမှားများကို အသုံးပြုသူထံ ပြသ  
+4. **Client-side လုပ်ဆောင်မှု**: ဓာတ်ပုံ ခွဲခြမ်းစိတ်ဖြတ်မှုအတွက် JavaScript (Transformers.js သုံး)
 
-### 5. Configuration
+### ၅။ ဖွဲ့စည်းတပ်ဆင်မှု
 
 **ဖိုင်:** `application.properties`
 
-အပလီကေးရှင်းအတွက် configuration ဆက်တင်များ -
+အက်ပ်ပလီကေးရှင်း ဆက်တင်များ -
 
 ```properties
 spring.application.name=pet-story-app
@@ -316,106 +322,111 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
-**Configuration ရှင်းပြချက်:**
+**ဖွဲ့စည်းတပ်ဆင်မှု ရှင်းလင်းချက်:**
 
-1. **File Upload**: 10MB အထိ image များကို ခွင့်ပြုသည်
-2. **Logging**: အလုပ်လုပ်စဉ်အတွင်း log ထုတ်လွှင့်မှုကို ထိန်းချုပ်သည်
-3. **GitHub Models**: အသုံးပြုမည့် AI model နှင့် endpoint ကို သတ်မှတ်ပေးသည်
-4. **Security**: အရေးကြီးသော အချက်အလက်များ မဖော်ပြစေရန် error handling ကို ပြုလုပ်ထားသည်
+1. **ဖိုင် တင်ခြင်း**: ၁၀MB အထိ ဓာတ်ပုံများ ခွင့်ပြုမှု  
+2. **မှတ်တမ်းတင်ခြင်း (Logging)**: လည်ပတ်မှုအတွင်း မှတ်တမ်းတင်ချက် ကို ထိန်းချုပ်  
+3. **Azure AI Foundry**: အသုံးပြုမည့် endpoint နှင့် မော်ဒယ် ဖြန့်ချိမှုကို ဖော်ပြသည် (keyless auth)  
+4. **လုံခြုံရေး**: အမှား ကင်းရှင်းမှု ဆက်တင်များကို ဝင်ရောက်ရရှိနိုင်သော သတင်းအချက်အလက် မဖော်ပြရန် ထိန်းချုပ်
 
-## အပလီကေးရှင်းကို အလုပ်လုပ်စေခြင်း
+## အက်ပ်ပလီကေးရှင်း စတင်လည်ပတ်ခြင်း
 
-### အဆင့် 1: GitHub Token ကို သတ်မှတ်ပါ
+### အဆင့် ၁: လက်မှတ်ထိုး လက်ရေးထိုးပြီး သင့် endpoint ကို သတ်မှတ်ပါ
 
-ပထမဦးစွာ သင့် GitHub token ကို environment variable အဖြစ် သတ်မှတ်ရမည် -
+Authentication က keyless (Microsoft Entra ID) ဖြစ်သောကြောင့် API key မလိုပါ။ လက်မှတ်ထိုးပြီး သင့် Foundry endpoint ကို သတ်မှတ်ပါ -
 
 **Windows (Command Prompt):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-**ဤအရာလိုအပ်သောအကြောင်းရင်း:**
-- GitHub Models သည် AI models များကို အသုံးပြုရန် authentication လိုအပ်သည်
-- Environment variables ကို အသုံးပြုခြင်းဖြင့် အရေးကြီးသော token များကို source code ထဲတွင် မထည့်ရ
-- `models:read` scope သည် AI inference ကို အသုံးပြုခွင့်ပေးသည်
+**ဘာကြောင့် လိုအပ်သလဲ:**
+- Azure AI Foundry သည် Microsoft Entra ID ဖြင့် inference တောင်းဆိုမှုများကို အတည်ပြုသည့် API  
+- Keyless auth ဟူသည် သင့် စကားဝှက် မရှိဘဲ ပြန်လည် အသုံးပြုနိုင်မှု ဖြစ်သည်  
+- သင့် အကောင့်မှာ **Cognitive Services OpenAI User** အခန်းကဏ္ဍ ရရှိထား ရမည်
 
-### အဆင့် 2: Build နှင့် Run
+### အဆင့် ၂: တည်ဆောက်ပြီး လည်ပတ်ပါ
 
-ပရောဂျက် directory သို့ သွားပါ -
+ပရောဂျက် ဖိုဒားထဲ သို့ သွားပါ -
 ```bash
 cd 04-PracticalSamples/petstory
 ```
 
-အပလီကေးရှင်းကို build လုပ်ပါ -
+အက်ပ် တည်ဆောက်ပါ -
 ```bash
 mvn clean compile
 ```
 
-Server ကို စတင်ပါ -
+ဆာဗာ စတင်ပါ -
 ```bash
 mvn spring-boot:run
 ```
 
-အပလီကေးရှင်းသည် `http://localhost:8080` တွင် စတင်ပါမည်။
+အက်ပ်ပလီကေးရှင်းသည် `http://localhost:8080` တွင် စတင် လည်ပတ်မည်။
 
-### အဆင့် 3: အပလီကေးရှင်းကို စမ်းသပ်ပါ
+### အဆင့် ၃: အက်ပ်ကို စမ်းသပ်ကြည့်ပါ
 
-1. **Browser** တွင် `http://localhost:8080` ကို ဖွင့်ပါ
-2. **Text Area** တွင် သင့်အိမ်မွေးတိရစ္ဆာန်ကို ဖော်ပြပါ (ဥပမာ - "A playful golden retriever who loves to fetch")
-3. **"Generate Story"** ကို နှိပ်ပြီး AI ဖန်တီးထားသော ပုံပြင်ကို ရယူပါ
-4. **အခြားနည်းလမ်း** - အိမ်မွေးတိရစ္ဆာန်ပုံတစ်ပုံကို upload လုပ်ပြီး ဖော်ပြချက်ကို အလိုအလျောက် ဖန်တီးပါ
-5. **ဖန်တီးထားသော ပုံပြင်ကို** သင့် browser တွင် ကြည့်ရှုနိုင်ပါသည်
+1. **ဖွင့်ပါ** `http://localhost:8080` ကို browser တွင်  
+2. **သင့်တိရစ္ဆာန်ကို ဖော်ပြပါ** (ဥပမာ - "အရူးအမူးကစားရတာကြိုက်တဲ့ ရွှေရောင် ရထားရီဗာ")  
+3. **နှိပ်ပါ** "Generate Story" ခလုတ်ကို AI ဖန်တီးပုံပြင် ရရှိရန်  
+4. **အခြားနည်း** အဖြစ် တိရစ္ဆာန် ဓာတ်ပုံ တင်ပြီး အလိုအလျောက် ဖော်ပြချက် ရရှိစေပါ  
+5. **သင့်တိရစ္ဆာန် ဖော်ပြချက်အရ ဖန်တီးထားသော ကောင်းကင်ပုံပြင်ကို ကြည့်ရန်**
 
-## အားလုံးပေါင်းစပ်ပြီး ဘယ်လိုအလုပ်လုပ်သလဲ
+## ဒါအားလုံး ဘယ်လိုပေါင်းစည်း လည်ပတ်သလဲ
 
-အိမ်မွေးတိရစ္ဆာန်ပုံပြင်ကို ဖန်တီးစဉ် အလုပ်လုပ်ပုံ -
+သင်တိရစ္ဆာန် ပုံပြင် တစ်ပုဒ် ဖန်တီးသော အပြည့်အစုံ စဉ်ဆက်ဖြစ်ပုံ -
 
-1. **User Input**: သင့်အိမ်မွေးတိရစ္ဆာန်ကို web form တွင် ဖော်ပြပါ
-2. **Form Submission**: Browser မှ POST request ကို `/generate-story` သို့ ပို့သည်
-3. **Controller Processing**: `PetController` သည် input ကို validate နှင့် sanitize လုပ်သည်
-4. **AI Service Call**: `StoryService` သည် GitHub Models API သို့ request ပို့သည်
-5. **Story Generation**: AI သည် ဖော်ပြချက်အပေါ်မူတည်၍ ဖန်တီးမှုကို ပြုလုပ်သည်
-6. **Response Handling**: Controller သည် ပုံပြင်ကို လက်ခံပြီး model သို့ ထည့်သွင်းသည်
-7. **Template Rendering**: Thymeleaf သည် `result.html` ကို render ပြုလုပ်သည်
-8. **Display**: အသုံးပြုသူသည် ဖန်တီးထားသော ပုံပြင်ကို browser တွင် ကြည့်ရှုနိုင်သည်
+1. **အသုံးပြုသူ ထည့်သွင်းချက်**: အသုံးပြုသူ မှ ဝက်ဘ်ပုံစံတွင် သူ့တိရစ္ဆာန်ကို ဖော်ပြသည်  
+2. **ပုံစံ တင်သွင်းခြင်း**: Browser မှ POST request ကို `/generate-story` သို့ ပေးပို့  
+3. **ထိန်းချုပ်ရေးသူ လုပ်ငန်းစဉ်**: `PetController` က ဖော်ပြချက်ကို စစ်ဆေး သန့်စင်  
+4. **AI ဝန်ဆောင်မှု ခေါ်ယူခြင်း**: `StoryService` မှ Azure AI Foundry မော်ဒယ် သို့ တောင်းဆို  
+5. **ပုံပြင် ဖန်တီးခြင်း**: AI မှ ဖန်တီးထားသော ဖန်တီးမှုအများဆုံးပုံပြင်  
+6. **တုံ့ပြန်မှု ကိုင်တွယ်မှု**: Controller က ပုံပြင်ကို လက်ခံပြီး Model ထဲ ထည့်  
+7. **ပုံစံ ဖော်ပြချက်**: Thymeleaf သည် `result.html` ကို ပုံပြင်နှင့် rendering ပြုလုပ်  
+8. **ပြသခြင်း**: မကြာခင် အဆိုပါ ဖန်တီးထားသော ပုံပြင်ကို အသုံးပြုသူ browser တွင် ပြသ   
 
-**Error Handling Flow:**
-AI service မအောင်မြင်ပါက -
-1. Controller သည် exception ကို ဖမ်းဆီးသည်
-2. ကြိုတင်ရေးသားထားသော fallback story ကို ဖန်တီးသည်
-3. AI မရရှိနိုင်ကြောင်း သတိပေးချက်နှင့် fallback story ကို ပြသသည်
-4. အသုံးပြုသူသည် ပုံပြင်တစ်ခုခုကို ရရှိနိုင်ပြီး သုံးစွဲမှုအတွေ့အကြုံကောင်းစေသည်
+**အမှား ကိုင်တွယ်မှု လမ်းစဉ်:**
+AI ဝန်ဆောင်မှု မအောင်မြင်ပါက -
+1. Controller က exception ကို ဖမ်းဆီး  
+2. ရေးသားပြီးသား ရှေ့ပြေးပုံပြင်များဖြင့် fallback ပုံပြင် ဖန်တီး  
+3. AI ဝန်ဆောင်မှု မရရှိနိုင်ခြင်း နှင့် ပတ်သက်၍ အကြောင်းကြားချက် ထည့်သွင်း ပြသ  
+4. အသုံးပြုသူသည် ပုံပြင် တစ်ပုဒ် ရရှိပြီး ကောင်းမွန်သော အသုံးပြုသူ အတွေ့အကြုံ ရရှိ
 
-## AI ပေါင်းစပ်မှုကို နားလည်ခြင်း
+## AI ပေါင်းစည်းမှု ကို နားလည်မြင်သာခြင်း
 
-### GitHub Models API
-ဤအပလီကေးရှင်းသည် GitHub Models ကို အသုံးပြုပြီး အခမဲ့ AI models များကို အသုံးပြုနိုင်သည် -
+### Azure AI Foundry (keyless)
+အက်ပ်သည် Azure AI Foundry ကို keyless authentication (Microsoft Entra ID) နည်းဖြင့် အသုံးပြု -
 
 ```java
-// Authentication with GitHub token
+// သော့မပါသောအတည်ပြုမှု - API သော့မရှိပါ။
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
 ### Prompt Engineering
-AI မှ အကောင်းဆုံးရလဒ်များရရှိရန် prompt များကို စနစ်တကျ ပြင်ဆင်ထားသည် -
+ဝန်ဆောင်မှုသည် ကောင်းမွန်သော တုံ့ပြန်ချက် ရရှိရန် အထူးပြု ပြင်ဆင်ထားသည့် prompts များ သုံး -
 
 ```java
 String systemPrompt = "You are a creative storyteller who writes fun, " +
@@ -423,17 +434,22 @@ String systemPrompt = "You are a creative storyteller who writes fun, " +
                      "Keep stories under 500 words and appropriate for all ages.";
 ```
 
-### Response Processing
-AI response ကို ထုတ်ယူပြီး validate လုပ်သည် -
+### တုံ့ပြန်ချက် ကိုင်တွယ်ခြင်း
+AI အဖြေကို ထုတ်ယူစစ်ဆေး -
 
 ```java
 ChatCompletion response = openAIClient.chat().completions().create(params);
 String story = response.choices().get(0).message().content().orElse("");
 ```
 
-## နောက်ထပ်အဆင့်များ
 
-နောက်ထပ် ဥပမာများအတွက် [Chapter 04: Practical samples](../README.md) ကို ကြည့်ပါ
+## နောက်တစ်ခုပြုလုပ်ရန် အဆင့်များ
 
-**ဝက်ဘ်ဆိုက်မှတ်ချက်**:  
-ဤစာရွက်စာတမ်းကို AI ဘာသာပြန်ဝန်ဆောင်မှု [Co-op Translator](https://github.com/Azure/co-op-translator) ကို အသုံးပြု၍ ဘာသာပြန်ထားပါသည်။ ကျွန်ုပ်တို့သည် တိကျမှန်ကန်မှုအတွက် ကြိုးစားနေသော်လည်း၊ အလိုအလျောက်ဘာသာပြန်ခြင်းတွင် အမှားများ သို့မဟုတ် မမှန်ကန်မှုများ ပါဝင်နိုင်ကြောင်း သတိပြုပါ။ မူလဘာသာစကားဖြင့် ရေးသားထားသော စာရွက်စာတမ်းကို အာဏာတည်သော ရင်းမြစ်အဖြစ် သတ်မှတ်သင့်ပါသည်။ အရေးကြီးသော အချက်အလက်များအတွက် လူ့ဘာသာပြန်ပညာရှင်များမှ ပြန်ဆိုမှုကို အကြံပြုပါသည်။ ဤဘာသာပြန်ကို အသုံးပြုခြင်းမှ ဖြစ်ပေါ်လာသော နားလည်မှုမှားများ သို့မဟုတ် အဓိပ္ပါယ်မှားများအတွက် ကျွန်ုပ်တို့သည် တာဝန်မယူပါ။ 
+နမူနာများ ပိုမိုကြည့်ရှုရန်၊ [အခန်း 04: အသုံးဝင် နမူနာများ](../README.md) သို့ သွားကြည့်ပါ။
+
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**ပြောကြားချက်**
+ဤစာတမ်းကို AI ဘာသာပြန်ဝန်ဆောင်မှု [Co-op Translator](https://github.com/Azure/co-op-translator) အသုံးပြု၍ ဘာသာပြန်ထားပါသည်။ ကျွန်ုပ်တို့သည် တိကျမှန်ကန်မှုအတွက် ကြိုးပမ်းနေသော်လည်း၊ စက်ကိရိယာဘာသာပြန်ခြင်းများတွင် အမှားများ သို့မဟုတ် မှားယွင်းချက်များ ပါဝင်နိုင်ကြောင်း သတိပြုပါရန် လိုအပ်ပါသည်။ မူလစာတမ်းကို မူရင်းဘာသာဖြင့်သာ ယုံကြည်စိတ်ချရသော အချက်အလက်အဖြစ် သတ်မှတ်သင့်သည်။ အရေးကြီးသည့် သတင်းအချက်အလက်များအတွက် ပရော်ဖက်ရှင်နယ် လူသားဘာသာပြန်သူဝန်ဆောင်မှုကို အကြံပြုပါသည်။ ဤဘာသာပြန်ချက်ကို အသုံးပြုခြင်းမှ ဖြစ်ပေါ်လာသော နားလည်မှုကွာခြားမှုများ သို့မဟုတ် မမှန်ကန်သော အသုံးပြုမှုများအတွက် ကျွန်ုပ်တို့ တာဝန်မခံပါ။
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

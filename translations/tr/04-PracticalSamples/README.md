@@ -1,64 +1,60 @@
 # Pratik Uygulamalar ve Projeler
 
-[![Pratik Uygulamalar ve Projeler](https://img.youtube.com/vi/01vJsYei3H0/0.jpg)](https://www.youtube.com/watch?v=01vJsYei3H0 "Pratik Uygulamalar ve Projeler")
-
-> **Video genel bakışı:** [YouTube'da "Pratik Uygulamalar ve Projeler"i İzleyin](https://www.youtube.com/watch?v=01vJsYei3H0).
-
 ## Öğrenecekleriniz
-Bu bölümde, Java ile üretken yapay zeka geliştirme kalıplarını sergileyen üç pratik uygulama gösterimi yapacağız:
-- İstemci tarafı ve sunucu tarafı yapay zekayı birleştiren çok modlu Bir Evcil Hayvan Hikayesi Üreteci oluşturmak
-- Foundry Local Spring Boot demosu ile yerel yapay zeka modeli entegrasyonunu gerçekleştirmek
-- Hesaplayıcı örneğiyle Model Context Protocol (MCP) hizmeti geliştirmek
+Bu bölümde Java ile yaratıcı yapay zeka geliştirme desenlerini sergileyen üç pratik uygulamayı göstereceğiz:
+- İstemci tarafı ve sunucu tarafı AI'yı birleştiren çok modlu Bir Evcil Hayvan Hikayesi Oluşturucu oluşturma
+- Foundry Local Spring Boot demoyla yerel AI model entegrasyonunu uygulama
+- Hesap Makinesi örneği ile Model Context Protocol (MCP) servisi geliştirme
 
 ## İçindekiler
 
 - [Giriş](#giriş)
   - [Foundry Local Spring Boot Demo](#foundry-local-spring-boot-demo)
-  - [Evcil Hayvan Hikayesi Üreteci](#evcil-hayvan-hikayesi-üreteci)
-  - [MCP Hesaplayıcı Hizmeti (Yeni Başlayanlar için MCP Demo)](#mcp-hesaplayıcı-hizmeti-yeni-başlayanlar-için-mcp-demo)
+  - [Pet Story Generator](#pet-story-generator)
+  - [MCP Calculator Service (Beginner-Friendly MCP Demo)](#mcp-calculator-service-beginner-friendly-mcp-demo)
 - [Öğrenme İlerlemesi](#öğrenme-i̇lerlemesi)
 - [Özet](#özet)
 - [Sonraki Adımlar](#sonraki-adımlar)
 
 ## Giriş
 
-Bu bölüm, Java ile üretken yapay zeka geliştirme kalıplarını gösteren **örnek projeleri** sergiler. Her proje tamamen işlevseldir ve kendi uygulamalarınız için uyarlayabileceğiniz özel yapay zeka teknolojilerini, mimari kalıpları ve en iyi uygulamaları gösterir.
+Bu bölümde **örnek projeler** ile Java kullanarak yaratıcı yapay zeka geliştirme desenleri gösterilmektedir. Her proje tam işlevseldir ve kendi uygulamalarınız için adapte edebileceğiniz belirli AI teknolojilerini, mimari desenleri ve en iyi uygulamaları gösterir.
 
 ### Foundry Local Spring Boot Demo
 
-**[Foundry Local Spring Boot Demo](foundrylocal/README.md)**, **OpenAI Java SDK** kullanarak yerel yapay zeka modelleriyle nasıl entegrasyon yapılacağını gösterir. Foundry Local üzerinde çalışan modellere (ör. **Phi-4-mini**) otomatik model algılama ile bağlanmayı sergiler, böylece bulut hizmetlerine bağımlı olmadan yapay zeka uygulamaları çalıştırabilirsiniz.
+**[Foundry Local Spring Boot Demo](foundrylocal/README.md)**, **OpenAI Java SDK** kullanarak yerel AI modelleri ile entegrasyon nasıl yapılır gösterir. Otomatik model algılama ile Foundry Local üzerinde çalışan modellere (örneğin, **Phi-4-mini**) bağlanmayı sergiler ve bulut hizmetlerine bağlı kalmadan AI uygulamalarını çalıştırmanıza olanak tanır.
 
-### Evcil Hayvan Hikayesi Üreteci
+### Pet Story Generator
 
-**[Evcil Hayvan Hikayesi Üreteci](petstory/README.md)**, yaratıcı evcil hayvan hikayeleri üretmek için **çok modlu yapay zeka işleme**yi gösteren etkileşimli bir Spring Boot web uygulamasıdır. Tarayıcı tabanlı yapay zeka etkileşimleri için transformer.js ve sunucu tarafı işlem için OpenAI SDK'yı birleştirir.
+**[Pet Story Generator](petstory/README.md)**, yaratıcı evcil hayvan hikayeleri üretmek için **çok modlu AI işlemesini** gösteren etkileşimli bir Spring Boot web uygulamasıdır. İstemci tarafı AI etkileşimleri için transformer.js ve sunucu tarafı işlem için OpenAI SDK'yı kullanarak AI yeteneklerini birleştirir.
 
-### MCP Hesaplayıcı Hizmeti (Yeni Başlayanlar için MCP Demo)
+### MCP Calculator Service (Beginner-Friendly MCP Demo)
 
-**[MCP Hesaplayıcı Hizmeti](calculator/README.md)**, Spring AI kullanarak **Model Context Protocol (MCP)**nin basit bir demosudur. MCP kavramlarına yeni başlayanlar için giriş sağlar ve MCP istemcileriyle etkileşimde bulunan temel bir MCP Sunucusu oluşturmayı gösterir.
+**[MCP Calculator Service](calculator/README.md)**, Spring AI kullanarak **Model Context Protocol (MCP)** kavramlarını basitçe gösteren bir demodur. MCP kavramlarına yeni başlayanlar için temel bir MCP Sunucusunun MCP istemcileri ile nasıl etkileşime geçtiğini gösterir.
 
 ## Öğrenme İlerlemesi
 
-Bu projeler önceki bölümlerdeki kavramlar üzerine inşa edilmek üzere tasarlanmıştır:
+Bu projeler önceki bölümlerdeki kavramların üzerine kurulacak şekilde tasarlanmıştır:
 
-1. **Basitten Başlayın**: Yerel modellerle temel yapay zeka entegrasyonunu anlamak için Foundry Local Spring Boot Demo ile başlayın
-2. **Etkileşim Ekleyin**: Çok modlu yapay zeka ve web tabanlı etkileşimler için Evcil Hayvan Hikayesi Üreteci'ne geçin
-3. **MCP Temellerini Öğrenin**: Model Context Protocol temellerini anlamak için MCP Hesaplayıcı Hizmeti'ni deneyin
+1. **Basit Başlayın**: Yerel modellerle temel AI entegrasyonunu anlamak için Foundry Local Spring Boot Demonstrasyonuyla başlayın
+2. **Etkileşim Ekleyin**: Çok modlu AI ve web tabanlı etkileşimler için Pet Story Generator'a ilerleyin
+3. **MCP Temellerini Öğrenin**: Model Context Protocol temellerini anlamak için MCP Calculator Servisini deneyin
 
 ## Özet
 
 Tebrikler! Artık bazı gerçek uygulamaları keşfettiniz:
 
-- Hem tarayıcıda hem de sunucuda çalışan çok modlu yapay zeka deneyimleri
-- Modern Java çerçeveleri ve SDK'ları kullanarak yerel yapay zeka modeli entegrasyonu
-- Araçların yapay zeka ile nasıl entegre olduğunu görmek için ilk Model Context Protocol hizmetiniz
+- Hem tarayıcıda hem de sunucuda çalışan çok modlu AI deneyimleri
+- Modern Java çerçeveleri ve SDK'ları kullanarak yerel AI model entegrasyonu
+- Araçların AI ile nasıl entegre olduğunu görmek için ilk Model Context Protocol servisinizi
 
 ## Sonraki Adımlar
 
-[5. Bölüm: Sorumlu Üretken Yapay Zeka](../05-ResponsibleGenAI/README.md)
+[Chapter 5: Responsible Generative AI](../05-ResponsibleGenAI/README.md)
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Feragatname**:  
-Bu belge, [Co-op Translator](https://github.com/Azure/co-op-translator) adlı AI çeviri hizmeti kullanılarak çevrilmiştir. Doğruluk için çaba sarf etsek de, otomatik çevirilerin hatalar veya yanlışlıklar içerebileceğini lütfen unutmayın. Orijinal belge, kendi dilinde yetkili kaynak olarak kabul edilmelidir. Kritik bilgiler için profesyonel insan çevirisi önerilir. Bu çevirinin kullanımı sonucu ortaya çıkabilecek yanlış anlamalar veya yorum hatalarından sorumlu değiliz.
+**Feragatname**:
+Bu belge, AI çeviri hizmeti [Co-op Translator](https://github.com/Azure/co-op-translator) kullanılarak çevrilmiştir. Doğruluk için çaba sarf etsek de, otomatik çevirilerin hata veya yanlışlık içerebileceğini lütfen unutmayınız. Orijinal belge, kendi dilinde yetkili kaynak olarak kabul edilmelidir. Kritik bilgiler için profesyonel insan çevirisi önerilir. Bu çevirinin kullanımı sonucu ortaya çıkabilecek yanlış anlamalardan veya yanlış yorumlamalardan sorumlu değiliz.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

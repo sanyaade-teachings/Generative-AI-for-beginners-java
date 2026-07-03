@@ -1,105 +1,103 @@
-# Core Generative AI Techniques Tutorial 
+# Kärntekniker för Generativ AI Tutorial 
 
-[![Core Generative AI Techniques](https://img.youtube.com/vi/ZUgN6gTjlPE/0.jpg)](https://www.youtube.com/watch?v=ZUgN6gTjlPE "Core Generative AI Techniques")
+## Innehållsförteckning
 
-> **Videoöversikt:** [Se "Core Generative AI Techniques" på YouTube](https://www.youtube.com/watch?v=ZUgN6gTjlPE), eller klicka på miniatyren ovan.
-
-## Table of Contents
-
-- [Prerequisites](#prerequisites)
-- [Getting Started](#getting-started)
-  - [Step 1: Set Your Environment Variable](#step-1-set-your-environment-variable)
-  - [Step 2: Navigate to the Examples Directory](#step-2-navigate-to-the-examples-directory)
-- [Model Selection Guide](#model-selection-guide)
-- [Tutorial 1: LLM Completions and Chat](#tutorial-1-llm-completions-and-chat)
-- [Tutorial 2: Function Calling](#tutorial-2-function-calling)
+- [Förutsättningar](#förutsättningar)
+- [Komma igång](#komma-igång)
+  - [Steg 1: Konfigurera din Foundry-endpoint](#steg-1-konfigurera-din-foundry-endpoint)
+  - [Steg 2: Navigera till Exempelmappen](#steg-2-navigera-till-exempelmappen)
+- [Välja modell-guide](#välja-modell-guide)
+- [Tutorial 1: LLM-slutföranden och Chatt](#tutorial-1-llm-slutföranden-och-chatt)
+- [Tutorial 2: Funktionsanrop](#tutorial-2-funktionsanrop)
 - [Tutorial 3: RAG (Retrieval-Augmented Generation)](#tutorial-3-rag-retrieval-augmented-generation)
-- [Tutorial 4: Responsible AI](#tutorial-4-responsible-ai)
-- [Common Patterns Across Examples](#common-patterns-across-examples)
-- [Next Steps](#next-steps)
-- [Troubleshooting](#troubleshooting)
-  - [Common Issues](#common-issues)
+- [Tutorial 4: Ansvarsfull AI](#tutorial-4-ansvarsfull-ai)
+- [Vanliga mönster i exemplen](#vanliga-mönster-i-exemplen)
+- [Nästa steg](#nästa-steg)
+- [Felsökning](#felsökning)
+  - [Vanliga problem](#vanliga-problem)
 
 
-## Overview
+## Översikt
 
-Denna handledning ger praktiska exempel på kärntekniker inom generativ AI med Java och GitHub Models. Du kommer att lära dig hur man interagerar med stora språkmodeller (LLM), implementerar funktionsanrop, använder retrieval-augmented generation (RAG) och tillämpar ansvarsfull AI.
+Denna tutorial ger praktiska exempel på kärntekniker för generativ AI med Java och Azure AI Foundry. Du kommer att lära dig hur du interagerar med stora språkmodeller (LLM), implementerar funktionsanrop, använder retrieval-augmented generation (RAG) och tillämpar ansvarsfulla AI-metoder.
 
-## Prerequisites
+## Förutsättningar
 
-Innan du börjar, kontrollera att du har:
+Innan du börjar, se till att du har:
 - Java 21 eller högre installerat
-- Maven för beroendehantering
-- Ett GitHub-konto med en personlig åtkomsttoken (PAT)
+- Maven för hantering av beroenden
+- En Azure AI Foundry-modellutplacering (provisionera den med `azd up` — se [Kapitel 2](../02-SetupDevEnvironment/getting-started-azure-openai.md))
+- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installerad, inloggad via `az login` (autentisering utan nyckel)
 
-## Getting Started
+## Komma igång
 
-### Step 1: Set Your Environment Variable
+> **Snabbaste sättet — kör i VS Code (F5):** Efter `azd up` (Kapitel 2) och `az login`, öppna **Run and Debug** (`Ctrl+Shift+D`), välj en konfiguration som **Ch03: LLM Completions & Chat**, och tryck på **F5**. Endpoint laddas automatiskt från `.env` som `azd up` skapade — så du kan hoppa över Steg 1 nedan. För interaktiv chatt, skriv i terminalen och skriv `exit` för att avsluta. Körkonfigurationerna finns i [`.vscode/launch.json`](../../../.vscode/launch.json).
+>
+> Föredrar du kommandoraden? Följ Steg 1 och Steg 2 nedan.
 
-Först behöver du sätta din GitHub-token som en miljövariabel. Denna token ger dig gratis tillgång till GitHub Models.
+### Steg 1: Konfigurera din Foundry-endpoint
+
+Dessa exempel autentiserar mot Azure AI Foundry med **autentisering utan nyckel** (Microsoft Entra ID). Logga in med `az login`, och ställ sedan in din Foundry-endpoint som en miljövariabel. Om du provisionerade med `azd up`, hämta värdet med `azd env get-value AZURE_OPENAI_ENDPOINT`.
 
 **Windows (Command Prompt):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-### Step 2: Navigate to the Examples Directory
+> Exempel använder `gpt-4o-mini` utplaceringen som standard. Skriv över med miljövariabeln `AZURE_OPENAI_DEPLOYMENT`.
+
+### Steg 2: Navigera till Exempelmappen
 
 ```bash
 cd 03-CoreGenerativeAITechniques/examples/
 ```
 
-## Model Selection Guide
+## Välja modell-guide
 
-Dessa exempel använder olika modeller optimerade för deras specifika användningsområden:
+Alla dessa exempel använder **`gpt-4o-mini`** utplacering som provisionerats i [Kapitel 2](../02-SetupDevEnvironment/getting-started-azure-openai.md):
 
-**GPT-4.1-nano** (Exempel för kompletteringar):
-- Ultrahast och ultrabillig
-- Perfekt för grundläggande textkomplettering och chatt
-- Idealisk för att lära sig grundläggande LLM-interaktionsmönster
-
-**GPT-4o-mini** (Exempel för funktioner, RAG och ansvarsfull AI):
-- Liten men fullt utrustad "omni-arbetshäst" modell
-- Stödjer pålitligt avancerade funktioner från olika leverantörer:
-  - Visionbehandling
-  - JSON/strukturerade utdata
+**GPT-4o-mini:**
+- Liten men fullfjädrad "allroundar"-modell
+- Stöder pålitligt avancerade kapabiliteter:
+  - Bildbehandling
+  - JSON/strukturerade utskrifter
   - Verktygs-/funktionsanrop
-- Fler funktioner än nano, vilket säkerställer att exemplen fungerar konsekvent
+- Snabb och kostnadseffektiv, samtidigt som den exponerar funktionerna som dessa tutorials behöver
 
-> **Varför detta är viktigt**: Även om "nano"-modeller är bra för hastighet och kostnad, är "mini"-modeller det säkrare valet när du behöver pålitlig åtkomst till avancerade funktioner som funktionsanrop, vilka kanske inte är fullt exponerade av alla värdleverantörer för nano-varianter.
+> **Tips**: Utplaceringens namn läses från miljövariabeln `AZURE_OPENAI_DEPLOYMENT` (standard `gpt-4o-mini`), så du kan rikta exempel mot en annan utplacering utan att ändra kod.
 
-## Tutorial 1: LLM Completions and Chat
+## Tutorial 1: LLM-slutföranden och Chatt
 
 **Fil:** `src/main/java/com/example/genai/techniques/completions/LLMCompletionsApp.java`
 
 ### Vad detta exempel lär ut
 
-Exemplet visar kärnmekanikerna för interaktion med stora språkmodeller (LLM) via OpenAI API, inklusive klientinitiering med GitHub Models, meddelandestrukturmönster för system- och användar-promptar, hantering av konversationsstatus genom ackumulering av meddelandehistorik, och inställningsparametrar för att kontrollera svarslängd och kreativ nivå.
+Detta exempel visar kärnmekaniken för interaktion med stora språkmodeller (LLM) via Azure OpenAI API, inklusive keyless klientinitialisering med Azure AI Foundry, meddelandestruktur för system- och användar-promptar, konversationshantering via ackumulering av meddelandehistorik, och parameterjustering för att styra svarslängd och kreativitet.
 
 ### Viktiga kodkoncept
 
-#### 1. Klientinställning
+#### 1. Klientuppsättning
 ```java
-// Skapa AI-klienten
+// Skapa AI-klienten med nyckelfri autentisering (Microsoft Entra ID)
 OpenAIClient client = new OpenAIClientBuilder()
-    .endpoint("https://models.inference.ai.azure.com")
-    .credential(new StaticTokenCredential(pat))
+    .endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"))
+    .credential(new DefaultAzureCredentialBuilder().build())
     .buildClient();
 ```
 
-Detta skapar en anslutning till GitHub Models med din token.
+Detta skapar en anslutning till Azure AI Foundry med dina `az login`-uppgifter — ingen API-nyckel behövs.
 
-#### 2. Enkel Komplettering
+#### 2. Enkel slutförande
 ```java
 List<ChatRequestMessage> messages = List.of(
     // Systemmeddelande ställer in AI-beteende
@@ -109,8 +107,8 @@ List<ChatRequestMessage> messages = List.of(
 );
 
 ChatCompletionsOptions options = new ChatCompletionsOptions(messages)
-    .setModel("gpt-4.1-nano")  // Snabbt, kostnadseffektivt modell för grundläggande kompletteringar
-    .setMaxTokens(200)         // Begränsa svarslängd
+    .setModel("gpt-4o-mini")   // Namnet på din Foundry-distribution
+    .setMaxTokens(200)         // Begränsa svars längd
     .setTemperature(0.7);      // Kontrollera kreativitet (0.0-1.0)
 ```
 
@@ -128,21 +126,21 @@ AI kommer ihåg tidigare meddelanden endast om du inkluderar dem i efterföljand
 mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.completions.LLMCompletionsApp"
 ```
 
-### Vad händer när du kör det
+### Vad som händer när du kör det
 
-1. **Enkel kompletering**: AI svarar på en Java-fråga med systempromptens vägledning
-2. **Flerturnschatt**: AI håller kontext över flera frågor
-3. **Interaktiv chatt**: Du kan ha en verklig konversation med AI
+1. **Enkel slutförande**: AI svarar på en Java-fråga med system-prompt som vägledning
+2. **Fler-stegs chatt**: AI behåller kontext över flera frågor
+3. **Interaktiv chatt**: Du kan ha en riktig konversation med AI:n
 
-## Tutorial 2: Function Calling
+## Tutorial 2: Funktionsanrop
 
 **Fil:** `src/main/java/com/example/genai/techniques/functions/FunctionsApp.java`
 
 ### Vad detta exempel lär ut
 
-Funktionsanrop möjliggör AI-modeller att begära att externa verktyg och API:er körs genom ett strukturerat protokoll där modellen analyserar naturliga språkbegäranden, bestämmer nödvändiga funktionsanrop med lämpliga parametrar via JSON Schema-definitioner, och bearbetar returnerade resultat för att generera kontextuella svar, medan själva funktionskörningen förblir under utvecklarens kontroll för säkerhet och tillförlitlighet.
+Funktionsanrop gör det möjligt för AI-modeller att begära exekvering av externa verktyg och API:er via ett strukturerat protokoll där modellen analyserar naturliga språkförfrågningar, bestämmer nödvändiga funktionsanrop med passande parametrar via JSON Schema-definitioner, och bearbetar returnerade resultat för att generera kontextuella svar, medan den faktiska funktionsexekveringen kontrolleras av utvecklaren för säkerhet och pålitlighet.
 
-> **Obs:** Detta exempel använder `gpt-4o-mini` eftersom funktionsanrop kräver pålitliga verktygsanropsmöjligheter som kanske inte är fullt exponerade i nano-modeller på alla värdplattformar.
+> **Notera**: Detta exempel använder `gpt-4o-mini` eftersom funktionsanrop kräver pålitliga verktygsanrop som kanske inte är fullt tillgängliga i nano-modeller på alla hostningsplattformar.
 
 ### Viktiga kodkoncept
 
@@ -167,7 +165,7 @@ weatherFunction.setParameters(BinaryData.fromString("""
     """));
 ```
 
-Detta berättar för AI vilka funktioner som finns tillgängliga och hur de ska användas.
+Detta säger åt AI:n vilka funktioner som finns och hur de ska användas.
 
 #### 2. Funktionsutförandeflöde
 ```java
@@ -178,19 +176,19 @@ if (choice.getFinishReason() == CompletionsFinishReason.TOOL_CALLS) {
     // 2. Du kör funktionen
     String result = simulateWeatherFunction(functionCall.getFunction().getArguments());
     
-    // 3. Du ger tillbaka resultatet till AI
+    // 3. Du ger resultatet tillbaka till AI
     messages.add(new ChatRequestToolMessage(result, toolCall.getId()));
     
-    // 4. AI ger slutligt svar med funktionsresultatet
+    // 4. AI ger ett slutgiltigt svar med funktionsresultatet
     ChatCompletions finalResponse = client.getChatCompletions(MODEL, options);
 }
 ```
 
-#### 3. Funktionsimplementering
+#### 3. Funktionsimplementation
 ```java
 private static String simulateWeatherFunction(String arguments) {
-    // Tolka argument och anropa verklig väder-API
-    // För demo returnerar vi mockdata
+    // Tolka argument och kalla på verklig väder-API
+    // För demo, returnerar vi falska data
     return """
         {
             "city": "Seattle",
@@ -206,10 +204,10 @@ private static String simulateWeatherFunction(String arguments) {
 mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.functions.FunctionsApp"
 ```
 
-### Vad händer när du kör det
+### Vad som händer när du kör det
 
-1. **Väderfunktion**: AI begär väderdata för Seattle, du tillhandahåller det, AI formaterar ett svar
-2. **Kalkylatorfunktion**: AI begär en beräkning (15% av 240), du beräknar det, AI förklarar resultatet
+1. **Väderfunktion**: AI ber om väderdata för Seattle, du tillhandahåller det, AI formaterar ett svar
+2. **Kalkylatorfunktion**: AI ber om en beräkning (15 % av 240), du räknar ut det, AI förklarar resultatet
 
 ## Tutorial 3: RAG (Retrieval-Augmented Generation)
 
@@ -217,9 +215,9 @@ mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.functions.F
 
 ### Vad detta exempel lär ut
 
-Retrieval-Augmented Generation (RAG) kombinerar informationshämtning med språkgenerering genom att injicera extern dokumentkontext i AI-promptar, vilket gör att modeller kan ge korrekta svar baserade på specifika kunskapskällor snarare än potentiellt inaktuell eller felaktig träningsdata, samtidigt som tydliga gränser hålls mellan användarfrågor och auktoritativa informationskällor via strategisk promptdesign.
+Retrieval-Augmented Generation (RAG) kombinerar informationssökning med språkgenerering genom att injicera extern dokumentkontext i AI-promptar, vilket möjliggör för modeller att ge precisa svar baserade på specifika kunskapskällor snarare än potentiellt föråldrad eller felaktig träningsdata, samtidigt som tydliga gränser mellan användarfrågor och auktoritativa informationskällor bibehålls genom strategisk promptdesign.
 
-> **Obs:** Detta exempel använder `gpt-4o-mini` för att säkerställa pålitlig bearbetning av strukturerade promptar och konsekvent hantering av dokumentkontext, vilket är avgörande för effektiva RAG-implementationer.
+> **Notera**: Detta exempel använder `gpt-4o-mini` för att säkerställa pålitlig bearbetning av strukturerade promptar och konsekvent hantering av dokumentkontext, vilket är avgörande för effektiva RAG-implementationer.
 
 ### Viktiga kodkoncept
 
@@ -241,9 +239,9 @@ List<ChatRequestMessage> messages = List.of(
 );
 ```
 
-De trefaldiga citattecknen hjälper AI att skilja mellan kontext och fråga.
+Trippelcitaten hjälper AI att skilja på kontext och fråga.
 
-#### 3. Säker svarshantering
+#### 3. Säker hantering av svar
 ```java
 if (response != null && response.getChoices() != null && !response.getChoices().isEmpty()) {
     String answer = response.getChoices().get(0).getMessage().getContent();
@@ -253,34 +251,34 @@ if (response != null && response.getChoices() != null && !response.getChoices().
 }
 ```
 
-Validera alltid API-svar för att undvika krascher.
+Validera alltid API-svar för att förhindra krascher.
 
 ### Kör exemplet
 ```bash
 mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.rag.SimpleReaderDemo"
 ```
 
-### Vad händer när du kör det
+### Vad som händer när du kör det
 
-1. Programmet laddar `document.txt` (innehåller info om GitHub Models)
+1. Programmet läser in `document.txt` (innehåller info om Azure AI Foundry)
 2. Du ställer en fråga om dokumentet
-3. AI svarar enbart baserat på dokumentinnehållet, inte dess generella kunskap
+3. AI svarar baserat endast på dokumentinnehållet, inte dess allmänna kunskap
 
-Prova att fråga: "Vad är GitHub Models?" vs "Hur är vädret?"
+Prova att fråga: "Vad är Azure AI Foundry?" vs "Hur är vädret?"
 
-## Tutorial 4: Responsible AI
+## Tutorial 4: Ansvarsfull AI
 
-**Fil:** `src/main/java/com/example/genai/techniques/responsibleai/ResponsibleGithubModels.java`
+**Fil:** `src/main/java/com/example/genai/techniques/responsibleai/ResponsibleAIDemo.java`
 
 ### Vad detta exempel lär ut
 
-Exemplet för ansvarsfull AI visar vikten av att implementera säkerhetsåtgärder i AI-applikationer. Det demonstrerar hur moderna AI-säkerhetssystem fungerar genom två primära mekanismer: hårda blockeringar (HTTP 400-fel från säkerhetsfilter) och mjuka avslag (artiga "Jag kan inte hjälpa till med det"-svar från modellen själv). Detta exempel visar hur produktions-AI-applikationer ska hantera överträdelser av innehållspolicys på ett smidigt sätt genom korrekt undantagshantering, avslagupptäckt, användarfeedback-mekanismer och fallback-responsstrategier.
+Exemplet Ansvarsfull AI visar vikten av att implementera säkerhetsåtgärder i AI-applikationer. Det demonstrerar hur moderna AI-säkerhetssystem fungerar via två huvudsakliga mekanismer: hårda blockeringar (HTTP 400-fel från säkerhetsfilter) och mjuka avslag (artiga "Jag kan tyvärr inte hjälpa till med det" svar från modellen själv). Detta exempel visar hur produktions-AI-applikationer ska hantera innehållspolicysbrott på ett smidigt sätt genom korrekt undantagshantering, avslagdetektion, användarfeedbackmekanismer och fallback-svar.
 
-> **Obs:** Detta exempel använder `gpt-4o-mini` eftersom det ger mer konsekventa och tillförlitliga säkerhetssvar för olika typer av potentiellt skadligt innehåll, vilket säkerställer att säkerhetsmekanismerna demonstreras korrekt.
+> **Notera**: Detta exempel använder `gpt-4o-mini` eftersom det ger mer konsekventa och pålitliga säkerhetssvar över olika typer av potentiellt skadligt innehåll, vilket säkerställer att säkerhetsmekanismer kan demonstreras korrekt.
 
 ### Viktiga kodkoncept
 
-#### 1. Testmiljö för säkerhet
+#### 1. Säkerhetstest-ramverk
 ```java
 private void testPromptSafety(String prompt, String category) {
     try {
@@ -288,7 +286,7 @@ private void testPromptSafety(String prompt, String category) {
         ChatCompletions response = client.getChatCompletions(modelId, options);
         String content = response.getChoices().get(0).getMessage().getContent();
         
-        // Kontrollera om modellen avvisade förfrågan (mjuk avvisning)
+        // Kontrollera om modellen vägrade förfrågan (mjuk vägran)
         if (isRefusalResponse(content)) {
             System.out.println("[REFUSED BY MODEL]");
             System.out.println("✓ This is GOOD - the AI refused to generate harmful content!");
@@ -325,23 +323,23 @@ private boolean isRefusalResponse(String response) {
 ```
 
 #### 2. Testade säkerhetskategorier
-- Våld/skadliga instruktioner
+- Vålds-/skadeinstruktioner
 - Hatretorik
-- Integritetskränkningar
+- Integritetsöverträdelser
 - Medicinsk felinformation
 - Olagliga aktiviteter
 
 ### Kör exemplet
 ```bash
-mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleGithubModels"
+mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleAIDemo"
 ```
 
-### Vad händer när du kör det
+### Vad som händer när du kör det
 
-Programmet testar olika skadliga promptar och visar hur AI-säkerhetssystemet fungerar genom två mekanismer:
+Programmet testar olika skadliga promptar och visar hur AI:s säkerhetssystem fungerar genom två mekanismer:
 
 1. **Hårda blockeringar**: HTTP 400-fel när innehåll blockeras av säkerhetsfilter innan det når modellen
-2. **Mjuka avslag**: Modellen svarar med artiga avslag som "Jag kan inte hjälpa till med det" (vanligast med moderna modeller)
+2. **Mjuka avslag**: Modellen svarar med artiga avslag som "Jag kan tyvärr inte hjälpa till med det" (vanligast med moderna modeller)
 3. **Säkert innehåll**: Tillåter legitima förfrågningar att genereras normalt
 
 Förväntad utmatning för skadliga promptar:
@@ -353,34 +351,32 @@ Status: [REFUSED BY MODEL]
 ✓ This is GOOD - the AI refused to generate harmful content!
 ```
 
-Detta demonstrerar att **både hårda blockeringar och mjuka avslag indikerar att säkerhetssystemet fungerar korrekt**.
+Detta visar att **både hårda blockeringar och mjuka avslag indikerar att säkerhetssystemet fungerar korrekt**.
 
-## Common Patterns Across Examples
+## Vanliga mönster i exemplen
 
-### Authentication Pattern
-Alla exempel använder detta mönster för att autentisera med GitHub Models:
+### Autentiseringsmönster
+Alla exempel använder detta keyless-mönster för autentisering med Azure AI Foundry:
 
 ```java
-String pat = System.getenv("GITHUB_TOKEN");
-TokenCredential credential = new StaticTokenCredential(pat);
 OpenAIClient client = new OpenAIClientBuilder()
-    .endpoint("https://models.inference.ai.azure.com")
-    .credential(credential)
+    .endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"))
+    .credential(new DefaultAzureCredentialBuilder().build())
     .buildClient();
 ```
 
-### Error Handling Pattern
+### Felhanteringsmönster
 ```java
 try {
     // AI-operation
 } catch (HttpResponseException e) {
-    // Hantera API-fel (gränser för hastighet, säkerhetsfilter)
+    // Hantera API-fel (gränser för förfrågningar, säkerhetsfilter)
 } catch (Exception e) {
-    // Hantera allmänna fel (nätverk, tolkning)
+    // Hantera allmänna fel (nätverk, parsning)
 }
 ```
 
-### Message Structure Pattern
+### Meddelandestruktur-mönster
 ```java
 List<ChatRequestMessage> messages = List.of(
     new ChatRequestSystemMessage("Set AI behavior"),
@@ -388,32 +384,32 @@ List<ChatRequestMessage> messages = List.of(
 );
 ```
 
-## Next Steps
+## Nästa steg
 
-Redo att använda dessa tekniker i praktiken? Låt oss bygga riktiga applikationer!
+Redo att börja använda dessa tekniker? Låt oss bygga riktiga applikationer!
 
-[Chapter 04: Practical samples](../04-PracticalSamples/README.md)
+[Kapitel 04: Praktiska exempel](../04-PracticalSamples/README.md)
 
-## Troubleshooting
+## Felsökning
 
-### Common Issues
+### Vanliga problem
 
-**"GITHUB_TOKEN not set"**
-- Kontrollera att du har satt miljövariabeln
-- Verifiera att din token har `models:read`-behörighet
+**"AZURE_OPENAI_ENDPOINT inte satt"**
+- Se till att du har satt miljövariabeln
+- Kör `az login` — autentisering är nyckelfri (Microsoft Entra ID)
 
-**"No response from API"**
+**"Inget svar från API" / 401 / 403**
 - Kontrollera din internetanslutning
-- Verifiera att din token är giltig
-- Kontrollera om du har nått tak för förfrågningar
+- Verifiera att du är inloggad med `az login` och har rollen Cognitive Services OpenAI User
+- Kontrollera om du har nått kvotbegränsningar för utplaceringen
 
-**Maven-kompileringsfel**
-- Säkerställ att du har Java 21 eller högre
+**Maven kompileringsfel**
+- Kontrollera att du har Java 21 eller högre
 - Kör `mvn clean compile` för att uppdatera beroenden
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
 **Ansvarsfriskrivning**:
-Detta dokument har översatts med AI-översättningstjänsten [Co-op Translator](https://github.com/Azure/co-op-translator). Även om vi strävar efter noggrannhet, var vänlig notera att automatiska översättningar kan innehålla fel eller brister. Det ursprungliga dokumentet på dess modersmål bör anses vara den auktoritativa källan. För kritisk information rekommenderas professionell mänsklig översättning. Vi ansvarar inte för några missförstånd eller feltolkningar som uppstår från användningen av denna översättning.
+Detta dokument har översatts med hjälp av AI-översättningstjänsten [Co-op Translator](https://github.com/Azure/co-op-translator). Även om vi strävar efter noggrannhet, var vänlig notera att automatiska översättningar kan innehålla fel eller brister. Det ursprungliga dokumentet på dess modersmål bör betraktas som den auktoritativa källan. För kritisk information rekommenderas professionell mänsklig översättning. Vi ansvarar inte för några missförstånd eller feltolkningar som uppstår till följd av användningen av denna översättning.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

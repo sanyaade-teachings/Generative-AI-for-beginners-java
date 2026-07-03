@@ -1,122 +1,77 @@
-# Alapvető Chat az Azure OpenAI-val - Teljes Példa
+# Alap csevegés Azure AI Foundry-val - Végponttól végpontig példa
 
-Ez a példa bemutatja, hogyan lehet létrehozni egy egyszerű Spring Boot alkalmazást, amely csatlakozik az Azure OpenAI-hoz, és teszteli a beállításokat.
+Ez a példa egy egyszerű Spring Boot alkalmazás, amely az **Azure AI Foundry** modellhez kapcsolódik **kulcs nélküli hitelesítéssel** (Microsoft Entra ID), és teszteli a beállításokat. A Spring AI `ChatClient`-jét használja.
 
 ## Tartalomjegyzék
 
-- [Előfeltételek](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Gyors Kezdés](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Konfigurációs Opciók](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [1. opció: Környezeti változók (.env fájl) - Ajánlott](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [2. opció: GitHub Codespace Secrets](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Az Alkalmazás Futtatása](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Maven használatával](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [VS Code használatával](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Várt Kimenet](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Konfigurációs Referencia](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Környezeti Változók](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Spring Konfiguráció](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Hibaelhárítás](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Gyakori Problémák](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Hibakeresési Mód](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Következő Lépések](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Források](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
+- [Előfeltételek](#előfeltételek)
+- [Gyors kezdés](#gyors-kezdés)
+- [Hogyan működik a hitelesítés](#hogyan-működik-a-hitelesítés)
+- [Az alkalmazás futtatása](#az-alkalmazás-futtatása)
+  - [Maven használata](#maven-használata)
+  - [VS Code használata](#vs-code-használata)
+  - [Várt kimenet](#várt-kimenet)
+- [Konfigurációs hivatkozás](#konfigurációs-hivatkozás)
+  - [Környezeti változók](#környezeti-változók)
+  - [Spring konfiguráció](#spring-konfiguráció)
+- [Hibaelhárítás](#hibaelhárítás)
+  - [Gyakori hibák](#gyakori-hibák)
+  - [Hibakeresési mód](#hibakeresési-mód)
+- [Következő lépések](#következő-lépések)
+- [Források](#források)
 
 ## Előfeltételek
 
-Mielőtt futtatnád ezt a példát, győződj meg róla, hogy:
+A példa futtatása előtt győződj meg róla, hogy rendelkezel:
 
-- Teljesítetted az [Azure OpenAI beállítási útmutatót](../../getting-started-azure-openai.md)  
-- Telepítetted az Azure OpenAI erőforrást (az Azure AI Foundry portálon keresztül)  
-- Telepítetted a gpt-4o-mini modellt (vagy alternatívát)  
-- Rendelkezel API kulccsal és végpont URL-lel az Azure-tól  
+- Egy Azure AI Foundry erőforrással, amelyen `gpt-4o-mini` telepítés fut — állítsd elő az `azd up` parancsal vagy kézzel a [Azure AI Foundry beállítási útmutató](../../getting-started-azure-openai.md) alapján
+- A **Cognitive Services OpenAI User** szerepkörrel az erőforráson (ezt a Bicep sablonok automatikusan hozzárendelik)
+- A [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli) telepítve és bejelentkezve az `az login` parancs segítségével
+- Java 21+ és Maven 3.9+ verzióval
 
-## Gyors Kezdés
+> **API-kulcs nem szükséges** — a hitelesítés kulcs nélküli, Microsoft Entra ID-n keresztül történik.
+
+## Gyors kezdés
 
 ```bash
-# 1. Navigate to project
+# 1. Navigálj a projekthez
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 
-# 2. Configure credentials
-cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# 2. Jelentkezz be, hogy a kulcs nélküli hitelesítés tokenhez jusson
+az login
 
-# 3. Run the application
+# 3. Állítsd be a végpontot
+#    - Ha futtattad az `azd up` parancsot, a .env fájlt neked írták (ezt kihagyhatod).
+#    - Ellenkező esetben másold a sablont és állítsd be az AZURE_OPENAI_ENDPOINT értékét:
+cp .env.example .env
+
+# 4. Futtasd az alkalmazást
 mvn spring-boot:run
 ```
 
-## Konfigurációs Opciók
+## Hogyan működik a hitelesítés
 
-### 1. opció: Környezeti változók (.env fájl) - Ajánlott
+Ez a példa a **Microsoft Entra ID** segítségével hitelesít — nincs API-kulcs.
 
-**1. lépés: Hozd létre a konfigurációs fájlt**  
-```bash
-cp .env.example .env
-```
+Ha csak a `spring.ai.azure.openai.endpoint` van megadva (és nincs api-kulcs), a Spring AI az Azure OpenAI kliensét a [`DefaultAzureCredential`](https://learn.microsoft.com/java/api/com.azure.identity.defaultazurecredential) használatával építi fel. Ez a hitelesítő automatikusan megtalálja a tokenedet a helyi `az login` munkamenetből, vagy egy kezelt identitásból, ha Azure-ban futsz — így ugyanaz a kód mindkét helyen működik módosítás nélkül.
 
-**2. lépés: Add hozzá az Azure OpenAI hitelesítési adataidat**  
-```bash
-# Your Azure OpenAI API key (from Azure AI Foundry portal)
-AZURE_AI_KEY=your-actual-api-key-here
+## Az alkalmazás futtatása
 
-# Your Azure OpenAI endpoint URL (e.g., https://your-hub-name.openai.azure.com/)
-AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-> **Biztonsági Megjegyzés**:  
-> - Soha ne kötelezd el a `.env` fájlt verziókezelésbe  
-> - A `.env` fájl már szerepel a `.gitignore` fájlban  
-> - Tartsd biztonságban az API kulcsaidat, és rendszeresen cseréld őket  
-
-### 2. opció: GitHub Codespace Secrets
-
-GitHub Codespaces esetén állítsd be ezeket a titkokat a repódban:
-- `AZURE_AI_KEY` - Az Azure OpenAI API kulcsod
-- `AZURE_AI_ENDPOINT` - Az Azure OpenAI végpont URL-je
-
-Az alkalmazás automatikusan felismeri és használja ezeket a titkokat.
-
-### Alternatíva: Közvetlen Környezeti Változók
-
-<details>
-<summary>Platformspecifikus parancsok megtekintése</summary>
-
-**Linux/macOS (bash/zsh):**  
-```bash
-export AZURE_AI_KEY=your-actual-api-key-here
-export AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (Command Prompt):**  
-```cmd
-set AZURE_AI_KEY=your-actual-api-key-here
-set AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (PowerShell):**  
-```powershell
-$env:AZURE_AI_KEY="your-actual-api-key-here"
-$env:AZURE_AI_ENDPOINT="https://your-hub-name.openai.azure.com/"
-```
-</details>
-
-## Az Alkalmazás Futtatása
-
-### Maven használatával
+### Maven használata
 
 ```bash
 mvn spring-boot:run
 ```
 
-### VS Code használatával
+### VS Code használata
 
-1. Nyisd meg a projektet a VS Code-ban  
-2. Nyomd meg az `F5` gombot, vagy használd a "Run and Debug" panelt  
-3. Válaszd ki a "Spring Boot-BasicChatApplication" konfigurációt  
+1. Nyisd meg a projektet VS Code-ban
+2. Nyomd meg az `F5`-öt vagy használd a "Run and Debug" panelt
+3. Válaszd a "Spring Boot-BasicChatApplication" konfigurációt
 
-> **Megjegyzés**: A VS Code konfiguráció automatikusan betölti a .env fájlt  
+> **Megjegyzés**: A VS Code konfiguráció automatikusan betölti a `.env` fájlodat
 
-### Várt Kimenet
+### Várt kimenet
 
 ```
 Starting Basic Chat with Azure OpenAI...
@@ -132,65 +87,66 @@ AI, or Artificial Intelligence, is the simulation of human intelligence in machi
 Success! Azure OpenAI connection is working correctly.
 ```
 
-## Konfigurációs Referencia
+## Konfigurációs hivatkozás
 
-### Környezeti Változók
+### Környezeti változók
 
 | Változó | Leírás | Kötelező | Példa |
-|---------|--------|----------|-------|
-| `AZURE_AI_KEY` | Azure OpenAI API kulcs | Igen | `abc123...` |
-| `AZURE_AI_ENDPOINT` | Azure OpenAI végpont URL | Igen | `https://my-hub.openai.azure.com/` |
-| `AZURE_AI_MODEL_DEPLOYMENT` | Modell telepítési neve | Nem | `gpt-4o-mini` (alapértelmezett) |
+|----------|-------------|----------|---------|
+| `AZURE_OPENAI_ENDPOINT` | Foundry (Azure OpenAI) végpont URL | Igen | `https://my-resource.openai.azure.com/` |
+| `AZURE_OPENAI_DEPLOYMENT` | Csevegő modell telepítésének neve | Nem | `gpt-4o-mini` (alapértelmezett) |
 
-### Spring Konfiguráció
+> Nincs **API-kulcs** változó — a hitelesítés kulcs nélküli (Microsoft Entra ID az `az login`-en keresztül).
 
-Az `application.yml` fájl konfigurálja:  
-- **API kulcs**: `${AZURE_AI_KEY}` - Környezeti változóból  
-- **Végpont**: `${AZURE_AI_ENDPOINT}` - Környezeti változóból  
-- **Modell**: `${AZURE_AI_MODEL_DEPLOYMENT:gpt-4o-mini}` - Környezeti változóból alapértelmezéssel  
-- **Hőmérséklet**: `0.7` - Kreativitás szabályozása (0.0 = determinisztikus, 1.0 = kreatív)  
-- **Maximális Tokenek**: `500` - Maximális válasz hossz  
+### Spring konfiguráció
+
+Az `application.yml` fájl a következőket állítja be:
+- **Végpont**: `${AZURE_OPENAI_ENDPOINT}` - Környezeti változóból
+- **Telepítés**: `${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}` - Környezeti változóból, alapértelmezéssel
+- **Hitelesítés**: kulcs nélküli — nincs `api-key` megadva, ezért a Spring AI a `DefaultAzureCredential`-t használja
+- **Hőmérséklet**: `0.7` - Kreativitás szabályozása (0.0 = determinisztikus, 1.0 = kreatív)
+- **Maximális tokenek**: `500` - A válasz maximális hossza
 
 ## Hibaelhárítás
 
-### Gyakori Problémák
+### Gyakori hibák
 
 <details>
-<summary><strong>Hiba: "Az API kulcs nem érvényes"</strong></summary>
+<summary><strong>Hiba: 401 / "PermissionDenied" / token hibák</strong></summary>
 
-- Ellenőrizd, hogy az `AZURE_AI_KEY` helyesen van-e beállítva a `.env` fájlban  
-- Győződj meg róla, hogy az API kulcs pontosan lett másolva az Azure AI Foundry portálról  
-- Ellenőrizd, hogy nincsenek extra szóközök vagy idézőjelek a kulcs körül  
+- Futtasd az `az login` parancsot — kulcs nélküli hitelesítéshez aktív bejelentkezés szükséges a token megszerzéséhez
+- Ellenőrizd, hogy a fiókod rendelkezik a **Cognitive Services OpenAI User** szerepkörrel az erőforráson
+- Ha most rendelkezted hozzá a szerepkört, várj egy percet a terjedéséhez
+- Győződj meg arról, hogy a megfelelő bérlőnél/fióknál vagy (`az account show`)
 </details>
 
 <details>
-<summary><strong>Hiba: "A végpont nem érvényes"</strong></summary>
+<summary><strong>Hiba: "A végpont nem érvényes" / kapcsolat hibák</strong></summary>
 
-- Győződj meg róla, hogy az `AZURE_AI_ENDPOINT` tartalmazza a teljes URL-t (pl. `https://your-hub-name.openai.azure.com/`)  
-- Ellenőrizd a perjelek következetességét  
-- Győződj meg róla, hogy a végpont megegyezik az Azure telepítési régiójával  
+- Győződj meg róla, hogy az `AZURE_OPENAI_ENDPOINT` a teljes alap URL (pl. `https://your-resource.openai.azure.com/`)
+- Ellenőrizd a perjeleket a végén megfelelően
+- Ellenőrizd, hogy a végpont egyezik a kiépített erőforrással (`azd env get-values`)
 </details>
 
 <details>
-<summary><strong>Hiba: "A telepítés nem található"</strong></summary>
+<summary><strong>Hiba: "Nem található a telepítés"</strong></summary>
 
-- Ellenőrizd, hogy a modell telepítési neve pontosan megegyezik az Azure-ban telepítettel  
-- Győződj meg róla, hogy a modell sikeresen telepítve és aktív  
-- Próbáld meg az alapértelmezett telepítési nevet használni: `gpt-4o-mini`  
+- Ellenőrizd, hogy az `AZURE_OPENAI_DEPLOYMENT` megegyezik egy telepítés nevével az Azure-ban
+- Győződj meg róla, hogy a modell sikeresen telepítve és aktív
+- Az alapértelmezett telepítés neve `gpt-4o-mini`
 </details>
 
 <details>
-<summary><strong>VS Code: A környezeti változók nem töltődnek be</strong></summary>
+<summary><strong>VS Code: Nem töltődnek be a környezeti változók</strong></summary>
 
-- Győződj meg róla, hogy a `.env` fájl a projekt gyökérkönyvtárában van (ugyanazon a szinten, mint a `pom.xml`)  
-- Próbáld meg futtatni a `mvn spring-boot:run` parancsot a VS Code integrált termináljában  
-- Ellenőrizd, hogy a VS Code Java bővítmény megfelelően telepítve van  
-- Győződj meg róla, hogy az indítási konfiguráció tartalmazza: `"envFile": "${workspaceFolder}/.env"`  
+- Győződj meg róla, hogy a `.env` fájl a projekt gyökérkönyvtárában van (ugyanolyan szinten, mint a `pom.xml`)
+- Próbáld meg futtatni a `mvn spring-boot:run` parancsot a VS Code integrált termináljában
+- Ellenőrizd, hogy a VS Code Java bővítmény megfelelően telepítve van
 </details>
 
-### Hibakeresési Mód
+### Hibakeresési mód
 
-A részletes naplózás engedélyezéséhez kommenteld ki ezeket a sorokat az `application.yml` fájlban:
+A részletes naplózás engedélyezéséhez távolítsd el ezeknek a soroknak a kommentelését az `application.yml` fájlban:
 
 ```yaml
 logging:
@@ -199,18 +155,22 @@ logging:
     com.azure: DEBUG
 ```
 
-## Következő Lépések
+## Következő lépések
 
-**A beállítás kész!** Folytasd a tanulási utadat:
+**Beállítás kész!** Folytasd a tanulási utadat:
 
-[3. fejezet: Generatív AI alaptechnikák](../../../03-CoreGenerativeAITechniques/README.md)
+[3. fejezet: Alapvető generatív AI technikák](../../../03-CoreGenerativeAITechniques/README.md)
 
 ## Források
 
-- [Spring AI Azure OpenAI Dokumentáció](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)  
-- [Azure OpenAI Szolgáltatás Dokumentáció](https://learn.microsoft.com/azure/ai-services/openai/)  
-- [Azure AI Foundry Portál](https://ai.azure.com/)  
-- [Azure AI Foundry Dokumentáció](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project)  
+- [Spring AI Azure OpenAI dokumentáció](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
+- [Kulcs nélküli hitelesítés Microsoft Entra ID-val](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
+- [Azure AI Foundry portál](https://ai.azure.com/)
+- [Azure AI Foundry dokumentáció](https://learn.microsoft.com/azure/ai-foundry/)
 
-**Felelősségkizárás**:  
-Ez a dokumentum az [Co-op Translator](https://github.com/Azure/co-op-translator) AI fordítási szolgáltatás segítségével készült. Bár törekszünk a pontosságra, kérjük, vegye figyelembe, hogy az automatikus fordítások hibákat vagy pontatlanságokat tartalmazhatnak. Az eredeti dokumentum az eredeti nyelvén tekintendő hiteles forrásnak. Kritikus információk esetén javasolt professzionális, emberi fordítást igénybe venni. Nem vállalunk felelősséget a fordítás használatából eredő félreértésekért vagy téves értelmezésekért.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Jogi nyilatkozat**:
+Ez a dokumentum az AI fordítási szolgáltatás, a [Co-op Translator](https://github.com/Azure/co-op-translator) segítségével készült. Bár az pontosságra törekszünk, kérjük, vegye figyelembe, hogy az automatikus fordítások hibákat vagy pontatlanságokat tartalmazhatnak. Az eredeti dokumentum az anyanyelvén tekintendő hiteles forrásnak. Fontos információk esetén professzionális emberi fordítást javasolunk. Nem vállalunk felelősséget semmilyen félreértésért vagy téves értelmezésért, amely ebből a fordításból ered.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

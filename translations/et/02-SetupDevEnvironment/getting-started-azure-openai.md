@@ -1,140 +1,152 @@
-# Azure OpenAI arenduskeskkonna seadistamine
+# Arenduskeskkonna seadistamine Azure AI Foundry jaoks
 
-> **Kiire alustamine**: See juhend on mõeldud Azure OpenAI seadistamiseks. Tasuta mudelitega koheseks alustamiseks kasuta [GitHub Models with Codespaces](./README.md#quick-start-cloud).
+> See juhend seab selle kursuse Java AI rakenduste jaoks üles **Azure AI Foundry** mudelid, kasutades **võtmeta** autentimist (Microsoft Entra ID) — pole vaja API võtmeid hallata. Oled tööriistadega uus? Alusta [arenduskeskkonna juhendist](./README.md).
 
-See juhend aitab sul seadistada Azure AI Foundry mudeleid Java AI rakenduste jaoks selles kursuses.
+See juhend seab selle kursuse Java AI rakenduste jaoks üles **Azure AI Foundry** mudelid. Sul on kaks võimalust:
+
+- **Variant A — Provisioneeri `azd` + Bicep abil (soovitatav):** üks käsklus viib läbi Foundry konto ja mudelite saidi loomise koodi abil. Ei mingit portaalis klõpsimist.
+- **Variant B — Loo ressursid käsitsi** Azure AI Foundry portaali kaudu.
+
+Mõlemad teed kasutavad **võtmeta autentimist** (Microsoft Entra ID) — pole API võtmeid, mida kopeerida ega lekkida.
 
 ## Sisukord
 
-- [Kiire ülevaade seadistusest](../../../02-SetupDevEnvironment)
-- [Samm 1: Loo Azure AI Foundry ressursid](../../../02-SetupDevEnvironment)
-  - [Loo Hub ja Projekt](../../../02-SetupDevEnvironment)
-  - [Paigalda GPT-4o-mini mudel](../../../02-SetupDevEnvironment)
-- [Samm 2: Loo oma Codespace](../../../02-SetupDevEnvironment)
-- [Samm 3: Konfigureeri oma keskkond](../../../02-SetupDevEnvironment)
-- [Samm 4: Testi oma seadistust](../../../02-SetupDevEnvironment)
-- [Mis edasi?](../../../02-SetupDevEnvironment)
-- [Ressursid](../../../02-SetupDevEnvironment)
-- [Täiendavad ressursid](../../../02-SetupDevEnvironment)
+- [Mida luuakse](#mida-luuakse)
+- [Eeltingimused](#eeltingimused)
+- [Variant A: Provisioneeri azd + Bicep abil (Soovitatav)](#option-a-provision-with-azd--bicep-recommended)
+- [Variant B: Loo ressursid käsitsi](#variant-b-loo-ressursid-käsitsi)
+- [Seadista oma keskkond](#seadista-oma-keskkond)
+- [Testi oma seadistust](#testi-oma-seadistust)
+- [Mis järgmiseks?](#mis-järgmiseks)
+- [Ressursid](#ressursid)
+- [Lisamaterjalid](#lisamaterjalid)
 
-## Kiire ülevaade seadistusest
+## Mida luuakse
 
-1. Loo Azure AI Foundry ressursid (Hub, Projekt, Mudel)
-2. Loo Codespace Java arenduskonteineriga
-3. Konfigureeri oma .env fail Azure OpenAI mandaatidega
-4. Testi oma seadistust näidisprojektiga
+[`infra/`](../../../02-SetupDevEnvironment/infra) Bicep mallid loovad:
 
-## Samm 1: Loo Azure AI Foundry ressursid
+- **Azure AI Foundry** konto (`Microsoft.CognitiveServices/accounts`, tüüp `AIServices`) koos projektiga
+- **vestlus** juurutuse — `gpt-4o-mini`
+- **embedimise** juurutuse — `text-embedding-3-small` (kasutatakse hilisemates peatükkides)
+- **võtmeta rolli määramise** (`Cognitive Services OpenAI User`), mis võimaldab sisselogimist `az login` kaudu võtmete haldamise asemel
 
-### Loo Hub ja Projekt
+## Eeltingimused
 
-1. Mine [Azure AI Foundry portaalile](https://ai.azure.com/) ja logi sisse
-2. Klõpsa **+ Create** → **New hub** (või navigeeri **Management** → **All hubs** → **+ New hub**)
-3. Konfigureeri oma hub:
-   - **Hubi nimi**: nt "MyAIHub"
-   - **Tellimus**: Vali oma Azure tellimus
-   - **Ressursigrupp**: Loo uus või vali olemasolev
-   - **Asukoht**: Vali endale lähim
-   - **Salvestuskonto**: Kasuta vaikimisi või konfigureeri kohandatud
-   - **Key vault**: Kasuta vaikimisi või konfigureeri kohandatud
-   - Klõpsa **Next** → **Review + create** → **Create**
-4. Kui hub on loodud, klõpsa **+ New project** (või **Create project** hubi ülevaates)
-   - **Projekti nimi**: nt "GenAIJava"
-   - Klõpsa **Create**
+- [Azure tellimus](https://azure.microsoft.com/free/)
+- [Azure Developer CLI (`azd`)](https://aka.ms/azure-dev/install)
+- [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli)
+- [Java 21+](https://learn.microsoft.com/java/openjdk/download) ja [Maven 3.9+](https://maven.apache.org/download.cgi)
 
-### Paigalda GPT-4o-mini mudel
+## Variant A: Provisioneeri azd + Bicep abil (Soovitatav)
 
-1. Oma projektis mine **Model catalog** ja otsi **gpt-4o-mini**
-   - *Alternatiiv: Mine **Deployments** → **+ Create deployment***
-2. Klõpsa **Deploy** gpt-4o-mini mudeli kaardil
-3. Konfigureeri paigaldus:
-   - **Paigalduse nimi**: "gpt-4o-mini"
-   - **Mudeli versioon**: Kasuta uusimat
-   - **Paigalduse tüüp**: Standard
-4. Klõpsa **Deploy**
-5. Kui paigaldus on tehtud, mine **Deployments** vahekaardile ja kopeeri järgmised väärtused:
-   - **Paigalduse nimi** (nt "gpt-4o-mini")
-   - **Siht URI** (nt `https://your-hub-name.openai.azure.com/`) 
-      > **Oluline**: Kopeeri ainult baas-URL (nt `https://myhub.openai.azure.com/`) mitte täielikku lõpp-punkti rada.
-   - **Võti** (Keys and Endpoint sektsioonist)
-
-> **Kas ikka on probleeme?** Külastage ametlikku [Azure AI Foundry dokumentatsiooni](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project)
-
-## Samm 2: Loo oma Codespace
-
-1. Forki see repositoorium oma GitHubi kontole
-   > **Märkus**: Kui soovid muuta põhikonfiguratsiooni, vaata [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
-2. Oma forkitud repositooriumis klõpsa **Code** → **Codespaces** vahekaart
-3. Klõpsa **...** → **New with options...**
-![codespace'i loomine valikutega](../../../translated_images/et/codespaces.9945ded8ceb431a5.webp)
-4. Vali **Dev container configuration**: 
-   - **Generative AI Java Development Environment**
-5. Klõpsa **Create codespace**
-
-## Samm 3: Konfigureeri oma keskkond
-
-Kui su Codespace on valmis, seadista oma Azure OpenAI mandaat:
-
-1. **Navigeeri näidisprojekti juurde repositooriumi juurest:**
-   ```bash
-   cd 02-SetupDevEnvironment/examples/basic-chat-azure
-   ```
-
-2. **Loo oma .env fail:**
-   ```bash
-   cp .env.example .env
-   ```
-
-3. **Muuda .env faili oma Azure OpenAI mandaatidega:**
-   ```bash
-   # Your Azure OpenAI API key (from Azure AI Foundry portal)
-   AZURE_AI_KEY=your-actual-api-key-here
-   
-   # Your Azure OpenAI endpoint URL (e.g., https://myhub.openai.azure.com/)
-   AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-   ```
-
-   > **Turvanõuanne**: 
-   > - Ära kunagi commit'i oma `.env` faili versioonihaldusesse
-   > - `.env` fail on juba lisatud `.gitignore` faili
-   > - Hoia oma API võtmed turvaliselt ja uuenda neid regulaarselt
-
-## Samm 4: Testi oma seadistust
-
-Käivita näidisrakendus, et testida oma Azure OpenAI ühendust:
+Kaustast `02-SetupDevEnvironment`:
 
 ```bash
+cd 02-SetupDevEnvironment
+
+# Logi sisse (mõlemad tööriistad)
+azd auth login
+az login
+
+# Hangi Foundry konto ja mudelite juurutused
+azd up
+```
+
+`azd` küsib **keskkonna nime** (näiteks `genai-java`) ja **regiooni**. Vali piirkond, kus on saadaval `gpt-4o-mini` ja `text-embedding-3-small` — näiteks `eastus2` või `swedencentral`.
+
+Kui provisioneerimine lõppeb, teeb azd:
+
+1. Juurutab kõik, mis on defineeritud [`infra/main.bicep`](../../../02-SetupDevEnvironment/infra/main.bicep) failis.
+2. Käivitab postprovisioneerimise hook’i, mis kirjutab faili [`examples/basic-chat-azure/.env`](../../../02-SetupDevEnvironment/examples/basic-chat-azure) koos sinu lõpp-punkti ja juurutuste nimedega (ilma saladusteta).
+
+> **Nipp:** Käivita `azd up` uuesti iga kord muudatuste rakendamiseks. Kustuta kõik ja lõpeta kulutamine käsuga `azd down`.
+
+Sätteid nägemiseks:
+
+```bash
+azd env get-values
+```
+
+Nüüd liigu edasi [testi oma seadistust](#testi-oma-seadistust).
+
+## Variant B: Loo ressursid käsitsi
+
+Eelistad portaali? Loo ressursid käsitsi:
+
+1. Mine [Azure AI Foundry portaali](https://ai.azure.com/) ja logi sisse.
+2. **Loo projekt** (see loob ka AI Foundry ressursi). Anna sellele nimi, näiteks `GenAIJava`.
+3. Projektis ava **Models + endpoints** → **Deploy model** → **Deploy base model**.
+4. Juuruta **gpt-4o-mini** (juurutuse nimi `gpt-4o-mini`). Korda protseduuri **text-embedding-3-small** jaoks, kui soovid embedimise näiteid.
+5. Ava **Overview**, kopeeri **lõpp-punkt** (näiteks `https://<resource>.openai.azure.com/`).
+6. Anna endale võtmeta ligipääs: ava ressursil **Juurdepääsu juhtimine (IAM)** → **Lisa rolli määramine** → lisa roll **Cognitive Services OpenAI User** oma kontole.
+
+> **Probleemid jätkuvad?** Vaata [Azure AI Foundry dokumentatsiooni](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects).
+
+## Seadista oma keskkond
+
+**Kui kasutasid varianti A (`azd up`)**, on sinu seaded juba olemas — pole midagi lisaks seadistada. Liigu edasi [testi oma seadistust](#testi-oma-seadistust).
+
+**Kui kasutasid varianti B (käsitsi)**, loo näite `.env` fail ise:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+cp .env.example .env
+```
+
+Redigeeri `.env` faili oma lõpp-punktiga (ilma võtmeta — autentimine on võtmeta):
+
+```bash
+AZURE_OPENAI_ENDPOINT=https://<your-resource>.openai.azure.com/
+AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini
+```
+
+> **Turvalisuse märkus:** API võtit pole vaja salvestada. Autentid Microsoft Entra ID abil kas `az login` kaudu (kohapeal) või hallatud identiteediga (Azure’is). `.env` fail sisaldab ainult mitte-saladuslikke sätteid ja on juba `.gitignore` failiga kaetud.
+
+## Testi oma seadistust
+
+Veendu, et oled sisse logitud, et võtmeta autentimine saaks tokeni ja käivita näide:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+
+az login          # kui te pole veel sisse logitud
 mvn clean spring-boot:run
 ```
 
-Sa peaksid nägema vastust GPT-4o-mini mudelilt!
+Peaksid nägema vastust mudelilt `gpt-4o-mini`!
 
-> **VS Code kasutajad**: Sa võid ka vajutada `F5` VS Code'is, et rakendust käivitada. Käivitamise konfiguratsioon on juba seadistatud, et laadida automaatselt sinu `.env` fail.
+> **VS Code kasutajatele:** Vajuta `F5`, et käivitada. Rakendus laadib sinu `.env` automaatselt.
 
-> **Täielik näide**: Vaata [End-to-End Azure OpenAI Example](./examples/basic-chat-azure/README.md) üksikasjalike juhiste ja tõrkeotsingu jaoks.
+> **Täielik näide:** Vaata [Basic Chat with Azure AI Foundry näidet](./examples/basic-chat-azure/README.md) detailide ja veaotsingu jaoks.
 
-## Mis edasi?
+## Mis järgmiseks?
 
-**Seadistus on valmis!** Sul on nüüd:
-- Azure OpenAI koos gpt-4o-mini paigaldatud
-- Kohalik .env faili konfiguratsioon
-- Java arenduskeskkond valmis
+**Seadistamine on lõpetatud!** Sul on nüüd:
 
-**Jätka** [3. peatükk: Põhilised generatiivse AI tehnikad](../03-CoreGenerativeAITechniques/README.md), et alustada AI rakenduste loomist!
+- Azure AI Foundry koos `gpt-4o-mini` ja `text-embedding-3-small` mudelitega juurutatud
+- Võtmeta autentimine (Microsoft Entra ID) — pole võtmete haldamist
+- Kohalik `.env` sinu lõpp-punktide ja juurutuste nimedega
+- Java arenduskeskkond valmis kasutamiseks
+
+**Jätka** peatüki [3 juurde: Core Generative AI Techniques](../03-CoreGenerativeAITechniques/README.md), et alustada AI rakenduste loomist!
 
 ## Ressursid
 
-- [Azure AI Foundry dokumentatsioon](https://learn.microsoft.com/azure/ai-services/)
-- [Spring AI Azure OpenAI dokumentatsioon](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
+- [Azure Developer CLI (azd)](https://aka.ms/azure-dev/install)
+- [Võtmeta autentimine Microsoft Entra ID-ga](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
+- [Azure AI Foundry dokumentatsioon](https://learn.microsoft.com/azure/ai-foundry/)
+- [Spring AI Azure OpenAI dokumentatsioon](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
 - [Azure OpenAI Java SDK](https://learn.microsoft.com/java/api/overview/azure/ai-openai-readme)
 
-## Täiendavad ressursid
+## Lisamaterjalid
 
 - [Laadi alla VS Code](https://code.visualstudio.com/Download)
 - [Hangi Docker Desktop](https://www.docker.com/products/docker-desktop)
-- [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
+- [Dev Container konfiguratsioon](../../../.devcontainer/devcontainer.json)
 
 ---
 
-**Lahtiütlus**:  
-See dokument on tõlgitud, kasutades AI tõlketeenust [Co-op Translator](https://github.com/Azure/co-op-translator). Kuigi püüame tagada täpsust, palun arvestage, et automaatsed tõlked võivad sisaldada vigu või ebatäpsusi. Algne dokument selle algses keeles tuleks lugeda autoriteetseks allikaks. Olulise teabe puhul on soovitatav kasutada professionaalset inimtõlget. Me ei vastuta selle tõlke kasutamisest tulenevate arusaamatuste või valede tõlgenduste eest.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Lahtiütlus**:
+See dokument on tõlgitud kasutades AI tõlketeenust [Co-op Translator](https://github.com/Azure/co-op-translator). Kuigi me püüdleme täpsuse poole, palun pange tähele, et automatiseeritud tõlgetes võib esineda vigu või ebatäpsusi. Originaaldokument selle emakeeles tuleks pidada autoriteetseks allikaks. Olulise teabe puhul soovitatakse kasutada professionaalset inimtõlget. Me ei vastuta selle tõlkega seotud eksimustest või valesti mõistmistest.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

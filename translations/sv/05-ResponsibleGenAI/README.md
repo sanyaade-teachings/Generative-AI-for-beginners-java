@@ -1,101 +1,97 @@
 # Ansvarsfull Generativ AI
 
-[![Responsible Generative AI](https://img.youtube.com/vi/rF-b2BTSMQ4/0.jpg)](https://www.youtube.com/watch?v=rF-b2BTSMQ4 "Responsible Generative AI")
 
-> **Video**: [Titta på videoöversikten för denna lektion](https://www.youtube.com/watch?v=rF-b2BTSMQ4).
-> Du kan också klicka på miniatyrbilden ovan för att öppna samma video.
+## Vad Du Kommer Lära Dig
 
-## Vad du kommer att lära dig
-
-- Lär dig de etiska övervägandena och bästa praxis som är viktiga för AI-utveckling
-- Bygg in innehållsfiltrering och säkerhetsåtgärder i dina applikationer
-- Testa och hantera AI-säkerhetssvar med GitHub Modellers inbyggda skydd
-- Använd ansvarsfulla AI-principer för att skapa säkra, etiska AI-system
+- Lära dig de etiska övervägandena och bästa praxis som är viktiga för AI-utveckling
+- Bygga in innehållsfiltrering och säkerhetsåtgärder i dina applikationer
+- Testa och hantera AI-säkerhetsrespons med hjälp av Azure AI Foundrys inbyggda innehållsfiltrering
+- Tillämpa principer för ansvarsfull AI för att skapa säkra, etiska AI-system
 
 ## Innehållsförteckning
 
 - [Introduktion](#introduktion)
-- [GitHub Modellers inbyggda säkerhet](#github-modellers-inbyggda-säkerhet)
-- [Praktiskt exempel: Demo av ansvarsfull AI-säkerhet](#praktiskt-exempel-demo-av-ansvarsfull-ai-säkerhet)
-  - [Vad demon visar](#vad-demon-visar)
+- [Azure AI Foundry Innehållssäkerhet](#azure-ai-foundry-innehållssäkerhet)
+- [Praktiskt Exempel: Ansvarsfull AI Säkerhetsdemo](#praktiskt-exempel-ansvarsfull-ai-säkerhetsdemo)
+  - [Vad Demon Visar](#vad-demon-visar)
   - [Installationsinstruktioner](#installationsinstruktioner)
-  - [Köra demon](#köra-demon)
-  - [Förväntad output](#förväntad-output)
-- [Bästa praxis för ansvarsfull AI-utveckling](#bästa-praxis-för-ansvarsfull-ai-utveckling)
-- [Viktig notering](#viktig-notering)
+  - [Köra Demon](#köra-demon)
+  - [Förväntat Resultat](#förväntat-resultat)
+- [Bästa Praxis för Ansvarsfull AI-Utveckling](#bästa-praxis-för-ansvarsfull-ai-utveckling)
+- [Viktig Notis](#viktig-notis)
 - [Sammanfattning](#sammanfattning)
 - [Kursavslutning](#kursavslutning)
-- [Nästa steg](#nästa-steg)
+- [Nästa Steg](#nästa-steg)
 
 ## Introduktion
 
-Detta sista kapitel fokuserar på de kritiska aspekterna av att bygga ansvarsfulla och etiska generativa AI-applikationer. Du kommer lära dig hur du implementerar säkerhetsåtgärder, hanterar innehållsfiltrering och använder bästa praxis för ansvarsfull AI-utveckling med hjälp av de verktyg och ramverk som täckts i tidigare kapitel. Att förstå dessa principer är avgörande för att bygga AI-system som inte bara är tekniskt imponerande utan också säkra, etiska och pålitliga.
+Detta sista kapitel fokuserar på de kritiska aspekterna av att bygga ansvarsfulla och etiska generativa AI-applikationer. Du kommer att lära dig hur du implementerar säkerhetsåtgärder, hanterar innehållsfiltrering och tillämpar bästa praxis för ansvarsfull AI-utveckling med hjälp av de verktyg och ramverk som behandlats i tidigare kapitel. Att förstå dessa principer är avgörande för att bygga AI-system som inte bara är tekniskt imponerande utan också säkra, etiska och pålitliga.
 
-## GitHub Modellers inbyggda säkerhet
+## Azure AI Foundry Innehållssäkerhet
 
-GitHub Modeller levereras med grundläggande innehållsfiltrering direkt från början. Det är som att ha en vänlig vakthavande portvakt vid din AI-klubb - inte den mest sofistikerade, men klarar jobbet för grundläggande scenarier.
+Azure AI Foundry-modeller levereras med innehållsfiltrering färdigintegrerat, drivs av Azure AI Content Safety. Skadliga prompts och svar filtreras automatiskt över flera kategorier innan de någonsin når — eller lämnar — modellen.
 
-**Vad GitHub Modeller skyddar mot:**
-- **Skadligt innehåll**: Blockerar uppenbart våldsamt, sexuellt eller farligt innehåll
-- **Grundläggande hatretorik**: Filtrerar tydligt diskriminerande språk
-- **Enkla jailbreak-försök**: Motstår grundläggande försök att kringgå säkerhetsbarriärer
+**Vad Azure AI Foundry Skyddar Mot:**
+- **Skadligt Innehåll**: Blockerar våldsamt, sexuellt, självskadeinriktat eller farligt innehåll
+- **Hatretorik**: Filtrerar diskriminerande språk
+- **Jailbreaks**: Upptäcker prompt-injektion och försök att kringgå säkerhetsbarriärer
 
-## Praktiskt exempel: Demo av ansvarsfull AI-säkerhet
+## Praktiskt Exempel: Ansvarsfull AI Säkerhetsdemo
 
-Detta kapitel innehåller en praktisk demonstration av hur GitHub Modeller implementerar ansvarsfulla AI-säkerhetsåtgärder genom att testa promptar som potentiellt kan bryta mot säkerhetsriktlinjer.
+Detta kapitel inkluderar en praktisk demonstration av hur Azure AI Foundry implementerar ansvarsfulla AI-säkerhetsåtgärder genom att testa prompts som potentiellt kan bryta mot säkerhetsriktlinjer.
 
-### Vad demon visar
+### Vad Demon Visar
 
-`ResponsibleGithubModels`-klassen följer detta flöde:
-1. Initiera GitHub Modeller-klienten med autentisering
-2. Testa skadliga promptar (våld, hatretorik, desinformation, olagligt innehåll)
-3. Skicka varje prompt till GitHub Modellers API
-4. Hantera svar: hårda blockeringar (HTTP-fel), mjuka avslag (hövliga ”Jag kan inte hjälpa till”-svar) eller normal innehållsgenerering
-5. Visa resultat som visar vilket innehåll som blockerats, nekat eller tillåtits
-6. Testa säkert innehåll för jämförelse
+`ResponsibleAIDemo`-klassen följer detta flöde:
+1. Initierar Azure AI Foundry-klienten med nyckelfri autentisering (Microsoft Entra ID)
+2. Testar skadliga prompts (våld, hatretorik, desinformation, olagligt innehåll)
+3. Skickar varje prompt till Azure AI Foundry-modellen
+4. Hanterar svar: hårda blocker (HTTP-fel), mjuka avslag (hövliga "Jag kan inte hjälpa till" svar) eller normalt innehållsgenerering
+5. Visar resultat som anger vilket innehåll som blockerades, avvisades eller tilläts
+6. Testar säkert innehåll för jämförelse
 
 ![Responsible AI Safety Demo](../../../translated_images/sv/responsible.e4f51a917bafa4bf.webp)
 
 ### Installationsinstruktioner
 
-1. **Ställ in din GitHub Personliga Åtkomsttoken:**
-   
-   På Windows (Kommandoprompt):
+1. **Logga in och ange din Azure AI Foundry-endpoint** (nyckelfri autentisering — ingen API-nyckel). Kör `az login` först, sedan:
+
+   På Windows (Command Prompt):
    ```cmd
-   set GITHUB_TOKEN=your_github_token_here
+   set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    ```
    
    På Windows (PowerShell):
    ```powershell
-   $env:GITHUB_TOKEN="your_github_token_here"
+   $env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
    ```
    
    På Linux/macOS:
    ```bash
-   export GITHUB_TOKEN=your_github_token_here
+   export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    ```   
 
-### Köra demon
+### Köra Demon
 
-1. **Navigera till examples-katalogen:**
+1. **Gå till examples-katalogen:**
    ```bash
    cd 03-CoreGenerativeAITechniques/examples
    ```
 
 2. **Kompilera och kör demon:**
    ```bash
-   mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleGithubModels"
+   mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleAIDemo"
    ```
 
-### Förväntad output
+### Förväntat Resultat
 
-Demon kommer att testa olika typer av potentiellt skadliga promptar och visa hur modern AI-säkerhet fungerar genom två mekanismer:
+Demon kommer att testa olika typer av potentiellt skadliga prompts och visa hur modern AI-säkerhet fungerar genom två mekanismer:
 
-- **Hårda blockeringar**: HTTP 400-fel när innehåll blockeras av säkerhetsfilter innan det når modellen
-- **Mjuka avslag**: Modellen svarar med hövliga avslag som ”Jag kan inte hjälpa till med det” (vanligast med moderna modeller)
+- **Hårda Blocker**: HTTP 400-fel när innehåll blockeras av säkerhetsfilter innan det når modellen
+- **Mjuka Avslag**: Modellen svarar med artiga avslag som "Jag kan inte hjälpa till med det" (vanligast med moderna modeller)
 - **Säkert innehåll** som får ett normalt svar
 
-Exempel på outputformat:
+Exempel på utskriftsformat:
 ```
 === Responsible AI Safety Demonstration ===
 
@@ -113,66 +109,66 @@ Status: Response generated successfully
 ────────────────────────────────────────────────────────────
 ```
 
-**Notera**: Både hårda blockeringar och mjuka avslag indikerar att säkerhetssystemet fungerar korrekt.
+**Notis**: Både hårda blocker och mjuka avslag indikerar att säkerhetssystemet fungerar korrekt.
 
-## Bästa praxis för ansvarsfull AI-utveckling
+## Bästa Praxis för Ansvarsfull AI-Utveckling
 
-När du bygger AI-applikationer, följ dessa viktiga riktlinjer:
+När du bygger AI-applikationer, följ dessa viktiga praxis:
 
-1. **Hantera alltid potentiella svar från säkerhetsfilter på ett smidigt sätt**
+1. **Hantera alltid eventuella säkerhetsfilter-responser på ett smidigt sätt**
    - Implementera korrekt felhantering för blockerat innehåll
    - Ge meningsfull återkoppling till användare när innehåll filtreras
 
-2. **Inför egna ytterligare innehållsvalideringar där det är lämpligt**
+2. **Implementera egna ytterligare innehållsvalideringar där det är lämpligt**
    - Lägg till domänspecifika säkerhetskontroller
-   - Skapa anpassade valideringsregler för din användning
+   - Skapa anpassade valideringsregler för ditt användningsfall
 
-3. **Informera användare om ansvarsfull AI-användning**
+3. **Utbilda användare om ansvarsfull AI-användning**
    - Ge tydliga riktlinjer för acceptabel användning
    - Förklara varför visst innehåll kan blockeras
 
 4. **Övervaka och logga säkerhetsincidenter för förbättring**
-   - Följ mönster i blockerat innehåll
+   - Spåra mönster av blockerat innehåll
    - Förbättra kontinuerligt dina säkerhetsåtgärder
 
 5. **Respektera plattformens innehållspolicys**
-   - Håll dig uppdaterad om plattformens riktlinjer
+   - Håll dig uppdaterad med plattformens riktlinjer
    - Följ användarvillkor och etiska riktlinjer
 
-## Viktig notering
+## Viktig Notis
 
-Detta exempel använder avsiktligt problematiska promptar för utbildningsändamål endast. Målet är att demonstrera säkerhetsåtgärder, inte att kringgå dem. Använd alltid AI-verktyg ansvarsfullt och etiskt.
+Detta exempel använder medvetet problematiska prompts i utbildningssyfte. Målet är att demonstrera säkerhetsåtgärder, inte att kringgå dem. Använd alltid AI-verktyg ansvarsfullt och etiskt.
 
 ## Sammanfattning
 
 **Grattis!** Du har framgångsrikt:
 
-- **Implementerat AI-säkerhetsåtgärder** inklusive innehållsfiltrering och hantering av säkerhetssvar
-- **Använt ansvarsfulla AI-principer** för att bygga etiska och pålitliga AI-system
-- **Testat säkerhetsmekanismer** med GitHub Modellers inbyggda skyddsfunktioner
+- **Implementerat AI-säkerhetsåtgärder** inklusive innehållsfiltrering och hantering av säkerhetsresponser
+- **Tillämpat principer för ansvarsfull AI** för att bygga etiska och pålitliga AI-system
+- **Testat säkerhetsmekanismer** med hjälp av Azure AI Foundrys inbyggda innehållssäkerhetsfunktioner
 - **Lärt dig bästa praxis** för ansvarsfull AI-utveckling och distribution
 
-**Ansvarsfulla AI-resurser:**
-- [Microsoft Trust Center](https://www.microsoft.com/trust-center) - Lär dig om Microsofts syn på säkerhet, integritet och efterlevnad
+**Resurser för Ansvarsfull AI:**
+- [Microsoft Trust Center](https://www.microsoft.com/trust-center) - Lär dig om Microsofts strategi för säkerhet, integritet och efterlevnad
 - [Microsoft Responsible AI](https://www.microsoft.com/ai/responsible-ai) - Utforska Microsofts principer och praxis för ansvarsfull AI-utveckling
 
 ## Kursavslutning
 
-Grattis till att du har slutfört kursen Generativ AI för nybörjare!
+Grattis till att ha avslutat kursen Generativ AI för Nybörjare!
 
 ![Course Completion](../../../translated_images/sv/image.73c7e2ff4a652e77.webp)
 
-**Vad du har åstadkommit:**
+**Det du uppnått:**
 - Ställt in din utvecklingsmiljö
 - Lärt dig kärntekniker för generativ AI
 - Utforskat praktiska AI-applikationer
 - Förstått principer för ansvarsfull AI
 
-## Nästa steg
+## Nästa Steg
 
 Fortsätt din AI-läranderesa med dessa ytterligare resurser:
 
-**Ytterligare lärandekurser:**
+**Ytterligare Lärandekurser:**
 - [AI Agents For Beginners](https://github.com/microsoft/ai-agents-for-beginners)
 - [Generative AI for Beginners using .NET](https://github.com/microsoft/Generative-AI-for-beginners-dotnet)
 - [Generative AI for Beginners using JavaScript](https://github.com/microsoft/generative-ai-with-javascript)
@@ -192,6 +188,6 @@ Fortsätt din AI-läranderesa med dessa ytterligare resurser:
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Ansvarsfriskrivning**:  
-Detta dokument har översatts med hjälp av AI-översättningstjänsten [Co-op Translator](https://github.com/Azure/co-op-translator). Även om vi strävar efter noggrannhet, var vänlig notera att automatiska översättningar kan innehålla fel eller feltolkningar. Det ursprungliga dokumentet på dess originalspråk ska betraktas som den auktoritativa källan. För kritisk information rekommenderas professionell mänsklig översättning. Vi ansvarar inte för några missförstånd eller feltolkningar som uppstår från användningen av denna översättning.
+**Ansvarsfriskrivning**:
+Detta dokument har översatts med hjälp av AI-översättningstjänsten [Co-op Translator](https://github.com/Azure/co-op-translator). Även om vi strävar efter noggrannhet, var vänlig notera att automatiska översättningar kan innehålla fel eller brister. Det ursprungliga dokumentet på dess modersmål bör betraktas som den auktoritativa källan. För kritisk information rekommenderas professionell mänsklig översättning. Vi ansvarar inte för några missförstånd eller feltolkningar som uppstår till följd av användningen av denna översättning.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

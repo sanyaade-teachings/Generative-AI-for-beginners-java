@@ -3,16 +3,16 @@
 
 ![Generative AI for Beginners - Java Edition](../../translated_images/pcm/beg-genai-series.8b48be9951cc574c.webp)
 
-**Time Commitment**: Di whole workshop fit finish online without local setup. To set up di environment go take 2 minutes, to explore di samples na 1-3 hours depend on how deep you wan investigate.
+**Time Commitment**: Di whole workshop fit finish online witout local setup. Di environment setup dey take 2 minutes, wit exploring di samples go need 1-3 hours depend on how deep you wan explore.
 
 > **Quick Start** 
 
 1. Fork dis repository go your GitHub account
 2. Click **Code** → **Codespaces** tab → **...** → **New with options...**
-3. Use di defaults – dis one go select di Development container wey dem create for dis course
+3. Use di default dem – dis go select di Development container wey dem create for dis course
 4. Click **Create codespace**
 5. Wait ~2 minutes make di environment ready
-6. Jump straight to [The first example](./02-SetupDevEnvironment/README.md#step-2-create-a-github-personal-access-token)
+6. Jump straight go [Di first example](./02-SetupDevEnvironment/README.md#step-2-create-a-github-personal-access-token)
 
 ## Multi-Language Support
 
@@ -23,7 +23,7 @@
 
 > **Prefer to Clone Locally?**
 >
-> Dis repository get 50+ language translations wey go make di download size big well well. To clone without di translations, use sparse checkout:
+> Dis repository get pass 50 language translations wey go make di download size big. If you wan clone without translations, use sparse checkout:
 >
 > **Bash / macOS / Linux:**
 > ```bash
@@ -39,42 +39,42 @@
 > git sparse-checkout set --no-cone "/*" "!translations" "!translated_images"
 > ```
 >
-> Dis one go give you everything wey you need to finish di course plus e go quick for download.
+> Dis go give you everytin wey you need to finish di course wit faster download.
 <!-- CO-OP TRANSLATOR LANGUAGES TABLE END -->
 
 ## Course Structure & Learning Path
 
 ### **Chapter 1: Introduction to Generative AI**
-- **Core Concepts**: Understanding Large Language Models, tokens, embeddings, and AI capabilities
+- **Core Concepts**: Understand Large Language Models, tokens, embeddings, and AI capabilities
 - **Java AI Ecosystem**: Overview of Spring AI and OpenAI SDKs
-- **Model Context Protocol**: Introduction to MCP and how e dey work for AI agent communication
-- **Practical Applications**: Real-world tins like chatbots and content generation
+- **Model Context Protocol**: Introduction to MCP and how e take work for AI agent communication
+- **Practical Applications**: Real-world cases including chatbots and content generation
 - **[→ Start Chapter 1](./01-IntroToGenAI/README.md)**
 
 ### **Chapter 2: Development Environment Setup**
-- **Multi-Provider Configuration**: Set up GitHub Models, Azure OpenAI, and OpenAI Java SDK integrations
-- **Spring Boot + Spring AI**: Best way dem take develop enterprise AI app
-- **GitHub Models**: Free AI model wey you fit use prototype and learn (no need credit card)
+- **Azure AI Foundry**: Deploy model with code using Bicep and Azure Developer CLI (azd)
+- **Spring Boot + Spring AI**: Best way for enterprise AI app development
+- **Keyless Authentication**: Connect securely wit Microsoft Entra ID — no API keys to worry
 - **Development Tools**: Docker containers, VS Code, and GitHub Codespaces setup
 - **[→ Start Chapter 2](./02-SetupDevEnvironment/README.md)**
 
 ### **Chapter 3: Core Generative AI Techniques**
-- **Prompt Engineering**: How to make AI model respond well well
-- **Embeddings & Vector Operations**: How to do semantic search and similarity matching
-- **Retrieval-Augmented Generation (RAG)**: Join AI with your own data
-- **Function Calling**: Add more power to AI wit custom tools and plugins
+- **Prompt Engineering**: Ways to get best AI model answers
+- **Embeddings & Vector Operations**: Use semantic search and similarity matching
+- **Retrieval-Augmented Generation (RAG)**: Mix AI wit your own data sources
+- **Function Calling**: Grow AI powers wit custom tools and plugins
 - **[→ Start Chapter 3](./03-CoreGenerativeAITechniques/README.md)**
 
 ### **Chapter 4: Practical Applications & Projects**
-- **Pet Story Generator** (`petstory/`): Creative content generator with GitHub Models
-- **Foundry Local Demo** (`foundrylocal/`): Local AI model join OpenAI Java SDK
-- **MCP Calculator Service** (`calculator/`): Basic Model Context Protocol with Spring AI
+- **Pet Story Generator** (`petstory/`): Creative content generation wit Azure AI Foundry
+- **Foundry Local Demo** (`foundrylocal/`): Local AI model integration wit OpenAI Java SDK
+- **MCP Calculator Service** (`calculator/`): Basic Model Context Protocol to work wit Spring AI
 - **[→ Start Chapter 4](./04-PracticalSamples/README.md)**
 
 ### **Chapter 5: Responsible AI Development**
-- **GitHub Models Safety**: Try built-in content filtering and safety mechanism (hard blocks and soft refusals)
-- **Responsible AI Demo**: Hands-on example to show how modern AI safety system dey work
-- **Best Practices**: Correct guideline for ethical AI development and deployment
+- **Azure AI Foundry Content Safety**: Try built-in content filtering and safety tools (hard blocks and soft refusals)
+- **Responsible AI Demo**: Hands-on example show how modern AI safety systems dey work for practice
+- **Best Practices**: Important rules for ethical AI development and deployment
 - **[→ Start Chapter 5](./05-ResponsibleGenAI/README.md)**
 
 ## Additional Resources
@@ -121,7 +121,7 @@
 
 ## Getting Help
 
-If you get stuck or get any question about how to build AI apps. Join other learners and experienced developers for discussions about MCP. Na community wey dey supportive, where questions dey welcome and knowledge dey share freely.
+If you get stuck or get any question about build AI apps. Join other learners and experienced developers for discussion about MCP. Na supportive community wey questions dey welcome and knowledge dey shared free.
 
 [![Microsoft Foundry Discord](https://dcbadge.limes.pink/api/server/nTYy5BXMWG)](https://discord.gg/nTYy5BXMWG)
 
@@ -132,6 +132,6 @@ If you get product feedback or errors while you dey build, visit:
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Disclaimer**:  
-Dis dokument don translate wit AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). Even though we dey try make am correct, abeg sabi say automated translation fit get errors or mistakes. Di original dokument for im own language na di correct source. For serious matter, e better make human professional translate am. We no go responsible for any misunderstanding or wrong meaning wey fit follow from dis translation.
+**Disclaimer**:
+Dis document don translate wit AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). Even tho we dey try make am correct, abeg make you know say automated translation fit get errors or mistakes. Di original document for dia own language na im be di correct source. For important info, make person wey sabi human translation do am. We no go responsible for any misunderstanding or wrong understanding wey fit happen because of dis translation.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

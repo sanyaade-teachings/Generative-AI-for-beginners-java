@@ -1,39 +1,40 @@
-# MCP Kalkulaatori Õpetus Algajatele
+# MCP kalkulaatori juhend algajatele
 
 ## Sisukord
 
-- [Mida Sa Õpid](../../../../04-PracticalSamples/calculator)
-- [Eeltingimused](../../../../04-PracticalSamples/calculator)
-- [Projekti Struktuuri Mõistmine](../../../../04-PracticalSamples/calculator)
-- [Põhikomponentide Selgitus](../../../../04-PracticalSamples/calculator)
-  - [1. Peamine Rakendus](../../../../04-PracticalSamples/calculator)
-  - [2. Kalkulaatori Teenus](../../../../04-PracticalSamples/calculator)
-  - [3. Otsene MCP Klient](../../../../04-PracticalSamples/calculator)
-  - [4. AI-põhine Klient](../../../../04-PracticalSamples/calculator)
-- [Näidete Käivitamine](../../../../04-PracticalSamples/calculator)
-- [Kuidas Kõik Koos Töötab](../../../../04-PracticalSamples/calculator)
-- [Järgmised Sammud](../../../../04-PracticalSamples/calculator)
+- [Mida sa õpid](#mida-sa-õpid)
+- [Eeldused](#eeldused)
+- [Projekti ülesehituse mõistmine](#projekti-ülesehituse-mõistmine)
+- [Põhikompontentide selgitus](#põhikompontentide-selgitus)
+  - [1. Peamine rakendus](#1-peamine-rakendus)
+  - [2. Kalkulaatori teenus](#2-kalkulaatori-teenus)
+  - [3. Otsene MCP klient](#3-otsene-mcp-klient)
+  - [4. AI-jõul töötav klient](#4-ai-jõul-töötav-klient)
+- [Näidete käivitamine](#näidete-käivitamine)
+- [Kuidas kõik koos töötab](#kuidas-koik-koos-toob)
+- [Järgmised sammud](#järgmised-sammud)
 
-## Mida Sa Õpid
+## Mida sa õpid
 
-See õpetus selgitab, kuidas luua kalkulaatori teenust, kasutades Model Context Protocol (MCP). Sa saad aru:
+See juhend seletab, kuidas luua kalkulaatori teenus Model Context Protocol'i (MCP) abil. Sa saad aru:
 
 - Kuidas luua teenust, mida AI saab tööriistana kasutada
-- Kuidas seadistada otsesuhtlust MCP teenustega
+- Kuidas seadistada otsene suhtlus MCP teenustega
 - Kuidas AI mudelid saavad automaatselt valida, milliseid tööriistu kasutada
-- Erinevust otseste protokollikõnede ja AI-põhiste interaktsioonide vahel
+- Erinevus otseste protokolli kõnede ja AI-toega interaktsioonide vahel
 
-## Eeltingimused
+## Eeldused
 
-Enne alustamist veendu, et sul on:
-- Paigaldatud Java 21 või uuem
-- Maven sõltuvuste haldamiseks
-- GitHubi konto koos isikliku juurdepääsutokeniga (PAT)
-- Põhilised teadmised Java ja Spring Boot kohta
+Enne alustamist veendu, et sul on olemas:
+- Java 21 või uuem versioon
+- Maven sõltuvuste halduseks
+- Azure AI Foundry mudeli juurutus (provisioni see käsuga `azd up` — vt [2. peatükk](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
+- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), sisse logitud käsuga `az login` (võtmeta autentimine)
+- Põhilised teadmised Javast ja Spring Bootist
 
-## Projekti Struktuuri Mõistmine
+## Projekti ülesehituse mõistmine
 
-Kalkulaatori projekt sisaldab mitmeid olulisi faile:
+Kalkulaatori projektis on mitu olulist faili:
 
 ```
 calculator/
@@ -46,13 +47,13 @@ calculator/
     └── Bot.java                          # Simple chat interface
 ```
 
-## Põhikomponentide Selgitus
+## Põhikompontentide selgitus
 
-### 1. Peamine Rakendus
+### 1. Peamine rakendus
 
 **Fail:** `McpServerApplication.java`
 
-See on meie kalkulaatori teenuse alguspunkt. Tegemist on standardse Spring Boot rakendusega, millel on üks eriline lisand:
+See on meie kalkulaatori teenuse stardipunkt. Tegemist on tavalise Spring Boot rakendusega, millel on üks eriline täiendus:
 
 ```java
 @SpringBootApplication
@@ -70,11 +71,11 @@ public class McpServerApplication {
 ```
 
 **Mida see teeb:**
-- Käivitab Spring Boot veebiserveri pordil 8080
-- Loob `ToolCallbackProvider`-i, mis teeb meie kalkulaatori meetodid MCP tööriistadena kättesaadavaks
-- `@Bean` annotatsioon ütleb Springile, et see komponenti hallatakse ja teised osad saavad seda kasutada
+- Käivitab Spring Boot veebi serveri pordil 8080
+- Loob `ToolCallbackProvider`-i, mis teeb meie kalkulaatori meetodid kättesaadavaks MCP tööriistadena
+- Märgend `@Bean` ütleb Springile, et see on komponent, mida teised osad saavad kasutada
 
-### 2. Kalkulaatori Teenus
+### 2. Kalkulaatori teenus
 
 **Fail:** `CalculatorService.java`
 
@@ -96,7 +97,7 @@ public class CalculatorService {
         return formatResult(a, "-", b, result);
     }
     
-    // More calculator operations...
+    // Rohkem kalkulaatori toiminguid...
     
     private String formatResult(double a, String operator, double b, double result) {
         return String.format("%.2f %s %.2f = %.2f", a, operator, b, result);
@@ -106,27 +107,27 @@ public class CalculatorService {
 
 **Peamised omadused:**
 
-1. **`@Tool` Annotatsioon**: See ütleb MCP-le, et seda meetodit saavad välised kliendid kutsuda
-2. **Selged Kirjeldused**: Igal tööriistal on kirjeldus, mis aitab AI mudelitel mõista, millal seda kasutada
-3. **Ühtlane Tagastusvorming**: Kõik operatsioonid tagastavad inimloetavaid stringe nagu "5.00 + 3.00 = 8.00"
-4. **Vigade Käitlemine**: Nulliga jagamine ja negatiivsete arvude ruutjuured tagastavad veateateid
+1. **`@Tool` märgend**: See ütleb MCP-le, et seda meetodit saavad välised kliendid kutsuda
+2. **Selged kirjeldused**: Igal tööriistal on kirjeldus, mis aitab AI mudelitel aru saada, millal seda kasutada
+3. **Järjekindel vastuse formaat**: Kõik tehteid tagastavad inimese jaoks loetavat teksti, nt "5.00 + 3.00 = 8.00"
+4. **Vigade käsitlemine**: Nulliga jagamine ja negatiivse ruutjuure puhul tagastatakse veateated
 
-**Saadaval Operatsioonid:**
+**Saadaval toimingud:**
 - `add(a, b)` - Liidab kaks arvu
-- `subtract(a, b)` - Lahutab teise esimese arvust
+- `subtract(a, b)` - Lahutab teisest esimesest
 - `multiply(a, b)` - Korrutab kaks arvu
-- `divide(a, b)` - Jagab esimese teisega (nulli kontrolliga)
-- `power(base, exponent)` - Tõstab baasi eksponendi astmesse
-- `squareRoot(number)` - Arvutab ruutjuure (negatiivse kontrolliga)
-- `modulus(a, b)` - Tagastab jagamise jäägi
+- `divide(a, b)` - Jagab esimest teisega (nulli kontrolliga)
+- `power(base, exponent)` - Tõstab aluse astmesse
+- `squareRoot(number)` - Arvutab ruutjuure (negatiivsuse kontrolliga)
+- `modulus(a, b)` - Tagastab jagamisjäägi
 - `absolute(number)` - Tagastab absoluutväärtuse
-- `help()` - Tagastab teavet kõigi operatsioonide kohta
+- `help()` - Tagastab info kõigi toimingute kohta
 
-### 3. Otsene MCP Klient
+### 3. Otsene MCP klient
 
 **Fail:** `SDKClient.java`
 
-See klient suhtleb otse MCP serveriga, kasutamata AI-d. See kutsub käsitsi konkreetseid kalkulaatori funktsioone:
+See klient suhtleb MCP serveriga otse ilma AI-ta. See kutsub käsitsi spetsiifilisi kalkulaatori funktsioone:
 
 ```java
 public class SDKClient {
@@ -142,11 +143,11 @@ public class SDKClient {
         var client = McpClient.sync(this.transport).build();
         client.initialize();
         
-        // List available tools
+        // Loetle saadaolevad tööriistad
         ListToolsResult toolsList = client.listTools();
         System.out.println("Available Tools = " + toolsList);
         
-        // Call specific calculator functions
+        // Kutsu spetsiifilisi kalkulaatori funktsioone
         CallToolResult resultAdd = client.callTool(
             new CallToolRequest("add", Map.of("a", 5.0, "b", 3.0))
         );
@@ -163,16 +164,16 @@ public class SDKClient {
 ```
 
 **Mida see teeb:**
-1. **Ühendub** kalkulaatori serveriga aadressil `http://localhost:8080`, kasutades builder mustrit
-2. **Loetleb** kõik saadaval olevad tööriistad (meie kalkulaatori funktsioonid)
-3. **Kutsub** konkreetseid funktsioone täpsete parameetritega
-4. **Prindib** tulemused otse
+1. **Ühendub** kalkulaatori serveriga aadressil `http://localhost:8080` kasutades builder musterit
+2. **Nimekirjab** kõik saadaval olevad tööriistad (meie kalkulaatorifunktsioonid)
+3. **Kutsutakse** spetsiifilisi funktsioone täpsete parameetritega
+4. **Trükib** tulemused otse välja
 
-**Märkus:** See näide kasutab Spring AI 1.1.0-SNAPSHOT sõltuvust, mis tutvustas builder mustrit `WebFluxSseClientTransport` jaoks. Kui kasutad vanemat stabiilset versiooni, võib olla vajalik kasutada otsest konstruktorit.
+**Märkus:** See näide kasutab Spring AI 1.1.0-SNAPSHOT sõltuvust, mis tõi sisse builder mustri `WebFluxSseClientTransport` jaoks. Kui kasutad vanemat stabiilset versiooni, võid vajada hoopis otseteed konstruktorit.
 
-**Millal seda kasutada:** Kui tead täpselt, millist arvutust soovid teha ja tahad seda programmiliselt kutsuda.
+**Millal seda kasutada:** Kui tead täpselt, millist arvutust soovid teha, ja tahad seda programmiliselt kutsuda.
 
-### 4. AI-põhine Klient
+### 4. AI-jõul töötav klient
 
 **Fail:** `LangChain4jClient.java`
 
@@ -182,17 +183,22 @@ See klient kasutab AI mudelit (GPT-4o-mini), mis suudab automaatselt otsustada, 
 public class LangChain4jClient {
     
     public static void main(String[] args) throws Exception {
-        // Set up the AI model (using GitHub Models)
+        // Seadista tehisintellekti mudel (Azure AI Foundry, võtmeta autentimine Microsoft Entra ID kaudu)
+        String endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1";
+        String token = new DefaultAzureCredentialBuilder().build()
+                .getToken(new TokenRequestContext().addScopes("https://ai.azure.com/.default"))
+                .block().getToken();
         ChatLanguageModel model = OpenAiOfficialChatModel.builder()
-                .isGitHubModels(true)
-                .apiKey(System.getenv("GITHUB_TOKEN"))
+                .baseUrl(baseUrl)
+                .apiKey(token)
                 .modelName("gpt-4o-mini")
                 .build();
 
-        // Connect to our calculator MCP server
+        // Ühenda meie kalkulaatori MCP serveriga
         McpTransport transport = new HttpMcpTransport.Builder()
                 .sseUrl("http://localhost:8080/sse")
-                .logRequests(true)  // Shows what the AI is doing
+                .logRequests(true)  // Kuvab, mida tehisintellekt teeb
                 .logResponses(true)
                 .build();
 
@@ -200,18 +206,18 @@ public class LangChain4jClient {
                 .transport(transport)
                 .build();
 
-        // Give the AI access to our calculator tools
+        // Anna tehisintellektile ligipääs meie kalkulaatori tööriistadele
         ToolProvider toolProvider = McpToolProvider.builder()
                 .mcpClients(List.of(mcpClient))
                 .build();
 
-        // Create an AI bot that can use our calculator
+        // Loo tehisintellekti robot, kes saab kasutada meie kalkulaatorit
         Bot bot = AiServices.builder(Bot.class)
                 .chatLanguageModel(model)
                 .toolProvider(toolProvider)
                 .build();
 
-        // Now we can ask the AI to do calculations in natural language
+        // Nüüd saame paluda tehisintellektil teha arvutusi loomulikus keeles
         String response = bot.chat("Calculate the sum of 24.5 and 17.3 using the calculator service");
         System.out.println(response);
 
@@ -222,31 +228,33 @@ public class LangChain4jClient {
 ```
 
 **Mida see teeb:**
-1. **Loob** AI mudeli ühenduse, kasutades sinu GitHubi tokenit
+1. **Loob** AI mudeliga ühenduse kasutades sinu GitHub tokenit
 2. **Ühendab** AI meie kalkulaatori MCP serveriga
-3. **Annab** AI-le juurdepääsu kõigile meie kalkulaatori tööriistadele
-4. **Võimaldab** loomuliku keele päringuid nagu "Arvuta 24.5 ja 17.3 summa"
+3. **Annavad** AI-le ligipääsu kõikidele meie kalkulaatori tööriistadele
+4. **Lubab** teha loomuliku keelega päringuid nagu "Arvuta 24.5 ja 17.3 summa"
 
-**AI automaatselt:**
-- Mõistab, et soovid arve liita
-- Valib `add` tööriista
+**AI teeb automaatselt:**
+- Mõistab, et sa tahad numbreid liita
+- Valib tööriista `add`
 - Kutsub `add(24.5, 17.3)`
 - Tagastab tulemuse loomulikus vastuses
 
-## Näidete Käivitamine
+## Näidete käivitamine
 
-### Samm 1: Käivita Kalkulaatori Server
+### Samm 1: Alusta kalkulaatori serverit
 
-Kõigepealt seadista oma GitHubi token (vajalik AI kliendi jaoks):
+Esmalt logi sisse ja määra oma Azure AI Foundry lõpp-punkt (vajalik AI kliendile — võtmeta autentimine, ilma API võtmeta):
 
 **Windows:**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 Käivita server:
@@ -260,22 +268,22 @@ Server käivitub aadressil `http://localhost:8080`. Sa peaksid nägema:
 Started McpServerApplication in X.XXX seconds
 ```
 
-### Samm 2: Testi Otsese Kliendiga
+### Samm 2: Testi otsese kliendiga
 
-**UUES** terminalis, kus server endiselt töötab, käivita otsene MCP klient:
+Uues terminaliaknas, kus server veel töötab, käivita otsene MCP klient:
 ```bash
 cd 04-PracticalSamples/calculator
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient" -Dexec.classpathScope=test
 ```
 
-Sa näed väljundit nagu:
+Sa näed sellist väljundit:
 ```
 Available Tools = [add, subtract, multiply, divide, power, squareRoot, modulus, absolute, help]
 Add Result = 5.00 + 3.00 = 8.00
 Square Root Result = √16.00 = 4.00
 ```
 
-### Samm 3: Testi AI Kliendiga
+### Samm 3: Testi AI kliendiga
 
 ```bash
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient" -Dexec.classpathScope=test
@@ -287,28 +295,30 @@ The sum of 24.5 and 17.3 is 41.8.
 The square root of 144 is 12.
 ```
 
-### Samm 4: Sulge MCP Server
+### Samm 4: Sule MCP server
 
-Kui testimine on lõpetatud, saad AI kliendi sulgeda, vajutades `Ctrl+C` selle terminalis. MCP server jääb tööle, kuni sa selle peatad.
-Serveri peatamiseks vajuta `Ctrl+C` terminalis, kus see töötab.
+Kui oled testi lõpetanud, saad AI kliendi peatada vajutades `Ctrl+C` selles terminalis. MCP server jätkab tööd seni, kuni sa selle ise peatud.
+Serveri peatamiseks vajuta `Ctrl+C` terminalis, kus ta töötab.
 
-## Kuidas Kõik Koos Töötab
+## Kuidas kõik koos töötab
 
-Siin on täielik voog, kui küsid AI-lt "Mis on 5 + 3?":
+Siin on kogu töövoog, kui küsid AI-lt "Mis on 5 + 3?":
 
-1. **Sina** küsid AI-lt loomulikus keeles
-2. **AI** analüüsib sinu päringut ja mõistab, et soovid liitmist
+1. **Sina** esitad AI-le loomulikus keeles küsimuse
+2. **AI** analüüsib päringut ja mõistab, et soovid liitmist
 3. **AI** kutsub MCP serverit: `add(5.0, 3.0)`
-4. **Kalkulaatori Teenus** sooritab: `5.0 + 3.0 = 8.0`
-5. **Kalkulaatori Teenus** tagastab: `"5.00 + 3.00 = 8.00"`
+4. **Kalkulaatori teenus** teostab: `5.0 + 3.0 = 8.0`
+5. **Kalkulaatori teenus** tagastab: `"5.00 + 3.00 = 8.00"`
 6. **AI** saab tulemuse ja vormindab loomuliku vastuse
-7. **Sina** saad: "5 ja 3 summa on 8"
+7. **Sina** saad: "Arvude 5 ja 3 summa on 8"
 
-## Järgmised Sammud
+## Järgmised sammud
 
-Rohkem näiteid leiad [Peatükist 04: Praktilised näited](../README.md)
+Rohkem näidete jaoks vaata [Peatükk 04: Praktilised näited](../README.md)
 
 ---
 
-**Lahtiütlus**:  
-See dokument on tõlgitud AI tõlketeenuse [Co-op Translator](https://github.com/Azure/co-op-translator) abil. Kuigi püüame tagada täpsust, palume arvestada, et automaatsed tõlked võivad sisaldada vigu või ebatäpsusi. Algne dokument selle algses keeles tuleks pidada autoriteetseks allikaks. Olulise teabe puhul soovitame kasutada professionaalset inimtõlget. Me ei vastuta selle tõlke kasutamisest tulenevate arusaamatuste või valesti tõlgenduste eest.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Lahtiütlus**:
+See dokument on tõlgitud kasutades AI tõlketeenust [Co-op Translator](https://github.com/Azure/co-op-translator). Kuigi me püüdleme täpsuse poole, palun pange tähele, et automatiseeritud tõlgetes võib esineda vigu või ebatäpsusi. Originaaldokument selle emakeeles tuleks pidada autoriteetseks allikaks. Olulise teabe puhul soovitatakse kasutada professionaalset inimtõlget. Me ei vastuta selle tõlkega seotud eksimustest või valesti mõistmistest.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

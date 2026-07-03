@@ -1,39 +1,40 @@
-# MCP計算機チュートリアル初心者向け
+# 初心者向けMCP電卓チュートリアル
 
 ## 目次
 
-- [学べること](../../../../04-PracticalSamples/calculator)
-- [前提条件](../../../../04-PracticalSamples/calculator)
-- [プロジェクト構造の理解](../../../../04-PracticalSamples/calculator)
-- [主要コンポーネントの説明](../../../../04-PracticalSamples/calculator)
-  - [1. メインアプリケーション](../../../../04-PracticalSamples/calculator)
-  - [2. 計算機サービス](../../../../04-PracticalSamples/calculator)
-  - [3. 直接MCPクライアント](../../../../04-PracticalSamples/calculator)
-  - [4. AI駆動型クライアント](../../../../04-PracticalSamples/calculator)
-- [例の実行方法](../../../../04-PracticalSamples/calculator)
-- [全体の仕組み](../../../../04-PracticalSamples/calculator)
-- [次のステップ](../../../../04-PracticalSamples/calculator)
+- [学べること](#学べること)
+- [前提条件](#前提条件)
+- [プロジェクト構成の理解](#プロジェクト構成の理解)
+- [主要コンポーネントの解説](#主要コンポーネントの解説)
+  - [1. メインアプリケーション](#1-メインアプリケーション)
+  - [2. 電卓サービス](#2-電卓サービス)
+  - [3. 直接MCPクライアント](#3-直接mcpクライアント)
+  - [4. AI搭載クライアント](#4-ai搭載クライアント)
+- [例の実行方法](#例の実行方法)
+- [全体の連携動作](#全体の連携動作)
+- [次のステップ](#次のステップ)
 
 ## 学べること
 
-このチュートリアルでは、Model Context Protocol (MCP)を使用して計算機サービスを構築する方法を説明します。以下を理解できます：
+このチュートリアルでは、Model Context Protocol (MCP) を使って電卓サービスを構築する方法を説明します。以下のことが理解できます：
 
-- AIがツールとして使用できるサービスの作成方法
-- MCPサービスとの直接通信の設定方法
-- AIモデルがどのツールを使用するかを自動的に選択する仕組み
-- 直接プロトコル呼び出しとAI支援型インタラクションの違い
+- AIがツールとして使用できるサービスの作り方
+- MCPサービスと直接通信を設定する方法
+- AIモデルが自動的に使うツールを選ぶ方法
+- 直接プロトコル呼び出しとAI支援インタラクションの違い
 
 ## 前提条件
 
-始める前に以下を準備してください：
-- Java 21以上がインストールされていること
-- 依存関係管理のためのMaven
-- 個人アクセストークン(PAT)を持つGitHubアカウント
-- JavaとSpring Bootの基本的な理解
+始める前に以下を用意してください：
+- Java 21以上のインストール
+- 依存関係管理用のMaven
+- Azure AI Foundryモデルのデプロイ（`azd up`コマンドでプロビジョニングしてください — [第2章](../../02-SetupDevEnvironment/getting-started-azure-openai.md)参照）
+- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) をサインイン済み（`az login`、キー不要認証）
+- Java と Spring Boot の基本知識
 
-## プロジェクト構造の理解
+## プロジェクト構成の理解
 
-計算機プロジェクトにはいくつかの重要なファイルがあります：
+電卓プロジェクトにはいくつか重要なファイルがあります：
 
 ```
 calculator/
@@ -46,13 +47,13 @@ calculator/
     └── Bot.java                          # Simple chat interface
 ```
 
-## 主要コンポーネントの説明
+## 主要コンポーネントの解説
 
 ### 1. メインアプリケーション
 
 **ファイル:** `McpServerApplication.java`
 
-これは計算機サービスのエントリーポイントです。標準的なSpring Bootアプリケーションですが、特別な追加があります：
+これは電卓サービスのエントリーポイントです。標準のSpring Bootアプリケーションで、ただし一つ特別な追加があります：
 
 ```java
 @SpringBootApplication
@@ -69,16 +70,16 @@ public class McpServerApplication {
 }
 ```
 
-**これが行うこと:**
-- ポート8080でSpring Bootウェブサーバーを起動
-- `ToolCallbackProvider`を作成し、計算機メソッドをMCPツールとして利用可能にする
-- `@Bean`アノテーションはSpringにこれをコンポーネントとして管理させ、他の部分で使用可能にする
+**これがすること:**
+- ポート8080でSpring BootのWebサーバーを起動する
+- `ToolCallbackProvider`を作成して電卓のメソッドをMCPツールとして利用可能にする
+- `@Bean`アノテーションでSpringがこれを管理コンポーネントとして扱い他部分で利用できるようにする
 
-### 2. 計算機サービス
+### 2. 電卓サービス
 
 **ファイル:** `CalculatorService.java`
 
-ここで全ての計算が行われます。各メソッドは`@Tool`でマークされ、MCPを通じて利用可能になります：
+ここで全ての計算処理が行われています。メソッドはすべて`@Tool`でマークされ、MCP経由で使えるようになっています：
 
 ```java
 @Service
@@ -96,7 +97,7 @@ public class CalculatorService {
         return formatResult(a, "-", b, result);
     }
     
-    // More calculator operations...
+    // さらに計算機の操作...
     
     private String formatResult(double a, String operator, double b, double result) {
         return String.format("%.2f %s %.2f = %.2f", a, operator, b, result);
@@ -106,27 +107,27 @@ public class CalculatorService {
 
 **主な特徴:**
 
-1. **`@Tool`アノテーション**: このメソッドが外部クライアントによって呼び出されることをMCPに伝える
-2. **明確な説明**: 各ツールにはAIモデルが使用するタイミングを理解するための説明が付いている
-3. **一貫した返却形式**: 全ての操作は「5.00 + 3.00 = 8.00」のような人間が読める文字列を返す
-4. **エラーハンドリング**: ゼロ除算や負の平方根はエラーメッセージを返す
+1. **`@Tool` アノテーション**: これによってMCPが外部クライアントから呼び出せることを認識
+2. <strong>分かりやすい説明文</strong>: 各ツールにはAIモデルがいつ使うか理解しやすい説明が付いている
+3. <strong>一貫した返却フォーマット</strong>: すべての操作は「5.00 + 3.00 = 8.00」のような人が読める文字列で返す
+4. <strong>エラーハンドリング</strong>: ゼロ除算や負の平方根はエラーメッセージを返す
 
 **利用可能な操作:**
 - `add(a, b)` - 2つの数値を加算
-- `subtract(a, b)` - 1つ目から2つ目を減算
+- `subtract(a, b)` - 2つの数値を減算
 - `multiply(a, b)` - 2つの数値を乗算
-- `divide(a, b)` - 1つ目を2つ目で除算（ゼロチェック付き）
-- `power(base, exponent)` - 基数を指数で累乗
-- `squareRoot(number)` - 平方根を計算（負の値チェック付き）
-- `modulus(a, b)` - 剰余を返す
-- `absolute(number)` - 絶対値を返す
-- `help()` - 全ての操作に関する情報を返す
+- `divide(a, b)` - 1つ目を2つ目で除算（ゼロチェック有）
+- `power(base, exponent)` - べき乗計算
+- `squareRoot(number)` - 平方根計算（負数チェック有）
+- `modulus(a, b)` - 剰余算
+- `absolute(number)` - 絶対値
+- `help()` - 操作一覧の説明を返す
 
 ### 3. 直接MCPクライアント
 
 **ファイル:** `SDKClient.java`
 
-このクライアントはAIを使用せず、MCPサーバーと直接通信します。特定の計算機関数を手動で呼び出します：
+このクライアントはAIを使わずにMCPサーバーに直接アクセスします。手動で特定の電卓関数を呼び出します：
 
 ```java
 public class SDKClient {
@@ -142,11 +143,11 @@ public class SDKClient {
         var client = McpClient.sync(this.transport).build();
         client.initialize();
         
-        // List available tools
+        // 利用可能なツールを一覧表示する
         ListToolsResult toolsList = client.listTools();
         System.out.println("Available Tools = " + toolsList);
         
-        // Call specific calculator functions
+        // 特定の計算機能を呼び出す
         CallToolResult resultAdd = client.callTool(
             new CallToolRequest("add", Map.of("a", 5.0, "b", 3.0))
         );
@@ -162,37 +163,42 @@ public class SDKClient {
 }
 ```
 
-**これが行うこと:**
-1. **接続**: ビルダーパターンを使用して`http://localhost:8080`の計算機サーバーに接続
-2. **ツール一覧**: 利用可能な全てのツール（計算機関数）をリスト化
-3. **特定の関数を呼び出し**: 正確なパラメータで関数を呼び出す
-4. **結果を直接出力**: 結果をそのまま出力
+**これがすること:**
+1. ビルダーパターンで`http://localhost:8080`の電卓サーバーに接続する
+2. 利用可能なすべてのツール（電卓機能）を一覧表示
+3. 特定の関数を正確なパラメータで呼び出す
+4. 結果を直接出力する
 
-**注意:** この例ではSpring AI 1.1.0-SNAPSHOT依存関係を使用しており、`WebFluxSseClientTransport`のビルダーパターンを導入しています。古い安定版を使用している場合は、直接コンストラクタを使用する必要があるかもしれません。
+**注意:** この例はSpring AI 1.1.0-SNAPSHOTの依存関係を使っており、`WebFluxSseClientTransport`にビルダーパターンが導入されています。古い安定版を使う場合は直接コンストラクタ呼び出しが必要な場合があります。
 
-**使用する場面:** 実行したい計算が正確に分かっており、プログラム的に呼び出したい場合。
+**使うタイミング:** 実行したい計算が明確に決まっている時にプログラムから呼び出したい場合。
 
-### 4. AI駆動型クライアント
+### 4. AI搭載クライアント
 
 **ファイル:** `LangChain4jClient.java`
 
-このクライアントはAIモデル(GPT-4o-mini)を使用し、どの計算機ツールを使用するかを自動的に決定します：
+このクライアントはAIモデル（GPT-4o-mini）を使って、どの電卓ツールを使うかを自動的に判断します：
 
 ```java
 public class LangChain4jClient {
     
     public static void main(String[] args) throws Exception {
-        // Set up the AI model (using GitHub Models)
+        // AIモデルを設定する（Azure AI Foundry、Microsoft Entra IDによるキー不要認証）
+        String endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1";
+        String token = new DefaultAzureCredentialBuilder().build()
+                .getToken(new TokenRequestContext().addScopes("https://ai.azure.com/.default"))
+                .block().getToken();
         ChatLanguageModel model = OpenAiOfficialChatModel.builder()
-                .isGitHubModels(true)
-                .apiKey(System.getenv("GITHUB_TOKEN"))
+                .baseUrl(baseUrl)
+                .apiKey(token)
                 .modelName("gpt-4o-mini")
                 .build();
 
-        // Connect to our calculator MCP server
+        // 当社の計算機MCPサーバーに接続する
         McpTransport transport = new HttpMcpTransport.Builder()
                 .sseUrl("http://localhost:8080/sse")
-                .logRequests(true)  // Shows what the AI is doing
+                .logRequests(true)  // AIが何をしているかを表示する
                 .logResponses(true)
                 .build();
 
@@ -200,18 +206,18 @@ public class LangChain4jClient {
                 .transport(transport)
                 .build();
 
-        // Give the AI access to our calculator tools
+        // AIに当社の計算機ツールへのアクセス権を与える
         ToolProvider toolProvider = McpToolProvider.builder()
                 .mcpClients(List.of(mcpClient))
                 .build();
 
-        // Create an AI bot that can use our calculator
+        // 当社の計算機を使えるAIボットを作成する
         Bot bot = AiServices.builder(Bot.class)
                 .chatLanguageModel(model)
                 .toolProvider(toolProvider)
                 .build();
 
-        // Now we can ask the AI to do calculations in natural language
+        // これでAIに自然言語で計算を依頼できるようになる
         String response = bot.chat("Calculate the sum of 24.5 and 17.3 using the calculator service");
         System.out.println(response);
 
@@ -221,94 +227,98 @@ public class LangChain4jClient {
 }
 ```
 
-**これが行うこと:**
-1. **AIモデル接続を作成**: GitHubトークンを使用して接続
-2. **AIを計算機MCPサーバーに接続**: MCPサーバーに接続
-3. **AIに全ての計算機ツールへのアクセスを提供**: ツールを利用可能にする
-4. **自然言語リクエストを許可**: 「24.5と17.3の合計を計算して」のようなリクエストを受け付ける
+**これがすること:**
+1. GitHubトークンでAIモデル接続を作成
+2. AIを電卓MCPサーバーに接続
+3. AIにすべての電卓ツールへのアクセス権を付与
+4. 「24.5と17.3の合計を計算して」のような自然言語リクエストに対応可能にする
 
-**AIが自動的に行うこと:**
-- 数値を加算したいことを理解
-- `add`ツールを選択
-- `add(24.5, 17.3)`を呼び出し
-- 自然な応答で結果を返す
+**AIは自動で:**
+- 数値の加算を理解
+- `add` ツールを選択
+- `add(24.5, 17.3)` を呼び出し
+- 結果を自然な返答として返す
 
 ## 例の実行方法
 
-### ステップ1: 計算機サーバーを起動
+### ステップ 1: 電卓サーバーを起動する
 
-まず、GitHubトークンを設定します（AIクライアントに必要です）：
+まずサインインし、Azure AI Foundryのエンドポイントを設定します（AIクライアント用 - キー不要認証）：
 
 **Windows:**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-サーバーを起動します：
+サーバー起動コマンド：
 ```bash
 cd 04-PracticalSamples/calculator
 mvn clean spring-boot:run
 ```
 
-サーバーは`http://localhost:8080`で起動します。以下が表示されます：
+サーバーは `http://localhost:8080` で起動します。以下のような表示が出ます：
 ```
 Started McpServerApplication in X.XXX seconds
 ```
 
-### ステップ2: 直接クライアントでテスト
+### ステップ 2: 直接クライアントでテスト
 
-**新しい**ターミナルでサーバーを起動したまま、直接MCPクライアントを実行します：
+サーバーを起動したまま<strong>新しい</strong>ターミナルで直接MCPクライアントを実行：
 ```bash
 cd 04-PracticalSamples/calculator
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient" -Dexec.classpathScope=test
 ```
 
-以下のような出力が表示されます：
+次のような出力が表示されます：
 ```
 Available Tools = [add, subtract, multiply, divide, power, squareRoot, modulus, absolute, help]
 Add Result = 5.00 + 3.00 = 8.00
 Square Root Result = √16.00 = 4.00
 ```
 
-### ステップ3: AIクライアントでテスト
+### ステップ 3: AIクライアントでテスト
 
 ```bash
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient" -Dexec.classpathScope=test
 ```
 
-AIがツールを自動的に使用する様子が表示されます：
+AIが自動的にツールを使う様子が見られます：
 ```
 The sum of 24.5 and 17.3 is 41.8.
 The square root of 144 is 12.
 ```
 
-### ステップ4: MCPサーバーを終了
+### ステップ 4: MCPサーバーを閉じる
 
-テストが終了したら、AIクライアントを終了するにはそのターミナルで`Ctrl+C`を押します。MCPサーバーは停止するまで動作し続けます。
-サーバーを停止するには、サーバーが実行されているターミナルで`Ctrl+C`を押します。
+テストが終わったら、AIクライアントのターミナルで `Ctrl+C` を押して終了できます。MCPサーバーは停止するまで動作を続けます。
+サーバーを停止する場合は、それが起動しているターミナルで `Ctrl+C` を押してください。
 
-## 全体の仕組み
+## 全体の連携動作
 
-AIに「5 + 3は何？」と尋ねた場合の完全な流れは以下の通りです：
+AIに「5 + 3は？」と聞いた時の全体の流れは以下の通りです：
 
-1. **あなた**がAIに自然言語で質問
-2. **AI**がリクエストを分析し、加算を求めていることを理解
-3. **AI**がMCPサーバーを呼び出し: `add(5.0, 3.0)`
-4. **計算機サービス**が計算を実行: `5.0 + 3.0 = 8.0`
-5. **計算機サービス**が結果を返す: `"5.00 + 3.00 = 8.00"`
-6. **AI**が結果を受け取り、自然な応答をフォーマット
-7. **あなた**が応答を受け取る: 「5と3の合計は8です」
+1. <strong>あなた</strong>が自然言語でAIに質問
+2. <strong>AI</strong>が解析し、加算をしたいと判断
+3. <strong>AI</strong>がMCPサーバーに呼び出しを実行：`add(5.0, 3.0)`
+4. <strong>電卓サービス</strong>が計算を実行：`5.0 + 3.0 = 8.0`
+5. <strong>電卓サービス</strong>が `"5.00 + 3.00 = 8.00"` を返す
+6. <strong>AI</strong>が結果を受け取り自然な応答文を生成
+7. <strong>あなた</strong>に「5と3の合計は8です」と返答
 
 ## 次のステップ
 
-さらなる例については、[第4章: 実用サンプル](../README.md)をご覧ください。
+さらに多くの例を見たい方は、[第04章：実践サンプル](../README.md) をご覧ください。
 
 ---
 
-**免責事項**:  
-この文書は、AI翻訳サービス [Co-op Translator](https://github.com/Azure/co-op-translator) を使用して翻訳されています。正確性を追求しておりますが、自動翻訳には誤りや不正確な部分が含まれる可能性があります。元の言語で記載された文書を正式な情報源としてお考えください。重要な情報については、専門の人間による翻訳を推奨します。この翻訳の使用に起因する誤解や誤解について、当社は責任を負いません。
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**免責事項**：
+本書類は AI 翻訳サービス [Co-op Translator](https://github.com/Azure/co-op-translator) を使用して翻訳されています。正確性を期していますが、自動翻訳には誤りや不正確な部分が含まれる可能性があることをご承知おきください。原文の原語版が正式な情報源とみなされるべきです。重要な情報については、専門の人間による翻訳を推奨します。本翻訳の利用により生じたいかなる誤解や解釈違いについても、当方は責任を負いかねます。
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

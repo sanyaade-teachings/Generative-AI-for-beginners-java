@@ -1,106 +1,61 @@
-# Mazungumzo ya Msingi na Azure OpenAI - Mfano wa Mwisho kwa Mwisho
+# Mazungumzo ya Msingi na Azure AI Foundry - Mfano wa Mwisho kwa Mwisho
 
-Mfano huu unaonyesha jinsi ya kuunda programu rahisi ya Spring Boot inayounganisha na Azure OpenAI na kujaribu usanidi wako.
+Mfano huu ni programu rahisi ya Spring Boot inayounganisha na mfano wa **Azure AI Foundry** kwa kutumia **uthibitishaji bila funguo** (Microsoft Entra ID) na kujaribu usanidi wako. Inatumia `ChatClient` ya Spring AI.
 
 ## Jedwali la Yaliyomo
 
-- [Mahitaji ya Awali](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Kuanza Haraka](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Chaguo za Usanidi](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Chaguo 1: Vigezo vya Mazingira (Faili ya .env) - Inapendekezwa](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Chaguo 2: Siri za GitHub Codespace](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Kuendesha Programu](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Kutumia Maven](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Kutumia VS Code](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Matokeo Yanayotarajiwa](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Marejeleo ya Usanidi](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Vigezo vya Mazingira](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Usanidi wa Spring](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Kutatua Matatizo](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Masuala ya Kawaida](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Hali ya Urekebishaji](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Hatua Zifuatazo](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Rasilimali](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
+- [Mahitaji](#mahitaji)
+- [Anza Haraka](#anza-haraka)
+- [Jinsi Uthibitishaji Unavyofanya Kazi](#jinsi-uthibitishaji-unavyofanya-kazi)
+- [Kukimbia Programu](#kukimbia-programu)
+  - [Kutumia Maven](#kutumia-maven)
+  - [Kutumia VS Code](#kutumia-vs-code)
+  - [Matokeo Yanayotarajiwa](#matokeo-yanayotarajiwa)
+- [Marejeleo ya Usanidi](#marejeleo-ya-usanidi)
+  - [Mazingira ya Kazi](#mazingira-ya-kazi)
+  - [Usanidi wa Spring](#usanidi-wa-spring)
+- [Kutatua Matatizo](#kutatua-matatizo)
+  - [Masuala ya Kawaida](#masuala-ya-kawaida)
+  - [Hali ya Kurekebisha Makosa](#hali-ya-kurekebisha-makosa)
+- [Hatua Zifuatazo](#hatua-zifuatazo)
+- [Rasilimali](#rasilimali)
 
-## Mahitaji ya Awali
+## Mahitaji
 
-Kabla ya kuendesha mfano huu, hakikisha una:
+Kabla ya kukimbia mfano huu, hakikisha una:
 
-- Umekamilisha [mwongozo wa usanidi wa Azure OpenAI](../../getting-started-azure-openai.md)  
-- Umeweka rasilimali ya Azure OpenAI (kupitia portal ya Azure AI Foundry)  
-- Umeweka mfano wa gpt-4o-mini (au mbadala)  
-- Umepewa funguo za API na URL ya mwisho kutoka Azure  
+- Rasilimali ya Azure AI Foundry yenye usambazaji wa `gpt-4o-mini` — itengeneze kwa kutumia `azd up` au kwa mkono kupitia [mwongozo wa usanidi wa Azure AI Foundry](../../getting-started-azure-openai.md)
+- Nafasi ya **Cognitive Services OpenAI User** kwenye rasilimali hiyo (vigezo vya Bicep vinakupa hii)
+- [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli), umeingia kwa `az login`
+- Java 21+ na Maven 3.9+
 
-## Kuanza Haraka
+> **Haina hitaji la funguo ya API** — uthibitishaji ni bila funguo kupitia Microsoft Entra ID.
+
+## Anza Haraka
 
 ```bash
-# 1. Navigate to project
+# 1. Elekea kwenye mradi
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 
-# 2. Configure credentials
-cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# 2. Ingia ili uthibitishaji usiotumia funguo upate tokeni
+az login
 
-# 3. Run the application
+# 3. Sanidi mwisho wa huduma
+#    - Ikiwa uliendesha `azd up`, .env ilianzishwa kwa ajili yako (ruka hii).
+#    - Vinginevyo nakili kiolezo na weka AZURE_OPENAI_ENDPOINT:
+cp .env.example .env
+
+# 4. Endesha programu
 mvn spring-boot:run
 ```
 
-## Chaguo za Usanidi
+## Jinsi Uthibitishaji Unavyofanya Kazi
 
-### Chaguo 1: Vigezo vya Mazingira (Faili ya .env) - Inapendekezwa
+Mfano huu unathibitisha kwa kutumia **Microsoft Entra ID** — hakuna funguo ya API.
 
-**Hatua ya 1: Unda faili yako ya usanidi**
-```bash
-cp .env.example .env
-```
+Wakati `spring.ai.azure.openai.endpoint` tu imewekwa (na hakuna api-key), Spring AI huunda mteja wa Azure OpenAI kwa kutumia [`DefaultAzureCredential`](https://learn.microsoft.com/java/api/com.azure.identity.defaultazurecredential). Kadi hiyo hujipata tokeni moja kwa moja kutoka kwa kikao chako cha `az login` kimoja kwa moja, au kutoka kwa kitambulisho kilichosimamiwa unapotumia Azure — hivyo msimbo huo unafanya kazi sehemu zote bila mabadiliko.
 
-**Hatua ya 2: Ongeza maelezo yako ya Azure OpenAI**
-```bash
-# Your Azure OpenAI API key (from Azure AI Foundry portal)
-AZURE_AI_KEY=your-actual-api-key-here
-
-# Your Azure OpenAI endpoint URL (e.g., https://your-hub-name.openai.azure.com/)
-AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-> **Kumbuka Kuhusu Usalama**: 
-> - Kamwe usiweke faili yako ya `.env` kwenye udhibiti wa toleo
-> - Faili ya `.env` tayari imejumuishwa kwenye `.gitignore`
-> - Linda funguo zako za API na uzibadilishe mara kwa mara
-
-### Chaguo 2: Siri za GitHub Codespace
-
-Kwa GitHub Codespaces, weka siri hizi kwenye hifadhi yako:
-- `AZURE_AI_KEY` - Funguo yako ya API ya Azure OpenAI
-- `AZURE_AI_ENDPOINT` - URL ya mwisho ya Azure OpenAI
-
-Programu inatambua na kutumia siri hizi moja kwa moja.
-
-### Mbadala: Vigezo vya Mazingira Moja kwa Moja
-
-<details>
-<summary>Bofya kuona amri maalum za jukwaa</summary>
-
-**Linux/macOS (bash/zsh):**
-```bash
-export AZURE_AI_KEY=your-actual-api-key-here
-export AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (Command Prompt):**
-```cmd
-set AZURE_AI_KEY=your-actual-api-key-here
-set AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (PowerShell):**
-```powershell
-$env:AZURE_AI_KEY="your-actual-api-key-here"
-$env:AZURE_AI_ENDPOINT="https://your-hub-name.openai.azure.com/"
-```
-</details>
-
-## Kuendesha Programu
+## Kukimbia Programu
 
 ### Kutumia Maven
 
@@ -110,11 +65,11 @@ mvn spring-boot:run
 
 ### Kutumia VS Code
 
-1. Fungua mradi kwenye VS Code
-2. Bonyeza `F5` au tumia paneli ya "Run and Debug"
+1. Fungua mradi katika VS Code
+2. Bonyeza `F5` au tumia jopo la "Run and Debug"
 3. Chagua usanidi wa "Spring Boot-BasicChatApplication"
 
-> **Kumbuka**: Usanidi wa VS Code unapakua faili yako ya .env moja kwa moja
+> **Kumbuka**: Usanidi wa VS Code hujipakiza faili lako la .env moja kwa moja
 
 ### Matokeo Yanayotarajiwa
 
@@ -134,63 +89,64 @@ Success! Azure OpenAI connection is working correctly.
 
 ## Marejeleo ya Usanidi
 
-### Vigezo vya Mazingira
+### Mazingira ya Kazi
 
-| Kigezo | Maelezo | Inahitajika | Mfano |
-|--------|---------|-------------|-------|
-| `AZURE_AI_KEY` | Funguo ya API ya Azure OpenAI | Ndio | `abc123...` |
-| `AZURE_AI_ENDPOINT` | URL ya mwisho ya Azure OpenAI | Ndio | `https://my-hub.openai.azure.com/` |
-| `AZURE_AI_MODEL_DEPLOYMENT` | Jina la mfano uliowekwa | Hapana | `gpt-4o-mini` (chaguo-msingi) |
+| Kigezo | Maelezo | Kinahitajika | Mfano |
+|----------|-------------|----------|---------|
+| `AZURE_OPENAI_ENDPOINT` | Anuani ya Foundry (Azure OpenAI) | Ndio | `https://my-resource.openai.azure.com/` |
+| `AZURE_OPENAI_DEPLOYMENT` | Jina la usambazaji wa mfano wa mazungumzo | Hapana | `gpt-4o-mini` (chaguo-msingi) |
+
+> Hakuna kigezo cha funguo ya API — uthibitishaji ni bila funguo (Microsoft Entra ID kupitia `az login`).
 
 ### Usanidi wa Spring
 
-Faili ya `application.yml` inasanidi:
-- **Funguo ya API**: `${AZURE_AI_KEY}` - Kutoka kwa kigezo cha mazingira
-- **URL ya mwisho**: `${AZURE_AI_ENDPOINT}` - Kutoka kwa kigezo cha mazingira  
-- **Mfano**: `${AZURE_AI_MODEL_DEPLOYMENT:gpt-4o-mini}` - Kutoka kwa kigezo cha mazingira na chaguo-msingi
-- **Joto**: `0.7` - Hudhibiti ubunifu (0.0 = hakika, 1.0 = ubunifu)
-- **Idadi ya Juu ya Tokeni**: `500` - Urefu wa majibu ya juu zaidi
+Faili ya `application.yml` inaweka:
+- **Anuani ya Huduma**: `${AZURE_OPENAI_ENDPOINT}` - Kutoka kwa kigezo cha mazingira
+- **Usambazaji**: `${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}` - Kutoka kwa kigezo cha mazingira na mbadala
+- **Uthibitishaji**: bila funguo — hakuna `api-key` imewekwa, hivyo Spring AI inatumia `DefaultAzureCredential`
+- **Joto**: `0.7` - Kudhibiti ubunifu (0.0 = uhakika, 1.0 = ubunifu)
+- **Hadi Tokeni**: `500` - Urefu wa juu wa jibu
 
 ## Kutatua Matatizo
 
 ### Masuala ya Kawaida
 
 <details>
-<summary><strong>Kosa: "Funguo ya API si sahihi"</strong></summary>
+<summary><strong>Kosa: 401 / "PermissionDenied" / makosa ya tokeni</strong></summary>
 
-- Hakikisha `AZURE_AI_KEY` yako imewekwa kwa usahihi kwenye faili yako ya `.env`
-- Thibitisha funguo ya API imekopiwa kama ilivyo kutoka portal ya Azure AI Foundry
-- Hakikisha hakuna nafasi za ziada au nukuu karibu na funguo
+- Endesha `az login` — uthibitishaji bila funguo unahitaji kuingia kuweza kupata tokeni
+- Hakikisha akaunti yako ina nafasi ya **Cognitive Services OpenAI User** kwenye rasilimali
+- Ikiwa umeweka nafasi hiyo hivi karibuni, subiri dakika ili iweze kusambaa
+- Thibitisha uko kwenye tena/usanidi sahihi (`az account show`)
 </details>
 
 <details>
-<summary><strong>Kosa: "URL ya mwisho si sahihi"</strong></summary>
+<summary><strong>Kosa: "Anuani ya huduma si halali" / makosa ya muunganisho</strong></summary>
 
-- Hakikisha `AZURE_AI_ENDPOINT` yako inajumuisha URL kamili (mfano, `https://your-hub-name.openai.azure.com/`)
-- Angalia uthabiti wa alama ya mwisho ya slash
-- Thibitisha URL ya mwisho inalingana na eneo la usanidi wa Azure
+- Hakikisha `AZURE_OPENAI_ENDPOINT` ni URL kamili ya msingi (mfano, `https://your-resource.openai.azure.com/`)
+- Angalia usawa wa mshale wa mwisho
+- Thibitisha anuani hiyo inalingana na rasilimali uliyotengeneza (`azd env get-values`)
 </details>
 
 <details>
-<summary><strong>Kosa: "Mfano haukupatikana"</strong></summary>
+<summary><strong>Kosa: "Usambazaji haukupatikana"</strong></summary>
 
-- Thibitisha jina la mfano uliowekwa linalingana kabisa na lililowekwa kwenye Azure
-- Angalia kuwa mfano umewekwa kwa mafanikio na uko hai
-- Jaribu kutumia jina la mfano chaguo-msingi: `gpt-4o-mini`
+- Thibitisha `AZURE_OPENAI_DEPLOYMENT` ni jina la usambazaji linalopatikana Azure
+- Angalia mfano umewekewa kazi na umeanzishwa
+- Jina la usambazaji la chaguo-msingi ni `gpt-4o-mini`
 </details>
 
 <details>
-<summary><strong>VS Code: Vigezo vya mazingira havipakui</strong></summary>
+<summary><strong>VS Code: Mazingira ya kazi hayaendi kufululiza</strong></summary>
 
-- Hakikisha faili yako ya `.env` iko kwenye saraka ya mizizi ya mradi (ngazi sawa na `pom.xml`)
-- Jaribu kuendesha `mvn spring-boot:run` kwenye terminal iliyojumuishwa ya VS Code
-- Angalia kuwa kiendelezi cha Java cha VS Code kimewekwa vizuri
-- Thibitisha usanidi wa uzinduzi una `"envFile": "${workspaceFolder}/.env"`
+- Hakikisha faili yako ya `.env` iko kwenye mzizi wa mradi (kando na `pom.xml`)
+- Jaribu kuendesha `mvn spring-boot:run` kwenye terminal ya VS Code
+- Angalia kwamba kuongeza la Java la VS Code limewekwa vizuri
 </details>
 
-### Hali ya Urekebishaji
+### Hali ya Kurekebisha Makosa
 
-Ili kuwezesha ufuatiliaji wa kina, toa maoni kwenye mistari hii katika `application.yml`:
+Ili kuwezesha kumbukumbu za kina, toa alama kutoka mistari hii katika `application.yml`:
 
 ```yaml
 logging:
@@ -203,14 +159,18 @@ logging:
 
 **Usanidi Umekamilika!** Endelea na safari yako ya kujifunza:
 
-[Sehemu ya 3: Mbinu za Msingi za AI ya Kizazi](../../../03-CoreGenerativeAITechniques/README.md)
+[Sura ya 3: Mbinu za Msingi za AI za Uumbaji](../../../03-CoreGenerativeAITechniques/README.md)
 
 ## Rasilimali
 
-- [Nyaraka za Spring AI Azure OpenAI](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
-- [Nyaraka za Huduma ya Azure OpenAI](https://learn.microsoft.com/azure/ai-services/openai/)
+- [Nyaraka za Spring AI Azure OpenAI](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
+- [Uthibitishaji bila funguo na Microsoft Entra ID](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
 - [Portal ya Azure AI Foundry](https://ai.azure.com/)
-- [Nyaraka za Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project)
+- [Nyaraka za Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/)
 
-**Kanusho**:  
-Hati hii imetafsiriwa kwa kutumia huduma ya kutafsiri ya AI [Co-op Translator](https://github.com/Azure/co-op-translator). Ingawa tunajitahidi kuhakikisha usahihi, tafadhali fahamu kuwa tafsiri za kiotomatiki zinaweza kuwa na makosa au kutokuwa sahihi. Hati ya asili katika lugha yake ya awali inapaswa kuzingatiwa kama chanzo cha mamlaka. Kwa taarifa muhimu, tafsiri ya kitaalamu ya binadamu inapendekezwa. Hatutawajibika kwa kutoelewana au tafsiri zisizo sahihi zinazotokana na matumizi ya tafsiri hii.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Kionyozo**:
+Hati hii imetafsiriwa kwa kutumia huduma ya tafsiri ya AI [Co-op Translator](https://github.com/Azure/co-op-translator). Ingawa tunajitahidi kupata usahihi, tafadhali fahamu kwamba tafsiri za kiotomatiki zinaweza kuwa na makosa au upungufu wa usahihi. Hati ya asili katika lugha yake halisi inapaswa kuchukuliwa kama chanzo cha mamlaka. Kwa taarifa muhimu, tafsiri ya kitaalamu inayofanywa na binadamu inapendekezwa. Hatutojibu kwa kuelewa vibaya au tafsiri potofu zinazotokea kutokana na matumizi ya tafsiri hii.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

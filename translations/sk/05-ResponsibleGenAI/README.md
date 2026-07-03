@@ -1,101 +1,97 @@
 # Zodpovedný generatívny AI
 
-[![Zodpovedný generatívny AI](https://img.youtube.com/vi/rF-b2BTSMQ4/0.jpg)](https://www.youtube.com/watch?v=rF-b2BTSMQ4 "Zodpovedný generatívny AI")
-
-> **Video**: [Pozrite si video prehľad tejto lekcie](https://www.youtube.com/watch?v=rF-b2BTSMQ4).
-> Môžete tiež kliknúť na obrázok náhľadu vyššie a otvoriť rovnaké video.
 
 ## Čo sa naučíte
 
-- Naučíte sa etické aspekty a osvedčené postupy, ktoré sú dôležité pre vývoj AI
-- Začleníte filtrovanie obsahu a bezpečnostné opatrenia do svojich aplikácií
-- Otestujete a spracujete reakcie AI na bezpečnosť pomocou vstavaných ochrán GitHub Models
-- Aplikujete princípy zodpovedného AI na vytváranie bezpečných a etických AI systémov
+- Naučte sa etické úvahy a najlepšie postupy, ktoré sú dôležité pri vývoji AI
+- Zabudujte do svojich aplikácií filtrovanie obsahu a bezpečnostné opatrenia
+- Testujte a spracovávajte reakcie na bezpečnosť AI pomocou vstavaného filtrovania obsahu Azure AI Foundry
+- Aplikujte zásady zodpovednej AI na vytváranie bezpečných a etických AI systémov
 
 ## Obsah
 
 - [Úvod](#úvod)
-- [Vstavaná bezpečnosť GitHub Models](#vstavaná-bezpečnosť-github-models)
-- [Praktický príklad: demo bezpečnosti zodpovedného AI](#praktický-príklad-demo-bezpečnosti-zodpovedného-ai)
+- [Bezpečnosť obsahu Azure AI Foundry](#bezpečnosť-obsahu-azure-ai-foundry)
+- [Praktický príklad: Demo bezpečnosti zodpovednej AI](#praktický-príklad-demo-bezpečnosti-zodpovednej-ai)
   - [Čo demo ukazuje](#čo-demo-ukazuje)
   - [Inštrukcie na nastavenie](#inštrukcie-na-nastavenie)
   - [Spustenie dema](#spustenie-dema)
   - [Očakávaný výstup](#očakávaný-výstup)
-- [Osvedčené postupy pre zodpovedný vývoj AI](#osvedčené-postupy-pre-zodpovedný-vývoj-ai)
-- [Dôležité upozornenie](#dôležité-upozornenie)
+- [Najlepšie postupy pre vývoj zodpovednej AI](#najlepšie-postupy-pre-vývoj-zodpovednej-ai)
+- [Dôležitá poznámka](#dôležitá-poznámka)
 - [Zhrnutie](#zhrnutie)
-- [Ukončenie kurzu](#ukončenie-kurzu)
+- [Dokončenie kurzu](#dokončenie-kurzu)
 - [Ďalšie kroky](#ďalšie-kroky)
 
 ## Úvod
 
-Táto záverečná kapitola sa sústreďuje na kľúčové aspekty tvorby zodpovedných a etických generatívnych AI aplikácií. Naučíte sa, ako implementovať bezpečnostné opatrenia, spracovať filtrovanie obsahu a uplatňovať osvedčené postupy pre zodpovedný vývoj AI pomocou nástrojov a rámcov uvedených v predchádzajúcich kapitolách. Pochopenie týchto princípov je nevyhnutné pre tvorbu AI systémov, ktoré sú nielen technicky pôsobivé, ale aj bezpečné, etické a dôveryhodné.
+Táto záverečná kapitola sa zameriava na kľúčové aspekty budovania zodpovedných a etických generatívnych AI aplikácií. Naučíte sa, ako implementovať bezpečnostné opatrenia, spracovávať filtrovanie obsahu a uplatňovať najlepšie postupy pre zodpovedný vývoj AI pomocou nástrojov a frameworkov, ktoré boli pokryté v predchádzajúcich kapitolách. Pochopenie týchto princípov je nevyhnutné pre vytváranie AI systémov, ktoré nie sú len technicky pôsobivé, ale aj bezpečné, etické a dôveryhodné.
 
-## Vstavaná bezpečnosť GitHub Models
+## Bezpečnosť obsahu Azure AI Foundry
 
-GitHub Models prichádza so základným filtrovaním obsahu už v základe. Je to ako mať priateľského barmana vo vašom AI klube – nie najsofistikovanejší, ale zvládne základné situácie.
+Modely Azure AI Foundry majú vstavané filtrovanie obsahu, ktoré je poháňané službou Azure AI Content Safety. Škodlivé podnety a odpovede sú automaticky kontrolované v niekoľkých kategóriách ešte predtým, než vôbec dosiahnu — alebo opustia — model.
 
-**Proti čomu GitHub Models chráni:**
-- **Škodlivý obsah**: blokuje zjavne násilný, sexuálny alebo nebezpečný obsah
-- **Základné prejavy nenávisti**: filtruje zjavný diskriminačný jazyk
-- **Jednoduché obchody**: odoláva základným pokusom o obídenie bezpečnostných opatrení
+**Proti čomu Azure AI Foundry chráni:**
+- **Škodlivý obsah**: Blokuje násilný, sexuálny, sebariadiaci alebo nebezpečný obsah
+- **Nenávistné prejavy**: Filtrovanie diskriminačného jazyka
+- **Jailbreaky**: Detekcia vkladania škodlivých podnetov a pokusov o obídenie bezpečnostných opatrení
 
-## Praktický príklad: demo bezpečnosti zodpovedného AI
+## Praktický príklad: Demo bezpečnosti zodpovednej AI
 
-Táto kapitola obsahuje praktickú ukážku, ako GitHub Models implementuje bezpečnostné opatrenia zodpovedného AI testovaním promptov, ktoré by mohli potenciálne porušovať pravidlá bezpečnosti.
+Táto kapitola obsahuje praktickú ukážku, ako Azure AI Foundry implementuje bezpečnostné opatrenia zodpovednej AI testovaním podnetov, ktoré potenciálne porušujú bezpečnostné pravidlá.
 
 ### Čo demo ukazuje
 
-Trieda `ResponsibleGithubModels` postupuje podľa tohto postupu:
-1. Inicializuje klienta GitHub Models s autentifikáciou
-2. Testuje škodlivé prompty (násilie, prejavy nenávisti, dezinformácie, nelegálny obsah)
-3. Posiela každý prompt do GitHub Models API
-4. Spracováva odpovede: tvrdé bloky (chyby HTTP), jemné odmietnutia (zdvorilé odpovede "Nemôžem pomôcť"), alebo bežné generovanie obsahu
-5. Zobrazí výsledky, ktoré ukazujú, ktorý obsah bol zablokovaný, odmietnutý alebo povolený
-6. Testuje bezpečný obsah pre porovnanie
+Trieda `ResponsibleAIDemo` postupuje podľa tohto toku:
+1. Inicializuje klienta Azure AI Foundry s autentifikáciou bez kľúča (Microsoft Entra ID)
+2. Testuje škodlivé podnety (násilie, nenávistné prejavy, dezinformácie, nelegálny obsah)
+3. Posiela každý podnet do modelu Azure AI Foundry
+4. Spracováva odpovede: tvrdé blokády (HTTP chyby), jemné odmietnutia (zdvorilé "nemôžem pomôcť" odpovede) alebo normálnu generáciu obsahu
+5. Zobrazuje výsledky ukazujúce, ktorý obsah bol zablokovaný, odmietnutý alebo povolený
+6. Testuje bezpečný obsah na porovnanie
 
-![Demo bezpečnosti zodpovedného AI](../../../translated_images/sk/responsible.e4f51a917bafa4bf.webp)
+![Demo bezpečnosti zodpovednej AI](../../../translated_images/sk/responsible.e4f51a917bafa4bf.webp)
 
 ### Inštrukcie na nastavenie
 
-1. **Nastavte si svoj osobný prístupový token GitHub:**
+1. **Prihláste sa a nastavte koncový bod Azure AI Foundry** (autentifikácia bez kľúča — bez API kľúča). Najskôr spustite `az login`, potom:
    
-   Vo Windows (Príkazový riadok):
+   Vo Windows (Command Prompt):
    ```cmd
-   set GITHUB_TOKEN=your_github_token_here
+   set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    ```
    
    Vo Windows (PowerShell):
    ```powershell
-   $env:GITHUB_TOKEN="your_github_token_here"
+   $env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
    ```
    
    Na Linux/macOS:
    ```bash
-   export GITHUB_TOKEN=your_github_token_here
+   export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    ```   
 
 ### Spustenie dema
 
-1. **Prejdite do priečinka examples:**
+1. **Prejdite do adresára s príkladmi:**
    ```bash
    cd 03-CoreGenerativeAITechniques/examples
    ```
 
-2. **Zostavte a spustite demo:**
+2. **Kompilujte a spustite demo:**
    ```bash
-   mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleGithubModels"
+   mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleAIDemo"
    ```
 
 ### Očakávaný výstup
 
-Demo otestuje rôzne druhy potenciálne škodlivých promptov a ukáže, ako moderná bezpečnosť AI funguje prostredníctvom dvoch mechanizmov:
+Demo otestuje rôzne typy potenciálne škodlivých podnetov a ukáže, ako moderná bezpečnosť AI funguje cez dva mechanizmy:
 
-- **Tvrdé bloky**: HTTP 400 chyby, keď obsah zablokuje bezpečnostný filter ešte pred samotným modelom
-- **Jemné odmietnutia**: model odpovedá zdvorilým odmietnutím ako „Nemôžem s tým pomôcť“ (najbežnejšie pri moderných modeloch)
-- **Bezpečný obsah**, ktorý dostane bežnú odpoveď
+- **Tvrdé blokády**: HTTP 400 chyby, keď obsah je zablokovaný bezpečnostnými filtrami ešte pred dosiahnutím modelu
+- **Jemné odmietnutia**: Model reaguje zdvorilým odmietnutím ako „Nemôžem s tým pomôcť“ (najbežnejšie pri moderných modeloch)
+- **Bezpečný obsah**, ktorý dostane normálnu odpoveď
 
-Ukážkový formát výstupu:
+Ukážka formátu výstupu:
 ```
 === Responsible AI Safety Demonstration ===
 
@@ -113,85 +109,85 @@ Status: Response generated successfully
 ────────────────────────────────────────────────────────────
 ```
 
-**Poznámka**: Hardbloky aj jemné odmietnutia znamenajú, že bezpečnostný systém funguje správne.
+**Poznámka**: Tvrdé blokády aj jemné odmietnutia indikujú, že bezpečnostný systém funguje správne.
 
-## Osvedčené postupy pre zodpovedný vývoj AI
+## Najlepšie postupy pre vývoj zodpovednej AI
 
-Pri tvorbe AI aplikácií dodržiavajte tieto kľúčové postupy:
+Pri budovaní AI aplikácií dodržujte tieto základné postupy:
 
-1. **Vždy vhodne spracujte potenciálne odpovede bezpečnostných filtrov**
-   - Implementujte správne spracovanie chýb pre zablokovaný obsah
-   - Poskytujte zmysluplnú spätnú väzbu užívateľom, keď je obsah filtrovaný
+1. **Vždy správne spracovávajte potenciálne odpovede bezpečnostného filtra**
+   - Implementujte správnu obsluhu chýb pre zablokovaný obsah
+   - Poskytujte zmysluplnú spätnú väzbu používateľom pri filtrovaní obsahu
 
-2. **Implementujte vlastné dodatočné overovanie obsahu, kde je to vhodné**
-   - Pridajte bezpečnostné kontroly špecifické pre danú oblasť
-   - Vytvorte vlastné validačné pravidlá pre váš prípad použitia
+2. **Implementujte vlastnú dodatočnú validáciu obsahu, kde je to vhodné**
+   - Pridajte bezpečnostné kontroly špecifické pre danú doménu
+   - Vytvorte vlastné pravidlá validácie pre svoj prípad použitia
 
-3. **Vzdelávajte užívateľov o zodpovednom používaní AI**
-   - Poskytnite jasné smernice o prijateľnom používaní
+3. **Vzdelávajte používateľov o zodpovednom používaní AI**
+   - Poskytujte jasné usmernenia o prijateľnom použití
    - Vysvetlite, prečo môže byť určitý obsah zablokovaný
 
-4. **Sledujte a zaznamenávajte bezpečnostné incidenty pre zlepšenie**
-   - Sledovanie vzorov zablokovaného obsahu
-   - Neustále zlepšovanie bezpečnostných opatrení
+4. **Monitorujte a zaznamenávajte bezpečnostné incidenty na zlepšenie**
+   - Sledujte vzory blokovaného obsahu
+   - Neustále vylepšujte svoje bezpečnostné opatrenia
 
-5. **Rešpektujte pravidlá obsahu platformy**
-   - Buďte v obraze o usmerneniach platformy
-   - Dodržiavajte podmienky služby a etické pravidlá
+5. **Dodržiavajte pravidlá platformy pre obsah**
+   - Sledujte pokyny platformy
+   - Dodržiavajte zmluvné podmienky a etické smernice
 
-## Dôležité upozornenie
+## Dôležitá poznámka
 
-Tento príklad používa zámerne problematické prompty výhradne na vzdelávacie účely. Cieľom je demonštrovať bezpečnostné opatrenia, nie ich obchádzať. Vždy používajte nástroje AI zodpovedne a eticky.
+Tento príklad použiva zámerne problematické podnety len na vzdelávacie účely. Cieľom je demonštrovať bezpečnostné opatrenia, nie ich obchádzať. Vždy používajte AI nástroje zodpovedne a eticky.
 
 ## Zhrnutie
 
-**Blahoželáme!** Úspešne ste:
+**Gratulujeme!** Úspešne ste:
 
-- **Implementovali bezpečnostné opatrenia AI** vrátane filtrovania obsahu a spracovania odpovedí na bezpečnosť
-- **Aplikovali princípy zodpovedného AI** k tvorbe etických a dôveryhodných AI systémov
-- **Otestovali bezpečnostné mechanizmy** pomocou vstavaných ochrán GitHub Models
-- **Naučili sa osvedčené postupy** pre zodpovedný vývoj a nasadenie AI
+- **Implementovali bezpečnostné opatrenia AI**, vrátane filtrovania obsahu a spracovania bezpečnostných reakcií
+- **Aplikovali zásady zodpovednej AI** na vytvorenie etických a dôveryhodných AI systémov
+- **Otestovali bezpečnostné mechanizmy** pomocou vstavaných schopností filtrovania obsahu Azure AI Foundry
+- **Naučili sa najlepšie postupy** pre vývoj a nasadzovanie zodpovednej AI
 
-**Zdroje na zodpovedný AI:**
-- [Microsoft Trust Center](https://www.microsoft.com/trust-center) – Spoznajte prístup Microsoftu k bezpečnosti, súkromiu a dodržiavaniu pravidiel
-- [Microsoft Responsible AI](https://www.microsoft.com/ai/responsible-ai) – Preskúmajte princípy a postupy Microsoftu pre zodpovedný vývoj AI
+**Zdroje pre zodpovednú AI:**
+- [Microsoft Trust Center](https://www.microsoft.com/trust-center) - Naučte sa o Microsoft prístupe k bezpečnosti, súkromiu a súladu
+- [Microsoft Responsible AI](https://www.microsoft.com/ai/responsible-ai) - Preskúmajte Microsoft zásady a praktiky pre zodpovedný vývoj AI
 
-## Ukončenie kurzu
+## Dokončenie kurzu
 
 Gratulujeme k dokončeniu kurzu Generatívny AI pre začiatočníkov!
 
-![Ukončenie kurzu](../../../translated_images/sk/image.73c7e2ff4a652e77.webp)
+![Dokončenie kurzu](../../../translated_images/sk/image.73c7e2ff4a652e77.webp)
 
 **Čo ste dosiahli:**
-- Nastavili ste si vývojové prostredie
-- Naučili ste sa základné techniky generatívneho AI
-- Preskúmali ste praktické použitia AI
-- Pochopili ste princípy zodpovedného AI
+- Nastavili ste si svoje vývojové prostredie
+- Naučili ste sa základné techniky generatívnej AI
+- Preskúmali ste praktické AI aplikácie
+- Pochopili ste zásady zodpovednej AI
 
 ## Ďalšie kroky
 
-Pokračujte vo svojej AI vzdelávacej ceste s týmito dodatočnými zdrojmi:
+Pokračujte vo svojom vzdelávaní v AI s týmito ďalšími zdrojmi:
 
 **Ďalšie vzdelávacie kurzy:**
-- [AI Agenti pre začiatočníkov](https://github.com/microsoft/ai-agents-for-beginners)
-- [Generatívny AI pre začiatočníkov s použitím .NET](https://github.com/microsoft/Generative-AI-for-beginners-dotnet)
-- [Generatívny AI pre začiatočníkov s použitím JavaScriptu](https://github.com/microsoft/generative-ai-with-javascript)
-- [Generatívny AI pre začiatočníkov](https://github.com/microsoft/generative-ai-for-beginners)
-- [Strojové učenie pre začiatočníkov](https://aka.ms/ml-beginners)
-- [Dátová veda pre začiatočníkov](https://aka.ms/datascience-beginners)
-- [AI pre začiatočníkov](https://aka.ms/ai-beginners)
-- [Kybernetická bezpečnosť pre začiatočníkov](https://github.com/microsoft/Security-101)
-- [Webový vývoj pre začiatočníkov](https://aka.ms/webdev-beginners)
-- [IoT pre začiatočníkov](https://aka.ms/iot-beginners)
-- [Vývoj XR pre začiatočníkov](https://github.com/microsoft/xr-development-for-beginners)
-- [Ovládanie GitHub Copilot pre párované programovanie AI](https://aka.ms/GitHubCopilotAI)
-- [Ovládanie GitHub Copilot pre C#/.NET vývojárov](https://github.com/microsoft/mastering-github-copilot-for-dotnet-csharp-developers)
-- [Vyberte si vlastné dobrodružstvo s Copilotom](https://github.com/microsoft/CopilotAdventures)
-- [RAG Chat App s Azure AI službami](https://github.com/Azure-Samples/azure-search-openai-demo-java)
+- [AI Agents For Beginners](https://github.com/microsoft/ai-agents-for-beginners)
+- [Generative AI for Beginners using .NET](https://github.com/microsoft/Generative-AI-for-beginners-dotnet)
+- [Generative AI for Beginners using JavaScript](https://github.com/microsoft/generative-ai-with-javascript)
+- [Generative AI for Beginners](https://github.com/microsoft/generative-ai-for-beginners)
+- [ML for Beginners](https://aka.ms/ml-beginners)
+- [Data Science for Beginners](https://aka.ms/datascience-beginners)
+- [AI for Beginners](https://aka.ms/ai-beginners)
+- [Cybersecurity for Beginners](https://github.com/microsoft/Security-101)
+- [Web Dev for Beginners](https://aka.ms/webdev-beginners)
+- [IoT for Beginners](https://aka.ms/iot-beginners)
+- [XR Development for Beginners](https://github.com/microsoft/xr-development-for-beginners)
+- [Mastering GitHub Copilot for AI Paired Programming](https://aka.ms/GitHubCopilotAI)
+- [Mastering GitHub Copilot for C#/.NET Developers](https://github.com/microsoft/mastering-github-copilot-for-dotnet-csharp-developers)
+- [Choose Your Own Copilot Adventure](https://github.com/microsoft/CopilotAdventures)
+- [RAG Chat App with Azure AI Services](https://github.com/Azure-Samples/azure-search-openai-demo-java)
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Zrieknutie sa zodpovednosti**:  
-Tento dokument bol preložený pomocou AI prekladačskej služby [Co-op Translator](https://github.com/Azure/co-op-translator). Aj keď sa snažíme o presnosť, prosím, berte na vedomie, že automatické preklady môžu obsahovať chyby alebo nepresnosti. Pôvodný dokument v jeho rodnom jazyku by mal byť považovaný za autoritatívny zdroj. Pre kritické informácie sa odporúča profesionálny ľudský preklad. Nie sme zodpovední za akékoľvek nedorozumenia alebo nesprávne interpretácie vyplývajúce z použitia tohto prekladu.
+**Vyhlásenie o zodpovednosti**:
+Tento dokument bol preložený pomocou AI prekladateľskej služby [Co-op Translator](https://github.com/Azure/co-op-translator). Hoci sa snažíme o presnosť, vezmite prosím na vedomie, že automatické preklady môžu obsahovať chyby alebo nepresnosti. Pôvodný dokument v jeho natívnom jazyku by mal byť považovaný za autoritatívny zdroj. Pre kritické informácie sa odporúča profesionálny ľudský preklad. Nie sme zodpovední za žiadne nedorozumenia alebo nesprávne interpretácie vyplývajúce z použitia tohto prekladu.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

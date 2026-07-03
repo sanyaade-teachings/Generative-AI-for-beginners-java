@@ -2,81 +2,82 @@
 
 ## نظرة عامة على المشروع
 
-هذا مستودع تعليمي لتعلم تطوير الذكاء الاصطناعي التوليدي باستخدام Java. يقدم دورة عملية شاملة تغطي نماذج اللغة الكبيرة (LLMs)، هندسة التوجيه، التضمينات، RAG (توليد معزز بالاسترجاع)، وبروتوكول سياق النموذج (MCP).
+هذا مستودع تعليمي لتعلم تطوير الذكاء الاصطناعي التوليدي باستخدام جافا. يوفر دورة شاملة عملية تغطي نماذج اللغة الكبيرة (LLMs)، هندسة التوجيه، التضمينات، RAG (التوليد المعزز بالإسترجاع)، وبروتوكول سياق النموذج (MCP).
 
-**التقنيات الرئيسية:**
-- Java 21
+**التقنيات الأساسية:**
+- جافا 21
 - Spring Boot 3.5.x
 - Spring AI 1.1.x
-- Maven
+- مافن
 - LangChain4j
-- نماذج GitHub، Azure OpenAI، و OpenAI SDKs
+- Azure AI Foundry، Azure OpenAI، ومكتبات OpenAI SDK
 
-**الهندسة المعمارية:**
+**الهيكلية:**
 - تطبيقات Spring Boot مستقلة متعددة منظمة حسب الفصول
-- مشاريع نموذجية توضح أنماط الذكاء الاصطناعي المختلفة
-- جاهزة للعمل مع GitHub Codespaces مع حاويات تطوير مُعدة مسبقًا
+- مشاريع عينة توضح أنماطًا مختلفة للذكاء الاصطناعي
+- جاهز لـ GitHub Codespaces مع حاويات تطوير مهيأة مسبقًا
 
 ## أوامر الإعداد
 
-### المتطلبات الأساسية
-- Java 21 أو أعلى
-- Maven 3.x
-- رمز وصول شخصي لـ GitHub (لنماذج GitHub)
-- اختياري: بيانات اعتماد Azure OpenAI
+### المتطلبات المسبقة
+- جافا 21 أو أحدث
+- مافن 3.x
+- اشتراك Azure مع نشر نموذج Azure AI Foundry (يتم توفيره باستخدام `azd up`)
+- Azure CLI (`az`) و Azure Developer CLI (`azd`)، مسجل دخول لدعم المصادقة بدون مفتاح
 
 ### إعداد البيئة
 
 **الخيار 1: GitHub Codespaces (موصى به)**
 ```bash
-# Fork the repository and create a codespace from GitHub UI
-# The dev container will automatically install all dependencies
-# Wait ~2 minutes for environment setup
+# قم بتفريع المستودع وإنشاء مساحة تعليمات برمجية من واجهة GitHub
+# سيقوم حاوية التطوير بتثبيت جميع التبعيات تلقائيًا
+# انتظر حوالي دقيقتين لإعداد البيئة
 ```
 
 **الخيار 2: حاوية تطوير محلية**
 ```bash
-# Clone repository
+# استنساخ المستودع
 git clone https://github.com/microsoft/Generative-AI-for-beginners-java.git
 cd Generative-AI-for-beginners-java
 
-# Open in VS Code with Dev Containers extension
-# Reopen in Container when prompted
+# افتح في VS Code مع امتداد حاويات التطوير
+# أعد الفتح في الحاوية عند الطلب
 ```
 
-**الخيار 3: إعداد محلي**
+**الخيار 3: الإعداد المحلي**
 ```bash
-# Install dependencies
+# تثبيت التبعيات
 sudo apt-get update
 sudo apt-get install -y maven openjdk-21-jdk
 
-# Verify installation
+# التحقق من التثبيت
 java -version
 mvn -version
 ```
 
-
 ### التكوين
 
-**إعداد رمز GitHub:**
+**إعداد Azure AI Foundry (مصادقة بدون مفتاح، موصى بها):**
 ```bash
-# Create a GitHub Personal Access Token
-# Set environment variable
-export GITHUB_TOKEN="your-token-here"
+# توفير حساب Foundry + نشر النماذج ككود
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
+# يقوم azd بكتابة examples/basic-chat-azure/.env مع نقطة النهاية الخاصة بك (بدون مفتاح)
 ```
 
-**إعداد Azure OpenAI (اختياري):**
+**تكوين نقطة النهاية يدويًا:**
 ```bash
-# For examples using Azure OpenAI
+# إذا لم تستخدم azd، قم بتعيين نقطة النهاية بنفسك (ستبقى المصادقة بدون مفتاح عبر az login)
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# حرر .env: AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com/
 ```
 
+## سير عمل التطوير
 
-## سير العمل التطويري
-
-### هيكل المشروع
+### هيكلية المشروع
 ```
 /
 ├── 01-IntroToGenAI/              # Chapter 1: Introduction
@@ -90,7 +91,6 @@ cp .env.example .env
 ├── 05-ResponsibleGenAI/         # Chapter 5: Responsible AI
 └── translations/                # Multi-language support
 ```
-
 
 ### تشغيل التطبيقات
 
@@ -106,92 +106,89 @@ cd [project-directory]
 mvn clean install
 ```
 
-**تشغيل خادم MCP Calculator:**
+**بدء خادم MCP Calculator:**
 ```bash
 cd 04-PracticalSamples/calculator
 mvn spring-boot:run
-# Server runs on http://localhost:8080
+# الخادم يعمل على http://localhost:8080
 ```
 
 **تشغيل أمثلة العميل:**
 ```bash
-# After starting the server in another terminal
+# بعد بدء الخادم في نافذة طرفية أخرى
 cd 04-PracticalSamples/calculator
 
-# Direct MCP client
+# عميل MCP مباشر
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient"
 
-# AI-powered client (requires GITHUB_TOKEN)
+# عميل معزز بالذكاء الاصطناعي (يتطلب AZURE_OPENAI_ENDPOINT + تسجيل دخول az)
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient"
 
-# Interactive bot
+# روبوت تفاعلي
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.Bot"
 ```
 
-
 ### إعادة التحميل السريع
-تم تضمين Spring Boot DevTools في المشاريع التي تدعم إعادة التحميل السريع:
+تتضمن المشاريع التي تدعم إعادة التحميل السريع Spring Boot DevTools:
 ```bash
-# Changes to Java files will automatically reload when saved
+# سيتم إعادة التحميل تلقائيًا عند حفظ التغييرات في ملفات جافا
 mvn spring-boot:run
 ```
-
 
 ## تعليمات الاختبار
 
 ### تشغيل الاختبارات
 
-**تشغيل جميع الاختبارات في المشروع:**
+**تشغيل جميع الاختبارات في مشروع:**
 ```bash
 cd [project-directory]
 mvn test
 ```
 
-**تشغيل الاختبارات مع إخراج مفصل:**
+**تشغيل الاختبارات مع مخرجات مفصلة:**
 ```bash
 mvn test -X
 ```
 
-**تشغيل فئة اختبار محددة:**
+**تشغيل فصل اختبار محدد:**
 ```bash
 mvn test -Dtest=CalculatorServiceTest
 ```
 
-
-### هيكل الاختبار
-- ملفات الاختبار تستخدم JUnit 5 (Jupiter)
-- فئات الاختبار موجودة في `src/test/java/`
-- أمثلة العميل في مشروع الحاسبة موجودة في `src/test/java/com/microsoft/mcp/sample/client/`
+### هيكلية الاختبار
+- تستخدم ملفات الاختبار JUnit 5 (Jupiter)
+- تقع فصول الاختبار في `src/test/java/`
+- أمثلة العميل في مشروع الحاسبة توجد في `src/test/java/com/microsoft/mcp/sample/client/`
 
 ### الاختبار اليدوي
 العديد من الأمثلة هي تطبيقات تفاعلية تتطلب اختبارًا يدويًا:
 
-1. قم بتشغيل التطبيق باستخدام `mvn spring-boot:run`
+1. ابدأ التطبيق مع `mvn spring-boot:run`
 2. اختبر نقاط النهاية أو تفاعل مع CLI
-3. تحقق من أن السلوك المتوقع يتطابق مع الوثائق في README.md لكل مشروع
+3. تحقق من توافق السلوك المتوقع مع الوثائق في كل ملف README.md الخاص بالمشروع
 
-### الاختبار باستخدام نماذج GitHub
-- حدود الطبقة المجانية: 15 طلبًا/دقيقة، 150/يوم
-- 5 طلبات متزامنة كحد أقصى
-- اختبار تصفية المحتوى باستخدام أمثلة الذكاء الاصطناعي المسؤول
+### الاختبار مع Azure AI Foundry
+- سجل الدخول باستخدام `az login` قبل تشغيل الأمثلة (مصادقة بدون مفتاح)
+- تأكد من أن حسابك يحمل دور مستخدم Cognitive Services OpenAI على المورد
+- اختبر التصفية المحتوى مع مثال الذكاء الاصطناعي المسؤول في الفصل 5
 
 ## إرشادات نمط الكود
 
-### اتفاقيات Java
-- **إصدار Java:** Java 21 مع الميزات الحديثة
-- **النمط:** اتباع اتفاقيات Java القياسية
-- **التسمية:**
+### قواعد جافا
+- **إصدار جافا:** جافا 21 مع ميزات حديثة
+- **النمط:** اتبع قواعد جافا القياسية
+- **التسمية:** 
   - الفئات: PascalCase
   - الطرق/المتغيرات: camelCase
   - الثوابت: UPPER_SNAKE_CASE
   - أسماء الحزم: أحرف صغيرة
 
 ### أنماط Spring Boot
-- استخدام `@Service` للمنطق التجاري
-- استخدام `@RestController` لنقاط النهاية REST
+- استخدم `@Service` للمنطق التجاري
+- استخدم `@RestController` لنقاط نهاية REST
 - التكوين عبر `application.yml` أو `application.properties`
-- تفضيل متغيرات البيئة على القيم الثابتة
-- استخدام التعليمة `@Tool` للطرق المكشوفة عبر MCP
+- تفضيل المتغيرات البيئية على القيم الثابتة
+- استخدم التعليمة `@Tool` للطرق المكشوفة عبر MCP
 
 ### تنظيم الملفات
 ```
@@ -212,23 +209,22 @@ src/
         └── com/microsoft/[component]/
 ```
 
-
-### التبعيات
-- تُدار عبر Maven `pom.xml`
+### الاعتمادات
+- مدار عبر مافن `pom.xml`
 - Spring AI BOM لإدارة الإصدارات
-- LangChain4j للتكاملات الذكاء الاصطناعي
-- Spring Boot starter parent لتبعيات Spring
+- LangChain4j للتكاملات AI
+- Spring Boot starter parent لإدارة تبعيات Spring
 
 ### تعليقات الكود
-- إضافة JavaDoc لواجهات برمجة التطبيقات العامة
-- تضمين تعليقات تفسيرية للتفاعلات المعقدة مع الذكاء الاصطناعي
-- توثيق أوصاف أدوات MCP بوضوح
+- أضف JavaDoc لواجهات API العامة
+- تضمين تعليقات توضيحية للتفاعلات المعقدة مع الذكاء الاصطناعي
+- وثق أوصاف أدوات MCP بوضوح
 
 ## البناء والنشر
 
 ### بناء المشاريع
 
-**البناء بدون اختبارات:**
+**البناء بدون اختبار:**
 ```bash
 mvn clean install -DskipTests
 ```
@@ -238,129 +234,132 @@ mvn clean install -DskipTests
 mvn clean install
 ```
 
-**تغليف التطبيق:**
+**حزم التطبيق:**
 ```bash
 mvn package
-# Creates JAR in target/ directory
+# يُنشئ JAR في دليل target/
 ```
 
-
-### أدلة الإخراج
+### مجلدات المخرجات
 - الفئات المترجمة: `target/classes/`
 - فئات الاختبار: `target/test-classes/`
 - ملفات JAR: `target/*.jar`
-- قطع Maven: `target/`
+- ملفات مافن: `target/`
 
-### تكوين خاص بالبيئة
+### التكوين الخاص بالبيئة
 
 **التطوير:**
 ```yaml
-# application.yml
+# application.yml (keyless - no api-key; auth via DefaultAzureCredential)
 spring:
   ai:
-    openai:
-      api-key: ${GITHUB_TOKEN}
-      base-url: https://models.inference.ai.azure.com
+    azure:
+      openai:
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 **الإنتاج:**
-- استخدام نماذج Azure AI Foundry بدلاً من نماذج GitHub
-- تحديث عنوان URL الأساسي إلى نقطة نهاية Azure OpenAI
-- إدارة الأسرار عبر Azure Key Vault أو متغيرات البيئة
+- استخدم هوية مدارة بدلاً من `az login` للمصادقة بدون مفتاح
+- وجه `AZURE_OPENAI_ENDPOINT` إلى مورد Foundry الإنتاجي الخاص بك
+- إدارة التكوين عبر متغيرات البيئة أو Azure Key Vault
 
 ### اعتبارات النشر
 - هذا مستودع تعليمي مع تطبيقات نموذجية
-- غير مصمم للنشر الإنتاجي كما هو
-- الأمثلة توضح أنماطًا يمكن تكييفها للاستخدام الإنتاجي
-- راجع ملفات README لكل مشروع للحصول على ملاحظات النشر المحددة
+- غير مصمم للنشر في بيئة الإنتاج كما هو
+- تعرض الأمثلة أنماطًا للتكيف مع الاستخدام في الإنتاج
+- راجع ملفات README الخاصة بكل مشروع لملاحظات النشر الخاصة
 
 ## ملاحظات إضافية
 
-### نماذج GitHub مقابل Azure OpenAI
-- **نماذج GitHub:** طبقة مجانية للتعلم، لا حاجة لبطاقة ائتمان
-- **Azure OpenAI:** جاهزة للإنتاج، تتطلب اشتراك Azure
-- الكود متوافق بين الاثنين - فقط قم بتغيير نقطة النهاية ومفتاح API
+### Azure AI Foundry
+- **المصادقة بدون مفتاح:** الاتصال عبر Microsoft Entra ID — لا حاجة لإدارة مفاتيح API
+- **تم توفيره ككود:** Bicep + azd (`azd up`) ينشئ الحساب ونماذج النشر
+- نفس الكود المتوافق مع OpenAI يعمل محليًا (`az login`) وفي Azure (الهوية المدارة)
 
 ### العمل مع مشاريع متعددة
 كل مشروع نموذجي مستقل:
 ```bash
-# Navigate to specific project
+# الانتقال إلى مشروع معين
 cd 04-PracticalSamples/[project-name]
 
-# Each has its own pom.xml and can be built independently
+# لدى كل منها ملف pom.xml الخاص بها ويمكن بناؤها بشكل مستقل
 mvn clean install
 ```
 
-
 ### المشكلات الشائعة
 
-**عدم توافق إصدار Java:**
+**عدم تطابق إصدار جافا:**
 ```bash
-# Verify Java 21
+# تحقق من جافا 21
 java -version
-# Update JAVA_HOME if needed
+# حدّث JAVA_HOME إذا تطلب الأمر
 export JAVA_HOME=/usr/lib/jvm/msopenjdk-current
 ```
 
-**مشكلات تنزيل التبعيات:**
+**مشاكل تنزيل التبعيات:**
 ```bash
-# Clear Maven cache and retry
+# مسح ذاكرة التخزين المؤقت لـ Maven وأعد المحاولة
 rm -rf ~/.m2/repository
 mvn clean install
 ```
 
-**رمز GitHub غير موجود:**
+**عدم العثور على نقطة النهاية أو تسجيل الدخول:**
 ```bash
-# Set in current session
-export GITHUB_TOKEN="your-token-here"
+# تعيين نقطة النهاية في الجلسة الحالية وتسجيل الدخول (بدون مفتاح)
+export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
+az login
 
-# Or use .env file in project directory
-echo "GITHUB_TOKEN=your-token-here" > .env
+# أو استخدام ملف .env في دليل المشروع
+echo "AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/" > .env
 ```
 
-**المنفذ قيد الاستخدام بالفعل:**
+**المنفذ مستخدم بالفعل:**
 ```bash
-# Spring Boot uses port 8080 by default
-# Change in application.properties:
+# يستخدم Spring Boot المنفذ 8080 بشكل افتراضي
+# التغيير في application.properties:
 server.port=8081
 ```
 
-
 ### دعم متعدد اللغات
-- الوثائق متوفرة بأكثر من 45 لغة عبر الترجمة الآلية
-- الترجمات موجودة في دليل `translations/`
-- تُدار الترجمة بواسطة سير عمل GitHub Actions
+- التوثيق متوفر بـ 45+ لغة عبر الترجمة التلقائية
+- الترجمات في مجلد `translations/`
+- إدارة الترجمة عبر سير عمل GitHub Actions
 
 ### مسار التعلم
-1. ابدأ بـ [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md)
+1. ابدأ مع [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md)
 2. اتبع الفصول بالترتيب (01 → 05)
 3. أكمل الأمثلة العملية في كل فصل
 4. استكشف المشاريع النموذجية في الفصل 4
 5. تعلم ممارسات الذكاء الاصطناعي المسؤول في الفصل 5
 
 ### حاوية التطوير
-تقوم `.devcontainer/devcontainer.json` بتكوين:
-- بيئة تطوير Java 21
-- Maven مثبت مسبقًا
-- ملحقات Java لـ VS Code
+ملف `.devcontainer/devcontainer.json` يجهز:
+- بيئة تطوير جافا 21
+- مافن مثبت مسبقًا
+- إضافات جافا لـ VS Code
 - أدوات Spring Boot
 - تكامل GitHub Copilot
 - دعم Docker-in-Docker
 - Azure CLI
 
 ### اعتبارات الأداء
-- طبقة نماذج GitHub المجانية لديها حدود معدل
+- نشرات Azure AI Foundry لها حصص رموز/طلبات دقيقة
 - استخدم أحجام دفعات مناسبة للتضمينات
-- ضع في اعتبارك التخزين المؤقت لطلبات API المتكررة
+- اعتبر التخزين المؤقت للنداءات المتكررة لواجهة API
 - راقب استخدام الرموز لتحسين التكلفة
 
 ### ملاحظات الأمان
-- لا تقم أبدًا بارتكاب ملفات `.env` (موجودة بالفعل في `.gitignore`)
-- استخدم متغيرات البيئة لمفاتيح API
-- يجب أن تحتوي رموز GitHub على أقل النطاقات المطلوبة
+- لا تقم أبدًا بالتزام ملفات `.env` (مٌدرجة مسبقًا في `.gitignore`)
+- فضّل المصادقة بدون مفتاح (Microsoft Entra ID) على مفاتيح API
+- استخدم الهويات المدارة في Azure؛ استخدم `az login` للتطوير المحلي
 - اتبع إرشادات الذكاء الاصطناعي المسؤول في الفصل 5
 
 ---
 
-**إخلاء المسؤولية**:  
-تم ترجمة هذا المستند باستخدام خدمة الترجمة بالذكاء الاصطناعي [Co-op Translator](https://github.com/Azure/co-op-translator). بينما نسعى لتحقيق الدقة، يرجى العلم أن الترجمات الآلية قد تحتوي على أخطاء أو معلومات غير دقيقة. يجب اعتبار المستند الأصلي بلغته الأصلية المصدر الموثوق. للحصول على معلومات حاسمة، يُوصى بالاستعانة بترجمة بشرية احترافية. نحن غير مسؤولين عن أي سوء فهم أو تفسيرات خاطئة ناتجة عن استخدام هذه الترجمة.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**تنويه**:
+تمت ترجمة هذا المستند باستخدام خدمة الترجمة بالذكاء الاصطناعي [Co-op Translator](https://github.com/Azure/co-op-translator). بينما نسعى للدقة، يرجى العلم أن الترجمات الآلية قد تحتوي على أخطاء أو عدم دقة. يجب اعتبار المستند الأصلي بلغته الأصلية المصدر الرسمي والمعتمد. للمعلومات الهامة، يُنصح بالاستعانة بترجمة بشرية محترفة. نحن غير مسؤولين عن أي سوء فهم أو تفسير ناتج عن استخدام هذه الترجمة.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

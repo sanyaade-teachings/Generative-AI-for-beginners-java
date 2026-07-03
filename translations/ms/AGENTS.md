@@ -2,7 +2,7 @@
 
 ## Gambaran Projek
 
-Ini adalah repositori pendidikan untuk mempelajari pembangunan Generative AI dengan Java. Ia menyediakan kursus praktikal yang komprehensif meliputi Model Bahasa Besar (LLMs), kejuruteraan prompt, embeddings, RAG (Retrieval-Augmented Generation), dan Protokol Konteks Model (MCP).
+Ini adalah repositori pendidikan untuk mempelajari pembangunan AI Generatif dengan Java. Ia menyediakan kursus praktikal yang komprehensif merangkumi Model Bahasa Besar (LLM), kejuruteraan arahan, penanaman, RAG (Generasi Beraugmen Pengambilan), dan Protokol Konteks Model (MCP).
 
 **Teknologi Utama:**
 - Java 21
@@ -10,66 +10,69 @@ Ini adalah repositori pendidikan untuk mempelajari pembangunan Generative AI den
 - Spring AI 1.1.x
 - Maven
 - LangChain4j
-- Model GitHub, Azure OpenAI, dan SDK OpenAI
+- Azure AI Foundry, Azure OpenAI, dan SDK OpenAI
 
 **Senibina:**
 - Beberapa aplikasi Spring Boot berdiri sendiri yang diatur mengikut bab
 - Projek contoh yang menunjukkan pelbagai corak AI
-- Sedia untuk GitHub Codespaces dengan kontena pembangunan yang telah dikonfigurasi
+- Sedia GitHub Codespaces dengan kontena pembangunan yang telah dikonfigurasikan
 
 ## Perintah Persediaan
 
 ### Prasyarat
 - Java 21 atau lebih tinggi
 - Maven 3.x
-- Token akses peribadi GitHub (untuk Model GitHub)
-- Pilihan: Kredensial Azure OpenAI
+- Langganan Azure dengan penyebaran model Azure AI Foundry (disediakan dengan `azd up`)
+- Azure CLI (`az`) dan Azure Developer CLI (`azd`), log masuk untuk pengesahan tanpa kunci
 
 ### Persediaan Persekitaran
 
 **Pilihan 1: GitHub Codespaces (Disyorkan)**
 ```bash
-# Fork the repository and create a codespace from GitHub UI
-# The dev container will automatically install all dependencies
-# Wait ~2 minutes for environment setup
+# Fork repositori dan buat codespace dari UI GitHub
+# Kontena dev akan memasang semua kebergantungan secara automatik
+# Tunggu ~2 minit untuk penyediaan persekitaran
 ```
 
-**Pilihan 2: Kontena Pembangunan Tempatan**
+**Pilihan 2: Kontena Dev Tempatan**
 ```bash
-# Clone repository
+# Klon repositori
 git clone https://github.com/microsoft/Generative-AI-for-beginners-java.git
 cd Generative-AI-for-beginners-java
 
-# Open in VS Code with Dev Containers extension
-# Reopen in Container when prompted
+# Buka dalam VS Code dengan sambungan Dev Containers
+# Buka semula dalam Container apabila diminta
 ```
 
 **Pilihan 3: Persediaan Tempatan**
 ```bash
-# Install dependencies
+# Pasang pergantungan
 sudo apt-get update
 sudo apt-get install -y maven openjdk-21-jdk
 
-# Verify installation
+# Sahkan pemasangan
 java -version
 mvn -version
 ```
 
 ### Konfigurasi
 
-**Persediaan Token GitHub:**
+**Persediaan Azure AI Foundry (tanpa kunci, disyorkan):**
 ```bash
-# Create a GitHub Personal Access Token
-# Set environment variable
-export GITHUB_TOKEN="your-token-here"
+# Sediakan akaun Foundry + penyebaran model sebagai kod
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
+# azd menulis examples/basic-chat-azure/.env dengan titik akhir anda (tanpa kunci)
 ```
 
-**Persediaan Azure OpenAI (Pilihan):**
+**Konfigurasi endpoint manual:**
 ```bash
-# For examples using Azure OpenAI
+# Jika anda tidak menggunakan azd, tetapkan titik akhir sendiri (auth kekal tanpa kunci melalui az login)
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# Sunting .env: AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com/
 ```
 
 ## Aliran Kerja Pembangunan
@@ -103,36 +106,36 @@ cd [project-directory]
 mvn clean install
 ```
 
-**Memulakan Pelayan MCP Calculator:**
+**Memulakan MCP Calculator Server:**
 ```bash
 cd 04-PracticalSamples/calculator
 mvn spring-boot:run
-# Server runs on http://localhost:8080
+# Pelayan berjalan di http://localhost:8080
 ```
 
-**Menjalankan Contoh Klien:**
+**Menjalankan Contoh Pelanggan:**
 ```bash
-# After starting the server in another terminal
+# Selepas memulakan pelayan dalam terminal lain
 cd 04-PracticalSamples/calculator
 
-# Direct MCP client
+# Klien MCP langsung
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient"
 
-# AI-powered client (requires GITHUB_TOKEN)
+# Klien berkuasa AI (memerlukan AZURE_OPENAI_ENDPOINT + az login)
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient"
 
-# Interactive bot
+# Bot interaktif
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.Bot"
 ```
 
 ### Muat Semula Panas
 Spring Boot DevTools disertakan dalam projek yang menyokong muat semula panas:
 ```bash
-# Changes to Java files will automatically reload when saved
+# Perubahan pada fail Java akan dimuat semula secara automatik apabila disimpan
 mvn spring-boot:run
 ```
 
-## Arahan Pengujian
+## Arahan Ujian
 
 ### Menjalankan Ujian
 
@@ -154,40 +157,40 @@ mvn test -Dtest=CalculatorServiceTest
 
 ### Struktur Ujian
 - Fail ujian menggunakan JUnit 5 (Jupiter)
-- Kelas ujian terletak di `src/test/java/`
-- Contoh klien dalam projek kalkulator berada di `src/test/java/com/microsoft/mcp/sample/client/`
+- Kelas ujian terletak dalam `src/test/java/`
+- Contoh pelanggan dalam projek kalkulator berada di `src/test/java/com/microsoft/mcp/sample/client/`
 
-### Pengujian Manual
-Banyak contoh adalah aplikasi interaktif yang memerlukan pengujian manual:
+### Ujian Manual
+Banyak contoh adalah aplikasi interaktif yang memerlukan ujian manual:
 
 1. Mulakan aplikasi dengan `mvn spring-boot:run`
-2. Uji endpoint atau berinteraksi dengan CLI
-3. Pastikan tingkah laku yang dijangka sepadan dengan dokumentasi dalam README.md setiap projek
+2. Uji titik akhir atau berinteraksi dengan CLI
+3. Sahkan tingkah laku yang dijangkakan sesuai dengan dokumentasi dalam README.md setiap projek
 
-### Pengujian dengan Model GitHub
-- Had percuma: 15 permintaan/minit, 150/hari
-- Maksimum 5 permintaan serentak
-- Uji penapisan kandungan dengan contoh AI yang bertanggungjawab
+### Ujian dengan Azure AI Foundry
+- Log masuk dengan `az login` sebelum menjalankan contoh (pengesahan tanpa kunci)
+- Pastikan akaun anda mempunyai peranan Pengguna OpenAI Perkhidmatan Kognitif pada sumber tersebut
+- Uji penapisan kandungan dengan contoh AI bertanggungjawab dalam Bab 5
 
 ## Garis Panduan Gaya Kod
 
 ### Konvensyen Java
-- **Versi Java:** Java 21 dengan ciri moden
+- **Versi Java:** Java 21 dengan ciri baharu
 - **Gaya:** Ikuti konvensyen Java standard
 - **Penamaan:** 
   - Kelas: PascalCase
-  - Kaedah/pembolehubah: camelCase
+  - Kaedah/variabel: camelCase
   - Konstanta: UPPER_SNAKE_CASE
   - Nama pakej: huruf kecil
 
 ### Corak Spring Boot
 - Gunakan `@Service` untuk logik perniagaan
-- Gunakan `@RestController` untuk endpoint REST
+- Gunakan `@RestController` untuk titik akhir REST
 - Konfigurasi melalui `application.yml` atau `application.properties`
-- Pembolehubah persekitaran lebih disukai daripada nilai yang ditetapkan
+- Gunakan pembolehubah persekitaran lebih utama daripada nilai terikat keras
 - Gunakan anotasi `@Tool` untuk kaedah yang didedahkan MCP
 
-### Organisasi Fail
+### Susunan Fail
 ```
 src/
 ├── main/
@@ -206,18 +209,18 @@ src/
         └── com/microsoft/[component]/
 ```
 
-### Kebergantungan
+### Pergantungan
 - Diuruskan melalui Maven `pom.xml`
-- Spring AI BOM untuk pengurusan versi
+- BOM Spring AI untuk pengurusan versi
 - LangChain4j untuk integrasi AI
-- Starter parent Spring Boot untuk kebergantungan Spring
+- Induk permulaan Spring Boot untuk pergantungan Spring
 
 ### Komen Kod
-- Tambahkan JavaDoc untuk API awam
+- Tambah JavaDoc untuk API awam
 - Sertakan komen penjelasan untuk interaksi AI yang kompleks
 - Dokumentasikan penerangan alat MCP dengan jelas
 
-## Pembinaan dan Penghantaran
+## Pembinaan dan Penyebaran
 
 ### Membina Projek
 
@@ -226,7 +229,7 @@ src/
 mvn clean install -DskipTests
 ```
 
-**Bina dengan semua semakan:**
+**Bina dengan semua pemeriksaan:**
 ```bash
 mvn clean install
 ```
@@ -234,123 +237,129 @@ mvn clean install
 **Pakej aplikasi:**
 ```bash
 mvn package
-# Creates JAR in target/ directory
+# Membuat JAR dalam direktori target/
 ```
 
 ### Direktori Output
-- Kelas yang telah dikompilasi: `target/classes/`
+- Kelas terkompilasi: `target/classes/`
 - Kelas ujian: `target/test-classes/`
 - Fail JAR: `target/*.jar`
 - Artifak Maven: `target/`
 
-### Konfigurasi Khusus Persekitaran
+### Konfigurasi Spesifik Persekitaran
 
 **Pembangunan:**
 ```yaml
-# application.yml
+# application.yml (keyless - no api-key; auth via DefaultAzureCredential)
 spring:
   ai:
-    openai:
-      api-key: ${GITHUB_TOKEN}
-      base-url: https://models.inference.ai.azure.com
+    azure:
+      openai:
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 **Pengeluaran:**
-- Gunakan Model AI Foundry Azure dan bukannya Model GitHub
-- Kemas kini base-url ke endpoint Azure OpenAI
-- Urus rahsia melalui Azure Key Vault atau pembolehubah persekitaran
+- Gunakan identiti terurus sebagai ganti `az login` untuk pengesahan tanpa kunci
+- Tetapkan `AZURE_OPENAI_ENDPOINT` pada sumber Foundry pengeluaran anda
+- Urus konfigurasi melalui pembolehubah persekitaran atau Azure Key Vault
 
-### Pertimbangan Penghantaran
+### Pertimbangan Penyebaran
 - Ini adalah repositori pendidikan dengan aplikasi contoh
-- Tidak direka untuk penghantaran pengeluaran seperti sedia ada
-- Contoh menunjukkan corak untuk disesuaikan bagi penggunaan pengeluaran
-- Lihat README projek individu untuk nota penghantaran khusus
+- Tidak direka untuk penyebaran pengeluaran secara langsung
+- Contoh menunjukkan corak untuk diadaptasi untuk penggunaan pengeluaran
+- Lihat README projek masing-masing untuk nota penyebaran khusus
 
 ## Nota Tambahan
 
-### Model GitHub vs Azure OpenAI
-- **Model GitHub:** Tingkat percuma untuk pembelajaran, tidak memerlukan kad kredit
-- **Azure OpenAI:** Sedia untuk pengeluaran, memerlukan langganan Azure
-- Kod serasi antara kedua-duanya - hanya tukar endpoint dan kunci API
+### Azure AI Foundry
+- **Pengesahan tanpa kunci:** sambungkan dengan Microsoft Entra ID — tiada kunci API untuk diurus
+- **Disediakan sebagai kod:** Bicep + azd (`azd up`) mencipta akaun dan penyebaran model
+- Kod yang sama serasi OpenAI berjalan secara tempatan (`az login`) dan dalam Azure (identiti terurus)
 
-### Bekerja dengan Pelbagai Projek
-Setiap projek contoh adalah berdiri sendiri:
+### Bekerja dengan Beberapa Projek
+Setiap projek contoh berdiri sendiri:
 ```bash
-# Navigate to specific project
+# Navigasi ke projek tertentu
 cd 04-PracticalSamples/[project-name]
 
-# Each has its own pom.xml and can be built independently
+# Setiap satunya mempunyai pom.xml sendiri dan boleh dibina secara berdikari
 mvn clean install
 ```
 
-### Masalah Biasa
+### Isu Umum
 
 **Ketidakpadanan Versi Java:**
 ```bash
-# Verify Java 21
+# Sahkan Java 21
 java -version
-# Update JAVA_HOME if needed
+# Kemas kini JAVA_HOME jika perlu
 export JAVA_HOME=/usr/lib/jvm/msopenjdk-current
 ```
 
-**Masalah Muat Turun Kebergantungan:**
+**Isu Muat Turun Pergantungan:**
 ```bash
-# Clear Maven cache and retry
+# Bersihkan cache Maven dan cuba lagi
 rm -rf ~/.m2/repository
 mvn clean install
 ```
 
-**Token GitHub Tidak Ditemui:**
+**Endpoint atau Log Masuk Tidak Ditemui:**
 ```bash
-# Set in current session
-export GITHUB_TOKEN="your-token-here"
+# Tetapkan titik akhir dalam sesi semasa dan log masuk (tanpa kunci)
+export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
+az login
 
-# Or use .env file in project directory
-echo "GITHUB_TOKEN=your-token-here" > .env
+# Atau gunakan fail .env dalam direktori projek
+echo "AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/" > .env
 ```
 
 **Port Sudah Digunakan:**
 ```bash
-# Spring Boot uses port 8080 by default
-# Change in application.properties:
+# Spring Boot menggunakan port 8080 secara lalai
+# Tukar dalam application.properties:
 server.port=8081
 ```
 
 ### Sokongan Pelbagai Bahasa
-- Dokumentasi tersedia dalam lebih 45 bahasa melalui terjemahan automatik
+- Dokumentasi tersedia dalam 45+ bahasa melalui terjemahan automatik
 - Terjemahan dalam direktori `translations/`
-- Terjemahan diuruskan oleh aliran kerja GitHub Actions
+- Terjemahan diurus oleh aliran kerja GitHub Actions
 
 ### Laluan Pembelajaran
 1. Mulakan dengan [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md)
-2. Ikuti bab mengikut urutan (01 → 05)
-3. Lengkapkan contoh praktikal dalam setiap bab
+2. Ikuti bab mengikut turutan (01 → 05)
+3. Selesaikan contoh praktikal dalam setiap bab
 4. Terokai projek contoh dalam Bab 4
-5. Pelajari amalan AI yang bertanggungjawab dalam Bab 5
+5. Pelajari amalan AI bertanggungjawab dalam Bab 5
 
 ### Kontena Pembangunan
-Konfigurasi `.devcontainer/devcontainer.json` termasuk:
+`.devcontainer/devcontainer.json` mengkonfigurasi:
 - Persekitaran pembangunan Java 21
-- Maven telah dipasang
+- Maven telah dipasang terlebih dahulu
 - Sambungan Java VS Code
 - Alat Spring Boot
 - Integrasi GitHub Copilot
-- Sokongan Docker-in-Docker
-- CLI Azure
+- Sokongan Docker dalam Docker
+- Azure CLI
 
 ### Pertimbangan Prestasi
-- Tingkat percuma Model GitHub mempunyai had kadar
-- Gunakan saiz batch yang sesuai untuk embeddings
-- Pertimbangkan caching untuk panggilan API berulang
+- Penyebaran Azure AI Foundry mempunyai kuota token/permintaan per minit
+- Gunakan saiz kumpulan sesuai untuk penanaman
+- Pertimbangkan pengepala untuk panggilan API berulang
 - Pantau penggunaan token untuk pengoptimuman kos
 
 ### Nota Keselamatan
-- Jangan sekali-kali komit fail `.env` (sudah dalam `.gitignore`)
-- Gunakan pembolehubah persekitaran untuk kunci API
-- Token GitHub harus mempunyai skop minimum yang diperlukan
-- Ikuti garis panduan AI yang bertanggungjawab dalam Bab 5
+- Jangan sekali-kali melakukan komit fail `.env` (sudah dalam `.gitignore`)
+- Pilih pengesahan tanpa kunci (Microsoft Entra ID) berbanding kunci API
+- Gunakan identiti terurus di Azure; `az login` untuk pembangunan tempatan
+- Ikuti garis panduan AI bertanggungjawab dalam Bab 5
 
 ---
 
-**Penafian**:  
-Dokumen ini telah diterjemahkan menggunakan perkhidmatan terjemahan AI [Co-op Translator](https://github.com/Azure/co-op-translator). Walaupun kami berusaha untuk memastikan ketepatan, sila ambil perhatian bahawa terjemahan automatik mungkin mengandungi kesilapan atau ketidaktepatan. Dokumen asal dalam bahasa asalnya harus dianggap sebagai sumber yang berwibawa. Untuk maklumat yang kritikal, terjemahan manusia profesional adalah disyorkan. Kami tidak bertanggungjawab atas sebarang salah faham atau salah tafsir yang timbul daripada penggunaan terjemahan ini.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Penafian**:
+Dokumen ini telah diterjemahkan menggunakan perkhidmatan terjemahan AI [Co-op Translator](https://github.com/Azure/co-op-translator). Walaupun kami berusaha untuk ketepatan, sila ambil maklum bahawa terjemahan automatik mungkin mengandungi kesilapan atau ketidaktepatan. Dokumen asal dalam bahasa asalnya harus dianggap sebagai sumber yang sahih. Untuk maklumat penting, terjemahan oleh manusia profesional adalah disyorkan. Kami tidak bertanggungjawab terhadap sebarang salah faham atau salah tafsir yang timbul daripada penggunaan terjemahan ini.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

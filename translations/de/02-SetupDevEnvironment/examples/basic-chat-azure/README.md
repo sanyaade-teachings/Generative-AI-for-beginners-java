@@ -1,104 +1,59 @@
-# Basis-Chat mit Azure OpenAI - End-to-End-Beispiel
+# Basic Chat mit Azure AI Foundry – End-to-End-Beispiel
 
-Dieses Beispiel zeigt, wie man eine einfache Spring Boot-Anwendung erstellt, die sich mit Azure OpenAI verbindet und Ihre Einrichtung testet.
+Dieses Beispiel ist eine einfache Spring-Boot-Anwendung, die eine Verbindung zu einem **Azure AI Foundry**-Modell mit **schlüsselosem Authentifizieren** (Microsoft Entra ID) herstellt und Ihre Einrichtung testet. Es verwendet Spring AI's `ChatClient`.
 
 ## Inhaltsverzeichnis
 
-- [Voraussetzungen](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Schnellstart](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Konfigurationsoptionen](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Option 1: Umgebungsvariablen (.env-Datei) - Empfohlen](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Option 2: GitHub Codespace Secrets](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Anwendung ausführen](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Mit Maven](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Mit VS Code](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Erwartete Ausgabe](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Konfigurationsreferenz](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Umgebungsvariablen](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Spring-Konfiguration](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Fehlerbehebung](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Häufige Probleme](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Debug-Modus](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Nächste Schritte](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Ressourcen](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
+- [Voraussetzungen](#voraussetzungen)
+- [Schnellstart](#schnellstart)
+- [Wie die Authentifizierung funktioniert](#wie-die-authentifizierung-funktioniert)
+- [Anwendung ausführen](#anwendung-ausführen)
+  - [Mit Maven](#mit-maven)
+  - [Mit VS Code](#mit-vs-code)
+  - [Erwartete Ausgabe](#erwartete-ausgabe)
+- [Konfigurationsreferenz](#konfigurationsreferenz)
+  - [Umgebungsvariablen](#umgebungsvariablen)
+  - [Spring-Konfiguration](#spring-konfiguration)
+- [Fehlerbehebung](#fehlerbehebung)
+  - [Häufige Probleme](#häufige-probleme)
+  - [Debug-Modus](#debug-modus)
+- [Nächste Schritte](#nächste-schritte)
+- [Ressourcen](#ressourcen)
 
 ## Voraussetzungen
 
-Bevor Sie dieses Beispiel ausführen, stellen Sie sicher, dass Sie:
+Bevor Sie dieses Beispiel ausführen, stellen Sie sicher, dass Sie Folgendes haben:
 
-- Die [Azure OpenAI-Einrichtungsanleitung](../../getting-started-azure-openai.md) abgeschlossen haben  
-- Eine Azure OpenAI-Ressource bereitgestellt haben (über das Azure AI Foundry-Portal)  
-- Das Modell gpt-4o-mini (oder eine Alternative) bereitgestellt haben  
-- Einen API-Schlüssel und eine Endpunkt-URL von Azure besitzen  
+- Eine Azure AI Foundry-Ressource mit einer `gpt-4o-mini` Bereitstellung – stellen Sie sie mit `azd up` bereit oder manuell über die [Azure AI Foundry Setup-Anleitung](../../getting-started-azure-openai.md)
+- Die Rolle **Cognitive Services OpenAI User** für diese Ressource (wird durch die Bicep-Vorlagen zugewiesen)
+- Die [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli), angemeldet mit `az login`
+- Java 21+ und Maven 3.9+
+
+> **Kein API-Schlüssel erforderlich** — die Authentifizierung erfolgt schlüssellos über Microsoft Entra ID.
 
 ## Schnellstart
 
 ```bash
-# 1. Navigate to project
+# 1. Navigiere zum Projekt
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 
-# 2. Configure credentials
-cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# 2. Melde dich an, damit die schlüssellose Authentifizierung ein Token erhalten kann
+az login
 
-# 3. Run the application
+# 3. Konfiguriere den Endpunkt
+#    - Wenn du `azd up` ausgeführt hast, wurde die .env für dich geschrieben (überspringe dies).
+#    - Andernfalls kopiere die Vorlage und setze AZURE_OPENAI_ENDPOINT:
+cp .env.example .env
+
+# 4. Starte die Anwendung
 mvn spring-boot:run
 ```
 
-## Konfigurationsoptionen
+## Wie die Authentifizierung funktioniert
 
-### Option 1: Umgebungsvariablen (.env-Datei) - Empfohlen
+Dieses Beispiel authentifiziert sich mit **Microsoft Entra ID** — es wird kein API-Schlüssel verwendet.
 
-**Schritt 1: Erstellen Sie Ihre Konfigurationsdatei**
-```bash
-cp .env.example .env
-```
-
-**Schritt 2: Fügen Sie Ihre Azure OpenAI-Zugangsdaten hinzu**
-```bash
-# Your Azure OpenAI API key (from Azure AI Foundry portal)
-AZURE_AI_KEY=your-actual-api-key-here
-
-# Your Azure OpenAI endpoint URL (e.g., https://your-hub-name.openai.azure.com/)
-AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-> **Sicherheitshinweis**: 
-> - Committen Sie Ihre `.env`-Datei niemals in die Versionskontrolle
-> - Die `.env`-Datei ist bereits in `.gitignore` enthalten
-> - Halten Sie Ihre API-Schlüssel sicher und rotieren Sie diese regelmäßig
-
-### Option 2: GitHub Codespace Secrets
-
-Für GitHub Codespaces setzen Sie diese Secrets in Ihrem Repository:
-- `AZURE_AI_KEY` - Ihr Azure OpenAI API-Schlüssel
-- `AZURE_AI_ENDPOINT` - Ihre Azure OpenAI Endpunkt-URL
-
-Die Anwendung erkennt und verwendet diese Secrets automatisch.
-
-### Alternative: Direkte Umgebungsvariablen
-
-<details>
-<summary>Plattform-spezifische Befehle anzeigen</summary>
-
-**Linux/macOS (bash/zsh):**
-```bash
-export AZURE_AI_KEY=your-actual-api-key-here
-export AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (Command Prompt):**
-```cmd
-set AZURE_AI_KEY=your-actual-api-key-here
-set AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (PowerShell):**
-```powershell
-$env:AZURE_AI_KEY="your-actual-api-key-here"
-$env:AZURE_AI_ENDPOINT="https://your-hub-name.openai.azure.com/"
-```
-</details>
+Wenn nur `spring.ai.azure.openai.endpoint` gesetzt ist (und kein api-key), erstellt Spring AI den Azure OpenAI-Client mit [`DefaultAzureCredential`](https://learn.microsoft.com/java/api/com.azure.identity.defaultazurecredential). Diese Anmeldeinformation findet automatisch ein Token aus Ihrer lokalen `az login`-Sitzung oder aus einer verwalteten Identität bei Ausführung in Azure – somit funktioniert der gleiche Code an beiden Orten ohne Änderungen.
 
 ## Anwendung ausführen
 
@@ -111,7 +66,7 @@ mvn spring-boot:run
 ### Mit VS Code
 
 1. Öffnen Sie das Projekt in VS Code
-2. Drücken Sie `F5` oder verwenden Sie das Panel "Run and Debug"
+2. Drücken Sie `F5` oder verwenden Sie das "Run and Debug"-Panel
 3. Wählen Sie die Konfiguration "Spring Boot-BasicChatApplication"
 
 > **Hinweis**: Die VS Code-Konfiguration lädt automatisch Ihre .env-Datei
@@ -138,16 +93,17 @@ Success! Azure OpenAI connection is working correctly.
 
 | Variable | Beschreibung | Erforderlich | Beispiel |
 |----------|--------------|--------------|----------|
-| `AZURE_AI_KEY` | Azure OpenAI API-Schlüssel | Ja | `abc123...` |
-| `AZURE_AI_ENDPOINT` | Azure OpenAI Endpunkt-URL | Ja | `https://my-hub.openai.azure.com/` |
-| `AZURE_AI_MODEL_DEPLOYMENT` | Modellbereitstellungsname | Nein | `gpt-4o-mini` (Standard) |
+| `AZURE_OPENAI_ENDPOINT` | Foundry (Azure OpenAI) Endpunkt-URL | Ja | `https://my-resource.openai.azure.com/` |
+| `AZURE_OPENAI_DEPLOYMENT` | Chat-Modell-Bereitstellungsname | Nein | `gpt-4o-mini` (Standard) |
+
+> Es gibt **keine** API-Schlüssel-Variable — die Authentifizierung erfolgt schlüssellos (Microsoft Entra ID via `az login`).
 
 ### Spring-Konfiguration
 
 Die Datei `application.yml` konfiguriert:
-- **API-Schlüssel**: `${AZURE_AI_KEY}` - Aus der Umgebungsvariable
-- **Endpunkt**: `${AZURE_AI_ENDPOINT}` - Aus der Umgebungsvariable  
-- **Modell**: `${AZURE_AI_MODEL_DEPLOYMENT:gpt-4o-mini}` - Aus der Umgebungsvariable mit Fallback
+- **Endpunkt**: `${AZURE_OPENAI_ENDPOINT}` - Aus Umgebungsvariable
+- **Bereitstellung**: `${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}` - Aus Umgebungsvariable mit Fallback
+- **Auth**: schlüssellos — kein `api-key` gesetzt, daher verwendet Spring AI `DefaultAzureCredential`
 - **Temperatur**: `0.7` - Steuert die Kreativität (0.0 = deterministisch, 1.0 = kreativ)
 - **Max Tokens**: `500` - Maximale Antwortlänge
 
@@ -156,41 +112,41 @@ Die Datei `application.yml` konfiguriert:
 ### Häufige Probleme
 
 <details>
-<summary><strong>Fehler: "Der API-Schlüssel ist nicht gültig"</strong></summary>
+<summary><strong>Fehler: 401 / "PermissionDenied" / Token-Fehler</strong></summary>
 
-- Überprüfen Sie, ob Ihr `AZURE_AI_KEY` korrekt in Ihrer `.env`-Datei gesetzt ist
-- Vergewissern Sie sich, dass der API-Schlüssel exakt aus dem Azure AI Foundry-Portal kopiert wurde
-- Stellen Sie sicher, dass keine zusätzlichen Leerzeichen oder Anführungszeichen um den Schlüssel vorhanden sind
+- Führen Sie `az login` aus — schlüssellose Auth benötigt ein aktives Anmelden, um ein Token zu erhalten
+- Überprüfen Sie, ob Ihr Konto die Rolle **Cognitive Services OpenAI User** für die Ressource hat
+- Wenn Sie die Rolle gerade zugewiesen haben, warten Sie eine Minute, bis sie propagiert wird
+- Stellen Sie sicher, dass Sie im richtigen Mandanten/Abonnement sind (`az account show`)
 </details>
 
 <details>
-<summary><strong>Fehler: "Der Endpunkt ist nicht gültig"</strong></summary>
+<summary><strong>Fehler: "Der Endpunkt ist nicht gültig" / Verbindungsfehler</strong></summary>
 
-- Stellen Sie sicher, dass Ihre `AZURE_AI_ENDPOINT` die vollständige URL enthält (z. B. `https://your-hub-name.openai.azure.com/`)
-- Überprüfen Sie die Konsistenz des abschließenden Schrägstrichs
-- Vergewissern Sie sich, dass der Endpunkt mit Ihrer Azure-Bereitstellungsregion übereinstimmt
+- Stellen Sie sicher, dass `AZURE_OPENAI_ENDPOINT` die vollständige Basis-URL ist (z.B. `https://your-resource.openai.azure.com/`)
+- Prüfen Sie die Konsistenz des abschließenden Schrägstrichs
+- Überprüfen Sie, dass der Endpunkt zu Ihrer bereitgestellten Ressource passt (`azd env get-values`)
 </details>
 
 <details>
 <summary><strong>Fehler: "Die Bereitstellung wurde nicht gefunden"</strong></summary>
 
-- Überprüfen Sie, ob Ihr Modellbereitstellungsname exakt mit dem in Azure bereitgestellten übereinstimmt
-- Stellen Sie sicher, dass das Modell erfolgreich bereitgestellt und aktiv ist
-- Versuchen Sie, den Standardbereitstellungsnamen zu verwenden: `gpt-4o-mini`
+- Überprüfen Sie, ob `AZURE_OPENAI_DEPLOYMENT` mit einem Bereitstellungsnamen in Azure übereinstimmt
+- Prüfen Sie, ob das Modell erfolgreich bereitgestellt und aktiv ist
+- Der Standard-Bereitstellungsname ist `gpt-4o-mini`
 </details>
 
 <details>
 <summary><strong>VS Code: Umgebungsvariablen werden nicht geladen</strong></summary>
 
-- Stellen Sie sicher, dass Ihre `.env`-Datei im Projektstammverzeichnis liegt (auf derselben Ebene wie `pom.xml`)
+- Stellen Sie sicher, dass Ihre `.env`-Datei im Projekt-Stammverzeichnis liegt (auf derselben Ebene wie `pom.xml`)
 - Versuchen Sie, `mvn spring-boot:run` im integrierten Terminal von VS Code auszuführen
-- Überprüfen Sie, ob die VS Code Java-Erweiterung ordnungsgemäß installiert ist
-- Vergewissern Sie sich, dass die Startkonfiguration `"envFile": "${workspaceFolder}/.env"` enthält
+- Prüfen Sie, ob die Java-Erweiterung in VS Code richtig installiert ist
 </details>
 
 ### Debug-Modus
 
-Um detailliertes Logging zu aktivieren, kommentieren Sie diese Zeilen in `application.yml` aus:
+Um detaillierte Protokolle zu aktivieren, kommentieren Sie diese Zeilen in der `application.yml` aus:
 
 ```yaml
 logging:
@@ -201,16 +157,20 @@ logging:
 
 ## Nächste Schritte
 
-**Einrichtung abgeschlossen!** Setzen Sie Ihre Lernreise fort:
+**Einrichtung abgeschlossen!** Führen Sie Ihre Lernreise fort:
 
 [Kapitel 3: Kerntechniken der generativen KI](../../../03-CoreGenerativeAITechniques/README.md)
 
 ## Ressourcen
 
-- [Spring AI Azure OpenAI Dokumentation](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
-- [Azure OpenAI Service Dokumentation](https://learn.microsoft.com/azure/ai-services/openai/)
+- [Spring AI Azure OpenAI Dokumentation](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
+- [Schlüssellose Authentifizierung mit Microsoft Entra ID](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
 - [Azure AI Foundry Portal](https://ai.azure.com/)
-- [Azure AI Foundry Dokumentation](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project)
+- [Azure AI Foundry Dokumentation](https://learn.microsoft.com/azure/ai-foundry/)
 
-**Haftungsausschluss**:  
-Dieses Dokument wurde mit dem KI-Übersetzungsdienst [Co-op Translator](https://github.com/Azure/co-op-translator) übersetzt. Obwohl wir uns um Genauigkeit bemühen, weisen wir darauf hin, dass automatisierte Übersetzungen Fehler oder Ungenauigkeiten enthalten können. Das Originaldokument in seiner ursprünglichen Sprache sollte als maßgebliche Quelle betrachtet werden. Für kritische Informationen wird eine professionelle menschliche Übersetzung empfohlen. Wir übernehmen keine Haftung für Missverständnisse oder Fehlinterpretationen, die sich aus der Nutzung dieser Übersetzung ergeben.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Haftungsausschluss**:
+Dieses Dokument wurde mit dem KI-Übersetzungsdienst [Co-op Translator](https://github.com/Azure/co-op-translator) übersetzt. Obwohl wir uns um Genauigkeit bemühen, beachten Sie bitte, dass automatisierte Übersetzungen Fehler oder Ungenauigkeiten enthalten können. Das Originaldokument in seiner Ursprungssprache gilt als maßgebliche Quelle. Bei kritischen Informationen wird eine professionelle menschliche Übersetzung empfohlen. Wir übernehmen keine Haftung für Missverständnisse oder Fehlinterpretationen, die aus der Verwendung dieser Übersetzung entstehen.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

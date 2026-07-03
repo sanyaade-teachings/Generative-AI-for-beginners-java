@@ -1,59 +1,62 @@
-# Alap Generatív AI Technikák Bemutatója
-
-[![Core Generative AI Techniques](https://img.youtube.com/vi/ZUgN6gTjlPE/0.jpg)](https://www.youtube.com/watch?v=ZUgN6gTjlPE "Core Generative AI Techniques")
-
-> **Videó áttekintés:** [Nézd meg a "Core Generative AI Techniques" című videót a YouTube-on](https://www.youtube.com/watch?v=ZUgN6gTjlPE), vagy kattints a fenti előnézeti képre.
+# Core Generatív Mesterséges Intelligencia Technikák Oktatóanyag
 
 ## Tartalomjegyzék
 
 - [Előfeltételek](#előfeltételek)
-- [Kezdés](#kezdés)
-  - [1. lépés: Állítsd be a környezeti változódat](#1-lépés-állítsd-be-a-környezeti-változódat)
-  - [2. lépés: Navigálj az Examples könyvtárba](#2-lépés-navigálj-az-examples-könyvtárba)
+- [Első lépések](#első-lépések)
+  - [1. lépés: Konfiguráld a Foundry végpontodat](#1-lépés-konfiguráld-a-foundry-végpontodat)
+  - [2. lépés: Navigálj az példák könyvtárába](#2-lépés-navigálj-az-példák-könyvtárába)
 - [Modellválasztási útmutató](#modellválasztási-útmutató)
-- [1. Gyakorlat: LLM kiegészítések és csevegés](#1-gyakorlat-llm-kiegészítések-és-csevegés)
-- [2. Gyakorlat: Függvényhívás](#2-gyakorlat-függvényhívás)
-- [3. Gyakorlat: RAG (Lekérdezés-alapú generálás)](#3-gyakorlat-rag-lekérdezés-alapú-generálás)
-- [4. Gyakorlat: Felelős AI](#4-gyakorlat-felelős-ai)
-- [Gyakori minták a példákban](#gyakori-minták-a-példákban)
+- [Oktatóanyag 1: LLM kiegészítések és Chat](#oktatóanyag-1-llm-kiegészítések-és-chat)
+- [Oktatóanyag 2: Függvényhívás](#oktatóanyag-2-függvényhívás)
+- [Oktatóanyag 3: RAG (Visszakereséssel kiegészített generálás)](#oktatóanyag-3-rag-visszakereséssel-kiegészített-generálás)
+- [Oktatóanyag 4: Felelős AI](#oktatóanyag-4-felelős-ai)
+- [Gyakori minták a példák között](#gyakori-minták-a-példák-között)
 - [Következő lépések](#következő-lépések)
-- [Hibaelhárítás](#hibaelhárítás)
+- [Hibakeresés](#hibakeresés)
   - [Gyakori problémák](#gyakori-problémák)
 
 
 ## Áttekintés
 
-Ez a bemutató gyakorlati példákat kínál az alap generatív AI technikákról Java és GitHub Modellek használatával. Megtanulod, hogyan lépj kapcsolatba Nagy Nyelvi Modellekkel (LLM-ek), hogyan valósíts meg függvényhívást, hogyan használd a lekérdezés-alapú generálást (RAG), valamint hogyan alkalmazd a felelős AI gyakorlatokat.
+Ez az oktatóanyag kézzelfogható példákat mutat be a generatív mesterséges intelligencia alaptechnikáira Java és Azure AI Foundry használatával. Megtanulod, hogyan lépj interakcióba Nagy Nyelvi Modellekkel (LLM-ekkel), hogyan valósítsd meg a függvényhívást, használd a visszakereséssel kiegészített generálást (RAG), és alkalmazd a felelős AI gyakorlatokat.
 
 ## Előfeltételek
 
 A kezdés előtt győződj meg róla, hogy rendelkezel:
-- Telepített Java 21 vagy újabb verzióval
-- Maven függőségkezelővel
-- Egy GitHub fiókkal és személyes hozzáférési tokennel (PAT)
+- Java 21 vagy újabb verzióval telepítve
+- Maven a függőségek kezelésére
+- Egy Azure AI Foundry modell telepítéssel (provízionáld az `azd up` parancsal — lásd a [2. fejezetet](../02-SetupDevEnvironment/getting-started-azure-openai.md))
+- Az [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) telepítve, bejelentkezve az `az login` paranccsal (kulcs nélküli hitelesítés)
 
-## Kezdés
+## Első lépések
 
-### 1. lépés: Állítsd be a környezeti változódat
+> **Leggyorsabb mód — futtasd VS Code-ban (F5):** Az `azd up` (2. fejezet) és az `az login` után nyisd meg a **Run and Debug** (`Ctrl+Shift+D`) panelt, válassz egy konfigurációt, például **Ch03: LLM Completions & Chat**, majd nyomj **F5**-öt. A végpont automatikusan betöltődik a `.env` fájlból, amit az `azd up` hozott létre — így az 1. lépést kihagyhatod. Az interaktív chathez írd be a terminálba, az `exit` parancs kilépéshez szolgál. A futtatási konfigurációk a [`.vscode/launch.json`](../../../.vscode/launch.json) fájlban találhatók.
+>
+> Inkább parancssort használnál? Kövesd az alábbi 1. és 2. lépéseket.
 
-Először is be kell állítanod a GitHub tokened környezeti változóként. Ez a token lehetővé teszi a GitHub Modellek ingyenes elérését.
+### 1. lépés: Konfiguráld a Foundry végpontodat
+
+Ezek a példák kulcs nélküli hitelesítést használnak az Azure AI Foundry-hoz (Microsoft Entra ID). Jelentkezz be az `az login`-nal, majd állítsd be a Foundry végpontot környezeti változóként. Ha az `azd up`-ot használtad, a végpont értékét az `azd env get-value AZURE_OPENAI_ENDPOINT` parancsból szerezheted meg.
 
 **Windows (Parancssor):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-### 2. lépés: Navigálj az Examples könyvtárba
+> Ezek a példák alapértelmezettként a `gpt-4o-mini` telepítést használják. Ha más telepítést szeretnél, definiáld az `AZURE_OPENAI_DEPLOYMENT` környezeti változót.
+
+### 2. lépés: Navigálj az példák könyvtárába
 
 ```bash
 cd 03-CoreGenerativeAITechniques/examples/
@@ -61,45 +64,40 @@ cd 03-CoreGenerativeAITechniques/examples/
 
 ## Modellválasztási útmutató
 
-Ezek a példák különböző modelleket használnak, melyek adott felhasználási esetekhez optimalizáltak:
+Minden példa a **`gpt-4o-mini`** telepítést használja, amit a [2. fejezetben](../02-SetupDevEnvironment/getting-started-azure-openai.md) állítottál be:
 
-**GPT-4.1-nano** (Kiegészítések példa):
-- Rendkívül gyors és alacsony költségű
-- Tökéletes alapvető szövegkiegészítéshez és csevegéshez
-- Ideális az LLM alapvető interakciós minták elsajátításához
-
-**GPT-4o-mini** (Függvényhívás, RAG és Felelős AI példák):
-- Kicsi, de teljes funkcionalitású "omni munkagép" modell
-- Megbízhatóan támogat fejlett képességeket több szolgáltatónál:
+**GPT-4o-mini:**
+- Kis méretű, mégis teljes funkcionalitású „omni munkaló” modell
+- Megbízhatóan támogatja az előrehaladott képességeket:
   - Látásfeldolgozás
-  - JSON/strukturált kimenetek  
-  - Eszköz/funkció hívás
-- Több képességgel rendelkezik, mint a nano, garantálva a példák következetes működését
+  - JSON/szerkezeti kimenetek
+  - Eszköz/funkcióhívás
+- Gyors és költséghatékony, miközben elérhetővé teszi az ezen oktatóanyagok által igényelt funkciókat
 
-> **Miért fontos ez:** Míg a "nano" modellek kiválóak sebesség és költség szempontjából, a "mini" modellek a biztonságosabb választás, ha megbízható hozzáférésre van szükséged fejlett funkciókhoz, mint például a függvényhívás, amelyet nem minden hosting szolgáltató tesz elérhetővé teljesen a nano változatoknál.
+> **Tipp**: A telepítés nevét az `AZURE_OPENAI_DEPLOYMENT` környezeti változóból olvassa be a kód (alapértelmezett: `gpt-4o-mini`), így a példák egyszerűen irányíthatók más telepítés felé anélkül, hogy kódot kellene módosítani.
 
-## 1. Gyakorlat: LLM kiegészítések és csevegés
+## Oktatóanyag 1: LLM kiegészítések és Chat
 
 **Fájl:** `src/main/java/com/example/genai/techniques/completions/LLMCompletionsApp.java`
 
-### Mit tanít ez a példa
+### Mit Tanít Ez a Példa
 
-Ez a példa bemutatja a Nagy Nyelvi Modell (LLM) interakció alapvető mechanizmusait az OpenAI API-n keresztül, beleértve a kliens inicializálását GitHub Modellekkel, az üzenetszerkezet mintáit rendszer- és felhasználói promptokhoz, a beszélgetés állapotkezelését az üzenettörténet felhalmozásával, és a paraméterek hangolását a válasz hossza és kreativitási szintje ellenőrzésére.
+Ez a példa bemutatja a Nagy Nyelvi Modellel (LLM) való interakció alapmechanizmusait az Azure OpenAI API-n keresztül, beleértve a kulcs nélküli kliens inicializálást az Azure AI Foundry-val, az üzenetstruktúra mintákat a rendszer- és felhasználói promptokhoz, a beszélgetés állapotának kezelését az üzenettörténet összegzésével, valamint a válasz hosszának és kreativitásának szabályozására szolgáló paraméterezést.
 
-### Fontos kód koncepciók
+### Fő Kódkoncepciók
 
-#### 1. Kliens beállítása
+#### 1. Kliens Beállítása
 ```java
-// Hozza létre az AI klienset
+// Hozza létre az AI klienst kulcs nélküli hitelesítéssel (Microsoft Entra ID)
 OpenAIClient client = new OpenAIClientBuilder()
-    .endpoint("https://models.inference.ai.azure.com")
-    .credential(new StaticTokenCredential(pat))
+    .endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"))
+    .credential(new DefaultAzureCredentialBuilder().build())
     .buildClient();
 ```
 
-Ez létrehoz egy kapcsolatot a GitHub Modellekkel a tokened használatával.
+Ez létrehoz egy kapcsolatot az Azure AI Foundry-val az `az login` hitelesítő adataid használatával — nem szükséges API-kulcs.
 
-#### 2. Egyszerű kiegészítés
+#### 2. Egyszerű Kiegészítés
 ```java
 List<ChatRequestMessage> messages = List.of(
     // A rendszerüzenet beállítja az MI viselkedését
@@ -109,50 +107,50 @@ List<ChatRequestMessage> messages = List.of(
 );
 
 ChatCompletionsOptions options = new ChatCompletionsOptions(messages)
-    .setModel("gpt-4.1-nano")  // Gyors, költséghatékony modell alapvető kiegészítésekhez
-    .setMaxTokens(200)         // Válasz hossza korlátozása
+    .setModel("gpt-4o-mini")   // A Foundry telepítésed neve
+    .setMaxTokens(200)         // Válasz hosszának korlátozása
     .setTemperature(0.7);      // Kreativitás szabályozása (0.0-1.0)
 ```
 
-#### 3. Beszélgetés memória
+#### 3. Beszélgetés Memória
 ```java
-// Adja hozzá az AI válaszát a beszélgetés előzményeinek megőrzéséhez
+// Add hozzá az MI válaszát a beszélgetéstörténet megőrzéséhez
 messages.add(new ChatRequestAssistantMessage(aiResponse));
 messages.add(new ChatRequestUserMessage("Follow-up question"));
 ```
 
-Az AI csak akkor emlékszik a korábbi üzenetekre, ha azokat belefoglalod a következő kérésekbe.
+A mesterséges intelligencia csak akkor emlékszik korábbi üzenetekre, ha azokat későbbi kérésekbe beilleszted.
 
-### A példa futtatása
+### A Példa Futtatása
 ```bash
 mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.completions.LLMCompletionsApp"
 ```
 
-### Mi történik futtatás közben
+### Mi Történik Futás Közben
 
-1. **Egyszerű kiegészítés**: AI válaszol egy Java kérdésre rendszer prompt útmutatással
-2. **Többfordulós csevegés**: AI megőrzi a kontextust több kérdés között
-3. **Interaktív csevegés**: Valódi beszélgetést folytathatsz az AI-val
+1. **Egyszerű kiegészítés**: Az MI egy Java kérdésre válaszol rendszer prompt irányelvekkel
+2. **Többszörös körös chat**: Az MI megőrzi a kontextust több kérdés során
+3. **Interaktív chat**: Igazi beszélgetést folytathatsz az MI-vel
 
-## 2. Gyakorlat: Függvényhívás
+## Oktatóanyag 2: Függvényhívás
 
 **Fájl:** `src/main/java/com/example/genai/techniques/functions/FunctionsApp.java`
 
-### Mit tanít ez a példa
+### Mit Tanít Ez a Példa
 
-A függvényhívás lehetővé teszi, hogy az AI modellek külső eszközök és API-k futtatását kérjék strukturált protokollon keresztül, ahol a modell természetes nyelvű kéréseket elemez, meghatározza a szükséges függvényhívásokat megfelelő paraméterekkel a JSON Schema definíciók alapján, és feldolgozza a visszatért eredményeket a kontextuális válaszok generálásához, miközben a tényleges függvényvégrehajtás a fejlesztő irányítása alatt marad a biztonság és megbízhatóság érdekében.
+A függvényhívás lehetővé teszi, hogy az AI modellek kérjék külső eszközök és API-k végrehajtását egy strukturált protokollon keresztül, ahol a modell természetes nyelvi kérés elemzése után meghatározza a szükséges függvényhívásokat a megfelelő paraméterekkel JSON sémák alapján, majd feldolgozza a visszakapott eredményeket a kontextuális válasz előállításához, miközben a tényleges függvényvégrehajtás a fejlesztők kontrollja alatt marad a biztonság és megbízhatóság érdekében.
 
-> **Megjegyzés**: Ez a példa a `gpt-4o-mini` modellt használja, mert a függvényhívás megbízható eszközhívási képességeket igényel, amelyeket nem minden hosting platform tesz teljesen elérhetővé nano modelleknél.
+> **Megjegyzés**: Ez a példa a `gpt-4o-mini` modellt használja, mert a függvényhívás megbízható eszközhívó képességeket igényel, amelyek nem feltétlenül teljesen elérhetők nano modelleken minden hoszt platformon.
 
-### Fontos kód koncepciók
+### Fő Kódkoncepciók
 
-#### 1. Függvény definíciója
+#### 1. Függvény Definíció
 ```java
 ChatCompletionsFunctionToolDefinitionFunction weatherFunction = 
     new ChatCompletionsFunctionToolDefinitionFunction("get_weather");
 weatherFunction.setDescription("Get current weather information for a city");
 
-// Paraméterek definiálása JSON Sémával
+// Paraméterek meghatározása JSON Schema segítségével
 weatherFunction.setParameters(BinaryData.fromString("""
     {
         "type": "object",
@@ -167,30 +165,30 @@ weatherFunction.setParameters(BinaryData.fromString("""
     """));
 ```
 
-Ez megmondja az AI-nak, milyen függvények állnak rendelkezésre és hogyan kell használni őket.
+Ez elmondja az MI-nek, hogy milyen függvények érhetőek el és hogyan kell használni őket.
 
-#### 2. Függvény végrehajtási folyamat
+#### 2. Függvény Végrehajtási Folyamat
 ```java
-// 1. Az MI funkcióhívást kér
+// 1. Az MI függvényhívást kér
 if (choice.getFinishReason() == CompletionsFinishReason.TOOL_CALLS) {
     ChatCompletionsFunctionToolCall functionCall = ...;
     
-    // 2. Ön végrehajtja a funkciót
+    // 2. Te végrehajtod a függvényt
     String result = simulateWeatherFunction(functionCall.getFunction().getArguments());
     
-    // 3. Visszaadja az eredményt az MI-nek
+    // 3. Visszaadod az eredményt az MI-nek
     messages.add(new ChatRequestToolMessage(result, toolCall.getId()));
     
-    // 4. Az MI a funkció eredményével ad végső választ
+    // 4. Az MI a függvény eredményével adja meg a végső választ
     ChatCompletions finalResponse = client.getChatCompletions(MODEL, options);
 }
 ```
 
-#### 3. Függvény implementációja
+#### 3. Függvény Implementáció
 ```java
 private static String simulateWeatherFunction(String arguments) {
-    // Érvek elemzése és valódi időjárás API hívása
-    // Bemutatóhoz, hamis adatokat adunk vissza
+    // Érvek feldolgozása és a valódi időjárás API hívása
+    // Bemutatóhoz hamis adatokat adunk vissza
     return """
         {
             "city": "Seattle",
@@ -201,31 +199,31 @@ private static String simulateWeatherFunction(String arguments) {
 }
 ```
 
-### A példa futtatása
+### A Példa Futtatása
 ```bash
 mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.functions.FunctionsApp"
 ```
 
-### Mi történik futtatás közben
+### Mi Történik Futás Közben
 
-1. **Időjárás függvény**: AI kér időjárás adatot Seattle-re, te megadod, AI formáz egy választ
-2. **Számológép függvény**: AI kér egy számítást (15% 240-ből), te kiszámolod, AI elmagyarázza az eredményt
+1. **Időjárás függvény**: Az MI kéri a seattle-i időjárási adatokat, te megadod, az MI formáz egy választ
+2. **Számoló függvény**: Az MI kéri egy számítás elvégzését (240 15%-a), te kiszámolod, az MI elmagyarázza az eredményt
 
-## 3. Gyakorlat: RAG (Lekérdezés-alapú generálás)
+## Oktatóanyag 3: RAG (Visszakereséssel kiegészített generálás)
 
 **Fájl:** `src/main/java/com/example/genai/techniques/rag/SimpleReaderDemo.java`
 
-### Mit tanít ez a példa
+### Mit Tanít Ez a Példa
 
-A Lekérdezés-Alapú Generálás (RAG) ötvözi az információ-visszakeresést a nyelvi generálással, úgy hogy külső dokumentum kontextust injektál az AI promptokba, lehetővé téve a modellek számára, hogy pontos válaszokat nyújtsanak konkrét tudásforrások alapján, nem pedig esetlegesen elavult vagy pontatlan tréningadatokra hagyatkozva, miközben világos határokat tart fenn a felhasználói lekérdezések és az autoritatív információforrások között stratégiai prompt mérnökséggel.
+A visszakereséssel kiegészített generálás (RAG) az információvisszakeresést és a nyelvi generálást egyesíti, úgy hogy külső dokumentumok kontextusát injektálja az AI promptokba, lehetővé téve, hogy a modellek pontos válaszokat adjanak specifikus tudásalapok alapján, nem pedig esetleg elavult vagy pontatlan képzési adatokból, miközben világos határokat tart fenn a felhasználói kérdések és a tekintélyes információforrások között stratégiai prompt-mérnöki eszközökkel.
 
-> **Megjegyzés**: Ez a példa a `gpt-4o-mini` modellt használja, hogy megbízhatóan feldolgozza a strukturált promptokat és következetesen kezelje a dokumentum kontextust, ami kritikus egy hatékony RAG megvalósításhoz.
+> **Megjegyzés**: Ez a példa a `gpt-4o-mini` modellt használja, hogy megbízhatóan feldolgozza a strukturált promptokat és következetesen kezelje a dokumentum kontextust, ami létfontosságú a hatékony RAG megvalósításhoz.
 
-### Fontos kód koncepciók
+### Fő Kódkoncepciók
 
-#### 1. Dokumentum betöltése
+#### 1. Dokumentum Betöltés
 ```java
-// Töltse be a tudásforrását
+// Töltse be a tudásforrást
 String doc = Files.readString(Paths.get("document.txt"));
 ```
 
@@ -241,9 +239,9 @@ List<ChatRequestMessage> messages = List.of(
 );
 ```
 
-A hármas idézőjelek segítik az AI-t, hogy megkülönböztesse a kontextust a kérdéstől.
+A három idézőjel segít az MI-nek megkülönböztetni a kontextust és a kérdést.
 
-#### 3. Biztonságos válasz kezelés
+#### 3. Biztonságos válaszkezelés
 ```java
 if (response != null && response.getChoices() != null && !response.getChoices().isEmpty()) {
     String answer = response.getChoices().get(0).getMessage().getContent();
@@ -253,38 +251,38 @@ if (response != null && response.getChoices() != null && !response.getChoices().
 }
 ```
 
-Mindig ellenőrizd az API válaszokat, hogy elkerüld a hibákat.
+Mindig validáld az API válaszokat, hogy elkerüld a hibákat.
 
-### A példa futtatása
+### A Példa Futtatása
 ```bash
 mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.rag.SimpleReaderDemo"
 ```
 
-### Mi történik futtatás közben
+### Mi Történik Futás Közben
 
-1. A program betölti a `document.txt` fájlt (amely GitHub Modellekről tartalmaz információt)
-2. Kérdezel egy kérdést a dokumentummal kapcsolatban
-3. Az AI kizárólag a dokumentum tartalma alapján válaszol, nem az általános ismeretei alapján
+1. A program betölti a `document.txt`-t (információkat tartalmaz az Azure AI Foundry-ról)
+2. Felteszel egy kérdést a dokumentummal kapcsolatban
+3. Az MI csak a dokumentum tartalma alapján válaszol, nem a saját általános ismeretei szerint
 
-Próbáld megkérdezni: "Mi az a GitHub Models?" vagy "Milyen az időjárás?"
+Próbáld megkérdezni: „Mi az Azure AI Foundry?” vs „Milyen az időjárás?”
 
-## 4. Gyakorlat: Felelős AI
+## Oktatóanyag 4: Felelős AI
 
-**Fájl:** `src/main/java/com/example/genai/techniques/responsibleai/ResponsibleGithubModels.java`
+**Fájl:** `src/main/java/com/example/genai/techniques/responsibleai/ResponsibleAIDemo.java`
 
-### Mit tanít ez a példa
+### Mit Tanít Ez a Példa
 
-A Felelős AI példa bemutatja az AI alkalmazásokban a biztonsági intézkedések fontosságát. Megmutatja, hogyan működnek a modern AI biztonsági rendszerek két fő mechanizmuson keresztül: kemény blokkok (HTTP 400 hibák a biztonsági szűrők miatt) és lágy visszautasítások (udvarias "Nem tudok ebben segíteni" válaszok a modelltől). Ez a példa bemutatja, hogyan kell a termelésben lévő AI alkalmazásoknak szépen kezelni a tartalmi irányelvek megsértését megfelelő kivételkezeléssel, visszautasítás felismeréssel, visszajelző mechanizmusokkal és tartalék válasz stratégiákkal.
+A felelős AI példa bemutatja az AI alkalmazások biztonsági intézkedéseinek fontosságát. Megmutatja, hogyan működnek a modern AI biztonsági rendszerek két fő mechanizmuson keresztül: kemény blokkok (HTTP 400 hibák a biztonsági szűrőktől) és lágy elutasítások (udvarias „Nem tudok segíteni ebben” válaszok magától a modelltől). Ez a példa demonstrálja, hogyan kezelhetik a termelési AI alkalmazások elegánsan a tartalmi irányelvek megsértését kivételkezeléssel, elutasítás észleléssel, felhasználói visszajelzéssel és tartalék válasz stratégiákkal.
 
-> **Megjegyzés**: Ez a példa a `gpt-4o-mini` modellt használja, mert az egységesebb és megbízhatóbb biztonsági válaszokat nyújt különféle potenciálisan káros tartalmakra, biztosítva, hogy a biztonsági mechanizmusok megfelelően legyenek bemutatva.
+> **Megjegyzés**: Ez a példa a `gpt-4o-mini` modellt használja, mert az megbízhatóbb és következetesebb biztonsági válaszokat ad különféle potenciálisan káros tartalmak esetén, biztosítva a biztonsági mechanizmusok megfelelő demonstrációját.
 
-### Fontos kód koncepciók
+### Fő Kódkoncepciók
 
-#### 1. Biztonsági teszt keretrendszer
+#### 1. Biztonsági tesztkeretrendszer
 ```java
 private void testPromptSafety(String prompt, String category) {
     try {
-        // Próbálkozás AI válasz lekérésére
+        // Kísérlet AI válasz lekérésére
         ChatCompletions response = client.getChatCompletions(modelId, options);
         String content = response.getChoices().get(0).getMessage().getContent();
         
@@ -305,7 +303,7 @@ private void testPromptSafety(String prompt, String category) {
 }
 ```
 
-#### 2. Visszautasítás felismerés
+#### 2. Elutasítás észlelése
 ```java
 private boolean isRefusalResponse(String response) {
     String lowerResponse = response.toLowerCase();
@@ -327,22 +325,22 @@ private boolean isRefusalResponse(String response) {
 #### 2. Tesztelt biztonsági kategóriák
 - Erőszak/károkozási utasítások
 - Gyűlöletbeszéd
-- Magánélet sértése
+- Magánélet megsértése
 - Orvosi félretájékoztatás
 - Illegális tevékenységek
 
-### A példa futtatása
+### A Példa Futtatása
 ```bash
-mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleGithubModels"
+mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleAIDemo"
 ```
 
-### Mi történik futtatás közben
+### Mi Történik Futás Közben
 
-A program különféle káros promptokat tesztel és megmutatja, hogyan működik az AI biztonsági rendszer két mechanizmuson keresztül:
+A program különféle káros promptokat tesztel és megmutatja, hogyan működik az AI biztonsági rendszer két mechanizmussal:
 
-1. **Kemény blokkok**: HTTP 400 hibák, amikor a biztonsági szűrők blokkolják a tartalmat, mielőtt elérné a modellt
-2. **Lágy visszautasítások**: A modell udvarias visszautasító válaszokat ad, mint "Nem tudok ebben segíteni" (legtöbbször modern modelleknél)
-3. **Biztonságos tartalom**: Lehetővé teszi a jogos kérések normál generálását
+1. **Kemény blokkok**: HTTP 400 hibák, amikor a tartalmat a modellhez érkezés előtt blokkolja a biztonsági szűrő
+2. **Lágy elutasítások**: A modell udvarias elutasító válaszokat ad, például „Nem tudok ebben segíteni” (ez a leggyakoribb modern modelleknél)
+3. **Biztonságos tartalom**: Elfogadja a jogos kéréseket normálisan
 
 Várható kimenet káros promptokra:
 ```
@@ -353,26 +351,24 @@ Status: [REFUSED BY MODEL]
 ✓ This is GOOD - the AI refused to generate harmful content!
 ```
 
-Ez azt mutatja, hogy **mind a kemény blokkok, mind a lágy visszautasítások azt jelzik, hogy a biztonsági rendszer megfelelően működik**.
+Ez demonstrálja, hogy **mind a kemény blokkok, mind a lágy elutasítások azt jelzik, hogy a biztonsági rendszer jól működik**.
 
-## Gyakori minták a példákban
+## Gyakori minták a példák között
 
 ### Hitelesítési minta
-Minden példa ezt a mintát használja a GitHub Modellekkel való hitelesítéshez:
+Minden példa ezt a kulcs nélküli mintát használja az Azure AI Foundry-hoz való hitelesítéshez:
 
 ```java
-String pat = System.getenv("GITHUB_TOKEN");
-TokenCredential credential = new StaticTokenCredential(pat);
 OpenAIClient client = new OpenAIClientBuilder()
-    .endpoint("https://models.inference.ai.azure.com")
-    .credential(credential)
+    .endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"))
+    .credential(new DefaultAzureCredentialBuilder().build())
     .buildClient();
 ```
 
-### Hiba kezelési minta
+### Hibakezelési minta
 ```java
 try {
-    // Mesterséges intelligencia működés
+    // AI működés
 } catch (HttpResponseException e) {
     // API hibák kezelése (sebességkorlátok, biztonsági szűrők)
 } catch (Exception e) {
@@ -380,7 +376,7 @@ try {
 }
 ```
 
-### Üzenetszerkezet minta
+### Üzenetstruktúra minta
 ```java
 List<ChatRequestMessage> messages = List.of(
     new ChatRequestSystemMessage("Set AI behavior"),
@@ -390,30 +386,30 @@ List<ChatRequestMessage> messages = List.of(
 
 ## Következő lépések
 
-Készen állsz, hogy bevetd ezeket a technikákat? Készítsünk néhány valós alkalmazást!
+Készen állsz, hogy alkalmazd ezeket a technikákat? Építsünk valódi alkalmazásokat!
 
-[04. fejezet: Gyakorlati példák](../04-PracticalSamples/README.md)
+[4. fejezet: Gyakorlati példák](../04-PracticalSamples/README.md)
 
-## Hibaelhárítás
+## Hibakeresés
 
 ### Gyakori problémák
 
-**"GITHUB_TOKEN nincs beállítva"**
+**„AZURE_OPENAI_ENDPOINT nincs beállítva”**
 - Győződj meg róla, hogy beállítottad a környezeti változót
-- Ellenőrizd, hogy a tokened rendelkezik `models:read` jogosultsággal
+- Futtasd az `az login`-t — a hitelesítés kulcs nélküli (Microsoft Entra ID)
 
-**"Nincs válasz az API-tól"**
-- Ellenőrizd az internetkapcsolatodat
-- Ellenőrizd, hogy érvényes a tokened
-- Nézd meg, hogy nem lépted-e túl a korlátozásokat
+**„Nincs válasz az API-tól” / 401 / 403**
+- Ellenőrizd az internetkapcsolatot
+- Győződj meg róla, hogy be vagy jelentkezve az `az login`-nal és rendelkezel a Cognitive Services OpenAI User szerepkörrel
+- Ellenőrizd, hogy nem lépted-e túl a telepítési kvótát
 
 **Maven fordítási hibák**
-- Győződj meg róla, hogy Java 21 vagy újabb van telepítve
+- Győződj meg róla, hogy Java 21 vagy újabb verzió van telepítve
 - Futtasd a `mvn clean compile` parancsot a függőségek frissítéséhez
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
 **Jogi nyilatkozat**:
-Ez a dokumentum az AI fordító szolgáltatás [Co-op Translator](https://github.com/Azure/co-op-translator) használatával készült. Bár az pontosságra törekszünk, kérjük, vegye figyelembe, hogy az automatikus fordítások hibákat vagy pontatlanságokat tartalmazhatnak. Az eredeti dokumentum az anyanyelvén tekintendő hivatalos forrásnak. Fontos információk esetén ajánlott professzionális emberi fordítást igénybe venni. Nem vállalunk felelősséget a fordítás használatából eredő félreértésekért vagy félreértelmezésekért.
+Ez a dokumentum az AI fordítási szolgáltatás, a [Co-op Translator](https://github.com/Azure/co-op-translator) segítségével készült. Bár az pontosságra törekszünk, kérjük, vegye figyelembe, hogy az automatikus fordítások hibákat vagy pontatlanságokat tartalmazhatnak. Az eredeti dokumentum az anyanyelvén tekintendő hiteles forrásnak. Fontos információk esetén professzionális emberi fordítást javasolunk. Nem vállalunk felelősséget semmilyen félreértésért vagy téves értelmezésért, amely ebből a fordításból ered.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

@@ -1,29 +1,29 @@
-# Generativ AI för nybörjare - Java Edition
+# Generativ AI för nybörjare - Java-utgåva
 [![Microsoft Foundry Discord](https://dcbadge.limes.pink/api/server/nTYy5BXMWG)](https://discord.gg/nTYy5BXMWG)
 
-![Generativ AI för nybörjare - Java Edition](../../translated_images/sv/beg-genai-series.8b48be9951cc574c.webp)
+![Generativ AI för nybörjare - Java-utgåva](../../translated_images/sv/beg-genai-series.8b48be9951cc574c.webp)
 
-**Tidsåtgång**: Hela workshopen kan genomföras online utan lokal installation. Miljöinställningen tar 2 minuter, och att utforska exemplen kräver 1-3 timmar beroende på utforskningsdjup.
+**Tidsåtgång**: Hela workshopen kan genomföras online utan lokal installation. Miljöinställningen tar 2 minuter, och att utforska exemplen kräver 1–3 timmar beroende på utforskningsdjup.
 
-> **Snabbstart** 
+> **Snabbstart**
 
 1. Forka detta repository till ditt GitHub-konto
-2. Klicka på **Code** → **Codespaces** fliken → **...** → **New with options...**
-3. Använd standardinställningarna – detta väljer utvecklingscontainern som skapats för denna kurs
-4. Klicka på **Create codespace**
-5. Vänta ca 2 minuter tills miljön är klar
+2. Klicka på **Code** → fliken **Codespaces** → **...** → **New with options...**
+3. Använd standardinställningarna – detta väljer utvecklingscontainern skapad för denna kurs
+4. Klicka **Create codespace**
+5. Vänta ~2 minuter för att miljön ska vara redo
 6. Hoppa direkt till [Det första exemplet](./02-SetupDevEnvironment/README.md#step-2-create-a-github-personal-access-token)
 
 ## Flerspråkigt stöd
 
-### Stöds via GitHub Action (Automatiskt & Alltid uppdaterat)
+### Stöds via GitHub Action (Automatiserat & Alltid uppdaterat)
 
 <!-- CO-OP TRANSLATOR LANGUAGES TABLE START -->
-[Arabiska](../ar/README.md) | [Bengali](../bn/README.md) | [Bulgariska](../bg/README.md) | [Burmese (Myanmar)](../my/README.md) | [Kinesiska (Förenklad)](../zh-CN/README.md) | [Kinesiska (Traditionell, Hong Kong)](../zh-HK/README.md) | [Kinesiska (Traditionell, Macau)](../zh-MO/README.md) | [Kinesiska (Traditionell, Taiwan)](../zh-TW/README.md) | [Kroatiska](../hr/README.md) | [Tjeckiska](../cs/README.md) | [Danska](../da/README.md) | [Holländska](../nl/README.md) | [Estniska](../et/README.md) | [Finska](../fi/README.md) | [Franska](../fr/README.md) | [Tyska](../de/README.md) | [Grekiska](../el/README.md) | [Hebreiska](../he/README.md) | [Hindi](../hi/README.md) | [Ungerska](../hu/README.md) | [Indonesiska](../id/README.md) | [Italienska](../it/README.md) | [Japanska](../ja/README.md) | [Kannada](../kn/README.md) | [Khmer](../km/README.md) | [Koreanska](../ko/README.md) | [Litauiska](../lt/README.md) | [Malayiska](../ms/README.md) | [Malayalam](../ml/README.md) | [Marathi](../mr/README.md) | [Nepalesiska](../ne/README.md) | [Nigeriansk Pidgin](../pcm/README.md) | [Norska](../no/README.md) | [Persiska (Farsi)](../fa/README.md) | [Polska](../pl/README.md) | [Portugisiska (Brasilien)](../pt-BR/README.md) | [Portugisiska (Portugal)](../pt-PT/README.md) | [Punjabi (Gurmukhi)](../pa/README.md) | [Rumänska](../ro/README.md) | [Ryska](../ru/README.md) | [Serbiska (Kyrilliska)](../sr/README.md) | [Slovakiska](../sk/README.md) | [Slovenska](../sl/README.md) | [Spanska](../es/README.md) | [Swahili](../sw/README.md) | [Svenska](./README.md) | [Tagalog (Filippinska)](../tl/README.md) | [Tamil](../ta/README.md) | [Telugu](../te/README.md) | [Thailändska](../th/README.md) | [Turkiska](../tr/README.md) | [Ukrainska](../uk/README.md) | [Urdu](../ur/README.md) | [Vietnamesiska](../vi/README.md)
+[Arabiska](../ar/README.md) | [Bengali](../bn/README.md) | [Bulgariska](../bg/README.md) | [Burmese (Myanmar)](../my/README.md) | [Kinesiska (förenklad)](../zh-CN/README.md) | [Kinesiska (traditionell, Hongkong)](../zh-HK/README.md) | [Kinesiska (traditionell, Macau)](../zh-MO/README.md) | [Kinesiska (traditionell, Taiwan)](../zh-TW/README.md) | [Kroatiska](../hr/README.md) | [Tjeckiska](../cs/README.md) | [Danska](../da/README.md) | [Holländska](../nl/README.md) | [Estniska](../et/README.md) | [Finska](../fi/README.md) | [Franska](../fr/README.md) | [Tyska](../de/README.md) | [Grekiska](../el/README.md) | [Hebreiska](../he/README.md) | [Hindi](../hi/README.md) | [Ungerska](../hu/README.md) | [Indonesiska](../id/README.md) | [Italienska](../it/README.md) | [Japanska](../ja/README.md) | [Kannada](../kn/README.md) | [Khmer](../km/README.md) | [Koreanska](../ko/README.md) | [Litauiska](../lt/README.md) | [Malajiska](../ms/README.md) | [Malayalam](../ml/README.md) | [Marathi](../mr/README.md) | [Nepalesiska](../ne/README.md) | [Nigeriansk pidgin](../pcm/README.md) | [Norska](../no/README.md) | [Persiska (Farsi)](../fa/README.md) | [Polska](../pl/README.md) | [Portugisiska (Brasilien)](../pt-BR/README.md) | [Portugisiska (Portugal)](../pt-PT/README.md) | [Punjabi (Gurmukhi)](../pa/README.md) | [Rumänska](../ro/README.md) | [Ryska](../ru/README.md) | [Serbiska (kyrilliska)](../sr/README.md) | [Slovakiska](../sk/README.md) | [Slovenska](../sl/README.md) | [Spanska](../es/README.md) | [Swahili](../sw/README.md) | [Svenska](./README.md) | [Tagalog (Filipino)](../tl/README.md) | [Tamil](../ta/README.md) | [Telugu](../te/README.md) | [Thailändska](../th/README.md) | [Turkiska](../tr/README.md) | [Ukrainska](../uk/README.md) | [Urdu](../ur/README.md) | [Vietnamesiska](../vi/README.md)
 
 > **Föredrar du att klona lokalt?**
 >
-> Detta repository inkluderar 50+ språköversättningar vilket avsevärt ökar nedladdningsstorleken. För att klona utan översättningar, använd sparse checkout:
+> Detta repository innehåller över 50 språkversioner vilket kraftigt ökar nedladdningsstorleken. För att klona utan översättningar, använd sparse checkout:
 >
 > **Bash / macOS / Linux:**
 > ```bash
@@ -39,43 +39,43 @@
 > git sparse-checkout set --no-cone "/*" "!translations" "!translated_images"
 > ```
 >
-> Detta ger dig allt du behöver för att genomföra kursen med mycket snabbare nedladdning.
+> Detta ger dig allt du behöver för kursen med en mycket snabbare nedladdning.
 <!-- CO-OP TRANSLATOR LANGUAGES TABLE END -->
 
-## Kursstruktur & Lärväg
+## Kursstruktur & inlärningsväg
 
 ### **Kapitel 1: Introduktion till Generativ AI**
-- **Grundläggande begrepp**: Förstå stora språkmodeller, tokens, embeddings och AI-möjligheter
-- **Java AI-ekosystem**: Översikt över Spring AI och OpenAI SDK:er
-- **Model Context Protocol**: Introduktion till MCP och dess roll i AI-agent kommunikation
-- **Praktiska tillämpningar**: Verkliga scenarier inklusive chatbots och innehållsgenerering
-- **[→ Starta kapitel 1](./01-IntroToGenAI/README.md)**
+- **Kärnbegrepp**: Förståelse för stora språkmodeller, tokens, inbäddningar och AI-möjligheter
+- **Java AI-ekosystemet**: Översikt av Spring AI och OpenAI SDK:er
+- **Model Context Protocol**: Introduktion till MCP och dess roll i AI-agentkommunikation
+- **Praktiska tillämpningar**: Verkliga scenarier inklusive chattrobotar och innehållsgenerering
+- **[→ Starta Kapitel 1](./01-IntroToGenAI/README.md)**
 
-### **Kapitel 2: Miljöinställning för utveckling**
-- **Konfiguration för flera leverantörer**: Ställ in GitHub Models, Azure OpenAI och OpenAI Java SDK-integrationer
-- **Spring Boot + Spring AI**: Bästa praxis för företagsutveckling av AI-applikationer
-- **GitHub Models**: Gratis AI-modeller för prototypning och lärande (ingen kreditkort behövs)
-- **Utvecklingsverktyg**: Docker-containrar, VS Code och GitHub Codespaces konfiguration
-- **[→ Starta kapitel 2](./02-SetupDevEnvironment/README.md)**
+### **Kapitel 2: Utvecklingsmiljöinställning**
+- **Azure AI Foundry**: Provisionera modellutplaceringar som kod med Bicep och Azure Developer CLI (azd)
+- **Spring Boot + Spring AI**: Bästa praxis för utveckling av företags-AI-applikationer
+- **Nyckellös autentisering**: Koppla säkert med Microsoft Entra ID — inga API-nycklar att hantera
+- **Utvecklingsverktyg**: Docker-containrar, VS Code och GitHub Codespaces-konfiguration
+- **[→ Starta Kapitel 2](./02-SetupDevEnvironment/README.md)**
 
 ### **Kapitel 3: Kärntekniker för Generativ AI**
-- **Prompt Engineering**: Tekniker för optimala AI-modell svar
-- **Embeddings & vektoroperationer**: Implementera semantisk sökning och likhetsmatchning
+- **Promptteknik**: Tekniker för optimala AI-modellsvar
+- **Inbäddningar & vektoroperationer**: Implementera semantisk sökning och likhetsmatchning
 - **Retrieval-Augmented Generation (RAG)**: Kombinera AI med dina egna datakällor
-- **Funktionsanrop**: Utöka AI:s kapabiliteter med egna verktyg och plugins
-- **[→ Starta kapitel 3](./03-CoreGenerativeAITechniques/README.md)**
+- **Funktionsanrop**: Utöka AI-möjligheter med skräddarsydda verktyg och plugins
+- **[→ Starta Kapitel 3](./03-CoreGenerativeAITechniques/README.md)**
 
 ### **Kapitel 4: Praktiska tillämpningar & projekt**
-- **Pet Story Generator** (`petstory/`): Kreativ innehållsgenerering med GitHub Models
+- **Pet Story Generator** (`petstory/`): Kreativ innehållsgenerering med Azure AI Foundry
 - **Foundry Local Demo** (`foundrylocal/`): Lokal AI-modellintegration med OpenAI Java SDK
-- **MCP Calculator Service** (`calculator/`): Enkel Model Context Protocol-implementation med Spring AI
-- **[→ Starta kapitel 4](./04-PracticalSamples/README.md)**
+- **MCP Calculator Service** (`calculator/`): Grundläggande Model Context Protocol-implementering med Spring AI
+- **[→ Starta Kapitel 4](./04-PracticalSamples/README.md)**
 
 ### **Kapitel 5: Ansvarsfull AI-utveckling**
-- **GitHub Models säkerhet**: Testa inbyggda innehållsfilter och säkerhetsmekanismer (hårda blockeringar och mjuka avslag)
-- **Demo för ansvarsfull AI**: Praktiskt exempel som visar hur moderna AI-säkerhetssystem fungerar i praktiken
-- **Bästa praxis**: Viktiga riktlinjer för etisk AI-utveckling och implementering
-- **[→ Starta kapitel 5](./05-ResponsibleGenAI/README.md)**
+- **Azure AI Foundry Content Safety**: Testa inbyggda innehållsfilter och säkerhetsmekanismer (hårda blockeringar och mjuka avvisningar)
+- **Ansvarsfull AI-demo**: Praktiskt exempel som visar hur moderna AI-säkerhetssystem fungerar i praktiken
+- **Bästa praxis**: Viktiga riktlinjer för etisk AI-utveckling och -distribution
+- **[→ Starta Kapitel 5](./05-ResponsibleGenAI/README.md)**
 
 ## Ytterligare resurser
 
@@ -114,25 +114,25 @@
 
 ---
  
-### Copilot-serien
+### Copilot-serie
 [![Copilot för AI-parprogrammering](https://img.shields.io/badge/Copilot%20for%20AI%20Paired%20Programming-FACC15?style=for-the-badge&labelColor=E5E7EB&color=FACC15)](https://aka.ms/GitHubCopilotAI?WT.mc_id=academic-105485-koreyst)
 [![Copilot för C#/.NET](https://img.shields.io/badge/Copilot%20for%20C%23/.NET-FBBF24?style=for-the-badge&labelColor=E5E7EB&color=FBBF24)](https://github.com/microsoft/mastering-github-copilot-for-dotnet-csharp-developers?WT.mc_id=academic-105485-koreyst)
-[![Copilot Adventure](https://img.shields.io/badge/Copilot%20Adventure-FDE68A?style=for-the-badge&labelColor=E5E7EB&color=FDE68A)](https://github.com/microsoft/CopilotAdventures?WT.mc_id=academic-105485-koreyst)
+[![Copilot-äventyr](https://img.shields.io/badge/Copilot%20Adventure-FDE68A?style=for-the-badge&labelColor=E5E7EB&color=FDE68A)](https://github.com/microsoft/CopilotAdventures?WT.mc_id=academic-105485-koreyst)
 <!-- CO-OP TRANSLATOR OTHER COURSES END -->
 
 ## Få hjälp
 
-Om du fastnar eller har några frågor om att bygga AI-appar. Delta i diskussioner med andra studerande och erfarna utvecklare om MCP. Det är en stödjande gemenskap där frågor är välkomna och kunskap delas fritt.
+Om du fastnar eller har några frågor om att bygga AI-appar. Gå med andra elever och erfarna utvecklare i diskussioner om MCP. Det är en stödjande gemenskap där frågor är välkomna och kunskap delas fritt.
 
 [![Microsoft Foundry Discord](https://dcbadge.limes.pink/api/server/nTYy5BXMWG)](https://discord.gg/nTYy5BXMWG)
 
-Om du har produktfeedback eller stöter på fel under byggandet, besök:
+Om du har produktfeedback eller fel under byggandet, besök:
 
 [![Microsoft Foundry Developer Forum](https://img.shields.io/badge/GitHub-Microsoft_Foundry_Developer_Forum-blue?style=for-the-badge&logo=github&color=000000&logoColor=fff)](https://aka.ms/foundry/forum)
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Ansvarsfriskrivning**:  
-Detta dokument har översatts med hjälp av AI-översättningstjänsten [Co-op Translator](https://github.com/Azure/co-op-translator). Även om vi strävar efter noggrannhet, vänligen var medveten om att automatiska översättningar kan innehålla fel eller brister. Originaldokumentet på dess ursprungliga språk bör betraktas som den auktoritativa källan. För kritisk information rekommenderas professionell mänsklig översättning. Vi ansvarar inte för några missförstånd eller feltolkningar som uppstår från användningen av denna översättning.
+**Ansvarsfriskrivning**:
+Detta dokument har översatts med hjälp av AI-översättningstjänsten [Co-op Translator](https://github.com/Azure/co-op-translator). Även om vi strävar efter noggrannhet, var vänlig notera att automatiska översättningar kan innehålla fel eller brister. Det ursprungliga dokumentet på dess modersmål bör betraktas som den auktoritativa källan. För kritisk information rekommenderas professionell mänsklig översättning. Vi ansvarar inte för några missförstånd eller feltolkningar som uppstår till följd av användningen av denna översättning.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

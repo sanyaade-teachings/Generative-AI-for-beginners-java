@@ -2,74 +2,77 @@
 
 ## Projektöversikt
 
-Detta är ett utbildningsarkiv för att lära sig utveckling av Generativ AI med Java. Det erbjuder en omfattande praktisk kurs som täcker Stora Språkmodeller (LLMs), promptteknik, embeddings, RAG (Retrieval-Augmented Generation) och Model Context Protocol (MCP).
+Detta är ett utbildningsförråd för att lära sig utveckling av Generative AI med Java. Det tillhandahåller en omfattande praktisk kurs som täcker stora språkmodeller (LLMs), prompt engineering, embeddings, RAG (Retrieval-Augmented Generation) och Model Context Protocol (MCP).
 
-**Nyckelteknologier:**
+**Viktiga teknologier:**
 - Java 21
 - Spring Boot 3.5.x
 - Spring AI 1.1.x
 - Maven
 - LangChain4j
-- GitHub Models, Azure OpenAI och OpenAI SDKs
+- Azure AI Foundry, Azure OpenAI och OpenAI SDKs
 
 **Arkitektur:**
 - Flera fristående Spring Boot-applikationer organiserade efter kapitel
 - Exempelprojekt som demonstrerar olika AI-mönster
-- GitHub Codespaces-redo med förkonfigurerade utvecklingscontainrar
+- GitHub Codespaces-redo med förkonfigurerade utvecklingscontainer
 
-## Installationskommandon
+## Setup-kommandon
 
 ### Förutsättningar
 - Java 21 eller högre
 - Maven 3.x
-- GitHub personligt åtkomsttoken (för GitHub Models)
-- Valfritt: Azure OpenAI-uppgifter
+- Azure-prenumeration med en Azure AI Foundry-modellutplacering (provisionera med `azd up`)
+- Azure CLI (`az`) och Azure Developer CLI (`azd`), inloggad för keyless-auth
 
 ### Miljöinställning
 
-**Alternativ 1: GitHub Codespaces (Rekommenderas)**
+**Alternativ 1: GitHub Codespaces (Rekommenderat)**
 ```bash
-# Fork the repository and create a codespace from GitHub UI
-# The dev container will automatically install all dependencies
-# Wait ~2 minutes for environment setup
+# Gaffla lagringsplatsen och skapa en codespace från GitHub UI
+# Dev-containern installerar automatiskt alla beroenden
+# Vänta cirka 2 minuter för miljöinställning
 ```
 
-**Alternativ 2: Lokal utvecklingscontainer**
+**Alternativ 2: Lokal Dev Container**
 ```bash
-# Clone repository
+# Klona repository
 git clone https://github.com/microsoft/Generative-AI-for-beginners-java.git
 cd Generative-AI-for-beginners-java
 
-# Open in VS Code with Dev Containers extension
-# Reopen in Container when prompted
+# Öppna i VS Code med Dev Containers-tillägget
+# Öppna igen i Container när du uppmanas
 ```
 
-**Alternativ 3: Lokal installation**
+**Alternativ 3: Lokal Setup**
 ```bash
-# Install dependencies
+# Installera beroenden
 sudo apt-get update
 sudo apt-get install -y maven openjdk-21-jdk
 
-# Verify installation
+# Verifiera installation
 java -version
 mvn -version
 ```
 
 ### Konfiguration
 
-**GitHub Token-inställning:**
+**Azure AI Foundry Setup (keyless, rekommenderat):**
 ```bash
-# Create a GitHub Personal Access Token
-# Set environment variable
-export GITHUB_TOKEN="your-token-here"
+# Tillhandahåll Foundry-kontot + modellutplaceringar som kod
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
+# azd skriver examples/basic-chat-azure/.env med din slutpunkt (inget nyckel)
 ```
 
-**Azure OpenAI-inställning (valfritt):**
+**Manuell endpoint-konfig:**
 ```bash
-# For examples using Azure OpenAI
+# Om du inte använde azd, ställ in slutpunkten själv (autentisering förblir nyckellös via az login)
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# Redigera .env: AZURE_OPENAI_ENDPOINT=https://<resurs>.openai.azure.com/
 ```
 
 ## Utvecklingsarbetsflöde
@@ -107,28 +110,28 @@ mvn clean install
 ```bash
 cd 04-PracticalSamples/calculator
 mvn spring-boot:run
-# Server runs on http://localhost:8080
+# Servern körs på http://localhost:8080
 ```
 
 **Köra klientexempel:**
 ```bash
-# After starting the server in another terminal
+# Efter att ha startat servern i en annan terminal
 cd 04-PracticalSamples/calculator
 
-# Direct MCP client
+# Direkt MCP-klient
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient"
 
-# AI-powered client (requires GITHUB_TOKEN)
+# AI-driven klient (kräver AZURE_OPENAI_ENDPOINT + az login)
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient"
 
-# Interactive bot
+# Interaktiv bot
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.Bot"
 ```
 
 ### Hot Reload
 Spring Boot DevTools ingår i projekt som stödjer hot reload:
 ```bash
-# Changes to Java files will automatically reload when saved
+# Ändringar i Java-filer kommer automatiskt att laddas om när de sparas
 mvn spring-boot:run
 ```
 
@@ -142,12 +145,12 @@ cd [project-directory]
 mvn test
 ```
 
-**Kör tester med detaljerad output:**
+**Kör tester med detaljerad utskrift:**
 ```bash
 mvn test -X
 ```
 
-**Kör specifik testklass:**
+**Kör en specifik testklass:**
 ```bash
 mvn test -Dtest=CalculatorServiceTest
 ```
@@ -155,30 +158,30 @@ mvn test -Dtest=CalculatorServiceTest
 ### Teststruktur
 - Testfiler använder JUnit 5 (Jupiter)
 - Testklasser finns i `src/test/java/`
-- Klientexempel i kalkylatorprojektet finns i `src/test/java/com/microsoft/mcp/sample/client/`
+- Klientexempel i calculator-projektet finns i `src/test/java/com/microsoft/mcp/sample/client/`
 
 ### Manuell testning
 Många exempel är interaktiva applikationer som kräver manuell testning:
 
 1. Starta applikationen med `mvn spring-boot:run`
-2. Testa endpoints eller interagera med CLI
-3. Verifiera att förväntat beteende matchar dokumentationen i varje projekts README.md
+2. Testa endpoints eller interagera via CLI
+3. Verifiera att förväntat beteende stämmer överens med dokumentationen i varje projekts README.md
 
-### Testning med GitHub Models
-- Begränsningar för gratisnivå: 15 förfrågningar/minut, 150/dag
-- Max 5 samtidiga förfrågningar
-- Testa innehållsfiltrering med ansvarsfulla AI-exempel
+### Testning med Azure AI Foundry
+- Logga in med `az login` innan du kör exempel (keyless auth)
+- Säkerställ att ditt konto har rollen Cognitive Services OpenAI User på resursen
+- Testa innehållsfiltrering med ansvarsfull AI-exemplet i Kapitel 5
 
-## Kodstilsguider
+## Kodstilriktlinjer
 
 ### Java-konventioner
 - **Java-version:** Java 21 med moderna funktioner
 - **Stil:** Följ standard Java-konventioner
-- **Namnstandard:** 
+- **Namn:**
   - Klasser: PascalCase
   - Metoder/variabler: camelCase
   - Konstanter: UPPER_SNAKE_CASE
-  - Paketnamn: små bokstäver
+  - Paketnamn: gemener
 
 ### Spring Boot-mönster
 - Använd `@Service` för affärslogik
@@ -212,7 +215,7 @@ src/
 - LangChain4j för AI-integrationer
 - Spring Boot starter parent för Spring-beroenden
 
-### Kodkommentarer
+### Kode kommentarer
 - Lägg till JavaDoc för publika API:er
 - Inkludera förklarande kommentarer för komplexa AI-interaktioner
 - Dokumentera MCP-verktygsbeskrivningar tydligt
@@ -234,102 +237,106 @@ mvn clean install
 **Paketera applikation:**
 ```bash
 mvn package
-# Creates JAR in target/ directory
+# Skapar JAR i target/ katalogen
 ```
 
-### Output-kataloger
+### Utdatakataloger
 - Kompilerade klasser: `target/classes/`
 - Testklasser: `target/test-classes/`
 - JAR-filer: `target/*.jar`
-- Maven-artiklar: `target/`
+- Maven-artifakter: `target/`
 
 ### Miljöspecifik konfiguration
 
 **Utveckling:**
 ```yaml
-# application.yml
+# application.yml (keyless - no api-key; auth via DefaultAzureCredential)
 spring:
   ai:
-    openai:
-      api-key: ${GITHUB_TOKEN}
-      base-url: https://models.inference.ai.azure.com
+    azure:
+      openai:
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 **Produktion:**
-- Använd Azure AI Foundry Models istället för GitHub Models
-- Uppdatera base-url till Azure OpenAI endpoint
-- Hantera hemligheter via Azure Key Vault eller miljövariabler
+- Använd managed identity istället för `az login` för keyless auth
+- Sätt `AZURE_OPENAI_ENDPOINT` till din produktions-Foundry-resurs
+- Hantera konfiguration via miljövariabler eller Azure Key Vault
 
 ### Distributionsöverväganden
-- Detta är ett utbildningsarkiv med exempelapplikationer
-- Inte designat för produktionsdistribution som det är
-- Exempel demonstrerar mönster att anpassa för produktionsbruk
-- Se individuella projekt-README:s för specifika distributionsanteckningar
+- Detta är ett utbildningsförråd med exempelapplikationer
+- Inte designat för produktion så som det är
+- Exempel visar mönster att anpassa för produktion
+- Se respektive projekts README för specifika distributionsanteckningar
 
 ## Ytterligare anteckningar
 
-### GitHub Models vs Azure OpenAI
-- **GitHub Models:** Gratisnivå för lärande, inget kreditkort krävs
-- **Azure OpenAI:** Produktionsklar, kräver Azure-abonnemang
-- Koden är kompatibel mellan båda - ändra bara endpoint och API-nyckel
+### Azure AI Foundry
+- **Keyless auth:** anslut med Microsoft Entra ID — inga API-nycklar att hantera
+- **Provisions-as-code:** Bicep + azd (`azd up`) skapar konto och modellutplaceringar
+- Samma OpenAI-kompatibla kod körs lokalt (`az login`) och i Azure (managed identity)
 
 ### Arbeta med flera projekt
 Varje exempelprojekt är fristående:
 ```bash
-# Navigate to specific project
+# Navigera till specifikt projekt
 cd 04-PracticalSamples/[project-name]
 
-# Each has its own pom.xml and can be built independently
+# Var och en har sin egen pom.xml och kan byggas oberoende
 mvn clean install
 ```
 
 ### Vanliga problem
 
-**Java-version mismatch:**
+**Java-version som inte matchar:**
 ```bash
-# Verify Java 21
+# Verifiera Java 21
 java -version
-# Update JAVA_HOME if needed
+# Uppdatera JAVA_HOME vid behov
 export JAVA_HOME=/usr/lib/jvm/msopenjdk-current
 ```
 
-**Problem med nedladdning av beroenden:**
+**Problem med beroendenedladdning:**
 ```bash
-# Clear Maven cache and retry
+# Rensa Maven-cache och försök igen
 rm -rf ~/.m2/repository
 mvn clean install
 ```
 
-**GitHub-token saknas:**
+**Endpoint eller inloggning saknas:**
 ```bash
-# Set in current session
-export GITHUB_TOKEN="your-token-here"
+# Sätt slutpunkten i den aktuella sessionen och logga in (nyckellöst)
+export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
+az login
 
-# Or use .env file in project directory
-echo "GITHUB_TOKEN=your-token-here" > .env
+# Eller använd en .env-fil i projektkatalogen
+echo "AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/" > .env
 ```
 
-**Port redan i användning:**
+**Port redan upptagen:**
 ```bash
-# Spring Boot uses port 8080 by default
-# Change in application.properties:
+# Spring Boot använder port 8080 som standard
+# Ändra i application.properties:
 server.port=8081
 ```
 
 ### Flerspråkigt stöd
-- Dokumentation tillgänglig på 45+ språk via automatisk översättning
-- Översättningar i katalogen `translations/`
-- Översättning hanteras av GitHub Actions-arbetsflöde
+- Dokumentation finns på 45+ språk via automatisk översättning
+- Översättningar i `translations/`-katalogen
+- Översättningshantering via GitHub Actions-workflow
 
-### Lärandebana
+### Lärandestig
 1. Börja med [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md)
-2. Följ kapitlen i ordning (01 → 05)
+2. Följ kapitel i ordning (01 → 05)
 3. Slutför praktiska exempel i varje kapitel
-4. Utforska exempelprojekt i kapitel 4
-5. Lär dig ansvarsfulla AI-principer i kapitel 5
+4. Utforska exempelprojekt i Kapitel 4
+5. Lär dig ansvarsfull AI i Kapitel 5
 
 ### Utvecklingscontainer
-Konfigurationen `.devcontainer/devcontainer.json` innehåller:
+`.devcontainer/devcontainer.json` konfigurerar:
 - Java 21 utvecklingsmiljö
 - Maven förinstallerat
 - VS Code Java-tillägg
@@ -339,18 +346,20 @@ Konfigurationen `.devcontainer/devcontainer.json` innehåller:
 - Azure CLI
 
 ### Prestandaöverväganden
-- GitHub Models gratisnivå har hastighetsbegränsningar
+- Azure AI Foundry-utplaceringar har per-minut token/förfrågningskvoter
 - Använd lämpliga batchstorlekar för embeddings
-- Överväg caching för upprepade API-anrop
+- Överväg caching vid upprepade API-anrop
 - Övervaka tokenanvändning för kostnadsoptimering
 
 ### Säkerhetsanteckningar
-- Commita aldrig `.env`-filer (redan i `.gitignore`)
-- Använd miljövariabler för API-nycklar
-- GitHub-token bör ha minimalt nödvändiga behörigheter
-- Följ ansvarsfulla AI-riktlinjer i kapitel 5
+- Checka aldrig in `.env`-filer (ingår redan i `.gitignore`)
+- Föredra keyless auth (Microsoft Entra ID) framför API-nycklar
+- Använd managed identities i Azure; `az login` för lokal utveckling
+- Följ riktlinjer för ansvarsfull AI i Kapitel 5
 
 ---
 
-**Ansvarsfriskrivning**:  
-Detta dokument har översatts med hjälp av AI-översättningstjänsten [Co-op Translator](https://github.com/Azure/co-op-translator). Även om vi strävar efter noggrannhet, bör det noteras att automatiska översättningar kan innehålla fel eller felaktigheter. Det ursprungliga dokumentet på dess originalspråk bör betraktas som den auktoritativa källan. För kritisk information rekommenderas professionell mänsklig översättning. Vi ansvarar inte för eventuella missförstånd eller feltolkningar som uppstår vid användning av denna översättning.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Ansvarsfriskrivning**:
+Detta dokument har översatts med hjälp av AI-översättningstjänsten [Co-op Translator](https://github.com/Azure/co-op-translator). Även om vi strävar efter noggrannhet, var vänlig notera att automatiska översättningar kan innehålla fel eller brister. Det ursprungliga dokumentet på dess modersmål bör betraktas som den auktoritativa källan. För kritisk information rekommenderas professionell mänsklig översättning. Vi ansvarar inte för några missförstånd eller feltolkningar som uppstår till följd av användningen av denna översättning.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

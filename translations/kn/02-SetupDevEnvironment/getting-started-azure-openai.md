@@ -1,142 +1,151 @@
-# Azure OpenAI ಅಭಿವೃದ್ಧಿ ಪರಿಸರವನ್ನು ಸೆಟ್ ಅಪ್ ಮಾಡುವುದು
+# ಅಜುರ್ AI ಫೌಂಡ್ರೀಗಾಗಿ ಡೆವಲಪ್ಮೆಂಟ್ ಪರಿಪರಿಸರವನ್ನು ಸ್ಥಾಪಿಸುವುದು
 
-> **ತ್ವರಿತ ಪ್ರಾರಂಭ**: ಈ ಮಾರ್ಗದರ್ಶಿ Azure OpenAI ಸೆಟ್ ಅಪ್‌ಗಾಗಿ. ಉಚಿತ ಮಾದರಿಗಳೊಂದಿಗೆ ತಕ್ಷಣ ಪ್ರಾರಂಭಿಸಲು, [GitHub Models with Codespaces](./README.md#quick-start-cloud) ಬಳಸಿ.
+> ಈ ಮಾರ್ಗದರ್ಶಿ ಈ ಕೋರ್ಸ್‌ನಲ್ಲಿನ ಜವಾ AI ಅಪ್ಲಿಕೇಶನ್‌ಗಳಿಗೆ **Azure AI Foundry** ಮಾದರಿಗಳನ್ನು **ಕೀಲೆಸ್** ಪ್ರಾಮಾಣೀಕರಣವನ್ನು (Microsoft Entra ID) ಬಳಸಿಕೊಂಡು ಸ್ಥಾಪಿಸುತ್ತದೆ — ನಿರ್ವಹಿಸಲು ಯಾವುದೇ API ಕೀಸ್ ಇಲ್ಲ. ಹೊಸದೆ ಇ Tools? [ಡೆವಲಪ್ಮೆಂಟ್ ಪರಿಪರಿಸರ ಮಾರ್ಗದರ್ಶಿಯಿಂದ](./README.md) ಪ್ರಾರಂಭಿಸಿ.
 
-ಈ ಮಾರ್ಗದರ್ಶಿ ಈ ಕೋರ್ಸ್‌ನಲ್ಲಿ ನಿಮ್ಮ Java AI ಅಪ್ಲಿಕೇಶನ್‌ಗಳಿಗೆ Azure AI Foundry ಮಾದರಿಗಳನ್ನು ಸೆಟ್ ಅಪ್ ಮಾಡಲು ಸಹಾಯ ಮಾಡುತ್ತದೆ.
+ಈ ಮಾರ್ಗದರ್ಶಿ ಈ ಕೋರ್ಸ್‌ನ ಜವಾ AI ಅಪ್ಲಿಕೇಶನ್‌ಗಳಿಗೆ **Azure AI Foundry** ಮಾದರಿಗಳನ್ನು ಸ್ಥಾಪಿಸುತ್ತದೆ. ನಿಮ್ಮ ಬಳಿ ಎರಡು ಮಾರ್ಗಗಳಿವೆ:
 
-## ವಿಷಯಗಳ ಪಟ್ಟಿಯು
+- **ವಿಕಲ್ಪ A — `azd` + Bicep ಮೂಲಕ ಪ್ರಾವೀರ್ಣಗೊಳಿಸುವುದು (ಶಿಫಾರಸಿ):** ಒಬ್ಬ ಆಜ್ಞೆ Foundry ಖಾತೆ ಮತ್ತು ಮಾದರಿಗಳನ್ನು ಕೋಡಿನಂತೆ ನಿಯೋಜಿಸುತ್ತದೆ. ಯಾವುದೇ ಪೋರ್ಟ್‌ಲ್ ಕ್ಲಿಕ್ಕಿಸುವ ಅವಶ್ಯಕತೆ ಇಲ್ಲ.
+- **ವಿಕಲ್ಪ B — Azure AI Foundry ಪೋರ್ಟ್‌ಲ್‌ನಲ್ಲಿ ಸಂಪನ್ಮೂಲಗಳನ್ನು ಕೈಯಲ್ಲಿ ರಚಿಸುವುದು.**
 
-- [ತ್ವರಿತ ಸೆಟ್ ಅಪ್ ಅವಲೋಕನ](../../../02-SetupDevEnvironment)
-- [ಹಂತ 1: Azure AI Foundry ಸಂಪತ್ತುಗಳನ್ನು ರಚಿಸಿ](../../../02-SetupDevEnvironment)
-  - [ಹಬ್ ಮತ್ತು ಪ್ರಾಜೆಕ್ಟ್ ರಚಿಸಿ](../../../02-SetupDevEnvironment)
-  - [GPT-4o-mini ಮಾದರಿಯನ್ನು ಡಿಪ್ಲಾಯ್ ಮಾಡಿ](../../../02-SetupDevEnvironment)
-- [ಹಂತ 2: ನಿಮ್ಮ ಕೋಡ್ಸ್‌ಪೇಸ್ ರಚಿಸಿ](../../../02-SetupDevEnvironment)
-- [ಹಂತ 3: ನಿಮ್ಮ ಪರಿಸರವನ್ನು ಸಂರಚಿಸಿ](../../../02-SetupDevEnvironment)
-- [ಹಂತ 4: ನಿಮ್ಮ ಸೆಟ್ ಅಪ್ ಅನ್ನು ಪರೀಕ್ಷಿಸಿ](../../../02-SetupDevEnvironment)
-- [ಮುಂದೆ ಏನು?](../../../02-SetupDevEnvironment)
-- [ಸಂಪತ್ತುಗಳು](../../../02-SetupDevEnvironment)
-- [ಹೆಚ್ಚುವರಿ ಸಂಪತ್ತುಗಳು](../../../02-SetupDevEnvironment)
+ಎರಡೂ ಮಾರ್ಗಗಳು **ಕೀಲೆಸ್ ಪ್ರಾಮಾಣೀಕರಣವನ್ನು** (Microsoft Entra ID) ಬಳಸುತ್ತವೆ — ನಕಲಿ ಅಥವಾ ನಕಲಿಸುವಂತಹ API ಕೀಸ್ ಇಲ್ಲ.
 
-## ತ್ವರಿತ ಸೆಟ್ ಅಪ್ ಅವಲೋಕನ
+## ವಿಷಯಗಳ ಪಟ್ಟಿಗಳು
 
-1. Azure AI Foundry ಸಂಪತ್ತುಗಳನ್ನು ರಚಿಸಿ (ಹಬ್, ಪ್ರಾಜೆಕ್ಟ್, ಮಾದರಿ)
-2. Java ಅಭಿವೃದ್ಧಿ ಕಂಟೈನರ್‌ನೊಂದಿಗೆ Codespace ರಚಿಸಿ
-3. Azure OpenAI ಕ್ರೆಡೆನ್ಷಿಯಲ್‌ಗಳೊಂದಿಗೆ ನಿಮ್ಮ .env ಫೈಲ್ ಅನ್ನು ಸಂರಚಿಸಿ
-4. ಉದಾಹರಣೆಯ ಪ್ರಾಜೆಕ್ಟ್‌ನೊಂದಿಗೆ ನಿಮ್ಮ ಸೆಟ್ ಅಪ್ ಅನ್ನು ಪರೀಕ್ಷಿಸಿ
+- [ಏನು ರಚಿಸಲಾಗುತ್ತದೆ](#ಏನು-ರಚಿಸಲಾಗುತ್ತದೆ)
+- [ಆವಶ್ಯಕತೆಗಳು](#ಆವಶ್ಯಕತೆಗಳು)
+- [ವಿಕಲ್ಪ A: azd + Bicep ಮೂಲಕ ಪ್ರಾವೀರ್ಭಣಗೊಳಿಸುವುದು (ಶಿಫಾರಸಿ)](#option-a-provision-with-azd--bicep-recommended)
+- [ವಿಕಲ್ಪ B: ಸಂಪನ್ಮೂಲಗಳನ್ನು ಕೈಯಿಂದ ರಚಿಸುವುದು](#ವಿಕಲ್ಪ-b-ಸಂಪನ್ಮೂಲಗಳನ್ನು-ಕೈಯಿಂದ-ರಚಿಸುವುದು)
+- [ನಿಮ್ಮ ಪರಿಸರವನ್ನು ಸಂರಚಿಸಿ](#ನಿಮ್ಮ-ಪರಿಸರವನ್ನು-ಸಂರಚಿಸಿ)
+- [ನಿಮ್ಮ ಸಿದ್ಧಾಂತವನ್ನು ಪರೀಕ್ಷಿಸಿ](#ನಿಮ್ಮ-ಸಿದ್ಧಾಂತವನ್ನು-ಪರೀಕ್ಷಿಸಿ)
+- [ಮುಂದೆ ಏನು?](#ಮುಂದೇನು)
+- [ಸರಣಿ ಸಂಪನ್ಮೂಲಗಳು](#ಸಂಪನ್ಮೂಲಗಳು)
+- [ಹೆಚ್ಚುವರಿ ಸಂಪನ್ಮೂಲಗಳು](#ಹೆಚ್ಚುವರಿ-ಸಂಪನ್ಮೂಲಗಳು)
 
-## ಹಂತ 1: Azure AI Foundry ಸಂಪತ್ತುಗಳನ್ನು ರಚಿಸಿ
+## ಏನು ರಚಿಸಲಾಗುತ್ತದೆ
 
-### ಹಬ್ ಮತ್ತು ಪ್ರಾಜೆಕ್ಟ್ ರಚಿಸಿ
+[`infra/`](../../../02-SetupDevEnvironment/infra)ಯಲ್ಲಿನ Bicep ಟೆಂಪ್ಲೇಟ್‌ಗಳು ಈತನ್ಮೂಲಗಳನ್ನು ಪ್ರಾವೀರ್ಣಗೊಳಿಸುತ್ತವೆ:
 
-1. [Azure AI Foundry Portal](https://ai.azure.com/) ಗೆ ಹೋಗಿ ಮತ್ತು ಲಾಗಿನ್ ಮಾಡಿ
-2. **+ Create** → **New hub** ಕ್ಲಿಕ್ ಮಾಡಿ (ಅಥವಾ **Management** → **All hubs** → **+ New hub** ಗೆ ಹೋಗಿ)
-3. ನಿಮ್ಮ ಹಬ್ ಅನ್ನು ಸಂರಚಿಸಿ:
-   - **ಹಬ್ ಹೆಸರು**: ಉದಾ., "MyAIHub"
-   - **ಚಂದಾದಾರಿಕೆ**: ನಿಮ್ಮ Azure ಚಂದಾದಾರಿಕೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ
-   - **ಸಂಪತ್ತು ಗುಂಪು**: ಹೊಸದನ್ನು ರಚಿಸಿ ಅಥವಾ ಹಳೆಯದನ್ನು ಆಯ್ಕೆಮಾಡಿ
-   - **ಸ್ಥಳ**: ನಿಮ್ಮ ಹತ್ತಿರದ ಸ್ಥಳವನ್ನು ಆಯ್ಕೆಮಾಡಿ
-   - **Storage account**: ಡೀಫಾಲ್ಟ್ ಅಥವಾ ಕಸ್ಟಮ್ ಆಯ್ಕೆಮಾಡಿ
-   - **Key vault**: ಡೀಫಾಲ್ಟ್ ಅಥವಾ ಕಸ್ಟಮ್ ಆಯ್ಕೆಮಾಡಿ
-   - **Next** → **Review + create** → **Create** ಕ್ಲಿಕ್ ಮಾಡಿ
-4. ರಚನೆಯಾದ ನಂತರ, **+ New project** ಕ್ಲಿಕ್ ಮಾಡಿ (ಅಥವಾ ಹಬ್ ಅವಲೋಕನದಿಂದ **Create project** ಆಯ್ಕೆಮಾಡಿ)
-   - **ಪ್ರಾಜೆಕ್ಟ್ ಹೆಸರು**: ಉದಾ., "GenAIJava"
-   - **Create** ಕ್ಲಿಕ್ ಮಾಡಿ
+- ಒಂದು **Azure AI Foundry** ಖಾತೆ (`Microsoft.CognitiveServices/accounts`, ಪ್ರಕಾರ `AIServices`) ಜೊತೆಗೆ ಒಂದು ಪ್ರಾಜೆಕ್ಟ್
+- ಒಂದು **ಚಾಟ್** ನಿಯೋಜನೆ — `gpt-4o-mini`
+- ಒಂದು **એಂಬેડ્ડಿಂಗ್** ನಿಯೋಜನೆ — `text-embedding-3-small` (ನಂತರ ಅಧ್ಯಾಯಗಳಲ್ಲಿ ಬಳಸಲ್ಪಡುವದು)
+- ಒಂದು **ಕೀಲೆಸ್ ಪಾತ್ರ ನಿಯೋಜನೆ** (`Cognitive Services OpenAI User`) ಇದರಿಂದ ನೀವು `az login` ಮೂಲಕ ಸೈನ್ ಇನ್ ಮಾಡಬಹುದು, ಕೀಲುಗಳನ್ನು ನಿರ್ವಹಿಸುವ ಅವಶ್ಯಕತೆ ಇಲ್ಲ
 
-### GPT-4o-mini ಮಾದರಿಯನ್ನು ಡಿಪ್ಲಾಯ್ ಮಾಡಿ
+## ಆವಶ್ಯಕತೆಗಳು
 
-1. ನಿಮ್ಮ ಪ್ರಾಜೆಕ್ಟ್‌ನಲ್ಲಿ, **Model catalog** ಗೆ ಹೋಗಿ ಮತ್ತು **gpt-4o-mini** ಹುಡುಕಿ
-   - *ಪರ್ಯಾಯ: **Deployments** → **+ Create deployment** ಗೆ ಹೋಗಿ*
-2. gpt-4o-mini ಮಾದರಿಯ ಕಾರ್ಡ್‌ನಲ್ಲಿ **Deploy** ಕ್ಲಿಕ್ ಮಾಡಿ
-3. ಡಿಪ್ಲಾಯ್ ಸಂರಚನೆ:
-   - **Deployment name**: "gpt-4o-mini"
-   - **Model version**: ಇತ್ತೀಚಿನದು ಬಳಸಿ
-   - **Deployment type**: Standard
-4. **Deploy** ಕ್ಲಿಕ್ ಮಾಡಿ
-5. ಡಿಪ್ಲಾಯ್ ಆದ ನಂತರ, **Deployments** ಟ್ಯಾಬ್‌ಗೆ ಹೋಗಿ ಮತ್ತು ಈ ಮೌಲ್ಯಗಳನ್ನು ನಕಲಿಸಿ:
-   - **Deployment name** (ಉದಾ., "gpt-4o-mini")
-   - **Target URI** (ಉದಾ., `https://your-hub-name.openai.azure.com/`) 
-      > **ಮುಖ್ಯ**: ಸಂಪೂರ್ಣ ಎಂಡ್‌ಪಾಯಿಂಟ್ ಪಾತ್ ಅನ್ನು ಅಲ್ಲ, ಕೇವಲ ಮೂಲ URL ಅನ್ನು (ಉದಾ., `https://myhub.openai.azure.com/`) ನಕಲಿಸಿ.
-   - **Key** (Keys and Endpoint ವಿಭಾಗದಿಂದ)
+- ಒಂದು [Azure ಚಂದಾದಾರಿಕೆ](https://azure.microsoft.com/free/)
+- [Azure Developer CLI (`azd`)](https://aka.ms/azure-dev/install)
+- [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli)
+- [Java 21+](https://learn.microsoft.com/java/openjdk/download) ಮತ್ತು [Maven 3.9+](https://maven.apache.org/download.cgi)
 
-> **ಇನ್ನೂ ಸಮಸ್ಯೆ ಇದೆಯೇ?** ಅಧಿಕೃತ [Azure AI Foundry Documentation](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project) ಗೆ ಭೇಟಿ ನೀಡಿ
+## ವಿಕಲ್ಪ A: azd + Bicep ಮೂಲಕ ಪ್ರಾವೀರ್ಣಗೊಳಿಸುವುದು (ಶಿಫಾರಸಿ)
 
-## ಹಂತ 2: ನಿಮ್ಮ ಕೋಡ್ಸ್‌ಪೇಸ್ ರಚಿಸಿ
-
-1. ಈ ರೆಪೊಸಿಟರಿಯನ್ನು ನಿಮ್ಮ GitHub ಖಾತೆಗೆ Fork ಮಾಡಿ
-   > **ಗಮನಿಸಿ**: ಮೂಲ ಸಂರಚನೆಯನ್ನು ಸಂಪಾದಿಸಲು [Dev Container Configuration](../../../.devcontainer/devcontainer.json) ನೋಡಿ
-2. ನಿಮ್ಮ Fork ಮಾಡಿದ ರೆಪೊದಲ್ಲಿ, **Code** → **Codespaces** ಟ್ಯಾಬ್ ಕ್ಲಿಕ್ ಮಾಡಿ
-3. **...** → **New with options...** ಕ್ಲಿಕ್ ಮಾಡಿ
-![ಕೋಡ್ಸ್‌ಪೇಸ್ ಆಯ್ಕೆಗಳೊಂದಿಗೆ ರಚಿಸುತ್ತಿದೆ](../../../translated_images/kn/codespaces.9945ded8ceb431a5.webp)
-4. **Dev container configuration** ಆಯ್ಕೆಮಾಡಿ: 
-   - **Generative AI Java Development Environment**
-5. **Create codespace** ಕ್ಲಿಕ್ ಮಾಡಿ
-
-## ಹಂತ 3: ನಿಮ್ಮ ಪರಿಸರವನ್ನು ಸಂರಚಿಸಿ
-
-ನಿಮ್ಮ Codespace ಸಿದ್ಧವಾದ ನಂತರ, ನಿಮ್ಮ Azure OpenAI ಕ್ರೆಡೆನ್ಷಿಯಲ್‌ಗಳನ್ನು ಸೆಟ್ ಅಪ್ ಮಾಡಿ:
-
-1. **ರೆಪೊಸಿಟರಿಯ ಮೂಲದಿಂದ ಉದಾಹರಣೆಯ ಪ್ರಾಜೆಕ್ಟ್‌ಗೆ ಹೋಗಿ:**
-   ```bash
-   cd 02-SetupDevEnvironment/examples/basic-chat-azure
-   ```
-
-2. **ನಿಮ್ಮ .env ಫೈಲ್ ರಚಿಸಿ:**
-   ```bash
-   cp .env.example .env
-   ```
-
-3. **ನಿಮ್ಮ .env ಫೈಲ್ ಅನ್ನು ನಿಮ್ಮ Azure OpenAI ಕ್ರೆಡೆನ್ಷಿಯಲ್‌ಗಳೊಂದಿಗೆ ಸಂಪಾದಿಸಿ:**
-   ```bash
-   # ನಿಮ್ಮ Azure OpenAI API ಕೀ (Azure AI Foundry ಪೋರ್ಟಲ್‌ನಿಂದ)
-   AZURE_AI_KEY=your-actual-api-key-here
-   
-   # ನಿಮ್ಮ Azure OpenAI ಎಂಡ್ಪಾಯಿಂಟ್ URL (ಉದಾ., https://myhub.openai.azure.com/)
-   AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-   ```
-
-   > **ಭದ್ರತಾ ಟಿಪ್ಪಣಿ**: 
-   > - ನಿಮ್ಮ `.env` ಫೈಲ್ ಅನ್ನು ವರ್ಶನ್ ಕಂಟ್ರೋಲ್‌ಗೆ ಕಮಿಟ್ ಮಾಡಬೇಡಿ
-   > - `.env` ಫೈಲ್ ಈಗಾಗಲೇ `.gitignore` ನಲ್ಲಿ ಸೇರಿಸಲಾಗಿದೆ
-   > - ನಿಮ್ಮ API ಕೀಗಳನ್ನು ಸುರಕ್ಷಿತವಾಗಿ ಇಟ್ಟುಕೊಳ್ಳಿ ಮತ್ತು ಅವುಗಳನ್ನು ನಿಯಮಿತವಾಗಿ ರೋಟೇಟ್ ಮಾಡಿ
-
-## ಹಂತ 4: ನಿಮ್ಮ ಸೆಟ್ ಅಪ್ ಅನ್ನು ಪರೀಕ್ಷಿಸಿ
-
-ನಿಮ್ಮ Azure OpenAI ಸಂಪರ್ಕವನ್ನು ಪರೀಕ್ಷಿಸಲು ಉದಾಹರಣೆಯ ಅಪ್ಲಿಕೇಶನ್ ಅನ್ನು ಚಲಾಯಿಸಿ:
+`02-SetupDevEnvironment` ಫೋಲ್ಡರ್‌ನಿಂದ:
 
 ```bash
+cd 02-SetupDevEnvironment
+
+# ಸೈನ್ ಇನ್ (ಎರಡೂ ಸಾಧನಗಳು)
+azd auth login
+az login
+
+# ಫೌಂಡ್ರಿ ಖಾತೆ + ಮಾದರಿ ನಿಯೋಜನೆಗಳನ್ನು ವ್ಯವಸ್ಥೆಮಾಡಿ
+azd up
+```
+
+`azd` ನಿಮಗೆ **ಪರಿಸರದ ಹೆಸರು** (ಉದಾಹರಣೆಗೆ `genai-java`) ಮತ್ತು **ಪ್ರದೇಶ** ಕೇಳುತ್ತದೆ. `gpt-4o-mini` ಮತ್ತು `text-embedding-3-small` ಲಭ್ಯವಿರುವ ಪ್ರದೇಶವನ್ನು ಆಯ್ಕೆಮಾಡಿ — ಉದಾಹರಣೆಗೆ `eastus2` ಅಥವಾ `swedencentral`.
+
+ಪ್ರಾವೀರ್ಣಗೊಳಿಸುವಿಕೆ ಪೂರ್ಣವಾದಾಗ, azd:
+
+1. [`infra/main.bicep`](../../../02-SetupDevEnvironment/infra/main.bicep)ಯಲ್ಲಿ ವ್ಯಾಖ್ಯಾನಿಸಿದ ಎಲ್ಲವನ್ನೂ ನಿಯೋಜಿಸುತ್ತದೆ.
+2. ಪೋಸ್ಟ್‌ಪ್ರಾವೀರ್ಣಿಂಗ್ ಹೂಕ್ ಅನ್ನು ನಡೆಸುತ್ತದೆ, ಇದು ನಿಮ್ಮ ಅಂತಿಮ ಬಿಂದು ಮತ್ತು ನಿಯೋಜನೆ ಹೆಸರುಗಳನ್ನು ಹೊಂದಿರುವ [`examples/basic-chat-azure/.env`](../../../02-SetupDevEnvironment/examples/basic-chat-azure) ಅನ್ನು ಬರೆಯುತ್ತದೆ (ರಹಸ್ಯವಿಲ್ಲದೆ).
+
+> **ಸೂಚನೆ:** ಬದಲಾವಣೆಗಳನ್ನು ಅನ್ವಯಿಸಲು ಯಾವಾಗ ಬೇಕಾದರೂ `azd up` ಅನ್ನು ಮರುಪರಿಚಲಿಸಬಹುದು. ಎಲ್ಲವನ್ನೂ ಅಳಿಸಲು ಮತ್ತು ವೆಚ್ಚವನ್ನು ನಿಲ್ಲಿಸಲು `azd down` ಅನ್ನು ಓಡಿಸಿ.
+
+ಕೃತ್ರಿಮ ಸರಹದ್ದುಗಳನ್ನು ನೋಡಲು:
+
+```bash
+azd env get-values
+```
+
+ಈಗ [ನಿಮ್ಮ ಸಿದ್ಧಾಂತವನ್ನು ಪರೀಕ್ಷಿಸಿ](#ನಿಮ್ಮ-ಸಿದ್ಧಾಂತವನ್ನು-ಪರೀಕ್ಷಿಸಿ) ಕಡೆಗೆ ಸರಿಯಿರಿ.
+
+## ವಿಕಲ್ಪ B: ಸಂಪನ್ಮೂಲಗಳನ್ನು ಕೈಯಿಂದ ರಚಿಸುವುದು
+
+ಪೋರ್ಟ್‌ಲ್ ಪREFER ಬೇರೆಯವರೇ? ಸಂಪನ್ಮೂಲಗಳನ್ನು ಕೈಯಿಂದ ರಚಿಸಿ:
+
+1. [Azure AI Foundry ಪೋರ್ಟ್‌ಲ್](https://ai.azure.com/)ಗೆ ಹೋಗಿ ಮತ್ತು ಸೈನ್ ಇನ್ ಮಾಡಿ.
+2. **ಪ್ರಾಜೆಕ್ಟ್ ರಚಿಸಿ** (ಇದು AI Foundry ಸಂಪನ್ಮೂಲವನ್ನು ಸಹ ರಚಿಸುತ್ತದೆ). ಅದಕ್ಕೆ `GenAIJava` ಎಂಬ ಹೆಸರನ್ನು ನೀಡಿ.
+3. ನಿಮ್ಮ ಪ್ರಾಜೆಕ್ಟ್‌ನಲ್ಲಿ, **ಮಾದರಿಗಳು + ಅಂತಿಮ ಬಿಂದುಗಳು** → **ಮಾದರಿ ನಿಯೋಜಿಸಿ** → **ಮೂಲ ಮಾದರಿಯನ್ನು ನಿಯೋಜಿಸಿ** ತೆರೆದುಕೊಳ್ಳಿ.
+4. **gpt-4o-mini** (ನಿಯೋಜನೆ ಹೆಸರು ಆಗ `gpt-4o-mini`)ಯನ್ನು ನಿಯೋಜಿಸಿ. एम्बेडಿಂಗ್ ಉದಾಹರಣೆಗೆ ಬೇಕಾದರೆ **text-embedding-3-small** ಕೂಡ ನಿಯೋಜಿಸಿ.
+5. **ಒವರ್‌ವ್ಯು**ಯಿಂದ, **ಅಂತಿಮ ಬಿಂದು** (ಉದಾಹರಣೆಗೆ `https://<resource>.openai.azure.com/`) ನಕಲಿಸಿ.
+6. ನಿಮ್ಮನ್ನು ಕೀಲೆಸ್ ಪ್ರವೇಶಕ್ಕೆ ಅನುಮತಿಸಿ: ಸಂಪನ್ಮೂಲದಲ್ಲಿ, **ಆಕ್ಸೆಸ್ ನಿಯಂತ್ರಣ (IAM)** → **ಪಾತ್ರ ನಿಯೋಜನೆ ಸೇರಿಸಿ** → ನಿಮ್ಮ ಖಾತೆಗೆ **Cognitive Services OpenAI User** ಅನ್ನು ನಿಯೋಜಿಸಿ.
+
+> **ಇನ್ನೂ ಸಮಸ್ಯೆ ಉಂಟೆ?** [Azure AI Foundry ದಸ್ತಾವೇಜು](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects) ನೋಡಿ.
+
+## ನಿಮ್ಮ ಪರಿಸರವನ್ನು ಸಂರಚಿಸಿ
+
+**ನೀವು ವಿಕಲ್ಪ A (`azd up`) ಅನ್ನು ಬಳಸಿದ್ದರೆ**, ನಿಮ್ಮ ಸೆಟ್ಟಿಂಗ್ಸ್ ಫೈಲ್ ಈಗಾಗಲೇ ಬರೆಯಲಾಗಿದೆ — ಸಂರಚಿಸುವುದಕ್ಕೆ ಏನೂ ಇಲ್ಲ. [ನಿಮ್ಮ ಸಿದ್ಧಾಂತವನ್ನು ಪರೀಕ್ಷಿಸಿ](#ನಿಮ್ಮ-ಸಿದ್ಧಾಂತವನ್ನು-ಪರೀಕ್ಷಿಸಿ) ಕಡೆಗೆ ಹೋಗಿ.
+
+**ನೀವು ವಿಕಲ್ಪ B (ಕೈಯಿಂದ) ಬಳಸಿದ್ದರೆ**, ಈ ಉದಾಹರಣೆಯ `.env` ಫೈಲ್ ಅನ್ನು ನಿಮ್ಮಿಂದ ಸರಳವಾಗಿ ರಚಿಸಿ:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+cp .env.example .env
+```
+
+ನಿಮ್ಮ ಅಂತಿಮ ಬಿಂದು (ಕೀ ಇಲ್ಲ — ಪ್ರಾಮಾಣೀಕರಣ ಕೀಲೆಸ್) ಜೊತೆ `.env` ಅನ್ನು ಸಂಪಾದಿಸಿ:
+
+```bash
+AZURE_OPENAI_ENDPOINT=https://<your-resource>.openai.azure.com/
+AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini
+```
+
+> **ಭದ್ರತಾ ಗಮನಿಕೆ:** ಸಂಗ್ರಹಿಸಲು ಯಾವುದೇ API ಕೀ নেই. ನೀವು Microsoft Entra ID ಮೂಲಕ `az login` (ಸ್ಥಳೀಯವಾಗಿ) ಅಥವಾ ನಿರ್ವಹಿಸಲಾದ ವಿಶೇಷತೆ (Azure ನಲ್ಲಿ) ಮೂಲಕ ಪ್ರಾಮಾಣೀಕರಿಸುವಿರಿ. `.env` ಫೈಲ್‌ನಲ್ಲಿ ಕೇವಲ ರಹಸ್ಯವಲ್ಲದ ಸೆಟ್ಟಿಂಗ್‌ಗಳಿವೆ ಮತ್ತು `.gitignore` ಮೂಲಕ ಈಗಾಗಲೇ ಸಂರಕ್ಷಿಸಲಾಗಿದೆ.
+
+## ನಿಮ್ಮ ಸಿದ್ಧಾಂತವನ್ನು ಪರೀಕ್ಷಿಸಿ
+
+ನೀವು ಸೈನ್ ಇನ್ ಆಗಿದ್ದೀರಿ ಎಂದು ಖಚಿತಪಡಿಸಿ ಇದರಿಂದ ಕೀಲೆಸ್ ಪ್ರಾಮಾಣೀಕರಣ ಟೋಕನ್ ಪಡೆಯಬಹುದು, ನಂತರ ಉದಾಹರಣೆಯನ್ನು ಓಡಿಸಿ:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+
+az login          # ನೀವು ಈಗಾಗಲೇ ಲಾಗಿನ್ ಆಗಿರದಿದ್ದರೆ
 mvn clean spring-boot:run
 ```
 
-ನೀವು GPT-4o-mini ಮಾದರಿಯಿಂದ ಪ್ರತಿಕ್ರಿಯೆಯನ್ನು ನೋಡಬಹುದು!
+ನೀವು `gpt-4o-mini` ಮಾದರಿಯಿಂದ ಉತ್ತರ ಕಾಣುತ್ತೀರಿ!
 
-> **VS Code ಬಳಕೆದಾರರು**: ನೀವು `F5` ಒತ್ತುವ ಮೂಲಕ ಅಪ್ಲಿಕೇಶನ್ ಅನ್ನು ಚಲಾಯಿಸಬಹುದು. ಲಾಂಚ್ ಸಂರಚನೆ ಈಗಾಗಲೇ ನಿಮ್ಮ `.env` ಫೈಲ್ ಅನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಲೋಡ್ ಮಾಡಲು ಸೆಟ್ ಮಾಡಲಾಗಿದೆ.
+> **VS ಕೋಡ್ ಬಳಕೆದಾರರು:** ಓಡಿಸಲು `F5` ಒತ್ತಿ. ಅಪ್ಲಿಕೇಶನ್ ನಿಮ್ಮ `.env` ಅನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಲೋಡ್ ಮಾಡುತ್ತದೆ.
 
-> **ಪೂರ್ಣ ಉದಾಹರಣೆ**: [End-to-End Azure OpenAI Example](./examples/basic-chat-azure/README.md) ಅನ್ನು ನೋಡಿ ವಿವರವಾದ ಸೂಚನೆಗಳು ಮತ್ತು ಸಮಸ್ಯೆ ಪರಿಹಾರಕ್ಕಾಗಿ.
+> **ಪೂರ್ಣ ಉದಾಹರಣೆ:** ವಿವರಗಳು ಮತ್ತು ಸಮಸ್ಯೆ ಪರಿಹಾರಕ್ಕಾಗಿ [Azure AI Foundry ಜೊತೆಗೆ ಮೂಲ ಚಾಟ್ ಉದಾಹರಣೆ](./examples/basic-chat-azure/README.md) ಅನ್ನು ನೋಡಿ.
 
 ## ಮುಂದೇನು?
 
-**ಸೆಟ್ ಅಪ್ ಪೂರ್ಣಗೊಂಡಿದೆ!** ನೀವು ಈಗ ಹೊಂದಿದ್ದೀರಿ:
-- gpt-4o-mini ಡಿಪ್ಲಾಯ್ ಮಾಡಿದ Azure OpenAI
-- ಸ್ಥಳೀಯ .env ಫೈಲ್ ಸಂರಚನೆ
-- Java ಅಭಿವೃದ್ಧಿ ಪರಿಸರ ಸಿದ್ಧವಾಗಿದೆ
+**ಸ್ಥಾಪನೆ ಪೂರ್ಣವಾಗಿದೆ!** ಈಗ ನಿಮಗಿದೆ:
+- Azure AI Foundry ಜೊತೆಗೆ `gpt-4o-mini` ಮತ್ತು `text-embedding-3-small` ನಿಯೋಜಿಸಲಾಗಿದೆ
+- ಕೀಲೆಸ್ ಪ್ರಾಮಾಣೀಕರಣ (Microsoft Entra ID) — ನಿರ್ವಹಿಸಲು ಯಾವುದೇ ಕೀ ಇಲ್ಲ
+- ನಿಮ್ಮ ಅಂತಿಮ ಬಿಂದು ಮತ್ತು ನಿಯೋಜನೆ ಹೆಸರುಗಳೊಂದಿಗೆ `.env` ಫೈಲ್ 
+- ಜವಾ ಡೆವಲಪ್ಮೆಂಟ್ ಪರಿಪರಿಸರ ಸಿದ್ಧವಾಗಿದೆ
 
-**ಮುಂದುವರಿಯಿರಿ** [Chapter 3: Core Generative AI Techniques](../03-CoreGenerativeAITechniques/README.md) ಗೆ AI ಅಪ್ಲಿಕೇಶನ್‌ಗಳನ್ನು ನಿರ್ಮಿಸಲು ಪ್ರಾರಂಭಿಸಲು!
+**ಮುಂದುವರೆಯಿರಿ** [ಅಧ್ಯಾಯ 3: ಕೋರ್ ಜನರೇಟಿವ್ AI ತಂತ್ರಗಳು](../03-CoreGenerativeAITechniques/README.md) ಗೆ AI ಅಪ್ಲಿಕೇಶನ್‌ಗಳ ನಿರ್ಮಾಣ ಪ್ರಾರಂಭಿಸಲು!
 
-## ಸಂಪತ್ತುಗಳು
+## ಸಂಪನ್ಮೂಲಗಳು
 
-- [Azure AI Foundry Documentation](https://learn.microsoft.com/azure/ai-services/)
-- [Spring AI Azure OpenAI Documentation](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
-- [Azure OpenAI Java SDK](https://learn.microsoft.com/java/api/overview/azure/ai-openai-readme)
+- [Azure Developer CLI (azd)](https://aka.ms/azure-dev/install)
+- [Microsoft Entra ID ಬಳಸಿ ಕೀಲೆಸ್ ಪ್ರಾಮಾಣೀಕರಣ](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
+- [Azure AI Foundry ದಸ್ತಾವೇಜು](https://learn.microsoft.com/azure/ai-foundry/)
+- [Spring AI Azure OpenAI ದಸ್ತಾವೇಜು](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
+- [Azure OpenAI ಜವಾ SDK](https://learn.microsoft.com/java/api/overview/azure/ai-openai-readme)
 
-## ಹೆಚ್ಚುವರಿ ಸಂಪತ್ತುಗಳು
+## ಹೆಚ್ಚುವರಿ ಸಂಪನ್ಮೂಲಗಳು
 
-- [VS Code ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ](https://code.visualstudio.com/Download)
-- [Docker Desktop ಪಡೆಯಿರಿ](https://www.docker.com/products/docker-desktop)
-- [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
+- [VS ಕೋಡ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ](https://code.visualstudio.com/Download)
+- [ಡೋಕರ್ ಡೆಸ್ಕ್‌టಾಪ್ ಪಡೆಯಿರಿ](https://www.docker.com/products/docker-desktop)
+- [ಡೆವ್ ಕಂಟೇನರ್ ಸಂರಚನೆ](../../../.devcontainer/devcontainer.json)
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**ಅಸ್ವೀಕಾರ**:  
-ಈ ದಸ್ತಾವೇಜನ್ನು AI ಅನುವಾದ ಸೇವೆ [Co-op Translator](https://github.com/Azure/co-op-translator) ಬಳಸಿ ಅನುವಾದಿಸಲಾಗಿದೆ. ನಾವು ನಿಖರತೆಯಿಗಾಗಿ ಪ್ರಯತ್ನಿಸುತ್ತಿದ್ದರೂ, ದಯವಿಟ್ಟು ಗಮನಿಸಿ, ಸ್ವಯಂಚಾಲಿತ ಅನುವಾದಗಳಲ್ಲಿ ದೋಷಗಳು ಅಥವಾ ಅಸಡ್ಡೆಗಳು ಇರಬಹುದು. ಮೂಲ ಭಾಷೆಯಲ್ಲಿರುವ ಮೂಲ ದಸ್ತಾವೇಜು ಪ್ರಾಮಾಣಿಕ ಮೂಲವೆಂದು ಪರಿಗಣಿಸಬೇಕು. ಮಹತ್ವದ ಮಾಹಿತಿಗಾಗಿ, ವೃತ್ತಿಪರ ಮಾನವ ಅನುವಾದವನ್ನು ಶಿಫಾರಸು ಮಾಡಲಾಗುತ್ತದೆ. ಈ ಅನುವಾದವನ್ನು ಬಳಸುವ ಮೂಲಕ ಉಂಟಾಗುವ ಯಾವುದೇ ತಪ್ಪು ಅರ್ಥಗಳ ಅಥವಾ ತಪ್ಪು ವ್ಯಾಖ್ಯಾನಗಳ ಬಗ್ಗೆ ನಾವು ಹೊಣೆಗಾರರಲ್ಲ.
+**ಅಸ್ವೀಕಾರ**:
+ಈ ದಸ್ತಾವೇಜು AI ಅನುವಾದ ಸೇವೆ [Co-op Translator](https://github.com/Azure/co-op-translator) ಬಳಸಿ ಅನುವಾದಿಸಲಾಗಿದೆ. ನಾವು ನಿಖರತೆಯನ್ನು ಸಾಧಿಸಲು ಪ್ರಯತ್ನಿಸುತ್ತಿದ್ದರೂ, ದಯವಿಟ್ಟು ಗಮನಿಸಿ, ಸ್ವಯಂಚಾಲಿತ ಅನುವಾದಗಳಲ್ಲಿ ದೋಷಗಳು ಅಥವಾ ಅಸಡ್ಡೆಗಳು ಇರಬಹುದು. ಮೂಲ ಭಾಷೆಯಲ್ಲಿರುವ ಮೂಲ ದಸ್ತಾವೇಜು ಪ್ರಾಮಾಣಿಕ ಮೂಲವೆಂದು ಪರಿಗಣಿಸಬೇಕು. ಪ್ರಮುಖ ಮಾಹಿತಿಗಾಗಿ, ವೃತ್ತಿಪರ ಮಾನವ ಅನುವಾದವನ್ನು ಶಿಫಾರಸು ಮಾಡಲಾಗುತ್ತದೆ. ಈ ಅನುವಾದವನ್ನು ಬಳಸುವ ಮೂಲಕ ಉಂಟಾಗುವ ಯಾವುದೇ ತಪ್ಪು ಅರ್ಥಗಳ ಅಥವಾ ತಪ್ಪು ವ್ಯಾಖ್ಯಾನಗಳ ಬಗ್ಗೆ ನಾವು ಹೊಣೆಗಾರರಲ್ಲ.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

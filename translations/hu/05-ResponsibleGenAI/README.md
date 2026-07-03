@@ -1,98 +1,94 @@
 # Felelős Generatív MI
 
-[![Felelős Generatív MI](https://img.youtube.com/vi/rF-b2BTSMQ4/0.jpg)](https://www.youtube.com/watch?v=rF-b2BTSMQ4 "Felelős Generatív MI")
 
-> **Videó**: [Nézze meg a lecke videós áttekintését](https://www.youtube.com/watch?v=rF-b2BTSMQ4).
-> A fenti bélyegképre kattintva is megnyithatja ugyanazt a videót.
+## Amit megtanulsz
 
-## Amit megtanul
-
-- Megismerheti az AI fejlesztés szempontjából fontos etikai megfontolásokat és bevált gyakorlatokat
-- Tartalomszűrést és biztonsági intézkedéseket építhet be alkalmazásaiba
-- Tesztelheti és kezelheti az AI biztonsági válaszokat a GitHub Models beépített védelmeinek használatával
-- Alkalmazhat felelős MI elveket biztonságos, etikus MI rendszerek létrehozásához
+- Megismered az etikai szempontokat és a legjobb gyakorlatokat, amelyek fontosak a MI fejlesztésében
+- Tartalomszűrést és biztonsági intézkedéseket építesz be az alkalmazásaidba
+- Teszteled és kezeled a MI biztonsági válaszait az Azure AI Foundry beépített tartalomszűrésével
+- Alkalmazod a felelős MI alapelveit biztonságos, etikus MI rendszerek létrehozásához
 
 ## Tartalomjegyzék
 
-- [Bevezetés](#bevezetés)
-- [GitHub Models beépített biztonsága](#github-models-beépített-biztonsága)
-- [Gyakorlati példa: Felelős MI biztonsági demó](#gyakorlati-példa-felelős-mi-biztonsági-demó)
-  - [Mit mutat a demó](#mit-mutat-a-demó)
-  - [Beállítási útmutató](#beállítási-útmutató)
-  - [A demó futtatása](#a-demó-futtatása)
-  - [Várt eredmény](#várt-eredmény)
-- [Bevált gyakorlatok a felelős MI fejlesztéséhez](#bevált-gyakorlatok-a-felelős-mi-fejlesztéséhez)
-- [Fontos megjegyzés](#fontos-megjegyzés)
-- [Összefoglalás](#összefoglalás)
-- [A tanfolyam befejezése](#a-tanfolyam-befejezése)
-- [Következő lépések](#következő-lépések)
+- [Bevezetés](#bevezetes)
+- [Azure AI Foundry Tartalombiztonság](#azure-ai-foundry-tartalombiztonsag)
+- [Gyakorlati példa: Felelős MI biztonsági demó](#gyakorlati-pelda-felelos-mi-biztonsagi-demo)
+  - [Mit mutat a demó](#mit-mutat-a-demo)
+  - [Beállítási utasítások](#beallitas-iutasitasok)
+  - [A demó futtatása](#a-demo-futtatasa)
+  - [Várható kimenet](#vart-kimenet)
+- [Legjobb gyakorlatok a felelős MI fejlesztéshez](#legjobb-gyakorlatok-a-felelos-mi-fejleszteshez)
+- [Fontos megjegyzés](#fontos-megjegyzes)
+- [Összefoglaló](#osszefoglalo)
+- [Tanfolyam befejezése](#tanfolyam-befejezese)
+- [Következő lépések](#kovetkezo-lepesek)
 
 ## Bevezetés
 
-Ez az utolsó fejezet a felelős és etikus generatív MI alkalmazások építésének kritikus aspektusaira koncentrál. Megtanulhatja, hogyan valósítson meg biztonsági intézkedéseket, kezelje a tartalomszűrést, és alkalmazza a felelős MI fejlesztésének bevált gyakorlatait az előző fejezetekben ismertetett eszközök és keretrendszerek segítségével. Ezeknek az elveknek a megértése elengedhetetlen ahhoz, hogy ne csak műszakilag lenyűgöző, hanem biztonságos, etikus és megbízható MI rendszereket építsen.
+Ez az utolsó fejezet a felelős és etikus generatív MI alkalmazások építésének kritikus aspektusaira összpontosít. Megtanulod, hogyan valósíts meg biztonsági intézkedéseket, hogyan kezeld a tartalomszűrést, és hogyan alkalmazd a legjobb gyakorlatokat a felelős MI fejlesztéshez az előző fejezetekben tárgyalt eszközök és keretrendszerek segítségével. Ezen alapelvek megértése elengedhetetlen olyan MI rendszerek építéséhez, amelyek nemcsak technikailag lenyűgözőek, hanem biztonságosak, etikusak és megbízhatóak is.
 
-## GitHub Models beépített biztonsága
+## Azure AI Foundry Tartalombiztonság
 
-A GitHub Models alapvető tartalomszűréssel érkezik. Olyan, mintha lenne egy barátságos kidobó az MI klubjában – nem a legfejlettebb, de alapvető helyzetekben elvégzi a munkát.
+Az Azure AI Foundry modellek tartalomszűréssel érkeznek alapértelmezés szerint, az Azure AI Content Safety által működtetve. A káros kéréseket és válaszokat automatikusan vizsgálják több kategóriában, mielőtt elérnék – vagy elhagynák – a modellt.
 
-**Amit a GitHub Models véd:**
-- **Ártalmas tartalom**: Blokkolja a nyilvánvalóan erőszakos, szexuális vagy veszélyes tartalmakat
-- **Alapvető gyűlöletbeszéd**: Kiszűri a nyíltan diszkriminatív nyelvezetet
-- **Egyszerű kijátszások**: Ellenáll az alapvető kísérleteknek, hogy megkerüljék a biztonsági korlátokat
+**Amit az Azure AI Foundry védi:**
+- **Káros tartalom**: Meggátolja az erőszakos, szexuális, öngyilkosságot elősegítő vagy veszélyes tartalmakat
+- **Gyűlöletbeszéd**: Megszűri a diszkriminatív nyelvezetet
+- **Jailbreak próbálkozások**: Felismeri a prompt-injektálást és a biztonsági korlátok kijátszására tett kísérleteket
 
 ## Gyakorlati példa: Felelős MI biztonsági demó
 
-Ez a fejezet egy gyakorlati bemutatót tartalmaz arról, hogyan valósítja meg a GitHub Models a felelős MI biztonsági intézkedéseket azáltal, hogy olyan promptokat tesztel, amelyek potenciálisan sérthetik a biztonsági irányelveket.
+Ez a fejezet egy gyakorlati bemutatót tartalmaz arról, hogyan valósítja meg az Azure AI Foundry a felelős MI biztonsági intézkedéseket azzal, hogy teszteli azokat a kéréseket, amelyek potenciálisan megszeghetik a biztonsági irányelveket.
 
 ### Mit mutat a demó
 
-A `ResponsibleGithubModels` osztály a következő folyamatot követi:
-1. Inicializálja a GitHub Models klienset hitelesítéssel
-2. Teszteli az ártalmas promptokat (erőszak, gyűlöletbeszéd, félretájékoztatás, törvénytelen tartalom)
-3. Minden promptot elküld a GitHub Models API-nak
-4. Kezeli a válaszokat: kemény blokkok (HTTP hibák), udvarias elutasítások („Nem tudok segíteni”) vagy normál tartalom generálás
-5. Megjeleníti az eredményeket, mutatva, hogy mely tartalom volt tiltva, elutasítva vagy engedélyezve
-6. Összehasonlításként teszteli a biztonságos tartalmat
+A `ResponsibleAIDemo` osztály a következő folyamatot követi:
+1. Inicializálja az Azure AI Foundry klienst kulcs nélküli hitelesítéssel (Microsoft Entra ID)
+2. Teszteli a káros kéréseket (erőszak, gyűlöletbeszéd, félretájékoztatás, illegális tartalom)
+3. Minden kérést elküld az Azure AI Foundry modellnek
+4. Kezeli a válaszokat: kemény blokkok (HTTP hibák), finom visszautasítások (udvarias "Nem tudok segíteni" válaszok), vagy normál tartalomgenerálás
+5. Megjeleníti az eredményeket, jelezve, hogy mely tartalmakat blokkolták, utasították el vagy engedélyezték
+6. Biztonságos tartalmat is tesztel összehasonlításként
 
-![Felelős MI biztonsági demó](../../../translated_images/hu/responsible.e4f51a917bafa4bf.webp)
+![Responsible AI Safety Demo](../../../translated_images/hu/responsible.e4f51a917bafa4bf.webp)
 
-### Beállítási útmutató
+### Beállítási utasítások
 
-1. **Állítsa be a GitHub személyes hozzáférési tokenjét:**
-   
+1. **Jelentkezz be, és állítsd be az Azure AI Foundry végpontodat** (kulcs nélküli hitelesítés – nincs API kulcs). Először futtasd az `az login` parancsot, majd:
+
    Windows (Parancssor):
    ```cmd
-   set GITHUB_TOKEN=your_github_token_here
+   set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    ```
    
    Windows (PowerShell):
    ```powershell
-   $env:GITHUB_TOKEN="your_github_token_here"
+   $env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
    ```
    
    Linux/macOS:
    ```bash
-   export GITHUB_TOKEN=your_github_token_here
+   export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    ```   
 
 ### A demó futtatása
 
-1. **Navigáljon az examples könyvtárba:**
+1. **Navigálj az examples könyvtárba:**
    ```bash
    cd 03-CoreGenerativeAITechniques/examples
    ```
 
-2. **Fordítsa és futtassa a demót:**
+2. **Fordítsd és futtasd a demót:**
    ```bash
-   mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleGithubModels"
+   mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleAIDemo"
    ```
 
-### Várt eredmény
+### Várt kimenet
 
-A demó különféle potenciálisan ártalmas promptokat tesztel, és megmutatja, hogyan működik a modern MI biztonság két mechanizmuson keresztül:
+A demó különféle potenciálisan káros kéréseket tesztel, és bemutatja, hogyan működik a modern MI biztonság két mechanizmusa révén:
 
-- **Kemény blokkok**: HTTP 400 hibák, amikor a tartalmat a biztonsági szűrők blokkolják, mielőtt elérné a modellt
-- **Udvarias elutasítások**: A modell udvarias elutasítással válaszol, például „Nem tudok segíteni ebben” (leggyakoribb a modern modelleknél)
+- **Kemény blokkok**: HTTP 400 hibák, amikor a tartalomszűrő blokkolja a tartalmat, mielőtt az elérné a modellt
+- **Finom visszautasítások**: A modell udvarias elutasítással válaszol, például "Nem tudok segíteni ezzel" (a modern modelleknél leggyakoribb)
 - **Biztonságos tartalom**, amely normál választ kap
 
 Minta kimeneti formátum:
@@ -113,64 +109,64 @@ Status: Response generated successfully
 ────────────────────────────────────────────────────────────
 ```
 
-**Megjegyzés**: Mind a kemény blokkok, mind az udvarias elutasítások azt jelzik, hogy a biztonsági rendszer helyesen működik.
+**Megjegyzés**: Mind a kemény blokkok, mind a finom visszautasítások azt jelzik, hogy a biztonsági rendszer helyesen működik.
 
-## Bevált gyakorlatok a felelős MI fejlesztéséhez
+## Legjobb gyakorlatok a felelős MI fejlesztéshez
 
-AI alkalmazások építésekor kövesse ezeket az alapvető gyakorlatokat:
+MI alkalmazások fejlesztésekor kövesd az alábbi alapvető gyakorlatokat:
 
-1. **Mindig kezelje megfelelően a potenciális biztonsági szűrő válaszokat**
-   - Valósítson meg megfelelő hiba kezelést a blokkolt tartalom esetén
-   - Nyújtson értelmes visszajelzést a felhasználóknak, amikor a tartalom szűrve lett
+1. **Mindig kezeld a biztonsági szűrő válaszait megfelelően**
+   - Valósíts meg hibakezelést a blokkolt tartalmak esetére
+   - Adj értelmes visszajelzést a felhasználóknak, amikor szűrt tartalommal találkoznak
 
-2. **Szükség esetén valósítson meg saját további tartalom-ellenőrzést**
-   - Adjon hozzá ágazatspecifikus biztonsági ellenőrzéseket
-   - Hozzon létre egyedi validációs szabályokat az Ön esetéhez
+2. **Implementálj saját kiegészítő tartalomellenőrzéseket, ahol szükséges**
+   - Adj hozzá terület-specifikus biztonsági ellenőrzéseket
+   - Készíts egyedi validációs szabályokat az esetedhez
 
-3. **Oktassa a felhasználókat a felelős MI használatról**
-   - Nyújtson világos iránymutatásokat az elfogadható használatról
-   - Magyarázza el, miért lehet bizonyos tartalmak blokkolva
+3. **Oktasd a felhasználókat a felelős MI használatról**
+   - Adj világos iránymutatást az elfogadható használatra
+   - Magyarázd el, miért kerülhet bizonyos tartalom blokkolásra
 
-4. **Figyelje és naplózza a biztonsági incidenseket a fejlesztés érdekében**
-   - Kövesse a blokkolt tartalmak mintázatait
-   - Folyamatosan javítsa biztonsági intézkedéseit
+4. **Figyeld és naplózd a biztonsági eseményeket a fejlesztés érdekében**
+   - Kövesd a blokkolt tartalmak mintázatait
+   - Folyamatosan javítsd a biztonsági intézkedéseket
 
-5. **Tartsa be a platform tartalmi szabályzatait**
-   - Tartsa naprakészen a platform irányelveit
-   - Kövesse az általános szerződési feltételeket és az etikai irányelveket
+5. **Tiszteld a platform tartalmi szabályzatait**
+   - Kövesd a platform irányelveit naprakészen
+   - Tartsd be a felhasználási feltételeket és az etikai irányelveket
 
 ## Fontos megjegyzés
 
-Ez a példa szándékosan problémás promptokat használ kizárólag oktatási célból. A cél a biztonsági intézkedések bemutatása, nem azok megkerülése. Mindig használja az MI eszközöket felelősségteljesen és etikusan.
+Ez a példa kifejezetten problémás kéréseket használ kizárólag oktatási célokra. A cél a biztonsági intézkedések bemutatása, nem azok megkerülése. Mindig használd a MI eszközöket felelősen és etikusan.
 
-## Összefoglalás
+## Összefoglaló
 
 **Gratulálunk!** Sikeresen:
 
-- **Megvalósította az MI biztonsági intézkedéseit**, beleértve a tartalomszűrést és a biztonsági válaszok kezelését
-- **Alkalmazta a felelős MI elveit** etikus és megbízható MI rendszerek építésére
-- **Letesztelte a biztonsági mechanizmusokat** a GitHub Models beépített védelmi képességeivel
-- **Megismerte a felelős MI fejlesztésének és bevezetésének bevált gyakorlatait**
+- **Megvalósítottad a MI biztonsági intézkedéseket**, beleértve a tartalomszűrést és a biztonsági válaszok kezelését
+- **Alkalmaztad a felelős MI alapelveit** etikus és megbízható MI rendszerek építéséhez
+- **Letesztelted a biztonsági mechanizmusokat** az Azure AI Foundry beépített tartalombiztonsági funkcióival
+- **Megismerted a legjobb gyakorlatokat** a felelős MI fejlesztéséhez és üzemeltetéséhez
 
 **Felelős MI források:**
-- [Microsoft Trust Center](https://www.microsoft.com/trust-center) – Ismerje meg a Microsoft biztonsággal, adatvédelemmel és megfeleléssel kapcsolatos megközelítését
-- [Microsoft Responsible AI](https://www.microsoft.com/ai/responsible-ai) – Fedezze fel a Microsoft felelős MI fejlesztési elveit és gyakorlatait
+- [Microsoft Trust Center](https://www.microsoft.com/trust-center) – Ismerd meg a Microsoft biztonsági, adatvédelmi és megfelelőségi megközelítését
+- [Microsoft Responsible AI](https://www.microsoft.com/ai/responsible-ai) – Fedezd fel a Microsoft felelős MI fejlesztési alapelveit és gyakorlatait
 
-## A tanfolyam befejezése
+## Tanfolyam befejezése
 
 Gratulálunk a Generatív MI kezdőknek tanfolyam elvégzéséhez!
 
-![Tanfolyam befejezése](../../../translated_images/hu/image.73c7e2ff4a652e77.webp)
+![Course Completion](../../../translated_images/hu/image.73c7e2ff4a652e77.webp)
 
-**Eddig elért eredményei:**
-- Beállította fejlesztői környezetét
-- Megtanulta az alapvető generatív MI technikákat
-- Felfedezte a gyakorlati MI alkalmazásokat
-- Megértette a felelős MI elveit
+**Amit sikerült elérned:**
+- Beállítottad a fejlesztési környezetedet
+- Megtanultad az alapvető generatív MI technikákat
+- Megismerted a gyakorlati MI alkalmazásokat
+- Megértetted a felelős MI alapelveit
 
 ## Következő lépések
 
-Folytassa MI tanulási útját a következő további forrásokkal:
+Folytasd MI tanulmányaidat ezekkel a további forrásokkal:
 
 **További tanfolyamok:**
 - [AI Agents For Beginners](https://github.com/microsoft/ai-agents-for-beginners)
@@ -192,6 +188,6 @@ Folytassa MI tanulási útját a következő további forrásokkal:
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Jogi nyilatkozat**:  
-Ezt a dokumentumot az AI fordító szolgáltatás, a [Co-op Translator](https://github.com/Azure/co-op-translator) használatával fordítottuk. Bár a pontosságra törekszünk, kérjük, vegye figyelembe, hogy az automatikus fordítások tartalmazhatnak hibákat vagy pontatlanságokat. Az eredeti dokumentum a saját nyelvén tekinthető hiteles forrásnak. Kritikus információk esetén ajánlott professzionális emberi fordítást igénybe venni. Nem vállalunk felelősséget a fordítás használatából eredő félreértésekért vagy félreértelmezésekért.
+**Jogi nyilatkozat**:
+Ez a dokumentum az AI fordítási szolgáltatás, a [Co-op Translator](https://github.com/Azure/co-op-translator) segítségével készült. Bár az pontosságra törekszünk, kérjük, vegye figyelembe, hogy az automatikus fordítások hibákat vagy pontatlanságokat tartalmazhatnak. Az eredeti dokumentum az anyanyelvén tekintendő hiteles forrásnak. Fontos információk esetén professzionális emberi fordítást javasolunk. Nem vállalunk felelősséget semmilyen félreértésért vagy téves értelmezésért, amely ebből a fordításból ered.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

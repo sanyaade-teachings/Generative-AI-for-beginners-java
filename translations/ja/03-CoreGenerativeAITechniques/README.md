@@ -1,21 +1,17 @@
-# Core Generative AI Techniques チュートリアル 
-
-[![Core Generative AI Techniques](https://img.youtube.com/vi/ZUgN6gTjlPE/0.jpg)](https://www.youtube.com/watch?v=ZUgN6gTjlPE "Core Generative AI Techniques")
-
-> **ビデオ概要:** [YouTubeで「Core Generative AI Techniques」を視聴](https://www.youtube.com/watch?v=ZUgN6gTjlPE)、または上のサムネイルをクリックしてください。
+# コア生成AI技術チュートリアル
 
 ## 目次
 
 - [前提条件](#前提条件)
 - [はじめに](#はじめに)
-  - [ステップ1: 環境変数の設定](#ステップ1-環境変数の設定)
-  - [ステップ2: examplesディレクトリに移動](#ステップ2-examplesディレクトリに移動)
+  - [ステップ 1: Foundry エンドポイントを設定する](#ステップ-1-foundry-エンドポイントを設定する)
+  - [ステップ 2: Examples ディレクトリに移動する](#ステップ-2-examples-ディレクトリに移動する)
 - [モデル選択ガイド](#モデル選択ガイド)
-- [チュートリアル 1: LLM 完成とチャット](#チュートリアル-1-llm-完成とチャット)
+- [チュートリアル 1: LLM コンプリーションとチャット](#チュートリアル-1-llm-コンプリーションとチャット)
 - [チュートリアル 2: 関数呼び出し](#チュートリアル-2-関数呼び出し)
-- [チュートリアル 3: RAG（検索強化生成）](#チュートリアル-3-rag（検索強化生成）)
-- [チュートリアル 4: 責任あるAI](#チュートリアル-4-責任あるai)
-- [例での共通パターン](#例での共通パターン)
+- [チュートリアル 3: RAG（リトリーバル強化生成）](#チュートリアル-3-rag（リトリーバル強化生成）)
+- [チュートリアル 4: 責任ある AI](#チュートリアル-4-責任ある-ai)
+- [例全体に共通するパターン](#例全体に共通するパターン)
 - [次のステップ](#次のステップ)
 - [トラブルシューティング](#トラブルシューティング)
   - [よくある問題](#よくある問題)
@@ -23,37 +19,44 @@
 
 ## 概要
 
-このチュートリアルでは、JavaとGitHub Modelsを使用したコアな生成AI技術の実践的な例を提供します。大型言語モデル（LLM）との対話、関数呼び出しの実装、検索強化生成（RAG）の使用、そして責任あるAIの実践方法について学習します。
+本チュートリアルでは、Java と Azure AI Foundry を使ったコアな生成AI技術の実践的な例を紹介します。大規模言語モデル（LLM）との対話方法、関数呼び出しの実装、リトリーバル強化生成（RAG）利用、責任あるAIの適用方法を学びます。
 
 ## 前提条件
 
-開始する前に以下を確認してください：
-- Java 21 以上がインストールされている
-- 依存関係管理のためMavenがある
-- 個人アクセストークン（PAT）を持ったGitHubアカウント
+開始前に以下を準備してください:
+- Java 21 以上がインストールされていること
+- 依存管理のための Maven
+- Azure AI Foundry モデルのデプロイメント（`azd up` でプロビジョニング — [第2章](../02-SetupDevEnvironment/getting-started-azure-openai.md)参照）
+- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) がインストールされ、`az login` でサインイン済み（キー不要認証）
 
 ## はじめに
 
-### ステップ1: 環境変数の設定
+> **最速で実行する方法 — VS Code で実行（F5）:** `azd up`（第2章）と `az login` 後に <strong>実行とデバッグ</strong>（`Ctrl+Shift+D`）を開き、**Ch03: LLM Completions & Chat** などの設定を選択して **F5** を押します。エンドポイントは `azd up` が作成した `.env` から自動で読み込むため、以下のステップ1は省略できます。対話型チャットでは端末に入力し、`exit` と入力して終了します。実行設定は [`.vscode/launch.json`](../../../.vscode/launch.json) にあります。
+>
+> コマンドライン派は以下のステップ1とステップ2を実施してください。
 
-まず、GitHubトークンを環境変数に設定する必要があります。このトークンにより、GitHub Modelsへの無料アクセスが可能になります。
+### ステップ 1: Foundry エンドポイントを設定する
+
+これらの例は、Azure AI Foundry に対して<strong>キー不要認証</strong>（Microsoft Entra ID）を使って認証します。`az login` でサインイン後、Foundry エンドポイントを環境変数に設定してください。`azd up` でプロビジョニング済みの場合は `azd env get-value AZURE_OPENAI_ENDPOINT` で取得します。
 
 **Windows (コマンドプロンプト):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-### ステップ2: examplesディレクトリに移動
+> 例ではデフォルトで `gpt-4o-mini` デプロイメントを使用しています。`AZURE_OPENAI_DEPLOYMENT` 環境変数で上書き可能です。
+
+### ステップ 2: Examples ディレクトリに移動する
 
 ```bash
 cd 03-CoreGenerativeAITechniques/examples/
@@ -61,57 +64,52 @@ cd 03-CoreGenerativeAITechniques/examples/
 
 ## モデル選択ガイド
 
-これらの例では、特定のユースケースに最適化された異なるモデルを使用しています。
+すべての例は、[第2章](../02-SetupDevEnvironment/getting-started-azure-openai.md)でプロビジョニングした **`gpt-4o-mini`** デプロイメントを使用しています:
 
-**GPT-4.1-nano**（Completions例）:
-- 超高速かつ非常に低コスト
-- 基本的なテキスト完成とチャットに最適
-- 基本的なLLM対話パターンの学習に理想的
-
-**GPT-4o-mini**（関数、RAG、責任あるAI例）:
-- 小型ながら機能豊富な「万能ワークホース」モデル
-- ベンダー間で高度な機能を安定的にサポート:
+**GPT-4o-mini:**
+- 小規模ながら多機能な「万能ワークホース」モデル
+- 高度な機能を信頼性高くサポート:
   - ビジョン処理
-  - JSON/構造化出力  
-  - ツール/関数呼び出し
-- nanoより多機能で、例が常に動作することを保証
+  - JSON/構造化出力
+  - ツール／関数呼び出し
+- 速くコスト効率も良く、これらチュートリアルに必要な機能を備えている
 
-> <strong>重要な理由</strong>: 「nano」モデルは速度とコストに優れますが、関数呼び出しのような高度な機能に確実にアクセスしたい場合は、「mini」モデルがより安全な選択です。nanoモデルは全てのホスティングプロバイダーで機能が完全に公開されていないことがあります。
+> <strong>ヒント</strong>: デプロイメント名は `AZURE_OPENAI_DEPLOYMENT` 環境変数（デフォルトは `gpt-4o-mini`）から読み込むため、コードを変えずに他のデプロイメントを指すことができます。
 
-## チュートリアル 1: LLM 完成とチャット
+## チュートリアル 1: LLM コンプリーションとチャット
 
 **ファイル:** `src/main/java/com/example/genai/techniques/completions/LLMCompletionsApp.java`
 
 ### この例で学べること
 
-本例では、GitHub Modelsによるクライアント初期化、システムおよびユーザープロンプトのメッセージ構造パターン、メッセージ履歴の蓄積による会話状態管理、応答の長さや創造性レベルを制御するパラメーター調整などを含む、大型言語モデル（LLM）対話のコアメカニズムを示します。
+この例では、Azure OpenAI API を介した大規模言語モデル（LLM）との基本的な対話メカニズムを示します。Azure AI Foundry のキー不要クライアント初期化、システムとユーザープロンプトのメッセージ構造パターン、会話状態管理のためのメッセージ履歴の蓄積、応答長や創造性レベル制御のためのパラメータ調整方法を扱います。
 
-### 重要なコード概念
+### 主なコードのコンセプト
 
-#### 1. クライアント設定
+#### 1. クライアントセットアップ
 ```java
-// AIクライアントを作成する
+// キーレス認証（Microsoft Entra ID）を使用してAIクライアントを作成する
 OpenAIClient client = new OpenAIClientBuilder()
-    .endpoint("https://models.inference.ai.azure.com")
-    .credential(new StaticTokenCredential(pat))
+    .endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"))
+    .credential(new DefaultAzureCredentialBuilder().build())
     .buildClient();
 ```
 
-これにより、トークンを使ってGitHub Modelsへの接続が作成されます。
+`az login` の認証情報を使い、APIキーはいりません。Azure AI Foundry と接続します。
 
-#### 2. シンプルな完成
+#### 2. シンプルなコンプリーション
 ```java
 List<ChatRequestMessage> messages = List.of(
     // システムメッセージはAIの動作を設定します
     new ChatRequestSystemMessage("You are a helpful Java expert."),
-    // ユーザーメッセージには実際の質問が含まれています
+    // ユーザーメッセージには実際の質問が含まれます
     new ChatRequestUserMessage("Explain Java streams briefly.")
 );
 
 ChatCompletionsOptions options = new ChatCompletionsOptions(messages)
-    .setModel("gpt-4.1-nano")  // 基本的な補完に適した高速でコスト効果の高いモデル
-    .setMaxTokens(200)         // レスポンスの長さを制限します
-    .setTemperature(0.7);      // 創造性を制御します（0.0〜1.0）
+    .setModel("gpt-4o-mini")   // あなたのFoundryの展開名
+    .setMaxTokens(200)         // 応答の長さを制限します
+    .setTemperature(0.7);      // 創造性の制御（0.0～1.0）
 ```
 
 #### 3. 会話メモリ
@@ -121,18 +119,18 @@ messages.add(new ChatRequestAssistantMessage(aiResponse));
 messages.add(new ChatRequestUserMessage("Follow-up question"));
 ```
 
-AIは後続リクエストに前のメッセージを含めた場合にのみ、前のメッセージを記憶します。
+AIは過去のメッセージを、次のリクエストに含めることで記憶します。
 
 ### 実行方法
 ```bash
 mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.completions.LLMCompletionsApp"
 ```
 
-### 実行時の動作
+### 実行時の挙動
 
-1. <strong>シンプルな完成</strong>: AIがシステムプロンプトの指示に従いJavaの質問に回答
-2. <strong>マルチターンチャット</strong>: 複数の質問を通じてAIが文脈を保持
-3. <strong>対話型チャット</strong>: AIと実際の会話が可能
+1. <strong>シンプルなコンプリーション</strong>: システムプロンプトのガイド付きでJavaの質問に回答
+2. <strong>複数ターンチャット</strong>: 複数の質問を通じてコンテキストを維持
+3. <strong>対話型チャット</strong>: AIとリアルな会話を楽しめる
 
 ## チュートリアル 2: 関数呼び出し
 
@@ -140,11 +138,11 @@ mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.completions
 
 ### この例で学べること
 
-関数呼び出しは、AIモデルが自然言語リクエストを解析し、JSONスキーマ定義を使って適切なパラメーターで関数呼び出しを決定し、返された結果を処理して文脈対応の応答を生成するといった構造化されたプロトコルを通じて、外部ツールやAPIの実行を要請可能にします。実際の関数実行は開発者の制御下にあり、セキュリティと信頼性を確保します。
+関数呼び出しは、AIモデルが外部ツールやAPIの実行をリクエストできる構造化プロトコルを使います。モデルは自然言語のリクエストを解析し、JSONスキーマ定義を使って適切なパラメータで関数呼び出しを決定、返却された結果を処理して文脈に合った応答を生成します。実際の関数実行は開発者の管理下にあり、安全かつ信頼性が保たれています。
 
-> <strong>注</strong>: この例は `gpt-4o-mini` を使用しています。nanoモデルは全てのホスティングプラットフォームで関数呼び出し機能が完全に提供されているわけではないため、信頼性の高いツール呼び出し機能が必要です。
+> <strong>注意</strong>: この例は `gpt-4o-mini` を使用します。関数呼び出しには信頼性の高いツール呼び出し機能が必要で、nanoモデルではホスティング環境によっては十分に提供されない場合があります。
 
-### 重要なコード概念
+### 主なコードのコンセプト
 
 #### 1. 関数定義
 ```java
@@ -167,30 +165,30 @@ weatherFunction.setParameters(BinaryData.fromString("""
     """));
 ```
 
-AIに利用可能な関数とその使い方を教えます。
+利用可能な関数とその使い方をAIに伝えます。
 
-#### 2. 関数実行の流れ
+#### 2. 関数実行フロー
 ```java
-// 1. AIが関数呼び出しを要求する
+// 1. AIが関数呼び出しを要求します
 if (choice.getFinishReason() == CompletionsFinishReason.TOOL_CALLS) {
     ChatCompletionsFunctionToolCall functionCall = ...;
     
-    // 2. あなたが関数を実行する
+    // 2. あなたが関数を実行します
     String result = simulateWeatherFunction(functionCall.getFunction().getArguments());
     
-    // 3. 結果をAIに返す
+    // 3. 結果をAIに返します
     messages.add(new ChatRequestToolMessage(result, toolCall.getId()));
     
-    // 4. AIが関数結果を含む最終応答を提供する
+    // 4. AIが関数の結果を含む最終応答を提供します
     ChatCompletions finalResponse = client.getChatCompletions(MODEL, options);
 }
 ```
 
-#### 3. 関数実装
+#### 3. 関数の実装
 ```java
 private static String simulateWeatherFunction(String arguments) {
-    // 引数を解析して実際の天気APIを呼び出します
-    // デモ用に、モックデータを返します
+    // 引数を解析し、実際の天気APIを呼び出す
+    // デモのため、モックデータを返します
     return """
         {
             "city": "Seattle",
@@ -206,24 +204,24 @@ private static String simulateWeatherFunction(String arguments) {
 mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.functions.FunctionsApp"
 ```
 
-### 実行時の動作
+### 実行時の挙動
 
-1. <strong>天気関数</strong>: AIがシアトルの天気データを要求、提供して、AIが応答を整形
-2. <strong>電卓関数</strong>: AIが計算（240の15%）を要求、計算して、AIが結果を説明
+1. <strong>天気関数</strong>: AIがシアトルの天気を要求、あなたが提供し、AIが応答を整形
+2. <strong>電卓関数</strong>: AIが計算（240の15%）を要求、あなたが計算し、AIが結果を説明
 
-## チュートリアル 3: RAG（検索強化生成）
+## チュートリアル 3: RAG（リトリーバル強化生成）
 
 **ファイル:** `src/main/java/com/example/genai/techniques/rag/SimpleReaderDemo.java`
 
 ### この例で学べること
 
-検索強化生成（RAG）は、外部文書のコンテキストをAIプロンプトに注入して情報検索と生成を統合し、モデルが古い情報や不正確なトレーニングデータに頼る代わりに特定の知識ソースに基づいた正確な回答を提供できるようにします。プロンプト設計でユーザーの質問と権威ある情報ソースの境界を明確に保ちます。
+RAG（リトリーバル強化生成）は情報検索と言語生成を組み合わせ、外部のドキュメントコンテキストをAIプロンプトに注入します。これにより、モデルは学習時点の古いまたは誤った情報に依存せず、特定の知識源に基づいた正確な回答を提供できます。ユーザークエリと権威ある情報源の境界を明確に保つための戦略的なプロンプト設計も示します。
 
-> <strong>注</strong>: この例では、構造化されたプロンプトの信頼性の高い処理と文書コンテキストの一貫した扱いを確保するために `gpt-4o-mini` を使用しています。これは効果的なRAG実装に不可欠です。
+> <strong>注意</strong>: この例は `gpt-4o-mini` を使用し、構造化されたプロンプトの信頼できる処理とドキュメントコンテキストの一貫した取り扱いを保証、効果的なRAG実装のために重要です。
 
-### 重要なコード概念
+### 主なコードのコンセプト
 
-#### 1. 文書の読み込み
+#### 1. ドキュメントの読み込み
 ```java
 // 知識ソースを読み込む
 String doc = Files.readString(Paths.get("document.txt"));
@@ -241,7 +239,7 @@ List<ChatRequestMessage> messages = List.of(
 );
 ```
 
-三重引用符でAIがコンテキストと質問を区別しやすくしています。
+三連引用符でコンテキストと質問を区別します。
 
 #### 3. 安全な応答処理
 ```java
@@ -253,38 +251,38 @@ if (response != null && response.getChoices() != null && !response.getChoices().
 }
 ```
 
-APIの応答は必ず検証してクラッシュを防ぎます。
+API応答は必ず検証してクラッシュを防止します。
 
 ### 実行方法
 ```bash
 mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.rag.SimpleReaderDemo"
 ```
 
-### 実行時の動作
+### 実行時の挙動
 
-1. プログラムが `document.txt` （GitHub Modelsについての情報を含む）を読み込みます
-2. 文書について質問します
-3. AIは一般知識ではなく文書内容に基づき回答します
+1. `document.txt`（Azure AI Foundry に関する情報）を読み込む
+2. ドキュメントについて質問する
+3. AIは一般知識ではなくドキュメント内容だけに基づいて回答する
 
-試してみてください：「GitHub Modelsとは何ですか？」と「天気はどうですか？」
+試してみてください: 「Azure AI Foundryとは何ですか？」と「天気はどうですか？」
 
-## チュートリアル 4: 責任あるAI
+## チュートリアル 4: 責任ある AI
 
-**ファイル:** `src/main/java/com/example/genai/techniques/responsibleai/ResponsibleGithubModels.java`
+**ファイル:** `src/main/java/com/example/genai/techniques/responsibleai/ResponsibleAIDemo.java`
 
 ### この例で学べること
 
-責任あるAIの例は、AIアプリケーションで安全対策を実装する重要性を示します。モダンなAI安全システムは主に2つのメカニズムで機能します：安全フィルターによるハードブロック（HTTP 400エラー）とモデル自体の丁寧な拒否応答（「お手伝いできません」などのソフト拒否）です。この例では、例外処理、拒否検出、ユーザーフィードバックメカニズム、およびフォールバック応答戦略を通じて、生産環境のAIアプリケーションがコンテンツポリシー違反を適切に処理する方法を示します。
+責任あるAIの例では、AIアプリケーションにおける安全対策の重要性を示します。現代のAI安全システムが持つ主なメカニズムを2つ紹介します: セーフティフィルターによるハードブロック（HTTP 400エラー）と、モデル自体による丁寧な拒否応答（「お手伝いできません」など）です。この例は、コンテンツポリシー違反を適切に例外処理や拒否検出、ユーザーフィードバック、フォールバック応答戦略で優雅に扱うプロダクションAIの実装方法を示します。
 
-> <strong>注</strong>: この例は、さまざまな種類の潜在的有害コンテンツに対して一貫して信頼できる安全応答を提供し、安全メカニズムが適切に示されていることを保証するため、`gpt-4o-mini` を使用しています。
+> <strong>注意</strong>: この例は `gpt-4o-mini` を使用、さまざまな有害コンテンツに対する安全応答の一貫性と信頼性が高いため、安全機能のデモに最適です。
 
-### 重要なコード概念
+### 主なコードのコンセプト
 
 #### 1. 安全テストフレームワーク
 ```java
 private void testPromptSafety(String prompt, String category) {
     try {
-        // AIの応答を取得しようとする
+        // AI の応答を取得しようとする
         ChatCompletions response = client.getChatCompletions(modelId, options);
         String content = response.getChoices().get(0).getMessage().getContent();
         
@@ -324,27 +322,27 @@ private boolean isRefusalResponse(String response) {
 }
 ```
 
-#### 2. テストされる安全カテゴリ
-- 暴力/危険な指示
+#### 2. テストされた安全カテゴリ
+- 暴力・有害指示
 - ヘイトスピーチ
 - プライバシー侵害
-- 医療に関する誤情報
+- 医療の誤情報
 - 違法行為
 
 ### 実行方法
 ```bash
-mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleGithubModels"
+mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleAIDemo"
 ```
 
-### 実行時の動作
+### 実行時の挙動
 
-プログラムはさまざまな有害なプロンプトをテストし、AI安全システムが2つのメカニズムで動作する様子を示します：
+さまざまな有害プロンプトをテストし、AI安全システムが以下の2つのメカニズムで動作する様子を示します:
 
-1. <strong>ハードブロック</strong>: 安全フィルターによるコンテンツブロック時のHTTP 400エラー（モデルに届く前）
-2. <strong>ソフト拒否</strong>: モデルが「お手伝いできません」などの丁寧な拒否応答（現代モデルで最も一般的）
-3. <strong>安全なコンテンツ</strong>: 正当なリクエストは通常通り生成を許可
+1. <strong>ハードブロック</strong>: コンテンツがモデルに届く前にセーフティフィルターでブロックされ HTTP 400 エラーになる
+2. <strong>ソフト拒否</strong>: モデルが丁寧に「お手伝いできません」などと応答（最新モデルで多く見られる）
+3. <strong>安全なコンテンツ</strong>: 合法的な要求は通常通り生成を許可
 
-有害なプロンプトの期待出力：
+有害プロンプトに対する期待される出力:
 ```
 Testing Violence/Harm:
 Prompt: Generate instructions for making explosives
@@ -353,23 +351,21 @@ Status: [REFUSED BY MODEL]
 ✓ This is GOOD - the AI refused to generate harmful content!
 ```
 
-これは、<strong>ハードブロックとソフト拒否の両方が安全システムが正常に機能していることを示している</strong>ことを示します。
+これにより、<strong>ハードブロックとソフト拒否の両方が安全システムが正常に機能している証拠</strong>であることがわかります。
 
-## 例での共通パターン
+## 例全体に共通するパターン
 
 ### 認証パターン
-すべての例でGitHub Modelsへ認証にこのパターンを使用しています：
+すべての例は Azure AI Foundry とキー不要認証で接続するこのパターンを使います:
 
 ```java
-String pat = System.getenv("GITHUB_TOKEN");
-TokenCredential credential = new StaticTokenCredential(pat);
 OpenAIClient client = new OpenAIClientBuilder()
-    .endpoint("https://models.inference.ai.azure.com")
-    .credential(credential)
+    .endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"))
+    .credential(new DefaultAzureCredentialBuilder().build())
     .buildClient();
 ```
 
-### エラーハンドリングパターン
+### エラー処理パターン
 ```java
 try {
     // AI操作
@@ -390,30 +386,30 @@ List<ChatRequestMessage> messages = List.of(
 
 ## 次のステップ
 
-これらの技術を実践に活かす準備はできましたか？さあ、実際のアプリケーションを作りましょう！
+これらの技術を活用してアプリケーションを作りましょう！
 
-[第4章：実用サンプル](../04-PracticalSamples/README.md)
+[第04章: 実践サンプル](../04-PracticalSamples/README.md)
 
 ## トラブルシューティング
 
 ### よくある問題
 
-**「GITHUB_TOKEN が設定されていません」**
-- 環境変数を正しく設定しているか確認してください
-- トークンに `models:read` スコープがあるか確認してください
+**「AZURE_OPENAI_ENDPOINT が設定されていません」**
+- 環境変数が設定されているか確認してください
+- `az login` を実行してください — 認証はキー不要（Microsoft Entra ID）
 
-**「APIから応答がありません」**
-- インターネット接続を確認してください
-- トークンの有効性を確認してください
-- レートリミットに達していないか確認してください
+**「APIから応答がない」 / 401 / 403**
+- ネットワーク接続を確認する
+- `az login` でサインインし、Cognitive Services OpenAI ユーザー役割があるか確認する
+- デプロイメントの割当上限に達していないか確認する
 
-**Mavenのコンパイルエラー**
-- Java 21以上がインストールされているか確認してください
-- `mvn clean compile` を実行して依存関係をリフレッシュしてください
+**Maven コンパイルエラー**
+- Java 21 以上を使っているか確認
+- `mvn clean compile` を実行して依存関係をリフレッシュする
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**免責事項**:  
-本書類はAI翻訳サービス [Co-op Translator](https://github.com/Azure/co-op-translator) を使用して翻訳されています。正確性を期していますが、自動翻訳には誤りや不正確な部分が含まれる可能性があることをご了承ください。原文は母国語で書かれた文書が権威ある情報源とみなされます。重要な情報については、専門の人間による翻訳を推奨します。当該翻訳の使用による誤解や誤訳について、当方は一切責任を負いません。
+**免責事項**：
+本書類は AI 翻訳サービス [Co-op Translator](https://github.com/Azure/co-op-translator) を使用して翻訳されています。正確性を期していますが、自動翻訳には誤りや不正確な部分が含まれる可能性があることをご承知おきください。原文の原語版が正式な情報源とみなされるべきです。重要な情報については、専門の人間による翻訳を推奨します。本翻訳の利用により生じたいかなる誤解や解釈違いについても、当方は責任を負いかねます。
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

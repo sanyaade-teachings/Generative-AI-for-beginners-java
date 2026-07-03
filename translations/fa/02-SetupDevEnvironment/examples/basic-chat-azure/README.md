@@ -1,117 +1,72 @@
-# مثال کامل ارتباط ساده با Azure OpenAI
+# چت پایه با Azure AI Foundry - نمونه انتها به انتها
 
-این مثال نشان می‌دهد که چگونه یک برنامه ساده Spring Boot ایجاد کنید که به Azure OpenAI متصل شود و تنظیمات شما را آزمایش کند.
+این نمونه یک برنامه ساده Spring Boot است که به مدل **Azure AI Foundry** با استفاده از **احراز هویت بدون کلید** (Microsoft Entra ID) متصل می‌شود و تنظیمات شما را آزمایش می‌کند. از `ChatClient` در Spring AI استفاده می‌کند.
 
 ## فهرست مطالب
 
-- [پیش‌نیازها](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [شروع سریع](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [گزینه‌های پیکربندی](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [گزینه ۱: متغیرهای محیطی (فایل .env) - توصیه‌شده](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [گزینه ۲: اسرار GitHub Codespace](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [اجرای برنامه](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [با استفاده از Maven](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [با استفاده از VS Code](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [خروجی مورد انتظار](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [مرجع پیکربندی](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [متغیرهای محیطی](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [پیکربندی Spring](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [رفع اشکال](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [مشکلات رایج](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [حالت اشکال‌زدایی](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [گام‌های بعدی](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [منابع](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
+- [پیش‌نیازها](#پیش‌نیازها)
+- [شروع سریع](#شروع-سریع)
+- [نحوه عملکرد احراز هویت](#نحوه-عملکرد-احراز-هویت)
+- [اجرای برنامه](#اجرای-برنامه)
+  - [استفاده از Maven](#استفاده-از-maven)
+  - [استفاده از VS Code](#استفاده-از-vs-code)
+  - [خروجی مورد انتظار](#خروجی-مورد-انتظار)
+- [مرجع پیکربندی](#مرجع-پیکربندی)
+  - [متغیرهای محیطی](#متغیرهای-محیطی)
+  - [پیکربندی Spring](#پیکربندی-spring)
+- [رفع اشکال](#رفع-اشکال)
+  - [مشکلات رایج](#مشکلات-رایج)
+  - [حالت اشکال‌زدایی](#حالت-اشکال‌زدایی)
+- [گام‌های بعدی](#گام‌های-بعدی)
+- [منابع](#منابع)
 
 ## پیش‌نیازها
 
-قبل از اجرای این مثال، مطمئن شوید که موارد زیر را انجام داده‌اید:
+قبل از اجرای این نمونه، مطمئن شوید که:
 
-- راهنمای تنظیم [Azure OpenAI](../../getting-started-azure-openai.md) را کامل کرده‌اید  
-- منبع Azure OpenAI را از طریق پورتال Azure AI Foundry مستقر کرده‌اید  
-- مدل gpt-4o-mini (یا جایگزین) را مستقر کرده‌اید  
-- کلید API و URL نقطه پایانی از Azure دریافت کرده‌اید  
+- یک منبع Azure AI Foundry با استقرار `gpt-4o-mini` دارید — آن را با `azd up` فراهم کنید یا دستی از طریق [راهنمای راه‌اندازی Azure AI Foundry](../../getting-started-azure-openai.md)
+- نقش **Cognitive Services OpenAI User** در آن منبع دارید (قالب‌های Bicep این نقش را برای شما اختصاص می‌دهند)
+- [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli) را نصب کرده و با `az login` وارد شده‌اید
+- Java 21+ و Maven 3.9+ نصب شده است
+
+> **کلید API لازم نیست** — احراز هویت بدون کلید از طریق Microsoft Entra ID انجام می‌شود.
 
 ## شروع سریع
 
 ```bash
-# 1. Navigate to project
+# ۱. به پروژه بروید
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 
-# 2. Configure credentials
-cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# ۲. وارد شوید تا احراز هویت بدون کلید بتواند توکن بگیرد
+az login
 
-# 3. Run the application
+# ۳. نقطه انتهایی را پیکربندی کنید
+#    - اگر دستور `azd up` را اجرا کردید، فایل .env برای شما نوشته شده است (این مرحله را رد کنید).
+#    - در غیر این صورت قالب را کپی کرده و AZURE_OPENAI_ENDPOINT را تنظیم کنید:
+cp .env.example .env
+
+# ۴. برنامه را اجرا کنید
 mvn spring-boot:run
 ```
 
-## گزینه‌های پیکربندی
+## نحوه عملکرد احراز هویت
 
-### گزینه ۱: متغیرهای محیطی (فایل .env) - توصیه‌شده
+این نمونه با **Microsoft Entra ID** احراز هویت می‌کند — کلید API وجود ندارد.
 
-**مرحله ۱: فایل پیکربندی خود را ایجاد کنید**
-```bash
-cp .env.example .env
-```
-
-**مرحله ۲: اطلاعات احراز هویت Azure OpenAI خود را اضافه کنید**
-```bash
-# Your Azure OpenAI API key (from Azure AI Foundry portal)
-AZURE_AI_KEY=your-actual-api-key-here
-
-# Your Azure OpenAI endpoint URL (e.g., https://your-hub-name.openai.azure.com/)
-AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-> **نکته امنیتی**: 
-> - هرگز فایل `.env` خود را به کنترل نسخه متعهد نکنید
-> - فایل `.env` از قبل در `.gitignore` قرار دارد
-> - کلیدهای API خود را ایمن نگه دارید و به طور منظم آن‌ها را تغییر دهید
-
-### گزینه ۲: اسرار GitHub Codespace
-
-برای GitHub Codespaces، این اسرار را در مخزن خود تنظیم کنید:
-- `AZURE_AI_KEY` - کلید API Azure OpenAI شما
-- `AZURE_AI_ENDPOINT` - URL نقطه پایانی Azure OpenAI شما
-
-برنامه به طور خودکار این اسرار را شناسایی و استفاده می‌کند.
-
-### جایگزین: متغیرهای محیطی مستقیم
-
-<details>
-<summary>برای مشاهده دستورات مخصوص پلتفرم کلیک کنید</summary>
-
-**Linux/macOS (bash/zsh):**
-```bash
-export AZURE_AI_KEY=your-actual-api-key-here
-export AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (Command Prompt):**
-```cmd
-set AZURE_AI_KEY=your-actual-api-key-here
-set AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (PowerShell):**
-```powershell
-$env:AZURE_AI_KEY="your-actual-api-key-here"
-$env:AZURE_AI_ENDPOINT="https://your-hub-name.openai.azure.com/"
-```
-</details>
+وقتی فقط `spring.ai.azure.openai.endpoint` تنظیم شده باشد (و کلید API نباشد)، Spring AI کلاینت Azure OpenAI را با [`DefaultAzureCredential`](https://learn.microsoft.com/java/api/com.azure.identity.defaultazurecredential) می‌سازد. این اعتبارنامه به طور خودکار توکنی را از جلسه `az login` شما به صورت محلی یا از هویت مدیریت شده هنگام اجرا در Azure پیدا می‌کند — بنابراین همان کد در هر دو محیط بدون تغییر کار می‌کند.
 
 ## اجرای برنامه
 
-### با استفاده از Maven
+### استفاده از Maven
 
 ```bash
 mvn spring-boot:run
 ```
 
-### با استفاده از VS Code
+### استفاده از VS Code
 
 1. پروژه را در VS Code باز کنید
-2. کلید `F5` را فشار دهید یا از پنل "Run and Debug" استفاده کنید
+2. کلید `F5` را بزنید یا از پنل "Run and Debug" استفاده کنید
 3. پیکربندی "Spring Boot-BasicChatApplication" را انتخاب کنید
 
 > **توجه**: پیکربندی VS Code به طور خودکار فایل .env شما را بارگذاری می‌کند
@@ -136,61 +91,62 @@ Success! Azure OpenAI connection is working correctly.
 
 ### متغیرهای محیطی
 
-| متغیر | توضیحات | ضروری | مثال |
-|-------|---------|-------|-------|
-| `AZURE_AI_KEY` | کلید API Azure OpenAI | بله | `abc123...` |
-| `AZURE_AI_ENDPOINT` | URL نقطه پایانی Azure OpenAI | بله | `https://my-hub.openai.azure.com/` |
-| `AZURE_AI_MODEL_DEPLOYMENT` | نام استقرار مدل | خیر | `gpt-4o-mini` (پیش‌فرض) |
+| متغیر | توضیحات | الزامی | مثال |
+|----------|-------------|----------|---------|
+| `AZURE_OPENAI_ENDPOINT` | آدرس پایانه Foundry (Azure OpenAI) | بله | `https://my-resource.openai.azure.com/` |
+| `AZURE_OPENAI_DEPLOYMENT` | نام استقرار مدل چت | خیر | `gpt-4o-mini` (پیش‌فرض) |
+
+> متغیر کلید API **وجود ندارد** — احراز هویت بدون کلید (Microsoft Entra ID از طریق `az login`) است.
 
 ### پیکربندی Spring
 
-فایل `application.yml` تنظیم می‌کند:
-- **کلید API**: `${AZURE_AI_KEY}` - از متغیر محیطی
-- **نقطه پایانی**: `${AZURE_AI_ENDPOINT}` - از متغیر محیطی  
-- **مدل**: `${AZURE_AI_MODEL_DEPLOYMENT:gpt-4o-mini}` - از متغیر محیطی با مقدار پیش‌فرض
-- **دمای پاسخ**: `0.7` - کنترل خلاقیت (0.0 = قطعی، 1.0 = خلاق)
-- **حداکثر توکن‌ها**: `500` - طول پاسخ حداکثر
+فایل `application.yml` تنظیمات زیر را انجام می‌دهد:
+- **پایانه**: `${AZURE_OPENAI_ENDPOINT}` - از متغیر محیطی
+- **استقرار**: `${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}` - از متغیر محیطی با مقدار پیش‌فرض
+- **احراز هویت**: بدون کلید — کلید API تنظیم نشده، پس Spring AI از `DefaultAzureCredential` استفاده می‌کند
+- **دمای پاسخ**: `0.7` - کنترل خلاقیت (0.0 = قطعی، 1.0 = خلاقانه)
+- **حداکثر توکن‌ها**: `500` - حداکثر طول پاسخ
 
 ## رفع اشکال
 
 ### مشکلات رایج
 
 <details>
-<summary><strong>خطا: "کلید API معتبر نیست"</strong></summary>
+<summary><strong>خطا: 401 / "PermissionDenied" / خطاهای توکن</strong></summary>
 
-- بررسی کنید که `AZURE_AI_KEY` به درستی در فایل `.env` تنظیم شده باشد
-- مطمئن شوید که کلید API دقیقاً از پورتال Azure AI Foundry کپی شده است
-- اطمینان حاصل کنید که هیچ فضای اضافی یا علامت نقل قول در اطراف کلید وجود ندارد
+- دستور `az login` را اجرا کنید — احراز هویت بدون کلید به ورود فعال برای دریافت توکن نیاز دارد
+- بررسی کنید حساب شما نقش **Cognitive Services OpenAI User** را بر روی منبع دارد
+- اگر همین الان نقش را اختصاص داده‌اید، یک دقیقه صبر کنید تا اعمال شود
+- تأیید کنید در tenant/اشتراک مناسب هستید (`az account show`)
 </details>
 
 <details>
-<summary><strong>خطا: "نقطه پایانی معتبر نیست"</strong></summary>
+<summary><strong>خطا: "The endpoint is not valid" / خطاهای اتصال</strong></summary>
 
-- مطمئن شوید که `AZURE_AI_ENDPOINT` شامل URL کامل است (مثلاً `https://your-hub-name.openai.azure.com/`)
-- بررسی کنید که آیا اسلش انتهایی به درستی تنظیم شده است
-- مطمئن شوید که نقطه پایانی با منطقه استقرار Azure شما مطابقت دارد
+- مطمئن شوید `AZURE_OPENAI_ENDPOINT` آدرس کامل پایه است (مثلاً `https://your-resource.openai.azure.com/`)
+- سازگاری در پایان آدرس با اسلش بررسی شود
+- مطمئن شوید پایانه با منبع فراهم شده شما مطابقت دارد (`azd env get-values`)
 </details>
 
 <details>
-<summary><strong>خطا: "استقرار یافت نشد"</strong></summary>
+<summary><strong>خطا: "The deployment was not found"</strong></summary>
 
-- بررسی کنید که نام استقرار مدل دقیقاً با چیزی که در Azure مستقر شده مطابقت دارد
-- مطمئن شوید که مدل با موفقیت مستقر شده و فعال است
-- تلاش کنید از نام استقرار پیش‌فرض استفاده کنید: `gpt-4o-mini`
+- بررسی کنید `AZURE_OPENAI_DEPLOYMENT` با نام یک استقرار در Azure مطابقت دارد
+- تأیید کنید مدل با موفقیت مستقر و فعال است
+- نام پیش‌فرض استقرار `gpt-4o-mini` است
 </details>
 
 <details>
-<summary><strong>VS Code: متغیرهای محیطی بارگذاری نمی‌شوند</strong></summary>
+<summary><strong>VS Code: بارگذاری نشدن متغیرهای محیطی</strong></summary>
 
-- مطمئن شوید که فایل `.env` در دایرکتوری ریشه پروژه قرار دارد (هم‌سطح با `pom.xml`)
-- تلاش کنید `mvn spring-boot:run` را در ترمینال یکپارچه VS Code اجرا کنید
-- بررسی کنید که افزونه Java در VS Code به درستی نصب شده باشد
-- مطمئن شوید که پیکربندی اجرا شامل `"envFile": "${workspaceFolder}/.env"` است
+- مطمئن شوید فایل `.env` در ریشه پروژه (سطح همان `pom.xml`) قرار دارد
+- تلاش کنید `mvn spring-boot:run` را در ترمینال داخلی VS Code اجرا کنید
+- بررسی کنید افزونه Java برای VS Code به درستی نصب شده باشد
 </details>
 
 ### حالت اشکال‌زدایی
 
-برای فعال کردن گزارش‌گیری دقیق، این خطوط را در `application.yml` از حالت کامنت خارج کنید:
+برای فعال‌سازی نمایش دقیق لاگ‌ها، این خطوط را در `application.yml` لغو کامنت کنید:
 
 ```yaml
 logging:
@@ -201,16 +157,20 @@ logging:
 
 ## گام‌های بعدی
 
-**تنظیمات کامل شد!** یادگیری خود را ادامه دهید:
+**راه‌اندازی کامل است!** مسیر یادگیری خود را ادامه دهید:
 
 [فصل ۳: تکنیک‌های اصلی هوش مصنوعی مولد](../../../03-CoreGenerativeAITechniques/README.md)
 
 ## منابع
 
-- [مستندات Spring AI Azure OpenAI](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
-- [مستندات سرویس Azure OpenAI](https://learn.microsoft.com/azure/ai-services/openai/)
-- [پورتال Azure AI Foundry](https://ai.azure.com/)
-- [مستندات Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project)
+- [مستندات Spring AI Azure OpenAI](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
+- [احراز هویت بدون کلید با Microsoft Entra ID](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
+- [پرتال Azure AI Foundry](https://ai.azure.com/)
+- [مستندات Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/)
 
-**سلب مسئولیت**:  
-این سند با استفاده از سرویس ترجمه هوش مصنوعی [Co-op Translator](https://github.com/Azure/co-op-translator) ترجمه شده است. در حالی که ما تلاش می‌کنیم دقت را حفظ کنیم، لطفاً توجه داشته باشید که ترجمه‌های خودکار ممکن است شامل خطاها یا نادرستی‌ها باشند. سند اصلی به زبان اصلی آن باید به عنوان منبع معتبر در نظر گرفته شود. برای اطلاعات حساس، توصیه می‌شود از ترجمه انسانی حرفه‌ای استفاده کنید. ما مسئولیتی در قبال سوء تفاهم‌ها یا تفسیرهای نادرست ناشی از استفاده از این ترجمه نداریم.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**سلب مسئولیت**:
+این سند با استفاده از سرویس ترجمه هوش مصنوعی [Co-op Translator](https://github.com/Azure/co-op-translator) ترجمه شده است. در حالی که ما در تلاش برای دقت هستیم، لطفاً توجه داشته باشید که ترجمه‌های خودکار ممکن است شامل خطاها یا نادرستی‌هایی باشند. سند اصلی به زبان مادری خود باید به عنوان منبع معتبر در نظر گرفته شود. برای اطلاعات حیاتی، ترجمه حرفه‌ای انسانی توصیه می‌شود. ما در قبال هرگونه سوء تفاهم یا برداشت نادرست ناشی از استفاده از این ترجمه مسئولیتی نداریم.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This repository is designed for educational purposes to learn Generative AI development using Java. It offers a comprehensive hands-on course that covers topics such as Large Language Models (LLMs), prompt engineering, embeddings, Retrieval-Augmented Generation (RAG), and the Model Context Protocol (MCP).
+This is an educational repository for learning Generative AI development with Java. It provides a comprehensive hands-on course covering Large Language Models (LLMs), prompt engineering, embeddings, RAG (Retrieval-Augmented Generation), and the Model Context Protocol (MCP).
 
 **Key Technologies:**
 - Java 21
@@ -10,20 +10,20 @@ This repository is designed for educational purposes to learn Generative AI deve
 - Spring AI 1.1.x
 - Maven
 - LangChain4j
-- GitHub Models, Azure OpenAI, and OpenAI SDKs
+- Azure AI Foundry, Azure OpenAI, and OpenAI SDKs
 
 **Architecture:**
 - Multiple standalone Spring Boot applications organized by chapters
-- Sample projects showcasing various AI patterns
-- Pre-configured for GitHub Codespaces with development containers
+- Sample projects demonstrating different AI patterns
+- GitHub Codespaces-ready with pre-configured dev containers
 
 ## Setup Commands
 
 ### Prerequisites
 - Java 21 or higher
 - Maven 3.x
-- GitHub personal access token (for GitHub Models)
-- Optional: Azure OpenAI credentials
+- Azure subscription with an Azure AI Foundry model deployment (provision with `azd up`)
+- Azure CLI (`az`) and Azure Developer CLI (`azd`), signed in for keyless auth
 
 ### Environment Setup
 
@@ -57,19 +57,22 @@ mvn -version
 
 ### Configuration
 
-**GitHub Token Setup:**
+**Azure AI Foundry Setup (keyless, recommended):**
 ```bash
-# Create a GitHub Personal Access Token
-# Set environment variable
-export GITHUB_TOKEN="your-token-here"
+# Provision the Foundry account + model deployments as code
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
+# azd writes examples/basic-chat-azure/.env with your endpoint (no key)
 ```
 
-**Azure OpenAI Setup (Optional):**
+**Manual endpoint config:**
 ```bash
-# For examples using Azure OpenAI
+# If you didn't use azd, set the endpoint yourself (auth stays keyless via az login)
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# Edit .env: AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com/
 ```
 
 ## Development Workflow
@@ -118,7 +121,7 @@ cd 04-PracticalSamples/calculator
 # Direct MCP client
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient"
 
-# AI-powered client (requires GITHUB_TOKEN)
+# AI-powered client (requires AZURE_OPENAI_ENDPOINT + az login)
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient"
 
 # Interactive bot
@@ -126,7 +129,7 @@ mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.Bot"
 ```
 
 ### Hot Reload
-Spring Boot DevTools is included in projects to enable hot reload:
+Spring Boot DevTools is included in projects that support hot reload:
 ```bash
 # Changes to Java files will automatically reload when saved
 mvn spring-boot:run
@@ -164,10 +167,10 @@ Many examples are interactive applications that require manual testing:
 2. Test endpoints or interact with the CLI
 3. Verify expected behavior matches documentation in each project's README.md
 
-### Testing with GitHub Models
-- Free tier limits: 15 requests/minute, 150/day
-- Maximum of 5 concurrent requests
-- Test content filtering using responsible AI examples
+### Testing with Azure AI Foundry
+- Sign in with `az login` before running examples (keyless auth)
+- Ensure your account has the Cognitive Services OpenAI User role on the resource
+- Test content filtering with the responsible AI example in Chapter 5
 
 ## Code Style Guidelines
 
@@ -183,8 +186,8 @@ Many examples are interactive applications that require manual testing:
 ### Spring Boot Patterns
 - Use `@Service` for business logic
 - Use `@RestController` for REST endpoints
-- Configure settings via `application.yml` or `application.properties`
-- Prefer environment variables over hard-coded values
+- Configuration via `application.yml` or `application.properties`
+- Environment variables preferred over hard-coded values
 - Use `@Tool` annotation for MCP-exposed methods
 
 ### File Organization
@@ -215,7 +218,7 @@ src/
 ### Code Comments
 - Add JavaDoc for public APIs
 - Include explanatory comments for complex AI interactions
-- Clearly document MCP tool descriptions
+- Document MCP tool descriptions clearly
 
 ## Build and Deployment
 
@@ -247,31 +250,34 @@ mvn package
 
 **Development:**
 ```yaml
-# application.yml
+# application.yml (keyless - no api-key; auth via DefaultAzureCredential)
 spring:
   ai:
-    openai:
-      api-key: ${GITHUB_TOKEN}
-      base-url: https://models.inference.ai.azure.com
+    azure:
+      openai:
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 **Production:**
-- Use Azure AI Foundry Models instead of GitHub Models
-- Update base-url to Azure OpenAI endpoint
-- Manage secrets via Azure Key Vault or environment variables
+- Use a managed identity instead of `az login` for keyless auth
+- Point `AZURE_OPENAI_ENDPOINT` at your production Foundry resource
+- Manage configuration via environment variables or Azure Key Vault
 
 ### Deployment Considerations
-- This repository is for educational purposes with sample applications
-- Not intended for production deployment as-is
-- Samples demonstrate patterns that can be adapted for production use
-- Refer to individual project READMEs for specific deployment notes
+- This is an educational repository with sample applications
+- Not designed for production deployment as-is
+- Samples demonstrate patterns to adapt for production use
+- See individual project READMEs for specific deployment notes
 
 ## Additional Notes
 
-### GitHub Models vs Azure OpenAI
-- **GitHub Models:** Free tier for learning, no credit card required
-- **Azure OpenAI:** Production-ready, requires Azure subscription
-- Code is compatible with both; simply update the endpoint and API key
+### Azure AI Foundry
+- **Keyless auth:** connect with Microsoft Entra ID — no API keys to manage
+- **Provisioned as code:** Bicep + azd (`azd up`) create the account and model deployments
+- The same OpenAI-compatible code runs locally (`az login`) and in Azure (managed identity)
 
 ### Working with Multiple Projects
 Each sample project is standalone:
@@ -300,13 +306,14 @@ rm -rf ~/.m2/repository
 mvn clean install
 ```
 
-**GitHub Token Not Found:**
+**Endpoint or Sign-in Not Found:**
 ```bash
-# Set in current session
-export GITHUB_TOKEN="your-token-here"
+# Set the endpoint in the current session and sign in (keyless)
+export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
+az login
 
-# Or use .env file in project directory
-echo "GITHUB_TOKEN=your-token-here" > .env
+# Or use a .env file in the project directory
+echo "AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/" > .env
 ```
 
 **Port Already in Use:**
@@ -317,19 +324,19 @@ server.port=8081
 ```
 
 ### Multi-Language Support
-- Documentation available in over 45 languages via automated translation
-- Translations located in the `translations/` directory
-- Translation managed by a GitHub Actions workflow
+- Documentation available in 45+ languages via automated translation
+- Translations in `translations/` directory
+- Translation managed by GitHub Actions workflow
 
 ### Learning Path
 1. Start with [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md)
-2. Follow chapters sequentially (01 → 05)
+2. Follow chapters in order (01 → 05)
 3. Complete hands-on examples in each chapter
 4. Explore sample projects in Chapter 4
 5. Learn responsible AI practices in Chapter 5
 
 ### Development Container
-The `.devcontainer/devcontainer.json` file configures:
+The `.devcontainer/devcontainer.json` configures:
 - Java 21 development environment
 - Maven pre-installed
 - VS Code Java extensions
@@ -339,18 +346,20 @@ The `.devcontainer/devcontainer.json` file configures:
 - Azure CLI
 
 ### Performance Considerations
-- GitHub Models free tier has rate limits
+- Azure AI Foundry deployments have per-minute token/request quotas
 - Use appropriate batch sizes for embeddings
 - Consider caching for repeated API calls
-- Monitor token usage to optimize costs
+- Monitor token usage for cost optimization
 
 ### Security Notes
-- Never commit `.env` files (already included in `.gitignore`)
-- Use environment variables for API keys
-- GitHub tokens should have minimal required scopes
-- Follow responsible AI guidelines outlined in Chapter 5
+- Never commit `.env` files (already in `.gitignore`)
+- Prefer keyless auth (Microsoft Entra ID) over API keys
+- Use managed identities in Azure; `az login` for local development
+- Follow responsible AI guidelines in Chapter 5
 
 ---
 
-**Disclaimer**:  
-This document has been translated using the AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we aim for accuracy, please note that automated translations may contain errors or inaccuracies. The original document in its native language should be regarded as the authoritative source. For critical information, professional human translation is recommended. We are not responsible for any misunderstandings or misinterpretations resulting from the use of this translation.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Disclaimer**:
+This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

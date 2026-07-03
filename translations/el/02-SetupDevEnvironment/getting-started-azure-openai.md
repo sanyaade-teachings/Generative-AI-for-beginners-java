@@ -1,138 +1,151 @@
-# Ρύθμιση του Περιβάλλοντος Ανάπτυξης για το Azure OpenAI
+# Ρύθμιση του Περιβάλλοντος Ανάπτυξης για το Azure AI Foundry
 
-> **Γρήγορη Εκκίνηση**: Αυτός ο οδηγός αφορά τη ρύθμιση του Azure OpenAI. Για άμεση εκκίνηση με δωρεάν μοντέλα, χρησιμοποιήστε [GitHub Models with Codespaces](./README.md#quick-start-cloud).
+> Αυτός ο οδηγός ρυθμίζει τα μοντέλα **Azure AI Foundry** για τις εφαρμογές Java AI αυτού του μαθήματος, χρησιμοποιώντας **αυθεντικοποίηση χωρίς κλειδί** (Microsoft Entra ID) — χωρίς να χρειάζεται να διαχειρίζεστε κλειδιά API. Καινούργιος στα εργαλεία; Ξεκινήστε με τον [οδηγό περιβάλλοντος ανάπτυξης](./README.md).
 
-Αυτός ο οδηγός θα σας βοηθήσει να ρυθμίσετε τα μοντέλα του Azure AI Foundry για τις εφαρμογές Java AI σε αυτό το μάθημα.
+Αυτός ο οδηγός ρυθμίζει τα μοντέλα **Azure AI Foundry** για τις εφαρμογές Java AI αυτού του μαθήματος. Έχετε δύο επιλογές:
+
+- **Επιλογή Α — Παροχή με `azd` + Bicep (συνιστάται):** μία εντολή αναπτύσσει τον λογαριασμό Foundry και τα μοντέλα ως κώδικα. Χωρίς κλικ στο portal.
+- **Επιλογή Β — Δημιουργία πόρων χειροκίνητα** στο portal του Azure AI Foundry.
+
+Και οι δύο τρόποι χρησιμοποιούν **αυθεντικοποίηση χωρίς κλειδί** (Microsoft Entra ID) — δεν υπάρχουν κλειδιά API για αντιγραφή ή διαρροή.
 
 ## Πίνακας Περιεχομένων
 
-- [Γρήγορη Επισκόπηση Ρύθμισης](../../../02-SetupDevEnvironment)
-- [Βήμα 1: Δημιουργία Πόρων Azure AI Foundry](../../../02-SetupDevEnvironment)
-  - [Δημιουργία Hub και Project](../../../02-SetupDevEnvironment)
-  - [Ανάπτυξη του Μοντέλου GPT-4o-mini](../../../02-SetupDevEnvironment)
-- [Βήμα 2: Δημιουργία του Codespace](../../../02-SetupDevEnvironment)
-- [Βήμα 3: Ρύθμιση του Περιβάλλοντός σας](../../../02-SetupDevEnvironment)
-- [Βήμα 4: Δοκιμή της Ρύθμισης](../../../02-SetupDevEnvironment)
-- [Τι Ακολουθεί;](../../../02-SetupDevEnvironment)
-- [Πόροι](../../../02-SetupDevEnvironment)
-- [Επιπλέον Πόροι](../../../02-SetupDevEnvironment)
+- [Τι Δημιουργείται](#τι-δημιουργείται)
+- [Προαπαιτούμενα](#προαπαιτούμενα)
+- [Επιλογή Α: Παροχή με azd + Bicep (Συνιστάται)](#επιλογή-α-παροχή-με-azd--bicep-συνιστάται)
+- [Επιλογή Β: Δημιουργία Πόρων Χειροκίνητα](#επιλογή-β-δημιουργία-πόρων-χειροκίνητα)
+- [Ρύθμιση του Περιβάλλοντός σας](#ρύθμιση-του-περιβάλλοντός-σας)
+- [Δοκιμή της Ρύθμισής σας](#δοκιμή-της-ρύθμισής-σας)
+- [Τι Ακολουθεί;](#τι-ακολουθεί)
+- [Πόροι](#πόροι)
+- [Πρόσθετοι Πόροι](#πρόσθετοι-πόροι)
 
-## Γρήγορη Επισκόπηση Ρύθμισης
+## Τι Δημιουργείται
 
-1. Δημιουργήστε πόρους Azure AI Foundry (Hub, Project, Model)
-2. Δημιουργήστε ένα Codespace με container ανάπτυξης Java
-3. Ρυθμίστε το αρχείο .env με τα διαπιστευτήρια του Azure OpenAI
-4. Δοκιμάστε τη ρύθμιση με το παράδειγμα έργου
+Τα πρότυπα Bicep στον φάκελο [`infra/`](../../../02-SetupDevEnvironment/infra) παρέχουν:
 
-## Βήμα 1: Δημιουργία Πόρων Azure AI Foundry
+- Λογαριασμό **Azure AI Foundry** (`Microsoft.CognitiveServices/accounts`, τύπος `AIServices`) με ένα έργο
+- Μια ανάπτυξη **chat** — `gpt-4o-mini`
+- Μια ανάπτυξη **embedding** — `text-embedding-3-small` (χρησιμοποιείται σε επόμενα κεφάλαια)
+- Μια **ανάθεση ρόλου χωρίς κλειδί** (`Cognitive Services OpenAI User`) ώστε να συνδεθείτε με `az login` αντί να διαχειρίζεστε κλειδιά
 
-### Δημιουργία Hub και Project
+## Προαπαιτούμενα
 
-1. Μεταβείτε στο [Azure AI Foundry Portal](https://ai.azure.com/) και συνδεθείτε
-2. Κάντε κλικ στο **+ Create** → **New hub** (ή πλοηγηθείτε στο **Management** → **All hubs** → **+ New hub**)
-3. Ρυθμίστε το hub σας:
-   - **Όνομα Hub**: π.χ., "MyAIHub"
-   - **Συνδρομή**: Επιλέξτε τη συνδρομή Azure σας
-   - **Ομάδα πόρων**: Δημιουργήστε νέα ή επιλέξτε υπάρχουσα
-   - **Τοποθεσία**: Επιλέξτε την πλησιέστερη σε εσάς
-   - **Λογαριασμός αποθήκευσης**: Χρησιμοποιήστε τον προεπιλεγμένο ή ρυθμίστε προσαρμοσμένο
-   - **Key vault**: Χρησιμοποιήστε τον προεπιλεγμένο ή ρυθμίστε προσαρμοσμένο
-   - Κάντε κλικ στο **Next** → **Review + create** → **Create**
-4. Μόλις δημιουργηθεί, κάντε κλικ στο **+ New project** (ή **Create project** από την επισκόπηση του hub)
-   - **Όνομα Project**: π.χ., "GenAIJava"
-   - Κάντε κλικ στο **Create**
+- Ένα [Azure συνδρομή](https://azure.microsoft.com/free/)
+- [Azure Developer CLI (`azd`)](https://aka.ms/azure-dev/install)
+- [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli)
+- [Java 21+](https://learn.microsoft.com/java/openjdk/download) και [Maven 3.9+](https://maven.apache.org/download.cgi)
 
-### Ανάπτυξη του Μοντέλου GPT-4o-mini
+## Επιλογή Α: Παροχή με azd + Bicep (Συνιστάται)
 
-1. Στο project σας, μεταβείτε στο **Model catalog** και αναζητήστε το **gpt-4o-mini**
-   - *Εναλλακτικά: Μεταβείτε στο **Deployments** → **+ Create deployment***
-2. Κάντε κλικ στο **Deploy** στην κάρτα του μοντέλου gpt-4o-mini
-3. Ρυθμίστε την ανάπτυξη:
-   - **Όνομα Ανάπτυξης**: "gpt-4o-mini"
-   - **Έκδοση Μοντέλου**: Χρησιμοποιήστε την τελευταία
-   - **Τύπος Ανάπτυξης**: Standard
-4. Κάντε κλικ στο **Deploy**
-5. Μόλις αναπτυχθεί, μεταβείτε στην καρτέλα **Deployments** και αντιγράψτε τις παρακάτω τιμές:
-   - **Όνομα Ανάπτυξης** (π.χ., "gpt-4o-mini")
-   - **Target URI** (π.χ., `https://your-hub-name.openai.azure.com/`) 
-      > **Σημαντικό**: Αντιγράψτε μόνο το βασικό URL (π.χ., `https://myhub.openai.azure.com/`) και όχι ολόκληρη τη διαδρομή του endpoint.
-   - **Κλειδί** (από την ενότητα Keys and Endpoint)
-
-> **Έχετε ακόμα προβλήματα;** Επισκεφθείτε την επίσημη [Τεκμηρίωση Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project)
-
-## Βήμα 2: Δημιουργία του Codespace
-
-1. Κάντε fork αυτό το αποθετήριο στον λογαριασμό σας στο GitHub
-   > **Σημείωση**: Αν θέλετε να επεξεργαστείτε τη βασική διαμόρφωση, δείτε τη [Διαμόρφωση Dev Container](../../../.devcontainer/devcontainer.json)
-2. Στο αποθετήριο που κάνατε fork, κάντε κλικ στο **Code** → καρτέλα **Codespaces**
-3. Κάντε κλικ στο **...** → **New with options...**
-![δημιουργία codespace με επιλογές](../../../translated_images/el/codespaces.9945ded8ceb431a5.webp)
-4. Επιλέξτε **Διαμόρφωση Dev container**: 
-   - **Περιβάλλον Ανάπτυξης Generative AI Java**
-5. Κάντε κλικ στο **Create codespace**
-
-## Βήμα 3: Ρύθμιση του Περιβάλλοντός σας
-
-Μόλις το Codespace σας είναι έτοιμο, ρυθμίστε τα διαπιστευτήρια του Azure OpenAI:
-
-1. **Πλοηγηθείτε στο παράδειγμα έργου από τη ρίζα του αποθετηρίου:**
-   ```bash
-   cd 02-SetupDevEnvironment/examples/basic-chat-azure
-   ```
-
-2. **Δημιουργήστε το αρχείο .env:**
-   ```bash
-   cp .env.example .env
-   ```
-
-3. **Επεξεργαστείτε το αρχείο .env με τα διαπιστευτήρια του Azure OpenAI:**
-   ```bash
-   # Your Azure OpenAI API key (from Azure AI Foundry portal)
-   AZURE_AI_KEY=your-actual-api-key-here
-   
-   # Your Azure OpenAI endpoint URL (e.g., https://myhub.openai.azure.com/)
-   AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-   ```
-
-   > **Σημείωση Ασφαλείας**: 
-   > - Μην δεσμεύετε ποτέ το αρχείο `.env` στον έλεγχο εκδόσεων
-   > - Το αρχείο `.env` περιλαμβάνεται ήδη στο `.gitignore`
-   > - Διατηρήστε τα API keys σας ασφαλή και ανανεώστε τα τακτικά
-
-## Βήμα 4: Δοκιμή της Ρύθμισης
-
-Εκτελέστε την εφαρμογή παραδείγματος για να δοκιμάσετε τη σύνδεση με το Azure OpenAI:
+Από τον φάκελο `02-SetupDevEnvironment`:
 
 ```bash
+cd 02-SetupDevEnvironment
+
+# Συνδεθείτε (και τα δύο εργαλεία)
+azd auth login
+az login
+
+# Παρέχετε τον λογαριασμό Foundry + αναπτύξεις μοντέλων
+azd up
+```
+
+Η εντολή `azd` ζητά ένα **όνομα περιβάλλοντος** (π.χ. `genai-java`) και μια **περιοχή**. Επιλέξτε μια περιοχή όπου είναι διαθέσιμα τα `gpt-4o-mini` και `text-embedding-3-small` — για παράδειγμα `eastus2` ή `swedencentral`.
+
+Όταν ολοκληρωθεί η παροχή, το azd:
+
+1. Αναπτύσσει όλα όσα ορίζονται στο [`infra/main.bicep`](../../../02-SetupDevEnvironment/infra/main.bicep).
+2. Εκτελεί ένα postprovision hook που γράφει το [`examples/basic-chat-azure/.env`](../../../02-SetupDevEnvironment/examples/basic-chat-azure) με το endpoint και τα ονόματα ανάπτυξης (χωρίς μυστικά).
+
+> **Συμβουλή:** Εκτελέστε ξανά `azd up` οποτεδήποτε για να εφαρμόσετε αλλαγές. Τρέξτε `azd down` για να διαγράψετε τα πάντα και να σταματήσετε να επιβαρύνεστε οικονομικά.
+
+Για να δείτε τις ρυθμίσεις που δημιουργήθηκαν:
+
+```bash
+azd env get-values
+```
+
+Τώρα πηγαίνετε στο [Δοκιμή της Ρύθμισής σας](#δοκιμή-της-ρύθμισής-σας).
+
+## Επιλογή Β: Δημιουργία Πόρων Χειροκίνητα
+
+Προτιμάτε το portal; Δημιουργήστε τους πόρους χειροκίνητα:
+
+1. Μεταβείτε στο [portal Azure AI Foundry](https://ai.azure.com/) και συνδεθείτε.
+2. **Δημιουργήστε ένα έργο** (αυτό δημιουργεί επίσης έναν πόρο AI Foundry). Δώστε του ένα όνομα όπως `GenAIJava`.
+3. Στο έργο σας, ανοίξτε **Models + endpoints** → **Deploy model** → **Deploy base model**.
+4. Αναπτύξτε το **gpt-4o-mini** (όνομα ανάπτυξης `gpt-4o-mini`). Επαναλάβετε για το **text-embedding-3-small** αν θέλετε τα παραδείγματα embedding.
+5. Από την **Επισκόπηση**, αντιγράψτε το **endpoint** (π.χ. `https://<resource>.openai.azure.com/`).
+6. Δώστε στον εαυτό σας πρόσβαση χωρίς κλειδί: στον πόρο, ανοίξτε **Έλεγχος πρόσβασης (IAM)** → **Προσθήκη ανάθεσης ρόλου** → αναθέστε **Cognitive Services OpenAI User** στον λογαριασμό σας.
+
+> **Ακόμη έχετε πρόβλημα;** Δείτε την [τεκμηρίωση Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects).
+
+## Ρύθμιση του Περιβάλλοντός σας
+
+**Αν χρησιμοποιήσατε την Επιλογή Α (`azd up`)**, το αρχείο ρυθμίσεών σας έχει ήδη γραφτεί — δεν χρειάζεται καμία περαιτέρω ρύθμιση. Παραλείψτε και πηγαίνετε στο [Δοκιμή της Ρύθμισής σας](#δοκιμή-της-ρύθμισής-σας).
+
+**Αν χρησιμοποιήσατε την Επιλογή Β (χειροκίνητα)**, δημιουργήστε μόνοι σας το αρχείο `.env` του παραδείγματος:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+cp .env.example .env
+```
+
+Επεξεργαστείτε το `.env` με το endpoint σας (χωρίς κλειδί — η αυθεντικοποίηση είναι χωρίς κλειδί):
+
+```bash
+AZURE_OPENAI_ENDPOINT=https://<your-resource>.openai.azure.com/
+AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini
+```
+
+> **Σημείωση ασφάλειας:** Δεν υπάρχει κλειδί API να αποθηκεύσετε. Αυθεντικοποιείστε μέσω Microsoft Entra ID με `az login` (τοπικά) ή με managed identity (στο Azure). Το αρχείο `.env` περιέχει μόνο μη μυστικές ρυθμίσεις και καλύπτεται ήδη από `.gitignore`.
+
+## Δοκιμή της Ρύθμισής σας
+
+Βεβαιωθείτε ότι είστε συνδεδεμένοι ώστε η αυθεντικοποίηση χωρίς κλειδί να λάβει ένα token, και στη συνέχεια τρέξτε το παράδειγμα:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+
+az login          # αν δεν έχετε ήδη συνδεθεί
 mvn clean spring-boot:run
 ```
 
-Θα πρέπει να δείτε μια απάντηση από το μοντέλο GPT-4o-mini!
+Θα πρέπει να δείτε μια απόκριση από το μοντέλο `gpt-4o-mini`!
 
-> **Χρήστες VS Code**: Μπορείτε επίσης να πατήσετε `F5` στο VS Code για να εκτελέσετε την εφαρμογή. Η διαμόρφωση εκκίνησης έχει ήδη ρυθμιστεί ώστε να φορτώνει αυτόματα το αρχείο `.env`.
+> **Χρήστες VS Code:** Πατήστε `F5` για εκτέλεση. Η εφαρμογή φορτώνει αυτόματα το `.env` σας.
 
-> **Πλήρες Παράδειγμα**: Δείτε το [Παράδειγμα End-to-End Azure OpenAI](./examples/basic-chat-azure/README.md) για λεπτομερείς οδηγίες και αντιμετώπιση προβλημάτων.
+> **Πλήρες παράδειγμα:** Δείτε το [Βασικό Chat με Azure AI Foundry](./examples/basic-chat-azure/README.md) για λεπτομέρειες και αντιμετώπιση προβλημάτων.
 
 ## Τι Ακολουθεί;
 
-**Η Ρύθμιση Ολοκληρώθηκε!** Τώρα έχετε:
-- Azure OpenAI με gpt-4o-mini αναπτυγμένο
-- Τοπική διαμόρφωση αρχείου .env
-- Έτοιμο περιβάλλον ανάπτυξης Java
+**Η ρύθμιση ολοκληρώθηκε!** Τώρα διαθέτετε:
+- Το Azure AI Foundry με τα `gpt-4o-mini` και `text-embedding-3-small` αναπτυγμένα
+- Αυθεντικοποίηση χωρίς κλειδί (Microsoft Entra ID) — χωρίς κλειδιά για διαχείριση
+- Ένα τοπικό `.env` με το endpoint και τα ονόματα ανάπτυξης
+- Ένα περιβάλλον ανάπτυξης Java έτοιμο για χρήση
 
-**Συνεχίστε στο** [Κεφάλαιο 3: Βασικές Τεχνικές Generative AI](../03-CoreGenerativeAITechniques/README.md) για να ξεκινήσετε την ανάπτυξη εφαρμογών AI!
+**Συνεχίστε στο** [Κεφάλαιο 3: Βασικές Τεχνικές Γεννητικής Τεχνητής Νοημοσύνης](../03-CoreGenerativeAITechniques/README.md) για να ξεκινήσετε την κατασκευή εφαρμογών AI!
 
 ## Πόροι
 
-- [Τεκμηρίωση Azure AI Foundry](https://learn.microsoft.com/azure/ai-services/)
-- [Τεκμηρίωση Spring AI Azure OpenAI](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
+- [Azure Developer CLI (azd)](https://aka.ms/azure-dev/install)
+- [Αυθεντικοποίηση χωρίς κλειδί με Microsoft Entra ID](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
+- [Τεκμηρίωση Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/)
+- [Spring AI Azure OpenAI Documentation](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
 - [Azure OpenAI Java SDK](https://learn.microsoft.com/java/api/overview/azure/ai-openai-readme)
 
-## Επιπλέον Πόροι
+## Πρόσθετοι Πόροι
 
-- [Κατεβάστε το VS Code](https://code.visualstudio.com/Download)
-- [Αποκτήστε το Docker Desktop](https://www.docker.com/products/docker-desktop)
+- [Κατέβασμα VS Code](https://code.visualstudio.com/Download)
+- [Κατέβασμα Docker Desktop](https://www.docker.com/products/docker-desktop)
 - [Διαμόρφωση Dev Container](../../../.devcontainer/devcontainer.json)
 
-**Αποποίηση ευθύνης**:  
-Αυτό το έγγραφο έχει μεταφραστεί χρησιμοποιώντας την υπηρεσία αυτόματης μετάφρασης [Co-op Translator](https://github.com/Azure/co-op-translator). Παρόλο που καταβάλλουμε προσπάθειες για ακρίβεια, παρακαλούμε να έχετε υπόψη ότι οι αυτοματοποιημένες μεταφράσεις ενδέχεται να περιέχουν σφάλματα ή ανακρίβειες. Το πρωτότυπο έγγραφο στη μητρική του γλώσσα θα πρέπει να θεωρείται η αυθεντική πηγή. Για κρίσιμες πληροφορίες, συνιστάται επαγγελματική ανθρώπινη μετάφραση. Δεν φέρουμε ευθύνη για τυχόν παρεξηγήσεις ή εσφαλμένες ερμηνείες που προκύπτουν από τη χρήση αυτής της μετάφρασης.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Αποποίηση ευθυνών**:
+Αυτό το έγγραφο έχει μεταφραστεί χρησιμοποιώντας την υπηρεσία μετάφρασης με τεχνητή νοημοσύνη [Co-op Translator](https://github.com/Azure/co-op-translator). Ενώ επιδιώκουμε την ακρίβεια, παρακαλούμε να έχετε υπόψη ότι οι αυτοματοποιημένες μεταφράσεις ενδέχεται να περιέχουν λάθη ή ανακρίβειες. Το πρωτότυπο έγγραφο στη μητρική του γλώσσα πρέπει να θεωρείται η αυθεντική πηγή. Για κρίσιμες πληροφορίες, συνιστάται επαγγελματική ανθρώπινη μετάφραση. Δεν φέρουμε ευθύνη για τυχόν παρεξηγήσεις ή λανθασμένες ερμηνείες που προκύπτουν από τη χρήση αυτής της μετάφρασης.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

@@ -1,31 +1,31 @@
-# Vodič za početnike: Generator priča o kućnim ljubimcima
+# Vodič za generiranje priča o kućnim ljubimcima za početnike
 
 ## Sadržaj
 
-- [Preduvjeti](../../../../04-PracticalSamples/petstory)
-- [Razumijevanje strukture projekta](../../../../04-PracticalSamples/petstory)
-- [Objašnjenje ključnih komponenti](../../../../04-PracticalSamples/petstory)
-  - [1. Glavna aplikacija](../../../../04-PracticalSamples/petstory)
-  - [2. Web kontroler](../../../../04-PracticalSamples/petstory)
-  - [3. Servis za priče](../../../../04-PracticalSamples/petstory)
-  - [4. Web predlošci](../../../../04-PracticalSamples/petstory)
-  - [5. Konfiguracija](../../../../04-PracticalSamples/petstory)
-- [Pokretanje aplikacije](../../../../04-PracticalSamples/petstory)
-- [Kako sve funkcionira zajedno](../../../../04-PracticalSamples/petstory)
-- [Razumijevanje AI integracije](../../../../04-PracticalSamples/petstory)
-- [Sljedeći koraci](../../../../04-PracticalSamples/petstory)
+- [Preduvjeti](#preduvjeti)
+- [Razumijevanje strukture projekta](#razumijevanje-strukture-projekta)
+- [Objašnjenje osnovnih komponenti](#objašnjenje-osnovnih-komponenti)
+  - [1. Glavna aplikacija](#1-glavna-aplikacija)
+  - [2. Web kontroler](#2-web-kontroler)
+  - [3. Servis za priče](#3-servis-za-priče)
+  - [4. Web predlošci](#4-web-predlošci)
+  - [5. Konfiguracija](#5-konfiguracija)
+- [Pokretanje aplikacije](#pokretanje-aplikacije)
+- [Kako sve to funkcionira zajedno](#kako-sve-to-funkcionira-zajedno)
+- [Razumijevanje AI integracije](#razumijevanje-ai-integracije)
+- [Sljedeći koraci](#sljedeći-koraci)
 
 ## Preduvjeti
 
-Prije početka, osigurajte da imate:
-- Instaliran Java 21 ili noviji
+Prije početka, provjerite imate li:
+- Instaliranu Javu 21 ili noviju verziju
 - Maven za upravljanje ovisnostima
-- GitHub račun s osobnim pristupnim tokenom (PAT) s dozvolom `models:read`
-- Osnovno razumijevanje Jave, Spring Boota i web razvoja
+- Azure AI Foundry model deployment (postavite ga s `azd up` — vidi [Poglavlje 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md)), prijavljeni putem `az login` (autentifikacija bez ključa)
+- Osnovno znanje Jave, Spring Boota i web razvoja
 
 ## Razumijevanje strukture projekta
 
-Projekt za priče o kućnim ljubimcima sadrži nekoliko važnih datoteka:
+Projekt priče o kućnim ljubimcima sadrži nekoliko važnih datoteka:
 
 ```
 petstory/
@@ -42,13 +42,13 @@ petstory/
 └── pom.xml                           # Maven dependencies
 ```
 
-## Objašnjenje ključnih komponenti
+## Objašnjenje osnovnih komponenti
 
 ### 1. Glavna aplikacija
 
 **Datoteka:** `PetStoryApplication.java`
 
-Ovo je ulazna točka za našu Spring Boot aplikaciju:
+Ovo je ulazna točka naše Spring Boot aplikacije:
 
 ```java
 @SpringBootApplication
@@ -59,16 +59,16 @@ public class PetStoryApplication {
 }
 ```
 
-**Što radi:**
-- Anotacija `@SpringBootApplication` omogućuje automatsku konfiguraciju i skeniranje komponenti
+**Što ovo radi:**
+- `@SpringBootApplication` anotacija omogućuje automatsku konfiguraciju i skeniranje komponenti
 - Pokreće ugrađeni web poslužitelj (Tomcat) na portu 8080
-- Automatski kreira sve potrebne Spring beanove i servise
+- Automatski kreira sve potrebne Spring beane i servise
 
 ### 2. Web kontroler
 
 **Datoteka:** `PetController.java`
 
-Ovo upravlja svim web zahtjevima i interakcijama korisnika:
+Ovaj kontroler obrađuje sve web zahtjeve i interakcije s korisnikom:
 
 ```java
 @Controller
@@ -82,7 +82,7 @@ public class PetController {
     
     @GetMapping("/")
     public String index() {
-        return "index";  // Returns index.html template
+        return "index";  // Vraća predložak index.html
     }
     
     @PostMapping("/generate-story")
@@ -90,24 +90,24 @@ public class PetController {
                                Model model, 
                                RedirectAttributes redirectAttributes) {
         
-        // Input validation
+        // Validacija unosa
         if (description.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please provide a description.");
             return "redirect:/";
         }
         
-        // Sanitize input for security
+        // Očistite unos radi sigurnosti
         String sanitizedDescription = sanitizeInput(description);
         
-        // Generate story with error handling
+        // Generiraj priču s rukovanjem pogreškama
         try {
             String story = storyService.generateStory(sanitizedDescription);
             model.addAttribute("caption", sanitizedDescription);
             model.addAttribute("story", story);
-            return "result";  // Returns result.html template
+            return "result";  // Vraća predložak result.html
             
         } catch (Exception e) {
-            // Use fallback story if AI fails
+            // Koristi rezervnu priču ako AI zakaže
             String fallbackStory = generateFallbackStory(sanitizedDescription);
             model.addAttribute("story", fallbackStory);
             return "result";
@@ -117,21 +117,21 @@ public class PetController {
     private String sanitizeInput(String input) {
         return input.replaceAll("[<>\"'&]", "")  // Remove dangerous characters
                    .trim()
-                   .substring(0, Math.min(input.length(), 500));  // Limit length
+                   .substring(0, Math.min(input.length(), 500));  // Ograniči duljinu
     }
 }
 ```
 
 **Ključne značajke:**
 
-1. **Upravljanje rutama**: `@GetMapping("/")` prikazuje obrazac za učitavanje, `@PostMapping("/generate-story")` obrađuje podneske
+1. **Rukovanje rutama**: `@GetMapping("/")` prikazuje obrazac za upload, `@PostMapping("/generate-story")` obrađuje predaje
 2. **Validacija unosa**: Provjerava prazne opise i ograničenja duljine
 3. **Sigurnost**: Sanitizira korisnički unos kako bi spriječio XSS napade
-4. **Upravljanje greškama**: Osigurava rezervne priče kada AI servis ne uspije
-5. **Povezivanje modela**: Prosljeđuje podatke HTML predlošcima koristeći Springov `Model`
+4. **Rukovanje pogreškama**: Pruža zamjenske priče kad AI servis zakaže
+5. **Povezivanje modela**: Prosljeđuje podatke u HTML predloške koristeći Springov `Model`
 
-**Sustav rezervnih opcija:**
-Kontroler uključuje unaprijed napisane predloške priča koji se koriste kada AI servis nije dostupan:
+**Sustav zamjene:**
+Kontroler uključuje unaprijed napisane predloške priča koji se koriste kad AI servis nije dostupan:
 
 ```java
 private String generateFallbackStory(String description) {
@@ -141,7 +141,7 @@ private String generateFallbackStory(String description) {
         "In a cozy home filled with love, there lived an extraordinary pet..."
     };
     
-    // Use description hash for consistent responses
+    // Koristite hash opisa za dosljedne odgovore
     int index = Math.abs(description.hashCode() % storyTemplates.length);
     return storyTemplates[index];
 }
@@ -151,7 +151,7 @@ private String generateFallbackStory(String description) {
 
 **Datoteka:** `StoryService.java`
 
-Ovaj servis komunicira s GitHub Models kako bi generirao priče:
+Ovaj servis komunicira s Azure AI Foundry za generiranje priča koristeći autentifikaciju bez ključa:
 
 ```java
 @Service
@@ -160,18 +160,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // OpenAI-kompatibilna točka kraja Foundryja nalazi se pod /openai/v1/
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // Autentifikacija bez ključa s Microsoft Entra ID (bez API ključa)
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -182,16 +186,16 @@ public class StoryService {
         
         String userPrompt = "Write a fun short story about a pet described as: " + description;
         
-        // Configure the AI request
+        // Konfigurirajte AI zahtjev
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(modelName)
                 .addSystemMessage(systemPrompt)
                 .addUserMessage(userPrompt)
-                .maxCompletionTokens(500)  // Limit response length
-                .temperature(0.8)          // Control creativity (0.0-1.0)
+                .maxCompletionTokens(500)  // Ograniči duljinu odgovora
+                .temperature(0.8)          // Kontroliraj kreativnost (0.0-1.0)
                 .build();
         
-        // Send request and get response
+        // Pošalji zahtjev i dobij odgovor
         ChatCompletion response = openAIClient.chat().completions().create(params);
         
         return response.choices().get(0).message().content().orElse("");
@@ -201,17 +205,17 @@ public class StoryService {
 
 **Ključne komponente:**
 
-1. **OpenAI klijent**: Koristi službeni OpenAI Java SDK konfiguriran za GitHub Models
+1. **OpenAI klijent**: Koristi službeni OpenAI Java SDK konfiguriran za Azure AI Foundry (autentifikacija bez ključa)
 2. **Sistemski prompt**: Postavlja ponašanje AI-a za pisanje obiteljskih priča o kućnim ljubimcima
-3. **Korisnički prompt**: Precizno opisuje AI-u kakvu priču treba napisati na temelju opisa
-4. **Parametri**: Kontrolira duljinu priče i razinu kreativnosti
-5. **Upravljanje greškama**: Generira iznimke koje kontroler hvata i obrađuje
+3. **Kornički prompt**: Precizno govori AI-u koju priču napisati na temelju opisa
+4. **Parametri**: Kontrolira duljinu i razinu kreativnosti priče
+5. **Rukovanje pogreškama**: Bacaju se iznimke koje kontroler hvata i obrađuje
 
 ### 4. Web predlošci
 
-**Datoteka:** `index.html` (Obrazac za učitavanje)
+**Datoteka:** `index.html` (obrazac za upload)
 
-Glavna stranica na kojoj korisnici opisuju svoje ljubimce:
+Glavna stranica gdje korisnici opisuju svoje ljubimce:
 
 ```html
 <!DOCTYPE html>
@@ -258,7 +262,7 @@ Glavna stranica na kojoj korisnici opisuju svoje ljubimce:
 </html>
 ```
 
-**Datoteka:** `result.html` (Prikaz priče)
+**Datoteka:** `result.html` (prikaz priče)
 
 Prikazuje generiranu priču:
 
@@ -296,15 +300,15 @@ Prikazuje generiranu priču:
 **Značajke predloška:**
 
 1. **Integracija s Thymeleafom**: Koristi `th:` atribute za dinamički sadržaj
-2. **Responzivni dizajn**: CSS stilovi za mobilne uređaje i desktop
-3. **Upravljanje greškama**: Prikazuje validacijske greške korisnicima
+2. **Odazivni dizajn**: CSS stilovi za mobilne uređaje i desktop računala
+3. **Rukovanje pogreškama**: Prikazuje korisničke poruke o neuspjehu validacije
 4. **Obrada na strani klijenta**: JavaScript za analizu slika (koristeći Transformers.js)
 
 ### 5. Konfiguracija
 
 **Datoteka:** `application.properties`
 
-Postavke konfiguracije za aplikaciju:
+Postavke konfiguracije aplikacije:
 
 ```properties
 spring.application.name=pet-story-app
@@ -316,45 +320,48 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 **Objašnjenje konfiguracije:**
 
-1. **Učitavanje datoteka**: Omogućuje slike do 10MB
-2. **Logiranje**: Kontrolira koje se informacije bilježe tijekom izvođenja
-3. **GitHub Models**: Navodi koji AI model i endpoint se koriste
-4. **Sigurnost**: Konfiguracija za upravljanje greškama kako bi se izbjeglo izlaganje osjetljivih informacija
+1. **Upload datoteka**: Dozvoljava slike veličine do 10MB
+2. **Logiranje**: Kontrolira što se zapisuje tijekom izvođenja
+3. **Azure AI Foundry**: Navodi endpoint i model deployment za korištenje (autentifikacija bez ključa)
+4. **Sigurnost**: Konfiguracija rukovanja pogreškama kako ne bi izložila osjetljive informacije
 
 ## Pokretanje aplikacije
 
-### Korak 1: Postavite svoj GitHub token
+### Korak 1: Prijavite se i postavite endpoint
 
-Prvo, trebate postaviti svoj GitHub token kao varijablu okruženja:
+Autentifikacija je bez ključa (Microsoft Entra ID), stoga nema API ključa. Prijavite se i postavite svoj Foundry endpoint:
 
 **Windows (Command Prompt):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Zašto je ovo potrebno:**
-- GitHub Models zahtijeva autentifikaciju za pristup AI modelima
-- Korištenje varijabli okruženja čuva osjetljive tokene izvan izvornog koda
-- Dozvola `models:read` omogućuje pristup AI inferenciji
+- Azure AI Foundry koristi Microsoft Entra ID za autentifikaciju zahtjeva za predviđanje
+- Autentifikacija bez ključa znači da nema tajni u izvornom kodu ili okruženju
+- Vaš račun mora imati ulogu **Cognitive Services OpenAI User** na resursu
 
-### Korak 2: Izgradnja i pokretanje
+### Korak 2: Izgradite i pokrenite
 
 Idite u direktorij projekta:
 ```bash
@@ -373,49 +380,51 @@ mvn spring-boot:run
 
 Aplikacija će se pokrenuti na `http://localhost:8080`.
 
-### Korak 3: Testiranje aplikacije
+### Korak 3: Testirajte aplikaciju
 
-1. **Otvorite** `http://localhost:8080` u svom pregledniku
-2. **Opišite** svog ljubimca u tekstualnom polju (npr. "Razigrani zlatni retriver koji voli donositi loptice")
-3. **Kliknite** "Generiraj priču" kako biste dobili AI-generiranu priču
+1. **Otvorite** `http://localhost:8080` u pregledniku
+2. **Opširno opišite** svog ljubimca u tekstualnom polju (npr. "Razigrani zlatni retriver koji voli donositi lopticu")
+3. **Kliknite** "Generate Story" za dobivanje priče koju je generirao AI
 4. **Alternativno**, učitajte sliku ljubimca za automatsko generiranje opisa
-5. **Pregledajte** kreativnu priču temeljenu na opisu vašeg ljubimca
+5. **Pogledajte** kreativnu priču baziranu na opisu vašeg ljubimca
 
-## Kako sve funkcionira zajedno
+## Kako sve to funkcionira zajedno
 
 Evo kompletnog toka kada generirate priču o kućnom ljubimcu:
 
-1. **Korisnički unos**: Opišete svog ljubimca na web obrascu
-2. **Podnošenje obrasca**: Preglednik šalje POST zahtjev na `/generate-story`
-3. **Obrada kontrolera**: `PetController` validira i sanitizira unos
-4. **Poziv AI servisa**: `StoryService` šalje zahtjev GitHub Models API-ju
-5. **Generiranje priče**: AI generira kreativnu priču na temelju opisa
-6. **Obrada odgovora**: Kontroler prima priču i dodaje je u model
-7. **Renderiranje predloška**: Thymeleaf renderira `result.html` s pričom
-8. **Prikaz**: Korisnik vidi generiranu priču u svom pregledniku
+1. **Korisnički unos**: Opisujete svog ljubimca u web obrascu
+2. **Slanje obrasca**: Preglednik šalje POST zahtjev na `/generate-story`
+3. **Obrada u kontroleru**: `PetController` validira i sanitizira unos
+4. **Poziv AI servisu**: `StoryService` šalje zahtjev modelu Azure AI Foundry
+5. **Generiranje priče**: AI kreira kreativnu priču na temelju opisa
+6. **Rukovanje odgovorom**: Kontroler prima priču i dodaje je u model
+7. **Prikaz predloška**: Thymeleaf renderira `result.html` s pričom
+8. **Prikaz korisniku**: Korisnik vidi generiranu priču u pregledniku
 
-**Tok upravljanja greškama:**
-Ako AI servis ne uspije:
+**Tijek rukovanja pogreškama:**
+Ako AI servis zakaže:
 1. Kontroler hvata iznimku
-2. Generira rezervnu priču koristeći unaprijed napisane predloške
-3. Prikazuje rezervnu priču s napomenom o nedostupnosti AI-a
-4. Korisnik i dalje dobiva priču, osiguravajući dobro korisničko iskustvo
+2. Generira zamjensku priču koristeći unaprijed napisane predloške
+3. Prikazuje zamjensku priču uz napomenu o nedostupnosti AI usluge
+4. Korisnik i dalje dobiva priču, osiguravajući dobar korisnički doživljaj
 
 ## Razumijevanje AI integracije
 
-### GitHub Models API
-Aplikacija koristi GitHub Models, koji pruža besplatan pristup raznim AI modelima:
+### Azure AI Foundry (bez ključa)
+Aplikacija koristi Azure AI Foundry s autentifikacijom bez ključa (Microsoft Entra ID):
 
 ```java
-// Authentication with GitHub token
+// Autentifikacija bez ključa - bez API ključa
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
 ### Inženjering prompta
-Servis koristi pažljivo osmišljene promte za postizanje dobrih rezultata:
+Servis koristi pažljivo kreirane promptove za dobre rezultate:
 
 ```java
 String systemPrompt = "You are a creative storyteller who writes fun, " +
@@ -424,7 +433,7 @@ String systemPrompt = "You are a creative storyteller who writes fun, " +
 ```
 
 ### Obrada odgovora
-AI odgovor se izvlači i validira:
+AI odgovor se ekstrahira i validira:
 
 ```java
 ChatCompletion response = openAIClient.chat().completions().create(params);
@@ -435,5 +444,9 @@ String story = response.choices().get(0).message().content().orElse("");
 
 Za više primjera, pogledajte [Poglavlje 04: Praktični primjeri](../README.md)
 
-**Odricanje od odgovornosti**:  
-Ovaj dokument je preveden pomoću AI usluge za prevođenje [Co-op Translator](https://github.com/Azure/co-op-translator). Iako nastojimo osigurati točnost, imajte na umu da automatski prijevodi mogu sadržavati pogreške ili netočnosti. Izvorni dokument na izvornom jeziku treba smatrati autoritativnim izvorom. Za ključne informacije preporučuje se profesionalni prijevod od strane čovjeka. Ne preuzimamo odgovornost za nesporazume ili pogrešna tumačenja koja mogu proizaći iz korištenja ovog prijevoda.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Napomena**:
+Ovaj dokument je preveden korištenjem AI prevoditeljskog servisa [Co-op Translator](https://github.com/Azure/co-op-translator). Iako težimo točnosti, imajte na umu da automatski prijevodi mogu sadržavati greške ili netočnosti. Izvorni dokument na izvornom jeziku treba smatrati autoritativnim izvorom. Za važne informacije preporuča se profesionalni ljudski prijevod. Nismo odgovorni za bilo kakva nesporazumevanja ili pogrešne interpretacije koje proizlaze iz korištenja ovog prijevoda.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

@@ -1,80 +1,83 @@
 # AGENTS.md
 
-## Projekt Áttekintés
+## Projekt áttekintése
 
-Ez egy oktatási célú adattár, amely a Generatív AI fejlesztésének elsajátítását segíti Java nyelven. Átfogó, gyakorlati kurzust kínál, amely lefedi a Nagy Nyelvi Modellek (LLM-ek), prompt tervezés, beágyazások, RAG (Retrieval-Augmented Generation) és a Model Context Protocol (MCP) témaköreit.
+Ez egy oktató jellegű tároló a Generatív AI fejlesztés Java nyelven történő elsajátításához. Átfogó, gyakorlati tanfolyamot biztosít a Nagynyelvű modellek (LLM-ek), prompttervezés, beágyazások, RAG (Retrieval-Augmented Generation) és a Model Context Protocol (MCP) témakörében.
 
-**Fő technológiák:**
+**Főbb technológiák:**
 - Java 21
 - Spring Boot 3.5.x
 - Spring AI 1.1.x
 - Maven
 - LangChain4j
-- GitHub Modellek, Azure OpenAI és OpenAI SDK-k
+- Azure AI Foundry, Azure OpenAI és OpenAI SDK-k
 
 **Architektúra:**
-- Több önálló Spring Boot alkalmazás fejezetek szerint szervezve
-- Mintaprojektek különböző AI minták bemutatására
-- GitHub Codespaces-kompatibilis, előre konfigurált fejlesztői konténerekkel
+- Több önálló Spring Boot alkalmazás fejezetenként szervezve
+- Minta projektek, amelyek különböző AI mintákat mutatnak be
+- GitHub Codespaces kompatibilis előre konfigurált fejlesztői konténerekkel
 
-## Telepítési Parancsok
+## Beállítási parancsok
 
 ### Előfeltételek
 - Java 21 vagy újabb
 - Maven 3.x
-- GitHub személyes hozzáférési token (GitHub Modellekhez)
-- Opcionális: Azure OpenAI hitelesítő adatok
+- Azure előfizetés Azure AI Foundry modell telepítéssel (az `azd up` paranccsal konfigurálható)
+- Azure CLI (`az`) és Azure Developer CLI (`azd`), bejelentkezve kulcs nélküli hitelesítéshez
 
-### Környezet Beállítása
+### Környezet beállítása
 
-**1. lehetőség: GitHub Codespaces (Ajánlott)**
+**1. lehetőség: GitHub Codespaces (ajánlott)**
 ```bash
-# Fork the repository and create a codespace from GitHub UI
-# The dev container will automatically install all dependencies
-# Wait ~2 minutes for environment setup
+# Ágazz el a tárházat, és hozz létre egy kódtérhelyet a GitHub felhasználói felületéről
+# A fejlesztői tároló automatikusan telepíti az összes függőséget
+# Várj kb. 2 percet a környezet beállítására
 ```
 
-**2. lehetőség: Helyi Fejlesztői Konténer**
+**2. lehetőség: helyi fejlesztői konténer**
 ```bash
-# Clone repository
+# Tároló klónozása
 git clone https://github.com/microsoft/Generative-AI-for-beginners-java.git
 cd Generative-AI-for-beginners-java
 
-# Open in VS Code with Dev Containers extension
-# Reopen in Container when prompted
+# Megnyitás VS Code-ban a Dev Containers bővítménnyel
+# Újra megnyitás konténerben, ha kéri
 ```
 
-**3. lehetőség: Helyi Beállítás**
+**3. lehetőség: helyi beállítás**
 ```bash
-# Install dependencies
+# Függőségek telepítése
 sudo apt-get update
 sudo apt-get install -y maven openjdk-21-jdk
 
-# Verify installation
+# Telepítés ellenőrzése
 java -version
 mvn -version
 ```
 
 ### Konfiguráció
 
-**GitHub Token Beállítása:**
+**Azure AI Foundry beállítása (kulcs nélküli, ajánlott):**
 ```bash
-# Create a GitHub Personal Access Token
-# Set environment variable
-export GITHUB_TOKEN="your-token-here"
+# A Foundry fiók és a modell telepítések kód általi előkészítése
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
+# azd létrehozza az examples/basic-chat-azure/.env fájlt a végpontoddal (kulcs nélkül)
 ```
 
-**Azure OpenAI Beállítás (Opcionális):**
+**Kézi végpont konfiguráció:**
 ```bash
-# For examples using Azure OpenAI
+# Ha nem használtad az azd-t, állítsd be magad az végpontot (az autentikáció kulcs nélküli marad az az login keresztül)
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# Szerkeszd a .env-et: AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com/
 ```
 
-## Fejlesztési Munkafolyamat
+## Fejlesztési munkafolyamat
 
-### Projekt Struktúra
+### Projekt felépítése
 ```
 /
 ├── 01-IntroToGenAI/              # Chapter 1: Introduction
@@ -89,7 +92,7 @@ cp .env.example .env
 └── translations/                # Multi-language support
 ```
 
-### Alkalmazások Futtatása
+### Alkalmazások futtatása
 
 **Spring Boot alkalmazás futtatása:**
 ```bash
@@ -103,40 +106,40 @@ cd [project-directory]
 mvn clean install
 ```
 
-**MCP Kalkulátor Szerver indítása:**
+**MCP kalkulátor szerver indítása:**
 ```bash
 cd 04-PracticalSamples/calculator
 mvn spring-boot:run
-# Server runs on http://localhost:8080
+# A szerver a http://localhost:8080 címen fut
 ```
 
-**Kliens példák futtatása:**
+**Ügyfél példák futtatása:**
 ```bash
-# After starting the server in another terminal
+# A szerver indítása után egy másik terminálban
 cd 04-PracticalSamples/calculator
 
-# Direct MCP client
+# Közvetlen MCP kliens
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient"
 
-# AI-powered client (requires GITHUB_TOKEN)
+# Mesterséges intelligenciával működő kliens (AZURE_OPENAI_ENDPOINT + az bejelentkezés szükséges)
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient"
 
-# Interactive bot
+# Interaktív bot
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.Bot"
 ```
 
 ### Hot Reload
-A Spring Boot DevTools támogatja a hot reload funkciót a projektekben:
+A Spring Boot DevTools benne van azokban a projektekben, amelyek támogatják a hot reloadot:
 ```bash
-# Changes to Java files will automatically reload when saved
+# A Java fájlokban végzett módosítások mentéskor automatikusan újratöltődnek
 mvn spring-boot:run
 ```
 
-## Tesztelési Útmutató
+## Tesztelési utasítások
 
-### Tesztek Futtatása
+### Tesztek futtatása
 
-**Az összes teszt futtatása egy projektben:**
+**Minden teszt futtatása egy projektben:**
 ```bash
 cd [project-directory]
 mvn test
@@ -152,42 +155,42 @@ mvn test -X
 mvn test -Dtest=CalculatorServiceTest
 ```
 
-### Teszt Struktúra
-- A tesztfájlok JUnit 5 (Jupiter) keretrendszert használnak
-- A teszt osztályok a `src/test/java/` könyvtárban találhatók
-- Kliens példák a kalkulátor projektben: `src/test/java/com/microsoft/mcp/sample/client/`
+### Teszt struktúra
+- A tesztfájlok JUnit 5 (Jupiter) használatával készültek
+- Teszt osztályok a `src/test/java/` könyvtárban találhatók
+- A kalkulátor projekt kliens példái a `src/test/java/com/microsoft/mcp/sample/client/` mappában vannak
 
-### Manuális Tesztelés
-Számos példa interaktív alkalmazás, amely manuális tesztelést igényel:
+### Kézi tesztelés
+Sok példa interaktív alkalmazás, amely kézi tesztelést igényel:
 
-1. Indítsd el az alkalmazást `mvn spring-boot:run` paranccsal
-2. Teszteld az endpointokat vagy használd a CLI-t
-3. Ellenőrizd, hogy a várt viselkedés megfelel-e az egyes projektek README.md dokumentációjának
+1. Indítsd el az alkalmazást a `mvn spring-boot:run` paranccsal
+2. Teszteld az végpontokat vagy lépj interakcióba a CLI-vel
+3. Ellenőrizd, hogy a várt viselkedés megfelel-e a dokumentációban szereplő leírásnak az egyes projektek README.md fájljaiban
 
-### Tesztelés GitHub Modellekkel
-- Ingyenes csomag korlátai: 15 kérés/perc, 150/nap
-- Maximum 5 egyidejű kérés
-- Teszteld a tartalomszűrést felelős AI példákkal
+### Tesztelés Azure AI Foundry-val
+- Jelentkezz be az `az login` parancssal az példák futtatása előtt (kulcs nélküli hitelesítés)
+- Győződj meg róla, hogy a fiókodnak Cognitive Services OpenAI User jogosultsága van az erőforráson
+- Teszteld a tartalomszűrést a felelős AI példával az 5. fejezetben
 
-## Kódstílus Irányelvek
+## Kódstílus irányelvek
 
-### Java Konvenciók
-- **Java Verzió:** Java 21 modern funkciókkal
-- **Stílus:** Kövesd a standard Java konvenciókat
-- **Elnevezés:** 
+### Java konvenciók
+- **Java verzió:** Java 21 modern funkciókkal
+- **Stílus:** Alkalmazd a szabványos Java konvenciókat
+- **Névhasználat:** 
   - Osztályok: PascalCase
   - Metódusok/változók: camelCase
   - Konstansok: UPPER_SNAKE_CASE
   - Csomagnevek: kisbetűs
 
-### Spring Boot Minták
-- Használj `@Service` annotációt az üzleti logikához
-- Használj `@RestController` annotációt REST endpointokhoz
-- Konfiguráció `application.yml` vagy `application.properties` fájlokon keresztül
-- Környezeti változókat részesítsd előnyben a hard-coded értékekkel szemben
-- Használj `@Tool` annotációt MCP által elérhető metódusokhoz
+### Spring Boot minták
+- Használd az `@Service` annotációt az üzleti logikához
+- Használd az `@RestController` annotációt REST végpontokhoz
+- Konfiguráció `application.yml` vagy `application.properties` fájllal
+- Környezeti változók előnyben a kódba ágyazott értékekkel szemben
+- Használd az `@Tool` annotációt az MCP számára elérhető metódusokhoz
 
-### Fájl Szervezés
+### Fájl szervezés
 ```
 src/
 ├── main/
@@ -207,19 +210,19 @@ src/
 ```
 
 ### Függőségek
-- Maven `pom.xml` fájlon keresztül kezelve
-- Spring AI BOM verziókezeléshez
-- LangChain4j AI integrációkhoz
-- Spring Boot starter parent Spring függőségekhez
+- Maven `pom.xml` kezeli őket
+- Spring AI BOM a verziókezeléshez
+- LangChain4j az AI integrációkhoz
+- Spring Boot starter parent a Spring függőségekhez
 
-### Kód Kommentek
-- Adj JavaDoc-ot a publikus API-khoz
-- Tartalmazz magyarázó kommenteket a komplex AI interakciókhoz
-- Dokumentáld az MCP eszközök leírását egyértelműen
+### Kódkommentek
+- Írj JavaDoc kommenteket a publikus API-khoz
+- Tartalmazz magyarázó kommenteket a komplex AI-interakcióknál
+- Dokumentáld világosan az MCP eszközök leírásait
 
-## Építés és Telepítés
+## Építés és telepítés
 
-### Projektek Építése
+### Projektek építése
 
 **Építés tesztek nélkül:**
 ```bash
@@ -234,102 +237,106 @@ mvn clean install
 **Alkalmazás csomagolása:**
 ```bash
 mvn package
-# Creates JAR in target/ directory
+# Létrehozza a JAR-t a target/ könyvtárban
 ```
 
-### Kimeneti Könyvtárak
+### Kimeneti könyvtárak
 - Fordított osztályok: `target/classes/`
 - Teszt osztályok: `target/test-classes/`
 - JAR fájlok: `target/*.jar`
 - Maven artefaktumok: `target/`
 
-### Környezet-specifikus Konfiguráció
+### Környezet-specifikus konfiguráció
 
 **Fejlesztés:**
 ```yaml
-# application.yml
+# application.yml (keyless - no api-key; auth via DefaultAzureCredential)
 spring:
   ai:
-    openai:
-      api-key: ${GITHUB_TOKEN}
-      base-url: https://models.inference.ai.azure.com
+    azure:
+      openai:
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
-**Éles Üzem:**
-- Használj Azure AI Foundry Modelleket GitHub Modellek helyett
-- Frissítsd az alap URL-t az Azure OpenAI végpontra
-- Kezeld a titkokat Azure Key Vault vagy környezeti változók segítségével
+**Éles környezet:**
+- Kezelt identity használata `az login` helyett kulcs nélküli hitelesítéshez
+- Állítsd be az `AZURE_OPENAI_ENDPOINT` változót az éles Foundry erőforrásra
+- Konfiguráció környezeti változókon vagy Azure Key Vault-on keresztül
 
-### Telepítési Megfontolások
-- Ez egy oktatási adattár mintaprogramokkal
-- Nem alkalmas közvetlen éles telepítésre
-- A minták bemutatják, hogyan adaptálhatók éles környezethez
-- Lásd az egyes projektek README fájljait konkrét telepítési megjegyzésekért
+### Telepítési megfontolások
+- Ez egy oktató jellegű tároló mintaalkalmazásokkal
+- Nem kifejezetten éles üzembehelyezésre kész
+- A minták bemutatják azokat a mintákat, amelyeket éles környezethez alakíthatsz
+- Egyedi projekt README-k tartalmazzák a specifikus telepítési megjegyzéseket
 
-## További Megjegyzések
+## További megjegyzések
 
-### GitHub Modellek vs Azure OpenAI
-- **GitHub Modellek:** Ingyenes csomag tanuláshoz, nem szükséges hitelkártya
-- **Azure OpenAI:** Éles környezetre kész, Azure előfizetést igényel
-- A kód kompatibilis mindkettővel - csak az endpointot és az API kulcsot kell módosítani
+### Azure AI Foundry
+- **Kulcs nélküli hitelesítés:** Microsoft Entra ID csatlakozás — nincs API kulcs kezelés
+- **Provisionolt kódként:** Bicep + azd (`azd up`) létrehozza a fiókot és a modell telepítéseket
+- Ugyanaz az OpenAI-kompatibilis kód fut helyben (`az login`) és Azure-ban (kezelt identity)
 
-### Több Projekt Kezelése
-Minden mintaprojekt önálló:
+### Több projekt kezelése
+Minden minta projekt önálló:
 ```bash
-# Navigate to specific project
+# Navigáljon egy adott projekthez
 cd 04-PracticalSamples/[project-name]
 
-# Each has its own pom.xml and can be built independently
+# Mindegyiknek megvan a saját pom.xml fájlja, és önállóan is felépíthető
 mvn clean install
 ```
 
-### Gyakori Problémák
+### Gyakori problémák
 
-**Java Verzió Eltérés:**
+**Java verzió eltérés:**
 ```bash
-# Verify Java 21
+# Ellenőrizze a Java 21-et
 java -version
-# Update JAVA_HOME if needed
+# Szükség esetén frissítse a JAVA_HOME változót
 export JAVA_HOME=/usr/lib/jvm/msopenjdk-current
 ```
 
-**Függőség Letöltési Hibák:**
+**Függőség letöltési problémák:**
 ```bash
-# Clear Maven cache and retry
+# Töröld a Maven gyorsítótárát, és próbáld újra
 rm -rf ~/.m2/repository
 mvn clean install
 ```
 
-**GitHub Token Nem Található:**
+**Végpont vagy bejelentkezés hiánya:**
 ```bash
-# Set in current session
-export GITHUB_TOKEN="your-token-here"
+# Állítsa be a végpontot az aktuális munkamenetben és jelentkezzen be (kulcs nélkül)
+export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
+az login
 
-# Or use .env file in project directory
-echo "GITHUB_TOKEN=your-token-here" > .env
+# Vagy használjon .env fájlt a projekt könyvtárában
+echo "AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/" > .env
 ```
 
-**Port Már Foglalt:**
+**Port már használatban:**
 ```bash
-# Spring Boot uses port 8080 by default
-# Change in application.properties:
+# A Spring Boot alapértelmezés szerint a 8080-as portot használja
+# Változtatás az application.properties fájlban:
 server.port=8081
 ```
 
-### Többnyelvű Támogatás
-- Dokumentáció elérhető több mint 45 nyelven automatikus fordítással
-- Fordítások a `translations/` könyvtárban
-- Fordítást GitHub Actions workflow kezeli
+### Többnyelvű támogatás
+- Dokumentáció 45+ nyelven automatikus fordítással elérhető
+- Fordítások a `translations/` mappában
+- Fordítást GitHub Actions munkafolyamat kezeli
 
-### Tanulási Útvonal
+### Tanulási útvonal
 1. Kezdd a [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md) fejezettel
 2. Kövesd a fejezeteket sorrendben (01 → 05)
 3. Végezd el a gyakorlati példákat minden fejezetben
-4. Fedezd fel a mintaprojekteket a 4. fejezetben
+4. Nézd meg a minta projekteket a 4. fejezetben
 5. Tanuld meg a felelős AI gyakorlatokat az 5. fejezetben
 
-### Fejlesztői Konténer
-A `.devcontainer/devcontainer.json` konfigurálja:
+### Fejlesztői konténer
+A `.devcontainer/devcontainer.json` a következőket konfigurálja:
 - Java 21 fejlesztői környezet
 - Maven előtelepítve
 - VS Code Java bővítmények
@@ -338,19 +345,21 @@ A `.devcontainer/devcontainer.json` konfigurálja:
 - Docker-in-Docker támogatás
 - Azure CLI
 
-### Teljesítmény Megfontolások
-- A GitHub Modellek ingyenes csomagjának korlátai vannak
+### Teljesítmény szempontok
+- Az Azure AI Foundry telepítések percenkénti token/kérés kvótával rendelkeznek
 - Használj megfelelő batch méreteket beágyazásokhoz
-- Fontold meg a cache használatát ismétlődő API hívásokhoz
-- Figyeld a tokenhasználatot a költségoptimalizálás érdekében
+- Fontold meg a cache használatát ismételt API hívásokhoz
+- Monitorozd a token használatot költség-optimalizálás céljából
 
-### Biztonsági Megjegyzések
-- Soha ne commitold a `.env` fájlokat (már szerepel a `.gitignore`-ban)
-- Használj környezeti változókat az API kulcsokhoz
-- A GitHub tokeneknek csak minimális szükséges jogosultságokat adj
+### Biztonsági megjegyzések
+- Soha ne vállalj be `.env` fájlokat (már .gitignore-ban vannak)
+- Részesítsd előnyben a kulcs nélküli hitelesítést (Microsoft Entra ID) az API kulcsok helyett
+- Használj kezelt identitást Azure-ban; helyi fejlesztéshez `az login`
 - Kövesd a felelős AI irányelveket az 5. fejezetben
 
 ---
 
-**Felelősség kizárása**:  
-Ez a dokumentum az [Co-op Translator](https://github.com/Azure/co-op-translator) AI fordítási szolgáltatás segítségével került lefordításra. Bár törekszünk a pontosságra, kérjük, vegye figyelembe, hogy az automatikus fordítások hibákat vagy pontatlanságokat tartalmazhatnak. Az eredeti dokumentum az eredeti nyelvén tekintendő hiteles forrásnak. Kritikus információk esetén javasolt professzionális emberi fordítást igénybe venni. Nem vállalunk felelősséget semmilyen félreértésért vagy téves értelmezésért, amely a fordítás használatából eredhet.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Jogi nyilatkozat**:
+Ez a dokumentum az AI fordítási szolgáltatás, a [Co-op Translator](https://github.com/Azure/co-op-translator) segítségével készült. Bár az pontosságra törekszünk, kérjük, vegye figyelembe, hogy az automatikus fordítások hibákat vagy pontatlanságokat tartalmazhatnak. Az eredeti dokumentum az anyanyelvén tekintendő hiteles forrásnak. Fontos információk esetén professzionális emberi fordítást javasolunk. Nem vállalunk felelősséget semmilyen félreértésért vagy téves értelmezésért, amely ebből a fordításból ered.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

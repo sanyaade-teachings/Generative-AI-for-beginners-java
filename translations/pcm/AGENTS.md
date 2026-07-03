@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Dis na one repo wey dem design make people learn how to develop Generative AI wit Java. E dey give full hands-on course wey cover Large Language Models (LLMs), prompt engineering, embeddings, RAG (Retrieval-Augmented Generation), and Model Context Protocol (MCP).
+Dis na educashonal repo wey you fit use learn Generative AI development with Java. E dey give una complete hands-on course wey cover Large Language Models (LLMs), prompt engineering, embeddings, RAG (Retrieval-Augmented Generation), plus di Model Context Protocol (MCP).
 
 **Key Technologies:**
 - Java 21
@@ -10,66 +10,69 @@ Dis na one repo wey dem design make people learn how to develop Generative AI wi
 - Spring AI 1.1.x
 - Maven
 - LangChain4j
-- GitHub Models, Azure OpenAI, and OpenAI SDKs
+- Azure AI Foundry, Azure OpenAI, and OpenAI SDKs
 
 **Architecture:**
-- Plenty standalone Spring Boot apps wey dem arrange by chapters
-- Sample projects wey dey show different AI patterns
-- GitHub Codespaces-ready wit dev containers wey dem don pre-configure
+- Plenty standalone Spring Boot apps organized by chapters
+- Sample projects wey show different AI patterns
+- GitHub Codespaces-ready with pre-configured dev containers
 
 ## Setup Commands
 
 ### Prerequisites
-- Java 21 or higher
+- Java 21 or pass
 - Maven 3.x
-- GitHub personal access token (for GitHub Models)
-- Optional: Azure OpenAI credentials
+- Azure subscription wey get Azure AI Foundry model deployment (make you deploy with `azd up`)
+- Azure CLI (`az`) and Azure Developer CLI (`azd`), you don sign for keyless auth
 
 ### Environment Setup
 
 **Option 1: GitHub Codespaces (Recommended)**
 ```bash
-# Fork the repository and create a codespace from GitHub UI
-# The dev container will automatically install all dependencies
-# Wait ~2 minutes for environment setup
+# Fork di repository den create a codespace from GitHub UI
+# Di dev container go automatically install all dependencies
+# Wait about 2 minutes for environment setup
 ```
 
 **Option 2: Local Dev Container**
 ```bash
-# Clone repository
+# Clone di repository
 git clone https://github.com/microsoft/Generative-AI-for-beginners-java.git
 cd Generative-AI-for-beginners-java
 
-# Open in VS Code with Dev Containers extension
-# Reopen in Container when prompted
+# Open am for VS Code wit Dev Containers extension
+# Reopen am for Container wen e ask you
 ```
 
 **Option 3: Local Setup**
 ```bash
-# Install dependencies
+# Install all di tins wey e need
 sudo apt-get update
 sudo apt-get install -y maven openjdk-21-jdk
 
-# Verify installation
+# Make sure say e don install well well
 java -version
 mvn -version
 ```
 
 ### Configuration
 
-**GitHub Token Setup:**
+**Azure AI Foundry Setup (keyless, recommended):**
 ```bash
-# Create a GitHub Personal Access Token
-# Set environment variable
-export GITHUB_TOKEN="your-token-here"
+# Set up di Foundry account + model deployments as code
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
+# azd dey write examples/basic-chat-azure/.env wit your endpoint (no key)
 ```
 
-**Azure OpenAI Setup (Optional):**
+**Manual endpoint config:**
 ```bash
-# For examples using Azure OpenAI
+# If you no use azd, set di endpoint yourself (auth go still keyless if you use az login)
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# Edit .env: AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com/
 ```
 
 ## Development Workflow
@@ -91,34 +94,34 @@ cp .env.example .env
 
 ### Running Applications
 
-**How to run Spring Boot application:**
+**How to run Spring Boot app:**
 ```bash
 cd [project-directory]
 mvn spring-boot:run
 ```
 
-**How to build project:**
+**Building project:**
 ```bash
 cd [project-directory]
 mvn clean install
 ```
 
-**How to start MCP Calculator Server:**
+**Start MCP Calculator Server:**
 ```bash
 cd 04-PracticalSamples/calculator
 mvn spring-boot:run
-# Server runs on http://localhost:8080
+# Server dey run for http://localhost:8080
 ```
 
-**How to run Client Examples:**
+**Run Client Examples:**
 ```bash
-# After starting the server in another terminal
+# After you don start di server for anoda terminal
 cd 04-PracticalSamples/calculator
 
 # Direct MCP client
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient"
 
-# AI-powered client (requires GITHUB_TOKEN)
+# AI-powered client (you go need AZURE_OPENAI_ENDPOINT + az login)
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient"
 
 # Interactive bot
@@ -128,7 +131,7 @@ mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.Bot"
 ### Hot Reload
 Spring Boot DevTools dey inside projects wey support hot reload:
 ```bash
-# Changes to Java files will automatically reload when saved
+# Changes wey you do for Java files go automatically reload wen you save am
 mvn spring-boot:run
 ```
 
@@ -136,44 +139,44 @@ mvn spring-boot:run
 
 ### Running Tests
 
-**How to run all tests for project:**
+**Run all tests for project:**
 ```bash
 cd [project-directory]
 mvn test
 ```
 
-**How to run tests wit verbose output:**
+**Run tests with detailed output:**
 ```bash
 mvn test -X
 ```
 
-**How to run specific test class:**
+**Run specific test class:**
 ```bash
 mvn test -Dtest=CalculatorServiceTest
 ```
 
 ### Test Structure
 - Test files dey use JUnit 5 (Jupiter)
-- Test classes dey inside `src/test/java/`
-- Client examples for calculator project dey inside `src/test/java/com/microsoft/mcp/sample/client/`
+- Test classes dey `src/test/java/`
+- Client examples for calculator project dey `src/test/java/com/microsoft/mcp/sample/client/`
 
 ### Manual Testing
 Plenty examples na interactive apps wey need manual testing:
 
-1. Start the app wit `mvn spring-boot:run`
-2. Test endpoints or use the CLI
-3. Check say the behavior wey you see match wetin dey for documentation inside each project README.md
+1. Start app with `mvn spring-boot:run`
+2. Test endpoints or interact with CLI
+3. Check say wetin happen follow wetin README.md talk for each project
 
-### Testing wit GitHub Models
-- Free tier limits: 15 requests/minute, 150/day
-- Max 5 concurrent requests
-- Test content filtering wit responsible AI examples
+### Testing with Azure AI Foundry
+- Sign in with `az login` before you run examples (keyless auth)
+- Make sure say your account get Cognitive Services OpenAI User role for the resource
+- Test content filtering with responsible AI example for Chapter 5
 
 ## Code Style Guidelines
 
 ### Java Conventions
-- **Java Version:** Java 21 wit modern features
-- **Style:** Follow standard Java conventions
+- **Java Version:** Java 21 with new features
+- **Style:** Follow normal Java conventions
 - **Naming:** 
   - Classes: PascalCase
   - Methods/variables: camelCase
@@ -183,8 +186,8 @@ Plenty examples na interactive apps wey need manual testing:
 ### Spring Boot Patterns
 - Use `@Service` for business logic
 - Use `@RestController` for REST endpoints
-- Configure wit `application.yml` or `application.properties`
-- Prefer environment variables over hard-coded values
+- Configure by `application.yml` or `application.properties`
+- Environment variables better pass hardcoded values
 - Use `@Tool` annotation for MCP-exposed methods
 
 ### File Organization
@@ -207,26 +210,26 @@ src/
 ```
 
 ### Dependencies
-- Manage am wit Maven `pom.xml`
-- Spring AI BOM for version management
-- LangChain4j for AI integrations
+- Manage with Maven `pom.xml`
+- Spring AI BOM for version control
+- LangChain4j for AI plugins
 - Spring Boot starter parent for Spring dependencies
 
 ### Code Comments
 - Add JavaDoc for public APIs
-- Put explanatory comments for complex AI interactions
-- Document MCP tool descriptions well
+- Put comments wey explain complex AI work
+- Document MCP tool descriptions well well
 
 ## Build and Deployment
 
 ### Building Projects
 
-**Build without tests:**
+**Build without run test:**
 ```bash
 mvn clean install -DskipTests
 ```
 
-**Build wit all checks:**
+**Build with all checks:**
 ```bash
 mvn clean install
 ```
@@ -234,7 +237,7 @@ mvn clean install
 **Package application:**
 ```bash
 mvn package
-# Creates JAR in target/ directory
+# Dey create JAR inside target/ folder
 ```
 
 ### Output Directories
@@ -247,39 +250,42 @@ mvn package
 
 **Development:**
 ```yaml
-# application.yml
+# application.yml (keyless - no api-key; auth via DefaultAzureCredential)
 spring:
   ai:
-    openai:
-      api-key: ${GITHUB_TOKEN}
-      base-url: https://models.inference.ai.azure.com
+    azure:
+      openai:
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 **Production:**
-- Use Azure AI Foundry Models instead of GitHub Models
-- Change base-url to Azure OpenAI endpoint
-- Manage secrets wit Azure Key Vault or environment variables
+- Use managed identity instead of `az login` for keyless auth
+- Point `AZURE_OPENAI_ENDPOINT` to your production Foundry resource
+- Manage config with environment variables or Azure Key Vault
 
 ### Deployment Considerations
-- Dis na educational repo wit sample apps
-- E no dey ready for production deployment as e dey
-- Samples dey show patterns wey you fit adapt for production use
-- Check individual project READMEs for deployment notes
+- Na educational repo with sample apps
+- No design for production deployment as e be
+- Samples dey show patterns to fit adapt for production
+- Check each project README for deployment notes
 
 ## Additional Notes
 
-### GitHub Models vs Azure OpenAI
-- **GitHub Models:** Free tier for learning, no need credit card
-- **Azure OpenAI:** Production-ready, e need Azure subscription
-- Code dey compatible between both - just change endpoint and API key
+### Azure AI Foundry
+- **Keyless auth:** connect with Microsoft Entra ID — no API keys to manage
+- **Provisioned as code:** Bicep + azd (`azd up`) create account and model deployments
+- Same OpenAI-compatible code dey run locally (`az login`) and for Azure (managed identity)
 
-### Working wit Multiple Projects
-Each sample project dey standalone:
+### Working with Multiple Projects
+Each sample project na standalone:
 ```bash
-# Navigate to specific project
+# Comot go one particular project
 cd 04-PracticalSamples/[project-name]
 
-# Each has its own pom.xml and can be built independently
+# Each get im own pom.xml wey dem fit build by imsef
 mvn clean install
 ```
 
@@ -287,51 +293,52 @@ mvn clean install
 
 **Java Version Mismatch:**
 ```bash
-# Verify Java 21
+# Make sure say Java 21 correct
 java -version
-# Update JAVA_HOME if needed
+# Change JAVA_HOME if e need am
 export JAVA_HOME=/usr/lib/jvm/msopenjdk-current
 ```
 
-**Dependency Download Wahala:**
+**Dependency Download Problems:**
 ```bash
-# Clear Maven cache and retry
+# Clear Maven cache and try again
 rm -rf ~/.m2/repository
 mvn clean install
 ```
 
-**GitHub Token No Dey:**
+**Endpoint or Sign-in Missing:**
 ```bash
-# Set in current session
-export GITHUB_TOKEN="your-token-here"
+# Set di endpoint for di current session and sign in (no need key)
+export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
+az login
 
-# Or use .env file in project directory
-echo "GITHUB_TOKEN=your-token-here" > .env
+# Or use one .env file for di project directory
+echo "AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/" > .env
 ```
 
-**Port Don Already Dey Use:**
+**Port Already Use:**
 ```bash
-# Spring Boot uses port 8080 by default
-# Change in application.properties:
+# Spring Boot dey use port 8080 by default
+# Change for application.properties:
 server.port=8081
 ```
 
 ### Multi-Language Support
-- Documentation dey available for 45+ languages wit automated translation
-- Translations dey inside `translations/` directory
-- Translation dey managed by GitHub Actions workflow
+- Documentation dey for 45+ languages through automated translation
+- Translations dey `translations/` folder
+- Translation controlled by GitHub Actions workflow
 
 ### Learning Path
-1. Start wit [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md)
+1. Start with [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md)
 2. Follow chapters one by one (01 → 05)
-3. Do hands-on examples for each chapter
-4. Check sample projects for Chapter 4
-5. Learn responsible AI practices for Chapter 5
+3. Complete hands-on examples inside each chapter
+4. Explore sample projects for Chapter 4
+5. Learn responsible AI behavior for Chapter 5
 
 ### Development Container
-The `.devcontainer/devcontainer.json` dey configure:
+The `.devcontainer/devcontainer.json` dey setup:
 - Java 21 development environment
-- Maven don already dey
+- Maven pre-installed
 - VS Code Java extensions
 - Spring Boot tools
 - GitHub Copilot integration
@@ -339,20 +346,20 @@ The `.devcontainer/devcontainer.json` dey configure:
 - Azure CLI
 
 ### Performance Considerations
-- GitHub Models free tier get rate limits
+- Azure AI Foundry deployments get per-minute token/request limits
 - Use correct batch sizes for embeddings
-- Think about caching for repeated API calls
-- Monitor token usage to save cost
+- Think about caching for repeat API calls
+- Monitor token use to save cost
 
 ### Security Notes
-- No ever commit `.env` files (e dey already inside `.gitignore`)
-- Use environment variables for API keys
-- GitHub tokens suppose get only the scopes wey you need
-- Follow responsible AI guidelines for Chapter 5
+- No ever commit `.env` files (dem dey `.gitignore` already)
+- Better use keyless auth (Microsoft Entra ID) pass API keys
+- Use managed identities in Azure; `az login` for local development
+- Follow responsible AI rules for Chapter 5
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Disclaimer**:  
-Dis docu don use AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator) take translate am. Even though we dey try make sure say e correct, abeg no forget say automatic translation fit get mistake or no dey accurate well. Di original docu for di language wey dem first write am na di main correct one. For important information, e good make una use professional human translation. We no go fit take blame for any misunderstanding or wrong interpretation wey fit happen because of dis translation.
+**Disclaimer**:
+Dis document don translate wit AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). Even tho we dey try make am correct, abeg make you know say automated translation fit get errors or mistakes. Di original document for dia own language na im be di correct source. For important info, make person wey sabi human translation do am. We no go responsible for any misunderstanding or wrong understanding wey fit happen because of dis translation.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

@@ -1,31 +1,31 @@
-# 寵物故事生成器初學者教程
+# 寵物故事生成器初學者教學
 
 ## 目錄
 
-- [先決條件](../../../../04-PracticalSamples/petstory)
-- [了解專案結構](../../../../04-PracticalSamples/petstory)
-- [核心元件解析](../../../../04-PracticalSamples/petstory)
-  - [1. 主應用程式](../../../../04-PracticalSamples/petstory)
-  - [2. 網頁控制器](../../../../04-PracticalSamples/petstory)
-  - [3. 故事服務](../../../../04-PracticalSamples/petstory)
-  - [4. 網頁模板](../../../../04-PracticalSamples/petstory)
-  - [5. 配置](../../../../04-PracticalSamples/petstory)
-- [運行應用程式](../../../../04-PracticalSamples/petstory)
-- [整體運作方式](../../../../04-PracticalSamples/petstory)
-- [了解 AI 整合](../../../../04-PracticalSamples/petstory)
-- [下一步](../../../../04-PracticalSamples/petstory)
+- [前置條件](#前置條件)
+- [了解專案結構](#了解專案結構)
+- [核心元件說明](#核心元件說明)
+  - [1. 主應用程式](#1-主應用程式)
+  - [2. 網頁控制器](#2-網頁控制器)
+  - [3. 故事服務](#3-故事服務)
+  - [4. 網頁模板](#4-網頁模板)
+  - [5. 配置](#5-配置)
+- [執行應用程式](#執行應用程式)
+- [整體運作原理](#整體運作原理)
+- [理解 AI 整合](#理解-ai-整合)
+- [後續步驟](#後續步驟)
 
-## 先決條件
+## 前置條件
 
-在開始之前，請確保您已經具備以下條件：
-- 安裝了 Java 21 或更高版本
-- 使用 Maven 進行依賴管理
-- 擁有一個 GitHub 帳戶，並設置了具有 `models:read` 權限的個人訪問令牌 (PAT)
-- 基本了解 Java、Spring Boot 和網頁開發
+開始之前，請確定你已具備：
+- 已安裝 Java 21 或更高版本
+- Maven 用於依賴管理
+- Azure AI Foundry 模型部署（使用 `azd up` 進行配置 — 請參見 [第 2 章](../../02-SetupDevEnvironment/getting-started-azure-openai.md)），並以 `az login` 登入（無需金鑰驗證）
+- 基本的 Java、Spring Boot 及網頁開發知識
 
 ## 了解專案結構
 
-寵物故事專案包含以下重要檔案：
+寵物故事專案包含數個重要檔案：
 
 ```
 petstory/
@@ -42,13 +42,13 @@ petstory/
 └── pom.xml                           # Maven dependencies
 ```
 
-## 核心元件解析
+## 核心元件說明
 
 ### 1. 主應用程式
 
-**檔案:** `PetStoryApplication.java`
+**檔案：** `PetStoryApplication.java`
 
-這是我們 Spring Boot 應用程式的入口點：
+這是我們 Spring Boot 應用程式的進入點：
 
 ```java
 @SpringBootApplication
@@ -59,16 +59,16 @@ public class PetStoryApplication {
 }
 ```
 
-**功能說明:**
-- `@SpringBootApplication` 註解啟用自動配置和元件掃描
-- 在埠 8080 上啟動嵌入式網頁伺服器 (Tomcat)
-- 自動建立所有必要的 Spring beans 和服務
+**功能說明：**
+- `@SpringBootApplication` 註解啟用自動配置及元件掃描
+- 在 8080 埠啟動內嵌式網頁伺服器（Tomcat）
+- 自動建立所需的 Spring beans 及服務
 
 ### 2. 網頁控制器
 
-**檔案:** `PetController.java`
+**檔案：** `PetController.java`
 
-負責處理所有網頁請求和使用者互動：
+此元件處理所有網頁請求和使用者互動：
 
 ```java
 @Controller
@@ -82,7 +82,7 @@ public class PetController {
     
     @GetMapping("/")
     public String index() {
-        return "index";  // Returns index.html template
+        return "index";  // 返回 index.html 範本
     }
     
     @PostMapping("/generate-story")
@@ -90,24 +90,24 @@ public class PetController {
                                Model model, 
                                RedirectAttributes redirectAttributes) {
         
-        // Input validation
+        // 輸入驗證
         if (description.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please provide a description.");
             return "redirect:/";
         }
         
-        // Sanitize input for security
+        // 為安全起見淨化輸入
         String sanitizedDescription = sanitizeInput(description);
         
-        // Generate story with error handling
+        // 生成故事並進行錯誤處理
         try {
             String story = storyService.generateStory(sanitizedDescription);
             model.addAttribute("caption", sanitizedDescription);
             model.addAttribute("story", story);
-            return "result";  // Returns result.html template
+            return "result";  // 返回 result.html 範本
             
         } catch (Exception e) {
-            // Use fallback story if AI fails
+            // 若 AI 失敗則使用後備故事
             String fallbackStory = generateFallbackStory(sanitizedDescription);
             model.addAttribute("story", fallbackStory);
             return "result";
@@ -117,21 +117,21 @@ public class PetController {
     private String sanitizeInput(String input) {
         return input.replaceAll("[<>\"'&]", "")  // Remove dangerous characters
                    .trim()
-                   .substring(0, Math.min(input.length(), 500));  // Limit length
+                   .substring(0, Math.min(input.length(), 500));  // 限制長度
     }
 }
 ```
 
-**主要功能:**
+**主要功能：**
 
-1. **路由處理**: `@GetMapping("/")` 顯示上傳表單，`@PostMapping("/generate-story")` 處理提交
-2. **輸入驗證**: 檢查描述是否為空以及長度限制
-3. **安全性**: 清理使用者輸入以防止 XSS 攻擊
-4. **錯誤處理**: 當 AI 服務失敗時提供備用故事
-5. **模型綁定**: 使用 Spring 的 `Model` 將資料傳遞到 HTML 模板
+1. <strong>路由處理</strong>：`@GetMapping("/")` 顯示上傳表單，`@PostMapping("/generate-story")` 處理提交的資料
+2. <strong>輸入驗證</strong>：檢查描述是否為空或是否超出長度限制
+3. <strong>安全性</strong>：淨化使用者輸入，防範 XSS 攻擊
+4. <strong>錯誤處理</strong>：當 AI 服務失敗時提供備用故事
+5. <strong>模型綁定</strong>：使用 Spring 的 `Model` 傳遞資料到 HTML 模板
 
-**備用系統:**
-控制器包含預先撰寫的故事模板，當 AI 服務不可用時使用：
+**備用系統：**
+控制器內含預寫好的故事模板，當 AI 服務無法使用時會採用：
 
 ```java
 private String generateFallbackStory(String description) {
@@ -141,7 +141,7 @@ private String generateFallbackStory(String description) {
         "In a cozy home filled with love, there lived an extraordinary pet..."
     };
     
-    // Use description hash for consistent responses
+    // 使用描述哈希以確保回應一致
     int index = Math.abs(description.hashCode() % storyTemplates.length);
     return storyTemplates[index];
 }
@@ -149,9 +149,9 @@ private String generateFallbackStory(String description) {
 
 ### 3. 故事服務
 
-**檔案:** `StoryService.java`
+**檔案：** `StoryService.java`
 
-此服務負責與 GitHub Models 通訊以生成故事：
+此服務與 Azure AI Foundry 通訊，使用無金鑰認證生成故事：
 
 ```java
 @Service
@@ -160,18 +160,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // Foundry 的 OpenAI 相容端點位於 /openai/v1/
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // 使用 Microsoft Entra ID 進行無金鑰認證（不需 API 金鑰）
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -182,16 +186,16 @@ public class StoryService {
         
         String userPrompt = "Write a fun short story about a pet described as: " + description;
         
-        // Configure the AI request
+        // 設定 AI 請求
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(modelName)
                 .addSystemMessage(systemPrompt)
                 .addUserMessage(userPrompt)
-                .maxCompletionTokens(500)  // Limit response length
-                .temperature(0.8)          // Control creativity (0.0-1.0)
+                .maxCompletionTokens(500)  // 限制回應長度
+                .temperature(0.8)          // 控制創意度（0.0-1.0）
                 .build();
         
-        // Send request and get response
+        // 傳送請求並獲取回應
         ChatCompletion response = openAIClient.chat().completions().create(params);
         
         return response.choices().get(0).message().content().orElse("");
@@ -199,19 +203,19 @@ public class StoryService {
 }
 ```
 
-**主要元件:**
+**關鍵元件：**
 
-1. **OpenAI 客戶端**: 使用配置為 GitHub Models 的官方 OpenAI Java SDK
-2. **系統提示**: 設定 AI 的行為以撰寫適合家庭的寵物故事
-3. **使用者提示**: 根據描述指示 AI 撰寫具體故事
-4. **參數**: 控制故事長度和創意程度
-5. **錯誤處理**: 拋出例外，供控制器捕捉並處理
+1. **OpenAI用戶端**：採用官方 OpenAI Java SDK 並配置 Azure AI Foundry（無金鑰）
+2. <strong>系統提示語</strong>：設定 AI 行為，寫出適合家庭的寵物故事
+3. <strong>使用者提示語</strong>：告訴 AI 根據描述撰寫故事
+4. <strong>參數設定</strong>：控制故事長度和創意程度
+5. <strong>錯誤處理</strong>：拋出例外，由控制器捕捉並處理
 
 ### 4. 網頁模板
 
-**檔案:** `index.html` (上傳表單)
+**檔案：** `index.html`（上傳表單）
 
-使用者描述寵物的主要頁面：
+主要頁面，使用者描述他們的寵物：
 
 ```html
 <!DOCTYPE html>
@@ -258,9 +262,9 @@ public class StoryService {
 </html>
 ```
 
-**檔案:** `result.html` (故事展示)
+**檔案：** `result.html`（故事展示）
 
-顯示生成的故事：
+顯示產生的故事：
 
 ```html
 <!DOCTYPE html>
@@ -293,18 +297,18 @@ public class StoryService {
 </html>
 ```
 
-**模板功能:**
+**模板特色：**
 
-1. **Thymeleaf 整合**: 使用 `th:` 屬性進行動態內容處理
-2. **響應式設計**: CSS 樣式適配手機和桌面
-3. **錯誤處理**: 向使用者顯示驗證錯誤
-4. **客戶端處理**: 使用 JavaScript 進行圖片分析 (基於 Transformers.js)
+1. **Thymeleaf 整合**：使用 `th:` 屬性動態顯示內容
+2. <strong>響應式設計</strong>：CSS 支援行動與桌面裝置
+3. <strong>錯誤處理</strong>：向使用者顯示驗證錯誤訊息
+4. <strong>客戶端處理</strong>：JavaScript 執行影像分析（利用 Transformers.js）
 
 ### 5. 配置
 
-**檔案:** `application.properties`
+**檔案：** `application.properties`
 
-應用程式的配置設定：
+應用程式設定：
 
 ```properties
 spring.application.name=pet-story-app
@@ -316,52 +320,55 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
-**配置說明:**
+**設定說明：**
 
-1. **檔案上傳**: 允許最大 10MB 的圖片
-2. **日誌記錄**: 控制執行期間記錄的資訊
-3. **GitHub Models**: 指定使用的 AI 模型和端點
-4. **安全性**: 錯誤處理配置以避免暴露敏感資訊
+1. <strong>檔案上傳</strong>：允許最大 10MB 的圖像檔案
+2. <strong>日誌紀錄</strong>：控制執行期間的日誌資訊
+3. **Azure AI Foundry**：指定端點和模型部署（無金鑰認證）
+4. <strong>安全性</strong>：錯誤處理設定，避免暴露敏感資訊
 
-## 運行應用程式
+## 執行應用程式
 
-### 步驟 1: 設置 GitHub Token
+### 第 1 步：登入並設置端點
 
-首先，您需要將 GitHub Token 設置為環境變數：
+驗證使用無金鑰方式（Microsoft Entra ID），無 API 金鑰。登入並設定 Foundry 端點：
 
-**Windows (命令提示字元):**
+**Windows（命令提示字元）：**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-**Windows (PowerShell):**
+**Windows（PowerShell）：**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
-**Linux/macOS:**
+**Linux/macOS：**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-**為什麼需要這樣做:**
-- GitHub Models 需要身份驗證才能訪問 AI 模型
-- 使用環境變數可避免將敏感 Token 存入原始碼
-- `models:read` 權限提供 AI 推理的訪問權限
+**為何需要這樣做：**
+- Azure AI Foundry 使用 Microsoft Entra ID 驗證推理請求
+- 無金鑰認證意味著無需在原始碼或環境中儲存秘密
+- 你的帳戶需擁有該資源的 **Cognitive Services OpenAI User** 角色
 
-### 步驟 2: 建置並運行
+### 第 2 步：編譯與執行
 
-進入專案目錄：
+切換至專案目錄：
 ```bash
 cd 04-PracticalSamples/petstory
 ```
 
-建置應用程式：
+編譯應用程式：
 ```bash
 mvn clean compile
 ```
@@ -371,51 +378,53 @@ mvn clean compile
 mvn spring-boot:run
 ```
 
-應用程式將在 `http://localhost:8080` 上啟動。
+應用程式將啟動於 `http://localhost:8080`。
 
-### 步驟 3: 測試應用程式
+### 第 3 步：測試應用程式
 
-1. **打開**瀏覽器並進入 `http://localhost:8080`
-2. **描述**您的寵物 (例如: "一隻喜歡撿球的活潑金毛")
-3. **點擊**"生成故事" 按鈕以獲取 AI 生成的故事
-4. **或者**上傳寵物圖片以自動生成描述
-5. **查看**根據寵物描述生成的創意故事
+1. <strong>開啟</strong> 瀏覽器進入 `http://localhost:8080`
+2. <strong>描述</strong> 你的寵物（例如：「一隻喜歡接物遊戲的活潑黃金獵犬」）
+3. <strong>點擊</strong>「產生故事」，獲得 AI 生成的故事
+4. <strong>或者</strong> 上傳寵物照片，自動生成描述
+5. <strong>瀏覽</strong> 根據描述產生的創意故事
 
-## 整體運作方式
+## 整體運作原理
 
-以下是生成寵物故事的完整流程：
+生成寵物故事的完整流程如下：
 
-1. **使用者輸入**: 您在網頁表單中描述您的寵物
-2. **表單提交**: 瀏覽器向 `/generate-story` 發送 POST 請求
-3. **控制器處理**: `PetController` 驗證並清理輸入
-4. **AI 服務調用**: `StoryService` 向 GitHub Models API 發送請求
-5. **故事生成**: AI 根據描述生成創意故事
-6. **響應處理**: 控制器接收故事並將其添加到模型
-7. **模板渲染**: Thymeleaf 使用故事渲染 `result.html`
-8. **展示**: 使用者在瀏覽器中看到生成的故事
+1. <strong>使用者輸入</strong>：在網頁表單中描述寵物
+2. <strong>表單提交</strong>：瀏覽器發送 POST 請求至 `/generate-story`
+3. <strong>控制器處理</strong>：`PetController` 驗證並淨化輸入
+4. **呼叫 AI 服務**：`StoryService` 請求 Azure AI Foundry 模型
+5. <strong>故事生成</strong>：AI 根據描述產生創意故事
+6. <strong>回應處理</strong>：控制器接收故事並加入模型
+7. <strong>模板渲染</strong>：Thymeleaf 呈現 `result.html` 與故事內容
+8. <strong>顯示結果</strong>：使用者於瀏覽器查看生成的故事
 
-**錯誤處理流程:**
-如果 AI 服務失敗：
-1. 控制器捕捉例外
-2. 使用預先撰寫的模板生成備用故事
-3. 顯示備用故事並附上 AI 不可用的提示
-4. 確保使用者仍然能獲得故事，提供良好的使用者體驗
+**錯誤處理流程：**
+若 AI 服務失敗：
+1. 控制器捕捉異常
+2. 使用預寫模板生成備用故事
+3. 顯示備用故事並註明 AI 服務不可用原因
+4. 確保使用者仍收到故事，維持良好的使用體驗
 
-## 了解 AI 整合
+## 理解 AI 整合
 
-### GitHub Models API
-應用程式使用 GitHub Models，提供免費訪問各種 AI 模型：
+### Azure AI Foundry（無金鑰認證）
+本應用採用 Azure AI Foundry 的無金鑰認證方式（Microsoft Entra ID）：
 
 ```java
-// Authentication with GitHub token
+// 無鑰匙認證 - 無需 API 金鑰
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
-### 提示工程
-服務使用精心設計的提示以獲得良好的結果：
+### 提示語工程
+該服務利用精心設計的提示語以取得良好結果：
 
 ```java
 String systemPrompt = "You are a creative storyteller who writes fun, " +
@@ -423,17 +432,21 @@ String systemPrompt = "You are a creative storyteller who writes fun, " +
                      "Keep stories under 500 words and appropriate for all ages.";
 ```
 
-### 響應處理
-AI 的響應會被提取並驗證：
+### 回應處理
+從 AI 回應中抽取並驗證內容：
 
 ```java
 ChatCompletion response = openAIClient.chat().completions().create(params);
 String story = response.choices().get(0).message().content().orElse("");
 ```
 
-## 下一步
+## 後續步驟
 
-更多範例請參考 [第 04 章: 實用範例](../README.md)
+更多範例，請參考 [第 04 章：實務範例](../README.md)
 
-**免責聲明**：  
-本文件已使用 AI 翻譯服務 [Co-op Translator](https://github.com/Azure/co-op-translator) 進行翻譯。雖然我們努力確保翻譯的準確性，但請注意，自動翻譯可能包含錯誤或不準確之處。原始文件的母語版本應被視為權威來源。對於關鍵信息，建議使用專業人工翻譯。我們對因使用此翻譯而引起的任何誤解或誤釋不承擔責任。
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**免責聲明**：
+本文件使用 AI 翻譯服務 [Co-op Translator](https://github.com/Azure/co-op-translator) 進行翻譯。雖然我們力求準確，但請注意，自動翻譯可能包含錯誤或不準確之處。原始文件的母語版本應被視為權威來源。對於重要資訊，建議尋求專業人工翻譯。我們不對因使用本翻譯而引起的任何誤解或曲解承擔責任。
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

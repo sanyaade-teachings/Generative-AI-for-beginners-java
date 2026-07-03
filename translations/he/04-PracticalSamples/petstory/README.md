@@ -1,31 +1,31 @@
-# מדריך למתחילים ליצירת סיפורים על חיות מחמד
+# מדריך ליצירת סיפורי חיות מחמד למתחילים
 
-## תוכן עניינים
+## תוכן העניינים
 
-- [דרישות מקדימות](../../../../04-PracticalSamples/petstory)
-- [הבנת מבנה הפרויקט](../../../../04-PracticalSamples/petstory)
-- [הסבר על רכיבים מרכזיים](../../../../04-PracticalSamples/petstory)
-  - [1. יישום ראשי](../../../../04-PracticalSamples/petstory)
-  - [2. בקר אינטרנט](../../../../04-PracticalSamples/petstory)
-  - [3. שירות סיפורים](../../../../04-PracticalSamples/petstory)
-  - [4. תבניות אינטרנט](../../../../04-PracticalSamples/petstory)
-  - [5. קובץ הגדרות](../../../../04-PracticalSamples/petstory)
-- [הרצת היישום](../../../../04-PracticalSamples/petstory)
-- [איך הכל עובד יחד](../../../../04-PracticalSamples/petstory)
-- [הבנת האינטגרציה עם AI](../../../../04-PracticalSamples/petstory)
-- [השלבים הבאים](../../../../04-PracticalSamples/petstory)
+- [דרישות מוקדמות](#דרישות-מוקדמות)
+- [הבנת מבנה הפרויקט](#הבנת-מבנה-הפרויקט)
+- [הסבר על הרכיבים הבסיסיים](#הסבר-על-הרכיבים-הבסיסיים)
+  - [1. היישום הראשי](#1-היישום-הראשי)
+  - [2. בקר רשת](#2-בקר-רשת)
+  - [3. שירות סיפורים](#3-שירות-סיפורים)
+  - [4. תבניות רשת](#4-תבניות-רשת)
+  - [5. הגדרות](#5-הגדרות)
+- [הפעלת היישום](#הפעלת-היישום)
+- [איך הכל עובד ביחד](#איך-הכל-עובד-ביחד)
+- [הבנת האינטגרציה עם ה-AI](#הבנת-האינטגרציה-עם-ה-ai)
+- [שלבים הבאים](#שלבים-הבאים)
 
-## דרישות מקדימות
+## דרישות מוקדמות
 
-לפני שמתחילים, ודאו שיש לכם:
-- Java 21 או גרסה חדשה יותר מותקנת
-- Maven לניהול תלות
-- חשבון GitHub עם אסימון גישה אישי (PAT) עם הרשאת `models:read`
-- הבנה בסיסית של Java, Spring Boot ופיתוח אתרים
+לפני שמתחילים, וודאו שיש לכם:
+- Java 21 או גרסה גבוהה יותר מותקנת
+- Maven לניהול התלויות
+- פריסת מודל Azure AI Foundry (הפעילו עם `azd up` — ראה [פרק 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md)), מחוברים עם `az login` (אימות ללא מפתח)
+- הבנה בסיסית ב-Java, Spring Boot ופיתוח רשת
 
 ## הבנת מבנה הפרויקט
 
-לפרויקט סיפורי חיות מחמד יש מספר קבצים חשובים:
+לפרויקט סיפורי חיות המחמד יש מספר קבצים חשובים:
 
 ```
 petstory/
@@ -42,13 +42,13 @@ petstory/
 └── pom.xml                           # Maven dependencies
 ```
 
-## הסבר על רכיבים מרכזיים
+## הסבר על הרכיבים הבסיסיים
 
-### 1. יישום ראשי
+### 1. היישום הראשי
 
 **קובץ:** `PetStoryApplication.java`
 
-זהו נקודת הכניסה ליישום Spring Boot שלנו:
+זהו נקודת הכניסה ליישום ה-Spring Boot שלנו:
 
 ```java
 @SpringBootApplication
@@ -60,15 +60,15 @@ public class PetStoryApplication {
 ```
 
 **מה זה עושה:**
-- האנטציה `@SpringBootApplication` מאפשרת קונפיגורציה אוטומטית וסריקת רכיבים
-- מפעיל שרת אינטרנט מובנה (Tomcat) על פורט 8080
-- יוצר את כל ה-Spring beans והשירותים הנדרשים באופן אוטומטי
+- האנוטציה `@SpringBootApplication` מאפשרת קונפיגורציה אוטומטית וסריקת רכיבים
+- מפעילה שרת אינטגרטיבי (Tomcat) בריבוט 8080
+- יוצרת באופן אוטומטי את כל הבאנים והשירותים הדרושים של Spring
 
-### 2. בקר אינטרנט
+### 2. בקר רשת
 
 **קובץ:** `PetController.java`
 
-מטפל בכל הבקשות מהאינטרנט ובאינטראקציות עם המשתמש:
+מתמודד עם כל בקשות הרשת ואינטראקציות המשתמש:
 
 ```java
 @Controller
@@ -82,7 +82,7 @@ public class PetController {
     
     @GetMapping("/")
     public String index() {
-        return "index";  // Returns index.html template
+        return "index";  // מחזיר את תבנית index.html
     }
     
     @PostMapping("/generate-story")
@@ -90,24 +90,24 @@ public class PetController {
                                Model model, 
                                RedirectAttributes redirectAttributes) {
         
-        // Input validation
+        // אימות קלט
         if (description.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please provide a description.");
             return "redirect:/";
         }
         
-        // Sanitize input for security
+        // ניקוי הקלט לאבטחה
         String sanitizedDescription = sanitizeInput(description);
         
-        // Generate story with error handling
+        // יצירת סיפור עם טיפול בשגיאות
         try {
             String story = storyService.generateStory(sanitizedDescription);
             model.addAttribute("caption", sanitizedDescription);
             model.addAttribute("story", story);
-            return "result";  // Returns result.html template
+            return "result";  // מחזיר את תבנית result.html
             
         } catch (Exception e) {
-            // Use fallback story if AI fails
+            // השתמש בסיפור חלופי אם ה-AI נכשל
             String fallbackStory = generateFallbackStory(sanitizedDescription);
             model.addAttribute("story", fallbackStory);
             return "result";
@@ -117,21 +117,21 @@ public class PetController {
     private String sanitizeInput(String input) {
         return input.replaceAll("[<>\"'&]", "")  // Remove dangerous characters
                    .trim()
-                   .substring(0, Math.min(input.length(), 500));  // Limit length
+                   .substring(0, Math.min(input.length(), 500));  // הגבלת אורך
     }
 }
 ```
 
 **תכונות עיקריות:**
 
-1. **ניהול מסלולים**: `@GetMapping("/")` מציג את טופס ההעלאה, `@PostMapping("/generate-story")` מעבד את ההגשות
-2. **אימות קלט**: בודק תיאורים ריקים ומגבלות אורך
-3. **אבטחה**: מנקה קלט משתמשים כדי למנוע התקפות XSS
+1. **ניהול נתיבים**: `@GetMapping("/")` מציג את טופס ההעלאה, `@PostMapping("/generate-story")` מעבד הגשות
+2. **אימות קלט**: בודק תיאורים ריקים והגבלת אורך
+3. **אבטחה**: מנקה את קלט המשתמש כדי למנוע התקפות XSS
 4. **ניהול שגיאות**: מספק סיפורים חלופיים כאשר שירות ה-AI נכשל
-5. **קשירת מודל**: מעביר נתונים לתבניות HTML באמצעות `Model` של Spring
+5. **קשירת מודל**: מעביר נתונים לתבניות HTML בעזרת `Model` של Spring
 
-**מערכת חלופית:**
-הבקר כולל תבניות סיפורים מוכנות מראש שמשמשות כאשר שירות ה-AI אינו זמין:
+**מערכת גיבוי:**
+הבקר כולל תבניות סיפורים מוקדמות שמשמשות כשהשירות AI אינו זמין:
 
 ```java
 private String generateFallbackStory(String description) {
@@ -141,7 +141,7 @@ private String generateFallbackStory(String description) {
         "In a cozy home filled with love, there lived an extraordinary pet..."
     };
     
-    // Use description hash for consistent responses
+    // השתמש ב-hash של התיאור לתשובות עקביות
     int index = Math.abs(description.hashCode() % storyTemplates.length);
     return storyTemplates[index];
 }
@@ -151,7 +151,7 @@ private String generateFallbackStory(String description) {
 
 **קובץ:** `StoryService.java`
 
-שירות זה מתקשר עם GitHub Models ליצירת סיפורים:
+שירות זה מתקשר עם Azure AI Foundry ליצירת סיפורים עם אימות ללא מפתח:
 
 ```java
 @Service
@@ -160,18 +160,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // נקודת הקצה התואמת ל-OpenAI של Foundry נמצאת תחת /openai/v1/
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // אימות ללא מפתח עם Microsoft Entra ID (ללא מפתח API)
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -182,16 +186,16 @@ public class StoryService {
         
         String userPrompt = "Write a fun short story about a pet described as: " + description;
         
-        // Configure the AI request
+        // הגדר את בקשת ה-AI
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(modelName)
                 .addSystemMessage(systemPrompt)
                 .addUserMessage(userPrompt)
-                .maxCompletionTokens(500)  // Limit response length
-                .temperature(0.8)          // Control creativity (0.0-1.0)
+                .maxCompletionTokens(500)  // הגבל את אורך התגובה
+                .temperature(0.8)          // שלוט ביצירתיות (0.0-1.0)
                 .build();
         
-        // Send request and get response
+        // שלח בקשה וקבל תגובה
         ChatCompletion response = openAIClient.chat().completions().create(params);
         
         return response.choices().get(0).message().content().orElse("");
@@ -201,17 +205,17 @@ public class StoryService {
 
 **רכיבים עיקריים:**
 
-1. **לקוח OpenAI**: משתמש ב-SDK הרשמי של OpenAI המוגדר עבור GitHub Models
-2. **System Prompt**: מגדיר את התנהגות ה-AI לכתיבת סיפורים ידידותיים למשפחה
-3. **User Prompt**: מורה ל-AI בדיוק איזה סיפור לכתוב בהתבסס על התיאור
-4. **פרמטרים**: שולט באורך הסיפור וברמת היצירתיות
-5. **ניהול שגיאות**: זורק חריגים שהבקר תופס ומטפל בהם
+1. **לקוח OpenAI**: משתמש ב-SDK הרשמי של OpenAI ב-Java, מוגדר ל-Azure AI Foundry (ללא מפתח)
+2. **הנחיית מערכת**: מגדיר את התנהגות ה-AI לכתיבת סיפורי חיות משפחתיים
+3. **הנחיית משתמש**: מורה ל-AI מה לספר בדיוק לפי התיאור
+4. **פרמטרים**: שולט על אורך הסיפור ורמת היצירתיות
+5. **ניהול שגיאות**: זורק חריגות שהבקר תופס ומטפל בהן
 
-### 4. תבניות אינטרנט
+### 4. תבניות רשת
 
 **קובץ:** `index.html` (טופס העלאה)
 
-העמוד הראשי שבו המשתמשים מתארים את חיות המחמד שלהם:
+העמוד הראשי שבו משתמשים מתארים את חיית המחמד שלהם:
 
 ```html
 <!DOCTYPE html>
@@ -258,7 +262,7 @@ public class StoryService {
 </html>
 ```
 
-**קובץ:** `result.html` (תצוגת סיפור)
+**קובץ:** `result.html` (הצגת סיפור)
 
 מציג את הסיפור שנוצר:
 
@@ -296,15 +300,15 @@ public class StoryService {
 **תכונות התבנית:**
 
 1. **אינטגרציה עם Thymeleaf**: משתמש בתכונות `th:` לתוכן דינמי
-2. **עיצוב רספונסיבי**: עיצוב CSS למובייל ולמחשב שולחני
-3. **ניהול שגיאות**: מציג שגיאות אימות למשתמשים
-4. **עיבוד בצד הלקוח**: JavaScript לניתוח תמונות (באמצעות Transformers.js)
+2. **עיצוב רספונסיבי**: סגנונות CSS למובייל ודסקטופ
+3. **ניהול שגיאות**: מציג הודעות אימות למשתמשים
+4. **עיבוד בצד הלקוח**: JavaScript לניתוח תמונה (באמצעות Transformers.js)
 
-### 5. קובץ הגדרות
+### 5. הגדרות
 
 **קובץ:** `application.properties`
 
-הגדרות קונפיגורציה ליישום:
+הגדרות התצורה של היישום:
 
 ```properties
 spring.application.name=pet-story-app
@@ -316,47 +320,50 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 **הסבר על ההגדרות:**
 
-1. **העלאת קבצים**: מאפשר העלאת תמונות עד 10MB
-2. **לוגים**: שולט במידע שנרשם במהלך ההרצה
-3. **GitHub Models**: מציין איזה מודל AI ואיזה נקודת קצה להשתמש
-4. **אבטחה**: הגדרות ניהול שגיאות כדי למנוע חשיפת מידע רגיש
+1. **העלאת קבצים**: מאפשר תמונות עד 10MB
+2. **רישומונים (לוגים)**: שולט על אילו מידע נרשם בפעילות
+3. **Azure AI Foundry**: מגדיר את נקודת הקצה ופריסת המודל לשימוש (אימות ללא מפתח)
+4. **אבטחה**: הגדרת טיפול בשגיאות למניעת חשיפת מידע רגיש
 
-## הרצת היישום
+## הפעלת היישום
 
-### שלב 1: הגדרת אסימון GitHub
+### שלב 1: התחברו והגדירו את נקודת הקצה שלכם
 
-ראשית, יש להגדיר את אסימון GitHub כמשתנה סביבה:
+האימות הוא ללא מפתח (Microsoft Entra ID), לכן אין מפתח API. התחברו והגדירו את נקודת הקצה של Foundry:
 
-**Windows (Command Prompt):**
+**Windows (שורת הפקודה):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-**למה זה נדרש:**
-- GitHub Models דורש אימות כדי לגשת למודלים של AI
-- שימוש במשתני סביבה שומר על אסימונים רגישים מחוץ לקוד המקור
-- ההרשאה `models:read` מספקת גישה לאינפרנס AI
+**למה זה צריך:**
+- Azure AI Foundry משתמש ב-Microsoft Entra ID לאימות בקשות חישוב
+- אימות ללא מפתח אומר שאין סודות בקוד המקור או בסביבה
+- על החשבון שלכם להיות עם תפקיד **Cognitive Services OpenAI User** במשאב
 
-### שלב 2: בנייה והרצה
+### שלב 2: בניה והפעלה
 
-נווטו לתיקיית הפרויקט:
+נווטו לספריית הפרויקט:
 ```bash
 cd 04-PracticalSamples/petstory
 ```
@@ -366,56 +373,58 @@ cd 04-PracticalSamples/petstory
 mvn clean compile
 ```
 
-הפעילו את השרת:
+התחילו את השרת:
 ```bash
 mvn spring-boot:run
 ```
 
-היישום יתחיל בכתובת `http://localhost:8080`.
+היישום יפעל בכתובת `http://localhost:8080`.
 
-### שלב 3: בדיקת היישום
+### שלב 3: בדקו את היישום
 
-1. **פתחו** את `http://localhost:8080` בדפדפן
-2. **תארו** את חיית המחמד שלכם בתיבת הטקסט (לדוגמה, "כלב גולדן רטריבר שובב שאוהב להביא כדורים")
-3. **לחצו** על "צור סיפור" כדי לקבל סיפור שנוצר על ידי AI
-4. **לחלופין**, העלו תמונה של חיית המחמד ליצירת תיאור אוטומטי
-5. **צפו** בסיפור היצירתי שנוצר על בסיס תיאור חיית המחמד שלכם
+1. **פתחו** את `http://localhost:8080` בדפדפן שלכם
+2. **תארו** את חיית המחמד שלכם באזור הטקסט (למשל, "רטריבר גולדן שובב שאוהב להביא כדור")
+3. **לחצו** על "Generate Story" כדי לקבל סיפור שיצר ה-AI
+4. **באופן חלופי**, העלו תמונת חיית מחמד ליצירת תיאור אוטומטית
+5. **צפו** בסיפור היצירתי בהתאם לתיאור של חיית המחמד שלכם
 
-## איך הכל עובד יחד
+## איך הכל עובד ביחד
 
-כך נראה הזרם המלא כאשר אתם יוצרים סיפור על חיית מחמד:
+הנה הזרימה המלאה כשאתם יוצרים סיפור חיית מחמד:
 
 1. **קלט משתמש**: אתם מתארים את חיית המחמד בטופס האינטרנט
 2. **שליחת טופס**: הדפדפן שולח בקשת POST ל-`/generate-story`
-3. **עיבוד בבקר**: `PetController` מאמת ומנקה את הקלט
-4. **קריאה לשירות AI**: `StoryService` שולח בקשה ל-API של GitHub Models
-5. **יצירת סיפור**: ה-AI יוצר סיפור יצירתי על בסיס התיאור
+3. **עיבוד הבקר**: `PetController` מאמת ומנקה את הקלט
+4. **קריאה לשירות AI**: `StoryService` שולח בקשה למודל ב-Azure AI Foundry
+5. **יצירת סיפור**: ה-AI יוצר סיפור יצירתי לפי התיאור
 6. **טיפול בתגובה**: הבקר מקבל את הסיפור ומוסיף אותו למודל
-7. **עיבוד תבנית**: Thymeleaf מעבד את `result.html` עם הסיפור
-8. **תצוגה**: המשתמש רואה את הסיפור שנוצר בדפדפן
+7. **הצגת תבנית**: Thymeleaf מרנדר את `result.html` עם הסיפור
+8. **הצגה**: המשתמש רואה את הסיפור בדפדפן שלו
 
-**זרם ניהול שגיאות:**
+**זרימת טיפול בשגיאות:**
 אם שירות ה-AI נכשל:
-1. הבקר תופס את החריג
-2. יוצר סיפור חלופי באמצעות תבניות מוכנות מראש
+1. הבקר תופס את החריגה
+2. יוצר סיפור חלופי מתבניות כתובות מראש
 3. מציג את הסיפור החלופי עם הערה על אי זמינות ה-AI
-4. המשתמש עדיין מקבל סיפור, מה שמבטיח חוויית משתמש טובה
+4. המשתמש עדיין מקבל סיפור, לשמירת חוויית משתמש טובה
 
-## הבנת האינטגרציה עם AI
+## הבנת האינטגרציה עם ה-AI
 
-### API של GitHub Models
-היישום משתמש ב-GitHub Models, שמספק גישה חינמית למודלים שונים של AI:
+### Azure AI Foundry (ללא מפתח)
+היישום משתמש ב-Azure AI Foundry עם אימות ללא מפתח (Microsoft Entra ID):
 
 ```java
-// Authentication with GitHub token
+// אימות ללא מפתח - ללא מפתח API
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
-### הנדסת פרומפטים
-השירות משתמש בפרומפטים שנכתבו בקפידה כדי לקבל תוצאות טובות:
+### הנחיית פרומפט (Prompt Engineering)
+השירות משתמש בפרומפטים מעוצבים בקפידה לקבלת תוצאות טובות:
 
 ```java
 String systemPrompt = "You are a creative storyteller who writes fun, " +
@@ -423,17 +432,21 @@ String systemPrompt = "You are a creative storyteller who writes fun, " +
                      "Keep stories under 500 words and appropriate for all ages.";
 ```
 
-### עיבוד תגובות
-תגובת ה-AI נשלפת ומאומתת:
+### עיבוד תגובה
+תגובה ה-AI מוצאת ומאומתת:
 
 ```java
 ChatCompletion response = openAIClient.chat().completions().create(params);
 String story = response.choices().get(0).message().content().orElse("");
 ```
 
-## השלבים הבאים
+## שלבים הבאים
 
-לעוד דוגמאות, ראו [פרק 04: דוגמאות מעשיות](../README.md)
+לדוגמאות נוספות, ראו [פרק 04: דוגמאות מעשיות](../README.md)
 
-**כתב ויתור**:  
-מסמך זה תורגם באמצעות שירות תרגום מבוסס בינה מלאכותית [Co-op Translator](https://github.com/Azure/co-op-translator). למרות שאנו שואפים לדיוק, יש לקחת בחשבון שתרגומים אוטומטיים עשויים להכיל שגיאות או אי דיוקים. המסמך המקורי בשפתו המקורית צריך להיחשב כמקור סמכותי. עבור מידע קריטי, מומלץ להשתמש בתרגום מקצועי על ידי אדם. איננו נושאים באחריות לאי הבנות או לפרשנויות שגויות הנובעות משימוש בתרגום זה.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**כתב ויתור**:
+מסמך זה תורגם באמצעות שירות תרגום אוטומטי [Co-op Translator](https://github.com/Azure/co-op-translator). למרות שאנו שואפים לדיוק, יש לקחת בחשבון שתרגומים אוטומטיים עלולים להכיל שגיאות או אי-דיוקים. יש להחשיב את המסמך המקורי בשפתו הטבעית כמקור הסמכות. למידע קריטי מומלץ להשתמש בתרגום מקצועי על ידי מתרגם אדם. אנו לא אחראים לכל אי-הבנה או פירוש שגוי הנובע מהשימוש בתרגום זה.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

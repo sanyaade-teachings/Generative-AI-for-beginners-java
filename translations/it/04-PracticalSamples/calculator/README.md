@@ -1,39 +1,40 @@
-# Tutorial del Calcolatore MCP per Principianti
+# Tutorial Calcolatrice MCP per Principianti
 
 ## Indice
 
-- [Cosa Imparerai](../../../../04-PracticalSamples/calculator)
-- [Prerequisiti](../../../../04-PracticalSamples/calculator)
-- [Comprendere la Struttura del Progetto](../../../../04-PracticalSamples/calculator)
-- [Componenti Principali Spiegati](../../../../04-PracticalSamples/calculator)
-  - [1. Applicazione Principale](../../../../04-PracticalSamples/calculator)
-  - [2. Servizio Calcolatore](../../../../04-PracticalSamples/calculator)
-  - [3. Client MCP Diretto](../../../../04-PracticalSamples/calculator)
-  - [4. Client Basato su AI](../../../../04-PracticalSamples/calculator)
-- [Eseguire gli Esempi](../../../../04-PracticalSamples/calculator)
-- [Come Funziona Tutto Insieme](../../../../04-PracticalSamples/calculator)
-- [Prossimi Passi](../../../../04-PracticalSamples/calculator)
+- [Cosa Imparerai](#cosa-imparerai)
+- [Prerequisiti](#prerequisiti)
+- [Comprendere la Struttura del Progetto](#comprendere-la-struttura-del-progetto)
+- [Componenti Principali Spiegati](#componenti-principali-spiegati)
+  - [1. Applicazione Principale](#1-applicazione-principale)
+  - [2. Servizio Calcolatrice](#2-servizio-calcolatrice)
+  - [3. Client MCP Diretto](#3-client-mcp-diretto)
+  - [4. Client Alimentato da AI](#4-client-alimentato-da-ai)
+- [Esecuzione degli Esempi](#esecuzione-degli-esempi)
+- [Come Funziona Tutto Insieme](#come-funziona-tutto-insieme)
+- [Prossimi Passi](#prossimi-passi)
 
 ## Cosa Imparerai
 
-Questo tutorial spiega come costruire un servizio calcolatore utilizzando il Model Context Protocol (MCP). Capirai:
+Questo tutorial spiega come costruire un servizio calcolatrice usando il Model Context Protocol (MCP). Capirai:
 
-- Come creare un servizio che l'AI può utilizzare come strumento
-- Come configurare la comunicazione diretta con i servizi MCP
-- Come i modelli AI possono scegliere automaticamente quali strumenti utilizzare
-- La differenza tra chiamate dirette al protocollo e interazioni assistite dall'AI
+- Come creare un servizio che l’AI può usare come strumento
+- Come configurare una comunicazione diretta con i servizi MCP
+- Come i modelli AI possono scegliere automaticamente quali strumenti usare
+- La differenza tra chiamate dirette al protocollo e interazioni assistite dall’AI
 
 ## Prerequisiti
 
 Prima di iniziare, assicurati di avere:
 - Java 21 o superiore installato
 - Maven per la gestione delle dipendenze
-- Un account GitHub con un personal access token (PAT)
-- Comprensione di base di Java e Spring Boot
+- Un deployment di modello Azure AI Foundry (provisiona con `azd up` — vedi [Capitolo 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
+- La [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), con accesso effettuato tramite `az login` (autenticazione senza chiave)
+- Conoscenze base di Java e Spring Boot
 
 ## Comprendere la Struttura del Progetto
 
-Il progetto del calcolatore contiene diversi file importanti:
+Il progetto calcolatrice contiene diversi file importanti:
 
 ```
 calculator/
@@ -52,7 +53,7 @@ calculator/
 
 **File:** `McpServerApplication.java`
 
-Questo è il punto di ingresso del nostro servizio calcolatore. È un'applicazione standard Spring Boot con un'aggiunta speciale:
+Questo è il punto di ingresso del nostro servizio calcolatrice. È una normale applicazione Spring Boot con un’aggiunta speciale:
 
 ```java
 @SpringBootApplication
@@ -71,14 +72,14 @@ public class McpServerApplication {
 
 **Cosa fa:**
 - Avvia un server web Spring Boot sulla porta 8080
-- Crea un `ToolCallbackProvider` che rende i metodi del calcolatore disponibili come strumenti MCP
-- L'annotazione `@Bean` indica a Spring di gestirlo come un componente utilizzabile da altre parti
+- Crea un `ToolCallbackProvider` che rende i metodi della calcolatrice disponibili come strumenti MCP
+- L’annotazione `@Bean` indica a Spring di gestire questo come componente utilizzabile da altre parti
 
-### 2. Servizio Calcolatore
+### 2. Servizio Calcolatrice
 
 **File:** `CalculatorService.java`
 
-Qui avvengono tutti i calcoli. Ogni metodo è contrassegnato con `@Tool` per renderlo disponibile tramite MCP:
+Qui avvengono tutti i calcoli matematici. Ogni metodo è annotato con `@Tool` per renderlo disponibile tramite MCP:
 
 ```java
 @Service
@@ -96,7 +97,7 @@ public class CalculatorService {
         return formatResult(a, "-", b, result);
     }
     
-    // More calculator operations...
+    // Altre operazioni della calcolatrice...
     
     private String formatResult(double a, String operator, double b, double result) {
         return String.format("%.2f %s %.2f = %.2f", a, operator, b, result);
@@ -106,18 +107,18 @@ public class CalculatorService {
 
 **Caratteristiche principali:**
 
-1. **Annotazione `@Tool`**: Indica a MCP che questo metodo può essere chiamato da client esterni
-2. **Descrizioni Chiare**: Ogni strumento ha una descrizione che aiuta i modelli AI a capire quando utilizzarlo
-3. **Formato di Ritorno Consistente**: Tutte le operazioni restituiscono stringhe leggibili come "5.00 + 3.00 = 8.00"
-4. **Gestione degli Errori**: La divisione per zero e le radici quadrate negative restituiscono messaggi di errore
+1. **Annotazione `@Tool`**: indica a MCP che il metodo può essere chiamato da client esterni
+2. **Descrizioni Chiare**: ogni strumento ha una descrizione che aiuta i modelli AI a capire quando usarlo
+3. **Formato di Ritorno Consistente**: tutte le operazioni restituiscono stringhe leggibili come "5.00 + 3.00 = 8.00"
+4. **Gestione degli Errori**: divisione per zero e radici quadrate negative ritornano messaggi di errore
 
 **Operazioni Disponibili:**
 - `add(a, b)` - Somma due numeri
 - `subtract(a, b)` - Sottrae il secondo dal primo
 - `multiply(a, b)` - Moltiplica due numeri
-- `divide(a, b)` - Divide il primo per il secondo (con controllo dello zero)
-- `power(base, exponent)` - Eleva la base alla potenza dell'esponente
-- `squareRoot(number)` - Calcola la radice quadrata (con controllo dei numeri negativi)
+- `divide(a, b)` - Divide il primo per il secondo (con controllo zero)
+- `power(base, exponent)` - Eleva la base alla potenza dell’esponente
+- `squareRoot(number)` - Calcola la radice quadrata (con controllo negativo)
 - `modulus(a, b)` - Restituisce il resto della divisione
 - `absolute(number)` - Restituisce il valore assoluto
 - `help()` - Restituisce informazioni su tutte le operazioni
@@ -126,7 +127,7 @@ public class CalculatorService {
 
 **File:** `SDKClient.java`
 
-Questo client comunica direttamente con il server MCP senza utilizzare l'AI. Chiama manualmente funzioni specifiche del calcolatore:
+Questo client comunica direttamente con il server MCP senza usare AI. Chiama manualmente funzioni specifiche della calcolatrice:
 
 ```java
 public class SDKClient {
@@ -142,11 +143,11 @@ public class SDKClient {
         var client = McpClient.sync(this.transport).build();
         client.initialize();
         
-        // List available tools
+        // Elenca gli strumenti disponibili
         ListToolsResult toolsList = client.listTools();
         System.out.println("Available Tools = " + toolsList);
         
-        // Call specific calculator functions
+        // Chiama funzioni specifiche della calcolatrice
         CallToolResult resultAdd = client.callTool(
             new CallToolRequest("add", Map.of("a", 5.0, "b", 3.0))
         );
@@ -163,36 +164,41 @@ public class SDKClient {
 ```
 
 **Cosa fa:**
-1. **Si connette** al server del calcolatore su `http://localhost:8080` utilizzando il pattern builder
-2. **Elenca** tutti gli strumenti disponibili (le funzioni del calcolatore)
+1. **Si connette** al server calcolatrice su `http://localhost:8080` usando il pattern builder
+2. **Elenca** tutti gli strumenti disponibili (le funzioni della calcolatrice)
 3. **Chiama** funzioni specifiche con parametri esatti
-4. **Stampa** direttamente i risultati
+4. **Stampa** i risultati direttamente
 
-**Nota:** Questo esempio utilizza la dipendenza Spring AI 1.1.0-SNAPSHOT, che ha introdotto un pattern builder per il `WebFluxSseClientTransport`. Se stai utilizzando una versione stabile precedente, potrebbe essere necessario utilizzare il costruttore diretto.
+**Nota:** questo esempio usa la dipendenza Spring AI 1.1.0-SNAPSHOT, che ha introdotto un pattern builder per `WebFluxSseClientTransport`. Se usi una versione stabile più vecchia, potresti dover usare il costruttore diretto.
 
-**Quando usarlo:** Quando sai esattamente quale calcolo vuoi eseguire e desideri chiamarlo programmaticamente.
+**Quando usarlo:** quando sai esattamente quale calcolo eseguire e vuoi chiamarlo programmaticamente.
 
-### 4. Client Basato su AI
+### 4. Client Alimentato da AI
 
 **File:** `LangChain4jClient.java`
 
-Questo client utilizza un modello AI (GPT-4o-mini) che può decidere automaticamente quali strumenti del calcolatore utilizzare:
+Questo client usa un modello AI (GPT-4o-mini) che può decidere automaticamente quali strumenti calcolatrice usare:
 
 ```java
 public class LangChain4jClient {
     
     public static void main(String[] args) throws Exception {
-        // Set up the AI model (using GitHub Models)
+        // Configura il modello AI (Azure AI Foundry, autenticazione senza chiave tramite Microsoft Entra ID)
+        String endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1";
+        String token = new DefaultAzureCredentialBuilder().build()
+                .getToken(new TokenRequestContext().addScopes("https://ai.azure.com/.default"))
+                .block().getToken();
         ChatLanguageModel model = OpenAiOfficialChatModel.builder()
-                .isGitHubModels(true)
-                .apiKey(System.getenv("GITHUB_TOKEN"))
+                .baseUrl(baseUrl)
+                .apiKey(token)
                 .modelName("gpt-4o-mini")
                 .build();
 
-        // Connect to our calculator MCP server
+        // Connetti al nostro server calcolatrice MCP
         McpTransport transport = new HttpMcpTransport.Builder()
                 .sseUrl("http://localhost:8080/sse")
-                .logRequests(true)  // Shows what the AI is doing
+                .logRequests(true)  // Mostra cosa sta facendo l'AI
                 .logResponses(true)
                 .build();
 
@@ -200,18 +206,18 @@ public class LangChain4jClient {
                 .transport(transport)
                 .build();
 
-        // Give the AI access to our calculator tools
+        // Dai all'AI accesso ai nostri strumenti calcolatrice
         ToolProvider toolProvider = McpToolProvider.builder()
                 .mcpClients(List.of(mcpClient))
                 .build();
 
-        // Create an AI bot that can use our calculator
+        // Crea un bot AI che può usare la nostra calcolatrice
         Bot bot = AiServices.builder(Bot.class)
                 .chatLanguageModel(model)
                 .toolProvider(toolProvider)
                 .build();
 
-        // Now we can ask the AI to do calculations in natural language
+        // Ora possiamo chiedere all'AI di fare calcoli in linguaggio naturale
         String response = bot.chat("Calculate the sum of 24.5 and 17.3 using the calculator service");
         System.out.println(response);
 
@@ -222,31 +228,33 @@ public class LangChain4jClient {
 ```
 
 **Cosa fa:**
-1. **Crea** una connessione al modello AI utilizzando il tuo token GitHub
-2. **Si connette** al nostro server MCP del calcolatore
-3. **Dà** accesso all'AI a tutti gli strumenti del calcolatore
+1. **Crea** una connessione al modello AI usando il tuo token GitHub
+2. **Connette** l’AI al nostro server MCP calcolatrice
+3. **Concede** accesso a tutti gli strumenti della calcolatrice
 4. **Permette** richieste in linguaggio naturale come "Calcola la somma di 24.5 e 17.3"
 
-**L'AI automaticamente:**
-- Capisce che vuoi sommare i numeri
+**L’AI automaticamente:**
+- Capisce che vuoi sommare numeri
 - Sceglie lo strumento `add`
 - Chiama `add(24.5, 17.3)`
 - Restituisce il risultato in una risposta naturale
 
-## Eseguire gli Esempi
+## Esecuzione degli Esempi
 
-### Passo 1: Avviare il Server del Calcolatore
+### Passo 1: Avvia il Server Calcolatrice
 
-Per prima cosa, imposta il tuo token GitHub (necessario per il client AI):
+Prima, accedi e imposta il tuo endpoint Azure AI Foundry (necessario per il client AI — autenticazione senza chiave, nessuna API key):
 
 **Windows:**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 Avvia il server:
@@ -255,60 +263,62 @@ cd 04-PracticalSamples/calculator
 mvn clean spring-boot:run
 ```
 
-Il server si avvierà su `http://localhost:8080`. Dovresti vedere:
+Il server partirà su `http://localhost:8080`. Dovresti vedere:
 ```
 Started McpServerApplication in X.XXX seconds
 ```
 
-### Passo 2: Testare con il Client Diretto
+### Passo 2: Testa con Client Diretto
 
-In un **NUOVO** terminale con il server ancora in esecuzione, esegui il client MCP diretto:
+In un terminale **NUOVO** mentre il Server è ancora in funzione, esegui il client MCP diretto:
 ```bash
 cd 04-PracticalSamples/calculator
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient" -Dexec.classpathScope=test
 ```
 
-Vedrai un output simile a:
+Vedrai output come:
 ```
 Available Tools = [add, subtract, multiply, divide, power, squareRoot, modulus, absolute, help]
 Add Result = 5.00 + 3.00 = 8.00
 Square Root Result = √16.00 = 4.00
 ```
 
-### Passo 3: Testare con il Client AI
+### Passo 3: Testa con Client AI
 
 ```bash
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient" -Dexec.classpathScope=test
 ```
 
-Vedrai l'AI utilizzare automaticamente gli strumenti:
+Vedrai l’AI usare automaticamente gli strumenti:
 ```
 The sum of 24.5 and 17.3 is 41.8.
 The square root of 144 is 12.
 ```
 
-### Passo 4: Chiudere il Server MCP
+### Passo 4: Chiudi il Server MCP
 
-Quando hai finito di testare, puoi interrompere il client AI premendo `Ctrl+C` nel suo terminale. Il server MCP continuerà a funzionare fino a quando non lo interrompi.
-Per interrompere il server, premi `Ctrl+C` nel terminale in cui è in esecuzione.
+Quando hai finito di testare, puoi fermare il client AI premendo `Ctrl+C` nel suo terminale. Il server MCP continuerà a funzionare fino a quando lo fermerai.
+Per fermare il server, premi `Ctrl+C` nel terminale in cui è in esecuzione.
 
 ## Come Funziona Tutto Insieme
 
-Ecco il flusso completo quando chiedi all'AI "Quanto fa 5 + 3?":
+Ecco il flusso completo quando chiedi all’AI "Quanto fa 5 + 3?":
 
-1. **Tu** chiedi all'AI in linguaggio naturale
-2. **L'AI** analizza la tua richiesta e capisce che vuoi sommare
-3. **L'AI** chiama il server MCP: `add(5.0, 3.0)`
-4. **Il Servizio Calcolatore** esegue: `5.0 + 3.0 = 8.0`
-5. **Il Servizio Calcolatore** restituisce: `"5.00 + 3.00 = 8.00"`
-6. **L'AI** riceve il risultato e lo formatta in una risposta naturale
-7. **Tu** ottieni: "La somma di 5 e 3 è 8"
+1. **Tu** chiedi all’AI in linguaggio naturale
+2. **AI** analizza la richiesta e capisce che vuoi sommare
+3. **AI** chiama il server MCP: `add(5.0, 3.0)`
+4. **Servizio Calcolatrice** esegue: `5.0 + 3.0 = 8.0`
+5. **Servizio Calcolatrice** restituisce: `"5.00 + 3.00 = 8.00"`
+6. **AI** riceve il risultato e forma una risposta naturale
+7. **Tu** ricevi: "La somma di 5 e 3 è 8"
 
 ## Prossimi Passi
 
-Per ulteriori esempi, vedi [Capitolo 04: Esempi pratici](../README.md)
+Per altri esempi, vedi [Capitolo 04: Esempi pratici](../README.md)
 
 ---
 
-**Disclaimer**:  
-Questo documento è stato tradotto utilizzando il servizio di traduzione AI [Co-op Translator](https://github.com/Azure/co-op-translator). Sebbene ci impegniamo per garantire l'accuratezza, si prega di notare che le traduzioni automatiche possono contenere errori o imprecisioni. Il documento originale nella sua lingua nativa dovrebbe essere considerato la fonte autorevole. Per informazioni critiche, si raccomanda una traduzione professionale effettuata da un esperto umano. Non siamo responsabili per eventuali fraintendimenti o interpretazioni errate derivanti dall'uso di questa traduzione.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Disclaimer**:
+Questo documento è stato tradotto utilizzando il servizio di traduzione AI [Co-op Translator](https://github.com/Azure/co-op-translator). Sebbene ci impegniamo per garantire la precisione, si prega di notare che le traduzioni automatizzate possono contenere errori o imprecisioni. Il documento originale nella sua lingua nativa deve essere considerato la fonte autorevole. Per informazioni critiche, si raccomanda una traduzione professionale effettuata da un essere umano. Non siamo responsabili per eventuali malintesi o interpretazioni errate derivanti dall’uso di questa traduzione.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

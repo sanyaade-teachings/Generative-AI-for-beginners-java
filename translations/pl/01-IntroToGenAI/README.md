@@ -1,22 +1,18 @@
-# Wprowadzenie do Generatywnej Sztucznej Inteligencji - Edycja Java
-
-[![Wprowadzenie do Generatywnej SI](https://img.youtube.com/vi/XH46tGp_eSw/0.jpg)](https://www.youtube.com/watch?v=XH46tGp_eSw "Wprowadzenie do Generatywnej SI")
-
-> **Wideo**: [Obejrzyj przegląd wideo do tej lekcji na YouTube.](https://www.youtube.com/watch?v=XH46tGp_eSw) Możesz także kliknąć powyższy obraz miniatury.
+# Wprowadzenie do Generatywnej AI - Edycja Java
 
 ## Czego się nauczysz
 
-- **Podstawy generatywnej SI** obejmujące LLM, inżynierię promptów, tokeny, embedingi i bazy danych wektorowych
-- **Porównanie narzędzi do rozwoju SI w Javie** w tym Azure OpenAI SDK, Spring AI i OpenAI Java SDK
-- **Poznasz Model Context Protocol** i jego rolę w komunikacji agentów SI
+- **Podstawy generatywnej AI**, w tym LLM, inżynierię promptów, tokeny, embeddingi oraz bazy danych wektorowych
+- **Porównanie narzędzi do tworzenia AI w Javie**, w tym Azure OpenAI SDK, Spring AI oraz OpenAI Java SDK
+- **Poznasz Model Context Protocol** oraz jego rolę w komunikacji agentów AI
 
 ## Spis treści
 
 - [Wprowadzenie](#wprowadzenie)
-- [Szybkie przypomnienie koncepcji Generatywnej SI](#szybkie-przypomnienie-koncepcji-generatywnej-si)
+- [Szybkie przypomnienie pojęć generatywnej AI](#szybkie-przypomnienie-pojęć-generatywnej-ai)
 - [Przegląd inżynierii promptów](#przegląd-inżynierii-promptów)
-- [Tokeny, embedingi i agenci](#tokeny-embedingi-i-agenci)
-- [Narzędzia i biblioteki do rozwoju SI dla Java](#narzędzia-i-biblioteki-do-rozwoju-si-dla-java)
+- [Tokeny, embeddingi i agenci](#tokeny-embeddingi-i-agenci)
+- [Narzędzia i biblioteki do tworzenia AI w Javie](#narzędzia-i-biblioteki-do-tworzenia-ai-w-javie)
   - [OpenAI Java SDK](#openai-java-sdk)
   - [Spring AI](#spring-ai)
   - [Azure OpenAI Java SDK](#azure-openai-java-sdk)
@@ -25,80 +21,79 @@
 
 ## Wprowadzenie
 
-Witamy w pierwszym rozdziale Generatywnej SI dla początkujących - Edycja Java! Ta podstawowa lekcja wprowadza Cię w kluczowe koncepcje generatywnej SI oraz sposoby pracy z nimi za pomocą Javy. Poznasz niezbędne elementy budulcowe aplikacji SI, w tym Duże Modele Językowe (LLM), tokeny, embedingi i agentów SI. Przeanalizujemy także podstawowe narzędzia Java, które będziesz używać w trakcie tego kursu.
+Witamy w pierwszym rozdziale Kursu Generatywnej AI dla Początkujących - Edycja Java! Ta lekcja wprowadzająca przedstawi Ci podstawowe pojęcia dotyczące generatywnej AI oraz jak z nimi pracować za pomocą Javy. Nauczysz się o kluczowych elementach aplikacji AI, w tym dużych modelach językowych (LLM), tokenach, embeddingach oraz agentach AI. Poznamy również podstawowe narzędzia Java, które będziesz używać w trakcie tego kursu.
 
-### Szybkie przypomnienie koncepcji Generatywnej SI
+### Szybkie przypomnienie pojęć generatywnej AI
 
-Generatywna SI to rodzaj sztucznej inteligencji, która tworzy nowe treści, takie jak tekst, obrazy czy kod, na podstawie wzorców i zależności wyuczonych z danych. Modele generatywnej SI potrafią generować odpowiedzi przypominające ludzkie, rozumieć kontekst, a czasem nawet tworzyć treści wydające się być ludzkie.
+Generatywna AI to rodzaj sztucznej inteligencji, która tworzy nowe treści, takie jak tekst, obrazy lub kod, na podstawie wzorców i zależności wyuczonych z danych. Modele generatywnej AI potrafią generować odpowiedzi przypominające ludzkie, rozumieć kontekst, a czasem nawet tworzyć treści wyglądające na napisane przez człowieka.
 
-Rozwijając aplikacje AI w Javie, będziesz pracować z **modelami generatywnej SI** do tworzenia treści. Niektóre możliwości modeli generatywnej SI to:
+Podczas tworzenia aplikacji AI w Javie, będziesz pracować z **modelami generatywnej AI**, aby generować treści. Niektóre możliwości modeli generatywnej AI to:
 
-- **Generowanie tekstu**: tworzenie tekstu przypominającego ludzki, do chatbotów, treści i uzupełniania tekstu.
-- **Generowanie i analiza obrazów**: tworzenie realistycznych obrazów, ulepszanie zdjęć i wykrywanie obiektów.
+- **Generowanie tekstu**: tworzenie tekstów przypominających ludzkie dla chatbotów, treści i uzupełniania tekstu.
+- **Generowanie i analiza obrazów**: tworzenie realistycznych obrazów, poprawa zdjęć i wykrywanie obiektów.
 - **Generowanie kodu**: pisanie fragmentów kodu lub skryptów.
 
-Istnieją różne typy modeli optymalizowanych do różnych zadań. Na przykład zarówno **Małe Modele Językowe (SLM)**, jak i **Duże Modele Językowe (LLM)** mogą obsługiwać generowanie tekstu, przy czym LLM zazwyczaj oferują lepszą wydajność dla zadań złożonych. W zadaniach związanych z obrazami używa się specjalistycznych modeli wizualnych lub modeli multimodalnych.
+Istnieją różne typy modeli zoptymalizowanych pod kątem konkretnych zadań. Na przykład zarówno **Małe Modele Językowe (SLM)**, jak i **Duże Modele Językowe (LLM)** mogą radzić sobie z generowaniem tekstu, przy czym LLM zwykle oferują lepszą wydajność w przypadku zadań skomplikowanych. Do zadań związanych z obrazami używa się specjalistycznych modeli wizji lub modeli multimodalnych.
 
-![Rysunek: Typy modeli generatywnej SI i ich zastosowania.](../../../translated_images/pl/llms.225ca2b8a0d34473.webp)
+![Figure: Generative AI model types and use cases.](../../../translated_images/pl/llms.225ca2b8a0d34473.webp)
 
-Oczywiście odpowiedzi tych modeli nie są zawsze idealne. Pewnie słyszałeś o modelach „halucynujących” lub generujących błędne informacje w sposób autorytatywny. Jednak możesz pomóc modelowi tworzyć lepsze odpowiedzi, podając mu jasne instrukcje i kontekst. Tu właśnie wchodzi w grę **inżynieria promptów**.
+Oczywiście, odpowiedzi z tych modeli nie są zawsze doskonałe. Prawdopodobnie słyszałeś o modelach "halucynujących" lub generujących nieprawdziwe informacje w sposób autorytatywny. Możesz jednak pomóc modelowi w generowaniu lepszych odpowiedzi, dostarczając mu jasne instrukcje i kontekst. Właśnie tutaj pojawia się **inżynieria promptów**.
 
 #### Przegląd inżynierii promptów
 
-Inżynieria promptów to praktyka projektowania skutecznych wejść, które kierują modele AI do pożądanych wyników. Obejmuje ona:
+Inżynieria promptów to praktyka projektowania efektywnych wejść, które kierują modele AI ku pożądanym wyjściom. Obejmuje ona:
 
-- **Jasność**: tworzenie instrukcji klarownych i jednoznacznych.
+- **Jasność**: formułowanie instrukcji w sposób przejrzysty i jednoznaczny.
 - **Kontekst**: dostarczanie niezbędnych informacji w tle.
 - **Ograniczenia**: określanie wszelkich limitów lub formatów.
 
-Niektóre dobre praktyki inżynierii promptów to projektowanie promptów, jasne instrukcje, dzielenie zadań na kroki, uczenie jednokrotne i kilku-krotne oraz strojenie promptów. Testowanie różnych promptów jest kluczowe, aby znaleźć najlepsze rozwiązanie dla Twojego konkretnego zastosowania.
+Do najlepszych praktyk inżynierii promptów należą projektowanie promptów, jasne instrukcje, podział zadania, nauka jednorazowa i wielokrotna oraz dostrajanie promptów. Testowanie różnych promptów jest niezbędne, aby znaleźć najlepsze rozwiązanie dla konkretnego zastosowania.
 
 Podczas tworzenia aplikacji będziesz pracować z różnymi typami promptów:
 - **Prompty systemowe**: ustalają podstawowe zasady i kontekst zachowania modelu
 - **Prompty użytkownika**: dane wejściowe od użytkowników Twojej aplikacji
-- **Prompty asystenta**: odpowiedzi modelu bazujące na promptach systemowych i użytkowników
+- **Prompty asystenta**: odpowiedzi modelu oparte o prompty systemowe i użytkownika
 
-> **Dowiedz się więcej**: Dowiedz się więcej o inżynierii promptów w [rozdziale Inżynieria Promptów kursu GenAI dla początkujących](https://github.com/microsoft/generative-ai-for-beginners/tree/main/04-prompt-engineering-fundamentals)
+> **Dowiedz się więcej**: Dowiedz się więcej o inżynierii promptów w [rozdziale Inżynieria promptów kursu GenAI dla początkujących](https://github.com/microsoft/generative-ai-for-beginners/tree/main/04-prompt-engineering-fundamentals)
 
-#### Tokeny, embedingi i agenci
+#### Tokeny, embeddingi i agenci
 
-Pracując z modelami generatywnej SI, spotkasz terminy takie jak **tokeny**, **embedingi**, **agenci** i **Model Context Protocol (MCP)**. Oto szczegółowy przegląd tych koncepcji:
+Pracując z modelami generatywnej AI, napotkasz terminy takie jak **tokeny**, **embeddingi**, **agenci** oraz **Model Context Protocol (MCP)**. Oto szczegółowy przegląd tych pojęć:
 
-- **Tokeny**: Tokeny to najmniejsze jednostki tekstu w modelu. Mogą to być słowa, znaki lub pod-słowa. Tokeny są używane do reprezentowania danych tekstowych w formacie zrozumiałym dla modelu. Na przykład zdanie "The quick brown fox jumped over the lazy dog" może zostać ztokenizowane jako ["The", " quick", " brown", " fox", " jumped", " over", " the", " lazy", " dog"] lub ["The", " qu", "ick", " br", "own", " fox", " jump", "ed", " over", " the", " la", "zy", " dog"] w zależności od użytej strategii tokenizacji.
+- **Tokeny**: Tokeny to najmniejsza jednostka tekstu w modelu. Mogą to być słowa, znaki lub podwyrazy. Tokeny służą do reprezentowania danych tekstowych w formacie zrozumiałym dla modelu. Na przykład zdanie "The quick brown fox jumped over the lazy dog" może zostać rozbite na tokeny jako ["The", " quick", " brown", " fox", " jumped", " over", " the", " lazy", " dog"] lub ["The", " qu", "ick", " br", "own", " fox", " jump", "ed", " over", " the", " la", "zy", " dog"], w zależności od strategii tokenizacji.
 
-![Rysunek: Przykład tokenów generatywnej SI - rozbijanie słów na tokeny](../../../translated_images/pl/tokens.6283ed277a2ffff4.webp)
+![Figure: Generative AI tokens example of breaking words into tokens](../../../translated_images/pl/tokens.6283ed277a2ffff4.webp)
 
-Tokenizacja to proces rozbijania tekstu na te mniejsze jednostki. To kluczowe, ponieważ modele operują na tokenach, a nie surowym tekście. Liczba tokenów w promptcie wpływa na długość i jakość odpowiedzi modelu, ponieważ modele mają limity tokenów dla okna kontekstowego (np. 128K tokenów dla całkowitego kontekstu GPT-4o, obejmującego zarówno wejście, jak i wyjście).
+Tokenizacja to proces rozbijania tekstu na te mniejsze jednostki. To kluczowe, ponieważ modele operują na tokenach, a nie na surowym tekście. Liczba tokenów w prompt wpływa na długość i jakość odpowiedzi modelu, ponieważ modele mają limity tokenów dla okna kontekstowego (np. 128K tokenów dla całkowitego kontekstu GPT-4o, łącznie z wejściem i wyjściem).
 
-  W Javie możesz użyć bibliotek, takich jak OpenAI SDK, aby automatycznie obsługiwać tokenizację podczas wysyłania zapytań do modeli AI.
+  W Javie możesz używać bibliotek, takich jak OpenAI SDK, które automatycznie obsługują tokenizację podczas wysyłania zapytań do modeli AI.
 
-- **Embedingi**: Embedingi to wektorowe reprezentacje tokenów, które odzwierciedlają znaczenie semantyczne. Są to reprezentacje numeryczne (zwykle tablice liczb zmiennoprzecinkowych), które pozwalają modelom rozumieć relacje między słowami i generować odpowiedzi odpowiednie semantycznie. Podobne słowa mają podobne embedingi, co umożliwia modelowi rozumienie takich pojęć jak synonimy i relacje semantyczne.
+- **Embeddingi**: Embeddingi to reprezentacje wektorowe tokenów, które uchwytują znaczenie semantyczne. Są to reprezentacje liczbowe (zwykle tablice liczb zmiennoprzecinkowych), które pozwalają modelom rozumieć relacje między słowami i generować odpowiedzi kontekstowo odpowiednie. Podobne słowa mają podobne embeddingi, co umożliwia modelowi rozumienie koncepcji takich jak synonimy oraz relacje semantyczne.
 
-![Rysunek: Embedingi](../../../translated_images/pl/embedding.398e50802c0037f9.webp)
+![Figure: Embeddings](../../../translated_images/pl/embedding.398e50802c0037f9.webp)
 
-  W Javie możesz generować embedingi za pomocą OpenAI SDK lub innych bibliotek obsługujących generowanie embedingów. Embedingi są niezbędne dla zadań takich jak wyszukiwanie semantyczne, gdzie wyszukujesz podobne treści na podstawie znaczenia, a nie dokładnego dopasowania tekstu.
+  W Javie możesz generować embeddingi za pomocą OpenAI SDK lub innych bibliotek wspierających ich tworzenie. Embeddingi są niezbędne do zadań takich jak wyszukiwanie semantyczne, gdy chcesz znaleźć podobne treści na bazie znaczenia, a nie dokładnych dopasowań tekstu.
 
-- **Bazy danych wektorowych**: Bazy danych wektorowych to wyspecjalizowane systemy przechowywania zoptymalizowane pod kątem embedingów. Umożliwiają efektywne wyszukiwanie podobieństw i są kluczowe dla wzorców Retrieval-Augmented Generation (RAG), gdzie potrzebujesz znaleźć istotne informacje z dużych zbiorów danych na podstawie podobieństwa semantycznego, a nie dokładnego dopasowania.
+- **Bazy danych wektorowych**: Bazy danych wektorowych to wyspecjalizowane systemy przechowywania zoptymalizowane pod kątem embeddingów. Umożliwiają efektywne wyszukiwanie podobieństw i są kluczowe dla wzorców Generowania Wspomaganego Odzyskiwaniem (RAG), gdzie trzeba znaleźć odpowiednie informacje z dużych zbiorów na podstawie podobieństwa semantycznego, a nie dokładnego dopasowania.
 
-![Rysunek: Architektura bazy danych wektorowych pokazująca, jak embedingi są przechowywane i pobierane do wyszukiwania podobieństw.](../../../translated_images/pl/vector.f12f114934e223df.webp)
+![Figure: Vector database architecture showing how embeddings are stored and retrieved for similarity search.](../../../translated_images/pl/vector.f12f114934e223df.webp)
 
-> **Uwaga**: W kursie nie będziemy omawiać baz danych wektorowych, ale warto o nich wspomnieć, ponieważ są często używane w rzeczywistych zastosowaniach.
+> **Uwaga**: W tym kursie nie omówimy baz wektorowych, ale warto o nich wspomnieć, ponieważ są powszechnie używane w aplikacjach produkcyjnych.
 
-- **Agenci i MCP**: Komponenty SI, które autonomicznie współdziałają z modelami, narzędziami i systemami zewnętrznymi. Model Context Protocol (MCP) dostarcza standardowy sposób umożliwiający agentom bezpieczny dostęp do zewnętrznych źródeł danych i narzędzi. Dowiedz się więcej w naszym kursie [MCP dla początkujących](https://github.com/microsoft/mcp-for-beginners).
+- **Agenci i MCP**: Komponenty AI, które autonomicznie wchodzą w interakcje z modelami, narzędziami i systemami zewnętrznymi. Model Context Protocol (MCP) zapewnia ustandaryzowany sposób, w jaki agenci mogą bezpiecznie uzyskiwać dostęp do zewnętrznych źródeł danych i narzędzi. Więcej informacji znajdziesz w naszym kursie [MCP dla początkujących](https://github.com/microsoft/mcp-for-beginners).
 
-W aplikacjach SI w Javie użyjesz tokenów do przetwarzania tekstu, embedingów do wyszukiwania semantycznego i RAG, baz danych wektorowych do pobierania danych oraz agentów z MCP do budowania inteligentnych systemów korzystających z narzędzi.
+W aplikacjach AI w Javie użyjesz tokenów do przetwarzania tekstu, embeddingów do wyszukiwania semantycznego i RAG, baz wektorowych do pobierania danych oraz agentów z MCP do budowy inteligentnych systemów korzystających z narzędzi.
 
-![Rysunek: Jak prompt zamienia się w odpowiedź — tokeny, wektory, opcjonalne wyszukiwanie RAG, przetwarzanie LLM i agent MCP w jednym szybkim przepływie.](../../../translated_images/pl/flow.f4ef62c3052d12a8.webp)
+![Figure: how a prompt becomes a reply—tokens, vectors, optional RAG lookup, LLM thinking, and an MCP agent all in one quick flow..](../../../translated_images/pl/flow.f4ef62c3052d12a8.webp)
 
-### Narzędzia i biblioteki do rozwoju SI dla Java
+### Narzędzia i biblioteki do tworzenia AI w Javie
 
-Java oferuje znakomite narzędzia do rozwoju SI. Istnieją trzy główne biblioteki, które poznamy w tym kursie - OpenAI Java SDK, Azure OpenAI SDK i Spring AI.
+Java oferuje doskonałe narzędzia do tworzenia AI. Istnieją trzy główne biblioteki, które omówimy w trakcie kursu - OpenAI Java SDK, Azure OpenAI SDK oraz Spring AI.
 
-Oto szybka tabela referencyjna pokazująca, którego SDK użyto w przykładach poszczególnych rozdziałów:
+Poniżej szybka tabela pokazująca, które SDK jest używane w przykładach na poszczególnych rozdziałach:
 
 | Rozdział | Przykład | SDK |
 |---------|--------|-----|
-| 02-SetupDevEnvironment | github-models | OpenAI Java SDK |
 | 02-SetupDevEnvironment | basic-chat-azure | Spring AI Azure OpenAI |
 | 03-CoreGenerativeAITechniques | examples | Azure OpenAI SDK |
 | 04-PracticalSamples | petstory | OpenAI Java SDK |
@@ -113,33 +108,33 @@ Oto szybka tabela referencyjna pokazująca, którego SDK użyto w przykładach p
 
 #### OpenAI Java SDK
 
-OpenAI SDK to oficjalna biblioteka Java dla API OpenAI. Zapewnia prosty i spójny interfejs do interakcji z modelami OpenAI, ułatwiając integrację możliwości SI w aplikacjach Java. Przykład GitHub Models z rozdziału 2, aplikacja Pet Story i przykład Foundry Local z rozdziału 4 demonstrują podejście OpenAI SDK.
+OpenAI SDK to oficjalna biblioteka Java dla API OpenAI. Zapewnia prosty i spójny interfejs do interakcji z modelami OpenAI, ułatwiając integrację funkcji AI w aplikacjach Java. Aplikacje z rozdziału 4, Pet Story oraz Foundry Local, demonstrują podejście OpenAI SDK w połączeniu z Azure AI Foundry.
 
 #### Spring AI
 
-Spring AI to kompleksowy framework, który wprowadza możliwości SI do aplikacji Spring, dostarczając jednolitą warstwę abstrakcji dla różnych dostawców SI. Integruje się bezproblemowo z ekosystemem Spring, co czyni go idealnym wyborem dla firmowych aplikacji Java potrzebujących możliwości SI.
+Spring AI to kompleksowy framework, który dostarcza możliwości AI do aplikacji Spring, zapewniając spójną warstwę abstrakcji między różnymi dostawcami AI. Integruje się bezproblemowo z ekosystemem Springa, co czyni go idealnym rozwiązaniem dla aplikacji korporacyjnych w Javie potrzebujących funkcji AI.
 
-Siła Spring AI tkwi w płynnej integracji z ekosystemem Spring, ułatwiającej budowanie produkcyjnych aplikacji SI za pomocą znanych wzorców Spring, takich jak wstrzykiwanie zależności, zarządzanie konfiguracją i frameworki testowe. Spring AI wykorzystasz w rozdziałach 2 i 4, aby tworzyć aplikacje korzystające zarówno z OpenAI, jak i Model Context Protocol (MCP).
+Siła Spring AI polega na jego płynnej integracji z ekosystemem Spring, dzięki czemu łatwo budować produkcyjne aplikacje AI z użyciem znanych wzorców Spring, takich jak wstrzykiwanie zależności, zarządzanie konfiguracją oraz frameworki testowe. Użyjesz Spring AI w rozdziałach 2 i 4 do budowy aplikacji korzystających zarówno z OpenAI, jak i Model Context Protocol (MCP) w bibliotekach Spring AI.
 
 ##### Model Context Protocol (MCP)
 
-[Model Context Protocol (MCP)](https://modelcontextprotocol.io/) to rozwijający się standard umożliwiający aplikacjom SI bezpieczną interakcję z zewnętrznymi źródłami danych i narzędziami. MCP zapewnia ustandaryzowany sposób dla modeli SI na dostęp do informacji kontekstowych i wykonywanie działań w Twoich aplikacjach.
+[Model Context Protocol (MCP)](https://modelcontextprotocol.io/) to rozwijający się standard umożliwiający aplikacjom AI bezpieczną interakcję z zewnętrznymi źródłami danych i narzędziami. MCP dostarcza ustandaryzowany sposób, w jaki modele AI uzyskują dostęp do informacji kontekstowych i wykonują działania w Twoich aplikacjach.
 
-W rozdziale 4 zbudujesz prostą usługę kalkulatora MCP, która ilustruje podstawy Model Context Protocol w Spring AI, pokazując, jak tworzyć podstawowe integracje narzędzi i architektury usług.
+W rozdziale 4 zbudujesz prostą usługę kalkulatora MCP, która demonstruje podstawy Model Context Protocol ze Spring AI, pokazując jak tworzyć podstawowe integracje narzędzi i architekturę usług.
 
 #### Azure OpenAI Java SDK
 
-Biblioteka kliencka Azure OpenAI dla Java to adaptacja REST API OpenAI, która oferuje idiomatyczny interfejs i integrację z resztą ekosystemu SDK Azure. W rozdziale 3 zbudujesz aplikacje za pomocą Azure OpenAI SDK, w tym aplikacje czatujące, wywoływanie funkcji i wzorce RAG (Retrieval-Augmented Generation).
+Biblioteka klienta Azure OpenAI dla Javy to adaptacja REST API OpenAI, która zapewnia idiomatyczny interfejs i integrację z resztą ekosystemu Azure SDK. W rozdziale 3 zbudujesz aplikacje używając Azure OpenAI SDK, w tym aplikacje czatowe, wywoływanie funkcji oraz wzorce RAG (Retrieval-Augmented Generation).
 
-> Uwaga: Azure OpenAI SDK jest w tyle za OpenAI Java SDK pod względem funkcji, dlatego do przyszłych projektów rozważ użycie OpenAI Java SDK.
+> Uwaga: Azure OpenAI SDK pozostaje w tyle za OpenAI Java SDK pod względem funkcji, dlatego do przyszłych projektów rozważ użycie OpenAI Java SDK.
 
 ## Podsumowanie
 
-To kończy podstawy! Teraz rozumiesz:
+To by było na tyle jeśli chodzi o podstawy! Teraz rozumiesz:
 
-- Kluczowe koncepcje stojące za generatywną SI – od LLM i inżynierii promptów po tokeny, embedingi i bazy danych wektorowych
-- Dostępne opcje narzędzi dla rozwoju SI w Javie: Azure OpenAI SDK, Spring AI i OpenAI Java SDK
-- Czym jest Model Context Protocol i jak umożliwia agentom SI współpracę z narzędziami zewnętrznymi
+- Kluczowe pojęcia generatywnej AI – od LLM i inżynierii promptów po tokeny, embeddingi i bazy wektorowe
+- Twoje opcje narzędziowe do tworzenia AI w Javie: Azure OpenAI SDK, Spring AI i OpenAI Java SDK
+- Czym jest Model Context Protocol i jak umożliwia agentom AI współpracę z zewnętrznymi narzędziami
 
 ## Kolejne kroki
 
@@ -148,6 +143,6 @@ To kończy podstawy! Teraz rozumiesz:
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Zastrzeżenie**:  
-Niniejszy dokument został przetłumaczony za pomocą automatycznej usługi tłumaczeniowej AI [Co-op Translator](https://github.com/Azure/co-op-translator). Chociaż staramy się zapewnić dokładność tłumaczenia, prosimy mieć na uwadze, że tłumaczenia automatyczne mogą zawierać błędy lub nieścisłości. Oryginalny dokument w języku źródłowym powinien być traktowany jako źródło autorytatywne. W przypadku informacji krytycznych zalecane jest skorzystanie z profesjonalnego tłumaczenia wykonanego przez człowieka. Nie ponosimy odpowiedzialności za jakiekolwiek nieporozumienia lub błędne interpretacje wynikające z korzystania z tego tłumaczenia.
+**Zastrzeżenie**:
+Niniejszy dokument został przetłumaczony za pomocą usługi tłumaczenia AI [Co-op Translator](https://github.com/Azure/co-op-translator). Choć dążymy do dokładności, prosimy pamiętać, że automatyczne tłumaczenia mogą zawierać błędy lub niedokładności. Oryginalny dokument w jego języku źródłowym należy uznawać za autorytatywne źródło. W przypadku informacji krytycznych zalecane jest skorzystanie z profesjonalnego tłumaczenia wykonanego przez człowieka. Nie ponosimy odpowiedzialności za jakiekolwiek nieporozumienia lub błędne interpretacje wynikające z użycia tego tłumaczenia.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

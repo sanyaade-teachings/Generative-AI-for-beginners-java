@@ -2,38 +2,39 @@
 
 ## Table of Contents
 
-- [Wetin You Go Learn](../../../../04-PracticalSamples/calculator)
-- [Prerequisites](../../../../04-PracticalSamples/calculator)
-- [Understand Di Project Structure](../../../../04-PracticalSamples/calculator)
-- [Core Components Explained](../../../../04-PracticalSamples/calculator)
-  - [1. Main Application](../../../../04-PracticalSamples/calculator)
-  - [2. Calculator Service](../../../../04-PracticalSamples/calculator)
-  - [3. Direct MCP Client](../../../../04-PracticalSamples/calculator)
-  - [4. AI-Powered Client](../../../../04-PracticalSamples/calculator)
-- [How to Run Di Examples](../../../../04-PracticalSamples/calculator)
-- [How Everything Work Together](../../../../04-PracticalSamples/calculator)
-- [Next Steps](../../../../04-PracticalSamples/calculator)
+- [Wetin You Go Learn](#wetin-you-go-learn)
+- [Wetin You Must Get Before](#wetin-you-must-get-before)
+- [How To Understand Di Project Structure](#how-to-understand-di-project-structure)
+- [Core Components We Explain](#core-components-we-explain)
+  - [1. Main Application](#1-main-application)
+  - [2. Calculator Service](#2-calculator-service)
+  - [3. Direct MCP Client](#3-direct-mcp-client)
+  - [4. AI-Powered Client](#4-ai-powered-client)
+- [How To Run Di Examples](#how-to-run-di-examples)
+- [How Everything Dey Work Together](#how-everything-dey-work-together)
+- [Next Steps](#next-steps)
 
 ## Wetin You Go Learn
 
-Dis tutorial go show you how to build calculator service wey dey use Model Context Protocol (MCP). You go sabi:
+Dis tutorial go explain how to build calculator service wit Model Context Protocol (MCP). You go sabi:
 
 - How to create service wey AI fit use as tool
-- How to setup direct communication wit MCP services
-- How AI models fit choose tools wey dem go use automatically
-- Di difference between direct protocol calls and AI-assisted interactions
+- How to setup direct talk with MCP services
+- How AI models fit automatically select which tools to use
+- The difference between direct protocol calls and AI-assisted interaction dem
 
-## Prerequisites
+## Wetin You Must Get Before
 
 Before you start, make sure say you get:
-- Java 21 or higher wey don dey installed
-- Maven for dependency management
-- GitHub account wey get personal access token (PAT)
-- Basic understanding of Java and Spring Boot
+- Java 21 or any version wey dey higher
+- Maven for managing dependencies
+- Azure AI Foundry model deployment (make you deploy am wit `azd up` — check [Chapter 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
+- The [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), sign in wit `az login` (no API key needed)
+- Basic knowledge of Java and Spring Boot
 
-## Understand Di Project Structure
+## How To Understand Di Project Structure
 
-Di calculator project get some important files:
+The calculator project get plenty important files:
 
 ```
 calculator/
@@ -46,13 +47,13 @@ calculator/
     └── Bot.java                          # Simple chat interface
 ```
 
-## Core Components Explained
+## Core Components We Explain
 
 ### 1. Main Application
 
 **File:** `McpServerApplication.java`
 
-Na di entry point of our calculator service. E be standard Spring Boot application wey get one special addition:
+Na here calculator service start. E be typical Spring Boot application but e get one special thing:
 
 ```java
 @SpringBootApplication
@@ -70,15 +71,15 @@ public class McpServerApplication {
 ```
 
 **Wetin dis one dey do:**
-- E dey start Spring Boot web server for port 8080
-- E dey create `ToolCallbackProvider` wey go make our calculator methods dey available as MCP tools
-- Di `@Bean` annotation dey tell Spring to manage am as component wey other parts fit use
+- E go start Spring Boot web server for port 8080
+- E go create `ToolCallbackProvider` wey go make our calculator methods dey available as MCP tools
+- The `@Bean` annotation mean say Spring go manage am as component wey other parts fit use
 
 ### 2. Calculator Service
 
 **File:** `CalculatorService.java`
 
-Na here all di math dey happen. Each method dey mark wit `@Tool` to make am dey available through MCP:
+Na here be where all math work dey happen. Each method get `@Tool` wey mean say MCP fit call am:
 
 ```java
 @Service
@@ -96,7 +97,7 @@ public class CalculatorService {
         return formatResult(a, "-", b, result);
     }
     
-    // More calculator operations...
+    // More calculator wahala dem...
     
     private String formatResult(double a, String operator, double b, double result) {
         return String.format("%.2f %s %.2f = %.2f", a, operator, b, result);
@@ -104,29 +105,29 @@ public class CalculatorService {
 }
 ```
 
-**Key features:**
+**Main features:**
 
-1. **`@Tool` Annotation**: E dey tell MCP say dis method fit dey called by external clients
-2. **Clear Descriptions**: Each tool get description wey dey help AI models sabi when to use am
+1. **`@Tool` Annotation**: E tell MCP say dis method fit dey called by external clients
+2. **Clear Descriptions**: Each tool get description wey go help AI models sabi wen to use am
 3. **Consistent Return Format**: All operations dey return human-readable strings like "5.00 + 3.00 = 8.00"
 4. **Error Handling**: Division by zero and negative square roots dey return error messages
 
-**Available Operations:**
+**Operations wey dey available:**
 - `add(a, b)` - Add two numbers
 - `subtract(a, b)` - Subtract second number from first
 - `multiply(a, b)` - Multiply two numbers
-- `divide(a, b)` - Divide first number by second (wit zero-check)
-- `power(base, exponent)` - Raise base to di power of exponent
-- `squareRoot(number)` - Calculate square root (wit negative check)
+- `divide(a, b)` - Divide first by second (check for zero)
+- `power(base, exponent)` - Raise base to power of exponent
+- `squareRoot(number)` - Calculate square root (check for negative)
 - `modulus(a, b)` - Return remainder of division
 - `absolute(number)` - Return absolute value
-- `help()` - Return information about all operations
+- `help()` - Return info about all operations
 
 ### 3. Direct MCP Client
 
 **File:** `SDKClient.java`
 
-Dis client dey talk directly to di MCP server without using AI. E dey manually call specific calculator functions:
+Dis client dey talk directly to MCP server without AI. E dey manually call specific calculator functions:
 
 ```java
 public class SDKClient {
@@ -142,11 +143,11 @@ public class SDKClient {
         var client = McpClient.sync(this.transport).build();
         client.initialize();
         
-        // List available tools
+        // List all di tools wey dey available
         ListToolsResult toolsList = client.listTools();
         System.out.println("Available Tools = " + toolsList);
         
-        // Call specific calculator functions
+        // Call di specific calculator functions
         CallToolResult resultAdd = client.callTool(
             new CallToolRequest("add", Map.of("a", 5.0, "b", 3.0))
         );
@@ -163,36 +164,41 @@ public class SDKClient {
 ```
 
 **Wetin dis one dey do:**
-1. **Connects** to di calculator server for `http://localhost:8080` using di builder pattern
-2. **Lists** all available tools (our calculator functions)
-3. **Calls** specific functions wit exact parameters
-4. **Prints** di results directly
+1. **Connect** to calculator server at `http://localhost:8080` using builder pattern
+2. **List** all available tools (our calculator functions)
+3. **Call** specific functions wit exact parameters
+4. **Print** results directly
 
-**Note:** Dis example dey use di Spring AI 1.1.0-SNAPSHOT dependency, wey introduce builder pattern for di `WebFluxSseClientTransport`. If you dey use older stable version, you fit need to use di direct constructor instead.
+**Note:** Dis example dey use Spring AI 1.1.0-SNAPSHOT dependency, wey introduce builder pattern for `WebFluxSseClientTransport`. If you dey use older stable version, you fit need use direct constructor.
 
-**When to use dis:** When you sabi di exact calculation wey you wan perform and wan call am programmatically.
+**When to use dis:** When you sabi exactly which calculation you want perform and you want call am programmatically.
 
 ### 4. AI-Powered Client
 
 **File:** `LangChain4jClient.java`
 
-Dis client dey use AI model (GPT-4o-mini) wey fit automatically decide which calculator tools to use:
+Dis client dey use AI model (GPT-4o-mini) wey fit automatically decide which calculator tools to take:
 
 ```java
 public class LangChain4jClient {
     
     public static void main(String[] args) throws Exception {
-        // Set up the AI model (using GitHub Models)
+        // Arrange di AI model (Azure AI Foundry, no need key auth through Microsoft Entra ID)
+        String endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1";
+        String token = new DefaultAzureCredentialBuilder().build()
+                .getToken(new TokenRequestContext().addScopes("https://ai.azure.com/.default"))
+                .block().getToken();
         ChatLanguageModel model = OpenAiOfficialChatModel.builder()
-                .isGitHubModels(true)
-                .apiKey(System.getenv("GITHUB_TOKEN"))
+                .baseUrl(baseUrl)
+                .apiKey(token)
                 .modelName("gpt-4o-mini")
                 .build();
 
         // Connect to our calculator MCP server
         McpTransport transport = new HttpMcpTransport.Builder()
                 .sseUrl("http://localhost:8080/sse")
-                .logRequests(true)  // Shows what the AI is doing
+                .logRequests(true)  // Show wetin di AI dey do
                 .logResponses(true)
                 .build();
 
@@ -200,18 +206,18 @@ public class LangChain4jClient {
                 .transport(transport)
                 .build();
 
-        // Give the AI access to our calculator tools
+        // Allow di AI make e fit use our calculator tools
         ToolProvider toolProvider = McpToolProvider.builder()
                 .mcpClients(List.of(mcpClient))
                 .build();
 
-        // Create an AI bot that can use our calculator
+        // Make one AI bot wey fit use our calculator
         Bot bot = AiServices.builder(Bot.class)
                 .chatLanguageModel(model)
                 .toolProvider(toolProvider)
                 .build();
 
-        // Now we can ask the AI to do calculations in natural language
+        // Now we fit ask di AI to do calculations for natural language
         String response = bot.chat("Calculate the sum of 24.5 and 17.3 using the calculator service");
         System.out.println(response);
 
@@ -222,47 +228,49 @@ public class LangChain4jClient {
 ```
 
 **Wetin dis one dey do:**
-1. **Creates** AI model connection using your GitHub token
-2. **Connects** di AI to our calculator MCP server
-3. **Gives** di AI access to all our calculator tools
-4. **Allows** natural language requests like "Calculate di sum of 24.5 and 17.3"
+1. **Create** AI model connection using your GitHub token
+2. **Connect** AI to our calculator MCP server
+3. **Give** AI access to all our calculator tools
+4. **Allow** natural language commands like "Calculate the sum of 24.5 and 17.3"
 
-**Di AI automatically:**
-- E go sabi say you wan add numbers
-- E go choose di `add` tool
-- E go call `add(24.5, 17.3)`
-- E go return di result in natural response
+**The AI automatically:**
+- Understand say you wan add numbers
+- Choose the `add` tool
+- Call `add(24.5, 17.3)`
+- Return result in normal way
 
-## How to Run Di Examples
+## How To Run Di Examples
 
-### Step 1: Start Di Calculator Server
+### Step 1: Start The Calculator Server
 
-First, set your GitHub token (e dey needed for di AI client):
+First, sign in and set your Azure AI Foundry endpoint (needed for AI client — no API key):
 
 **Windows:**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-Start di server:
+Start the server:
 ```bash
 cd 04-PracticalSamples/calculator
 mvn clean spring-boot:run
 ```
 
-Di server go start for `http://localhost:8080`. You go see:
+Server go start for `http://localhost:8080`. You go see:
 ```
 Started McpServerApplication in X.XXX seconds
 ```
 
 ### Step 2: Test wit Direct Client
 
-For **NEW** terminal wey di Server still dey run, run di direct MCP client:
+For **NEW** terminal wey server still dey run, run direct MCP client:
 ```bash
 cd 04-PracticalSamples/calculator
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient" -Dexec.classpathScope=test
@@ -281,28 +289,28 @@ Square Root Result = √16.00 = 4.00
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient" -Dexec.classpathScope=test
 ```
 
-You go see di AI dey use tools automatically:
+You go see AI dey use tools automatically:
 ```
 The sum of 24.5 and 17.3 is 41.8.
 The square root of 144 is 12.
 ```
 
-### Step 4: Close Di MCP Server
+### Step 4: Close The MCP Server
 
-When you don finish testing, you fit stop di AI client by pressing `Ctrl+C` for di terminal wey e dey. Di MCP server go still dey run until you stop am.
-To stop di server, press `Ctrl+C` for di terminal wey e dey run.
+When finish your test, you fit stop AI client by pressing `Ctrl+C` for e terminal. MCP server go still dey run until you stop am.
+To stop server, press `Ctrl+C` for terminal wey e dey run.
 
-## How Everything Work Together
+## How Everything Dey Work Together
 
-Dis na di complete flow when you ask di AI "Wetin be 5 + 3?":
+This na how e go flow when you ask AI "Wetin be 5 + 3?":
 
-1. **You** go ask di AI for natural language
-2. **AI** go analyze your request and sabi say you wan do addition
-3. **AI** go call di MCP server: `add(5.0, 3.0)`
+1. **You** ask AI for natural language
+2. **AI** go analyze your request, come sabi say you want add
+3. **AI** go call MCP server: `add(5.0, 3.0)`
 4. **Calculator Service** go perform: `5.0 + 3.0 = 8.0`
 5. **Calculator Service** go return: `"5.00 + 3.00 = 8.00"`
-6. **AI** go receive di result and format natural response
-7. **You** go get: "Di sum of 5 and 3 na 8"
+6. **AI** go receive result, come format natural response
+7. **You** go see: "The sum of 5 and 3 is 8"
 
 ## Next Steps
 
@@ -311,6 +319,6 @@ For more examples, check [Chapter 04: Practical samples](../README.md)
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Disclaimer**:  
-Dis docu don use AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator) take translate am. Even though we dey try make e correct well, abeg sabi say automatic translation fit get mistake or no dey accurate well. Di original docu for di language wey dem first write am na di main correct one. For important information, e good make una use professional human translation. We no go fit take blame for any misunderstanding or wrong interpretation wey fit happen because of dis translation.
+**Disclaimer**:
+Dis document don translate wit AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). Even tho we dey try make am correct, abeg make you know say automated translation fit get errors or mistakes. Di original document for dia own language na im be di correct source. For important info, make person wey sabi human translation do am. We no go responsible for any misunderstanding or wrong understanding wey fit happen because of dis translation.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

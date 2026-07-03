@@ -1,251 +1,224 @@
-# Kehitysympäristön asentaminen Generative AI:ta varten Javassa
+# Kehitysympäristön perustaminen Generative AI:ta varten Java-kielellä
 
-> **Pika-aloitus**: Koodaa pilvessä 2 minuutissa – siirry kohtaan [GitHub Codespaces -asennus](../../../02-SetupDevEnvironment) – ei tarvitse paikallista asennusta ja käyttää GitHub-malleja!
+> **Pika-aloitus:** Ota AI-mallit käyttöön **Azure AI Foundryssa** koodina Bicepillä + `azd`:llä muutamassa minuutissa — katso [Azure AI Foundry -aloitusopas](getting-started-azure-openai.md). Todennus on **avaimetonta** (Microsoft Entra ID), joten hallittavaa API-avainta ei ole.
 
-> **Kiinnostaako Azure OpenAI?**, katso [Azure OpenAI -asennusopas](getting-started-azure-openai.md) uusien Azure OpenAI -resurssien luomiseen.
+## Mitä Opit
 
-## Mitä opit
-
-- Miten asennat Java-kehitysympäristön tekoälysovelluksia varten
-- Kuinka valitset ja konfiguroit haluamasi kehitysympäristön (pilvipainotteinen Codespaces, paikallinen dev container tai täydellinen paikallinen asennus)
-- Testaat asennuksesi yhdistämällä GitHub-malleihin
+- Java-kehitysympäristön pystyttäminen AI-sovelluksia varten
+- Kehitysympäristön valinta ja konfigurointi (pilvipohjainen Codespaces, paikallinen dev container tai täydellinen paikallinen asennus)
+- Asetuksen testaaminen yhdistämällä Azure AI Foundry -malliin
 
 ## Sisällysluettelo
 
-- [Mitä opit](../../../02-SetupDevEnvironment)
-- [Johdanto](../../../02-SetupDevEnvironment)
-- [Vaihe 1: Kehitysympäristön asentaminen](../../../02-SetupDevEnvironment)
-  - [Vaihtoehto A: GitHub Codespaces (suositus)](../../../02-SetupDevEnvironment)
-  - [Vaihtoehto B: Paikallinen dev container](../../../02-SetupDevEnvironment)
-  - [Vaihtoehto C: Käytä olemassa olevaa paikallista asennustasi](../../../02-SetupDevEnvironment)
-- [Vaihe 2: GitHub-henkilökohtaisten käyttöoikeustunnusten luominen](../../../02-SetupDevEnvironment)
-- [Vaihe 3: Asennuksen testaaminen](../../../02-SetupDevEnvironment)
-- [Vianetsintä](../../../02-SetupDevEnvironment)
-- [Yhteenveto](../../../02-SetupDevEnvironment)
-- [Seuraavat askeleet](../../../02-SetupDevEnvironment)
+- [Mitä Opit](#mitä-opit)
+- [Johdanto](#johdanto)
+- [Vaihe 1: Kehitysympäristön Pystyttäminen](#vaihe-1-kehitysympäristön-pystyttäminen)
+  - [Vaihtoehto A: GitHub Codespaces (Suositeltu)](#vaihtoehto-a-github-codespaces-suositeltu)
+  - [Vaihtoehto B: Paikallinen Dev Container](#vaihtoehto-b-paikallinen-dev-container)
+  - [Vaihtoehto C: Käytä Olemassa Olevaa Paikallista Asennustasi](#vaihtoehto-c-käytä-olemassa-olevaa-paikallista-asennustasi)
+- [Vaihe 2: Azure AI Foundryn Käyttöönotto](#vaihe-2-azure-ai-foundryn-käyttöönotto)
+- [Vaihe 3: Testaa Asetuksesi](#vaihe-3-testa-asetuksesi)
+- [Vianetsintä](#vianetsintä)
+- [Yhteenveto](#yhteenveto)
+- [Seuraavat Askeleet](#seuraavat-askellet)
 
 ## Johdanto
 
-Tässä luvussa opastamme sinut läpi kehitysympäristön asentamisen. Käytämme pääesimerkkinä **GitHub-malleja**, koska ne ovat ilmaisia, helppoja ottaa käyttöön pelkällä GitHub-tilillä, eivät vaadi luottokorttia ja tarjoavat useita malleja kokeiltavaksi.
+Tässä luvussa ohjaamme sinua läpi kehitysympäristön perustamisen. Käytämme koko kurssin ajan **Azure AI Foundrya** malleihin. Otat mallit käyttöön koodina Bicepillä ja Azure Developer CLI:llä (`azd`), ja yhdistät **avaimettomalla todennuksella** (Microsoft Entra ID) — ei kopioitavia tai vuotavia API-avaimia.
 
-**Paikallista asennusta ei tarvita!** Voit aloittaa koodaamisen heti GitHub Codespacesin avulla, joka antaa täyden kehitysympäristön selaimessasi.
+**Paikallista asennusta ei tarvita!** Voit käyttää GitHub Codespacesia, joka tarjoaa täyden kehitysympäristön suoraan selaimessasi ja ottaa Foundryn käyttöön sieltä.
 
-<img src="../../../translated_images/fi/models.cb07f8af0d724e4d.webp" alt="Näyttökuva: GitHub Models" width="50%">
+Käytämme tätä kurssia varten **Azure AI Foundrya**, koska se on:
+- **Koodina käyttöön otettava** — yksi `azd up` ottaa käyttöön tilin ja mallin käyttöönotot
+- **Avaimeton** — kirjaudu Azure-tunnuksellasi tai hallitulla identiteetillä
+- **Tuotantovalmiina** — sama koodi toimii paikallisesti ja Azuressa
+- **Joustava** — vaihda mallia muuttamalla käyttöönoton nimeä, ei koodia
 
-Suosittelemme tämän kurssin käyttämistä yhdessä [**GitHub Models**](https://github.com/marketplace?type=models) kanssa, koska se on:
-- **Ilmainen** aloittaa
-- **Helppo** ottaa käyttöön pelkällä GitHub-tilillä
-- **Ei luottokorttia** vaadita
-- **Useita malleja** kokeiltavaksi
+> **Huomautus**: Azure AI Foundryn käyttöönotosta veloitetaan token-pohjaisesti (pay-as-you-go). Katso [Azure AI Foundryn käyttöönotto-opas](getting-started-azure-openai.md) käyttöönottovaiheet, aluevalinnat ja kustannustiedot.
 
-> **Huom:** Tässä koulutuksessa käytetyillä GitHub-malleilla on seuraavat ilmaiset rajoitukset:
-> - 15 pyyntöä minuutissa (150 päivässä)
-> - n. 8 000 sanaa sisään ja n. 4 000 sanaa ulos per pyyntö
-> - 5 samanaikaista pyyntöä
-> 
-> Tuotantokäyttöön suosittelemme päivitystä Azure AI Foundry -malleihin Azure-tililläsi. Koodiasi ei tarvitse muuttaa. Katso [Azure AI Foundry -dokumentaatio](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/quickstart-github-models).
-
-## Vaihe 1: Kehitysympäristön asentaminen
+## Vaihe 1: Kehitysympäristön Pystyttäminen
 
 <a name="quick-start-cloud"></a>
 
-Olemme luoneet valmiiksi määritellyn kehityskontainerin, jotta asennusaika minimoidaan ja sinulla on kaikki tarvittavat työkalut Generative AI Java -kurssia varten. Valitse haluamasi kehitystapa:
+Olemme luoneet valmiiksi konfiguroidun kehityskontin, joka minimoi asetusaikaa ja varmistaa, että sinulla on kaikki tarvittavat työkalut tälle Generative AI for Java -kurssille. Valitse haluamasi kehitystapa:
 
-### Kehitysympäristön asennusvaihtoehdot:
+### Ympäristön pystytysvaihtoehdot:
 
-#### Vaihtoehto A: GitHub Codespaces (suositus)
+#### Vaihtoehto A: GitHub Codespaces (Suositeltu)
 
-**Aloita koodaaminen 2 minuutissa – paikallista asennusta ei tarvita!**
+**Aloita koodaus 2 minuutissa – ei paikallista asennusta!**
 
-1. Forkkaa tämä repositorio omaan GitHub-tiliisi
-   > **Huom:** Jos haluat muokata peruskonfiguraatiota, katso [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
-2. Klikkaa **Code** → **Codespaces** -välilehti → **...** → **New with options...**
-3. Käytä oletusasetuksia – tämä valitsee **Dev container configuration**: **Generative AI Java Development Environment** -erikoiskehityskontainerin tälle kurssille
-4. Klikkaa **Create codespace**
-5. Odota noin 2 minuuttia, että ympäristö on valmis
-6. Jatka kohtaan [Vaihe 2: Luo GitHub-tunnus](../../../02-SetupDevEnvironment)
+1. Forkkaa tämä repositorio GitHub-tilillesi  
+   > **Huom:** Jos haluat muokata perusasetuksia, tutustu [Dev Container Configuration](../../../.devcontainer/devcontainer.json) -tiedostoon  
+2. Klikkaa **Code** → **Codespaces** -välilehti → Klikkaa **...** → **New with options...**  
+3. Käytä oletusasetuksia – tämä valitsee **Dev container configuration**: **Generative AI Java Development Environment** -mukautettu devcontainer tälle kurssille  
+4. Klikkaa **Create codespace**  
+5. Odota noin 2 minuuttia, että ympäristö on valmis  
+6. Jatka [Vaiheeseen 2: Azure AI Foundryn Käyttöönotto](#vaihe-2-azure-ai-foundryn-käyttöönotto)  
 
-<img src="../../../translated_images/fi/codespaces.9945ded8ceb431a5.webp" alt="Näyttökuva: Codespaces alakohdasta" width="50%">
+<img src="../../../translated_images/fi/codespaces.9945ded8ceb431a5.webp" alt="Kuvakaappaus: Codespaces alivalikko" width="50%">
 
-<img src="../../../translated_images/fi/image.833552b62eee7766.webp" alt="Näyttökuva: Uusi valintojen kanssa" width="50%">
+<img src="../../../translated_images/fi/image.833552b62eee7766.webp" alt="Kuvakaappaus: New with options" width="50%">
 
-<img src="../../../translated_images/fi/codespaces-create.b44a36f728660ab7.webp" alt="Näyttökuva: Codespace luomisen valinnat" width="50%">
+<img src="../../../translated_images/fi/codespaces-create.b44a36f728660ab7.webp" alt="Kuvakaappaus: Create codespace -valinnat" width="50%">
 
-> **Codespacesin edut**:
-> - Ei tarvitse paikallista asennusta
-> - Toimii millä tahansa laitteella, jossa on selain
-> - Esikonfiguroitu kaikilla työkaluilla ja riippuvuuksilla
-> - Henkilökohtaisille tileille ilmainen 60 tuntia kuukaudessa
-> - Tasalaatuinen ympäristö kaikille oppijoille
+> **Codespacesin hyödyt**:  
+> - Ei paikallista asennusta  
+> - Toimii millä tahansa laitteella, jossa on selain  
+> - Esikonfiguroitu kaikilla työkaluilla ja riippuvuuksilla  
+> - Ilmaiset 60 tuntia per kuukausi henkilökohtaisille tileille  
+> - Yhtenäinen ympäristö kaikille oppijoille  
 
-#### Vaihtoehto B: Paikallinen dev container
+#### Vaihtoehto B: Paikallinen Dev Container
 
-**Kehittäjille, jotka haluavat paikallista Docker-kehitystä**
+**Kehittäjille, jotka haluavat työskennellä paikallisesti Dockerilla**
 
-1. Forkkaa ja kloonaa tämä repositorio paikalliselle koneellesi
-   > **Huom:** Jos haluat muokata peruskonfiguraatiota, katso [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
-2. Asenna [Docker Desktop](https://www.docker.com/products/docker-desktop/) ja [VS Code](https://code.visualstudio.com/)
-3. Asenna [Dev Containers -laajennus](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) VS Codeen
-4. Avaa repositoriokansio VS Codessa
-5. Kun saat kehotteen, klikkaa **Reopen in Container** (tai käytä `Ctrl+Shift+P` → "Dev Containers: Reopen in Container")
-6. Odota, että kontaineri rakentuu ja käynnistyy
-7. Jatka kohtaan [Vaihe 2: Luo GitHub-tunnus](../../../02-SetupDevEnvironment)
+1. Forkkaa ja kloonaa tämä repositorio paikalliselle koneellesi  
+   > **Huom:** Jos haluat muokata perusasetuksia, tutustu [Dev Container Configuration](../../../.devcontainer/devcontainer.json) -tiedostoon  
+2. Asenna [Docker Desktop](https://www.docker.com/products/docker-desktop/) ja [VS Code](https://code.visualstudio.com/)  
+3. Asenna [Dev Containers -laajennus](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) VS Codeen  
+4. Avaa repositoriokansio VS Codessa  
+5. Kun kehote ilmestyy, valitse **Reopen in Container** (tai käytä `Ctrl+Shift+P` → "Dev Containers: Reopen in Container")  
+6. Odota, että kontti rakentuu ja käynnistyy  
+7. Jatka [Vaiheeseen 2: Azure AI Foundryn Käyttöönotto](#vaihe-2-azure-ai-foundryn-käyttöönotto)  
 
-<img src="../../../translated_images/fi/devcontainer.21126c9d6de64494.webp" alt="Näyttökuva: Dev containerin asennus" width="50%">
+<img src="../../../translated_images/fi/devcontainer.21126c9d6de64494.webp" alt="Kuvakaappaus: Dev container -asetukset" width="50%">
 
-<img src="../../../translated_images/fi/image-3.bf93d533bbc84268.webp" alt="Näyttökuva: Dev container -rakennus valmis" width="50%">
+<img src="../../../translated_images/fi/image-3.bf93d533bbc84268.webp" alt="Kuvakaappaus: Dev container -rakennus valmis" width="50%">
 
-#### Vaihtoehto C: Käytä olemassa olevaa paikallista asennustasi
+#### Vaihtoehto C: Käytä Olemassa Olevaa Paikallista Asennustasi
 
-**Kehittäjille, joilla on jo Java-ympäristö asennettuna**
+**Kehittäjille, joilla on jo Java-ympäristö**
 
-Esivaatimukset:
-- [Java 21+](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html) 
-- [Maven 3.9+](https://maven.apache.org/download.cgi)
+Esivaatimukset:  
+- [Java 21+](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html)  
+- [Maven 3.9+](https://maven.apache.org/download.cgi)  
 - [VS Code](https://code.visualstudio.com) tai haluamasi IDE
 
-Vaiheet:
-1. Kloonaa tämä repositorio paikalliselle koneellesi
-2. Avaa projekti IDE:ssäsi
-3. Jatka kohtaan [Vaihe 2: Luo GitHub-tunnus](../../../02-SetupDevEnvironment)
+Vaiheet:  
+1. Kloonaa tämä repositorio paikalliselle koneellesi  
+2. Avaa projekti IDE:ssäsi  
+3. Jatka [Vaiheeseen 2: Azure AI Foundryn Käyttöönotto](#vaihe-2-azure-ai-foundryn-käyttöönotto)  
 
-> **Vinkki ammattilaisille**: Jos sinulla on heikkotehoinen kone, mutta haluat VS Coden paikallisesti, käytä GitHub Codespacesia! Voit yhdistää paikallisen VS Codesi pilvipohjaiseen Codespaceen ja saada molempien parhaat puolet.
+> **Vinkki:** Jos sinulla on heikkotehoinen kone mutta haluat käyttää VS Codea paikallisesti, käytä GitHub Codespacesia! Voit yhdistää paikallisen VS Coden pilvipohjaiseen Codespaceen parhaan kokemuksen saamiseksi.  
 
-<img src="../../../translated_images/fi/image-2.fc0da29a6e4d2aff.webp" alt="Näyttökuva: luotu paikallinen devcontainer-instanssi" width="50%">
+<img src="../../../translated_images/fi/image-2.fc0da29a6e4d2aff.webp" alt="Kuvakaappaus: luotu paikallinen devcontainer-instanssi" width="50%">
 
-## Vaihe 2: Luo GitHub-henkilökohtainen käyttöoikeustunnus
+## Vaihe 2: Azure AI Foundryn Käyttöönotto
 
-1. Mene osoitteeseen [GitHub Asetukset](https://github.com/settings/profile) ja valitse profiilivalikosta **Settings**.
-2. Vasemmassa sivupalkissa klikkaa **Developer settings** (yleensä alhaalla).
-3. Valitse **Personal access tokens** → **Fine-grained tokens** (tai käytä suoraa [linkkiä](https://github.com/settings/personal-access-tokens)).
-4. Klikkaa **Generate new token**.
-5. Kirjoita "Token name" -kohtaan kuvaava nimi (esim. `GenAI-Java-Course-Token`).
-6. Aseta vanhentumispäivä (suositus: 7 päivää turvallisuuden vuoksi).
-7. Valitse "Resource owner":ksi oma käyttäjätilisi.
-8. Valitse "Repository access" -kohdasta repositoriot, joita haluat käyttää GitHub-mallien kanssa (tai "All repositories", jos tarpeen).
-9. Käy "Account permissions" -kohdassa läpi ja etsi **Models**, aseta se **Read-onlyksi**.
-10. Klikkaa **Generate token**.
-11. **Kopioi ja tallenna token heti** – et näe sitä enää uudestaan!
+Ota kurssin AI-mallit käyttöön Azure AI Foundryyn koodina. Repositorion juurihakemistosta:
 
-> **Turvallisuusvinkki**: Käytä vain välttämättömät käyttöoikeudet ja lyhyintä mahdollisuutta voimassaoloaikaa.
-
-## Vaihe 3: Testaa asennus GitHub Models -esimerkillä
-
-Kun kehitysympäristö on valmis, testataan GitHub-mallien yhdistäminen esimerkkisovelluksella kansiossa [`02-SetupDevEnvironment/examples/github-models`](../../../02-SetupDevEnvironment/examples/github-models).
-
-1. Avaa terminaali kehitysympäristössäsi.
-2. Siirry GitHub Models -esimerkkikansioon:
-   ```bash
-   cd 02-SetupDevEnvironment/examples/github-models
-   ```
-3. Aseta GitHub-tunnuksesi ympäristömuuttujaksi:
-   ```bash
-   # macOS/Linux
-   export GITHUB_TOKEN=your_token_here
-   
-   # Windows (Komentokehote)
-   set GITHUB_TOKEN=your_token_here
-   
-   # Windows (PowerShell)
-   $env:GITHUB_TOKEN="your_token_here"
-   ```
-
-4. Käynnistä sovellus:
-   ```bash
-   mvn compile exec:java -Dexec.mainClass="com.example.githubmodels.App"
-   ```
-
-Sinun pitäisi nähdä tuloste, joka muistuttaa tätä:
-```text
-Using model: gpt-4.1-nano
-Sending request to GitHub Models...
-Response: Hello World!
+```bash
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
 ```
+  
+`azd` kysyy ympäristön nimen ja alueen, ottaa käyttöön Azure AI Foundry -tilin `gpt-4o-mini` ja `text-embedding-3-small` -käyttöönottoineen sekä kirjoittaa päätepisteen esimerkin `.env`-tiedostoon — kaikki **avaimettomalla** todennuksella (ei API-avaimia).
 
-### Ymmärrä esimerkkikoodi
+> **Täysi läpikäynti:** Katso [Azure AI Foundry -aloitusopas](getting-started-azure-openai.md) esivaatimuksista, manuaalisesta (portaali) vaihtoehdosta, alueohjeista sekä kustannus- ja siivousohjeista.
 
-Katsotaan ensin mitä ajoimme. `examples/github-models` -kansiossa oleva esimerkki käyttää OpenAI Java SDK:ta yhdistääkseen GitHub-malleihin:
+## Vaihe 3: Testaa Asetuksesi
 
-**Mitkä asiat tämä koodi tekee:**
-- **Yhdistää** GitHub-malleihin henkilökohtaisen käyttöoikeustunnuksesi avulla
-- **Lähettää** yksinkertaisen "Say Hello World!" -viestin AI-mallille
-- **Vastaanottaa** ja näyttää AI:n vastauksen
-- **Varmistaa**, että asennuksesi toimii oikein
+Kun Foundry-mallit ovat valmiina, testaa yhteys esimerkkisovelluksella hakemistossa [`02-SetupDevEnvironment/examples/basic-chat-azure`](../../../02-SetupDevEnvironment/examples/basic-chat-azure).
 
-**Tärkeä riippuvuus** (tiedostossa `pom.xml`):
+1. Avaa terminaali kehitysympäristössäsi.  
+2. Siirry esimerkkikansioon:  
+   ```bash
+   cd 02-SetupDevEnvironment/examples/basic-chat-azure
+   ```
+  
+3. Varmista, että olet kirjautunut sisään (avaimeton todennus tarvitsee tokenin):  
+   ```bash
+   az login
+   ```
+  
+   > Jos olet suorittanut `azd up`, `.env`-tiedosto päätepisteellä on jo luotu.  
+4. Käynnistä sovellus:  
+   ```bash
+   mvn clean spring-boot:run
+   ```
+  
+Sinun pitäisi nähdä vastaus `gpt-4o-mini` -mallilta.
+
+### Esimerkkikoodin Ymmärtäminen
+
+`examples/basic-chat-azure` -kansiossa oleva esimerkki on Spring Boot -sovellus, joka käyttää **Spring AI**:ta yhdistääkseen Azure AI Foundryyn avaimettomalla todennuksella.
+
+**Mitä tämä koodi tekee:**
+- **Yhdistää** Azure AI Foundryyn Azure-kirjautumistunnuksellasi (Microsoft Entra ID) — ilman API-avainta  
+- **Lähettää** kehotteen `gpt-4o-mini` -mallille  
+- **Vastaanottaa** ja näyttää AI:n vastauksen  
+- **Varmistaa** että asetuksesi toimivat oikein  
+
+**Avainriippuvuus** (`pom.xml`):  
 ```xml
 <dependency>
-    <groupId>com.openai</groupId>
-    <artifactId>openai-java</artifactId>
-    <version>2.12.0</version>
+    <groupId>org.springframework.ai</groupId>
+    <artifactId>spring-ai-starter-model-azure-openai</artifactId>
 </dependency>
 ```
-
-**Pääkoodi** (`App.java`):
-```java
-// Yhdistä GitHub-malleihin OpenAI Java SDK:n avulla
-OpenAIClient client = OpenAIOkHttpClient.builder()
-    .apiKey(pat)
-    .baseUrl("https://models.inference.ai.azure.com")
-    .build();
-
-// Luo chat-vastauksen pyyntö
-ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
-    .model(modelId)
-    .addSystemMessage("You are a concise assistant.")
-    .addUserMessage("Say Hello World!")
-    .build();
-
-// Hanki tekoälyn vastaus
-ChatCompletion response = client.chat().completions().create(params);
-System.out.println("Response: " + response.choices().get(0).message().content().orElse("No response content"));
+  
+**Konfiguraatio** (`application.yml`):  
+```yaml
+spring:
+  ai:
+    azure:
+      openai:
+        # Endpoint only - no api-key. Spring AI uses DefaultAzureCredential (keyless).
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
+  
 
 ## Yhteenveto
 
-Hienoa! Sinulla on nyt kaikki asennettuna:
+Hienoa! Nyt sinulla on kaikki valmiina:
 
-- Loit GitHub-henkilökohtaisen käyttöoikeustunnuksen AI-mallien käyttöön tarvittavilla oikeuksilla
-- Käynnistit Java-kehitysympäristösi (Codespaces, dev container tai paikallinen)
-- Yhdistit GitHub-malleihin käyttämällä OpenAI Java SDK:ta ilmaiseen AI-kehitykseen
-- Testasit kaiken toimivan yksinkertaisella esimerkillä, joka kommunikoi AI-mallien kanssa
+- Otit Azure AI Foundryn mallit käyttöön koodina Bicepillä + `azd`:llä  
+- Java-kehitysympäristösi toimii (oli se sitten Codespaces, devcontainer tai paikallinen)  
+- Yhdistit Azure AI Foundryyn avaimettomalla todennuksella (Microsoft Entra ID) — ilman API-avaimia  
+- Testasit kaiken toimivan yksinkertaisella esimerkillä, joka kommunikoi mallisi kanssa  
 
-## Seuraavat askeleet
+## Seuraavat Askeleet
 
-[Luku 3: Keskeiset generatiivisen tekoälyn tekniikat](../03-CoreGenerativeAITechniques/README.md)
+[Luku 3: Keskeiset Generative AI -tekniikat](../03-CoreGenerativeAITechniques/README.md)
 
 ## Vianetsintä
 
 Ongelmia? Tässä yleisimmät ongelmat ja ratkaisut:
 
-- **Token ei toimi?**  
-  - Varmista, että kopioit tokenin kokonaan, ilman ylimääräisiä välilyöntejä  
-  - Tarkista, että token on asetettu oikein ympäristömuuttujaksi  
-  - Varmista, että tokenilla on oikeat oikeudet (Models: Read-only)
+- **Todennus epäonnistuu (401/403)?**  
+  - Suorita `az login` — todennus on avaimetonta, joten kirjaudu sisään  
+  - Varmista, että tililläsi on **Cognitive Services OpenAI User** -rooli resurssissa  
+  - Jos otit juuri käyttöön, odota hetki, että roolijako leviää  
 
-- **Mavenia ei löydy?**  
-  - Käytätkö dev containeria tai Codespacesia? Maven on siellä valmiiksi asennettu  
+- **Maven ei löydy?**  
+  - Dev containereissa/Codespacessa Mavenin pitäisi olla esiasennettu  
   - Paikallisessa asennuksessa varmista, että Java 21+ ja Maven 3.9+ on asennettu  
-  - Kokeile komentoa `mvn --version` asennuksen tarkistamiseen
+  - Tarkista komennolla `mvn --version`
 
-- **Yhteysongelmat?**  
-  - Tarkista internet-yhteytesi  
-  - Varmista, että GitHub on verkostossasi saavutettavissa  
-  - Varmista ettei palomuuri estä GitHub Models -päätepistettä
+- **`azd` ei löydy tai käyttöönotto epäonnistuu?**  
+  - Asenna [Azure Developer CLI](https://aka.ms/azure-dev/install) ja suorita `azd auth login`  
+  - Valitse alue, jolla `gpt-4o-mini` on saatavilla (esim. `eastus2`)  
+  - Katso [Azure AI Foundry -aloitusopas](getting-started-azure-openai.md) lisätiedoista  
 
 - **Dev container ei käynnisty?**  
-  - Tarkista, että Docker Desktop on käynnissä (paikallisessa kehityksessä)  
-  - Kokeile uudelleenrakentaa kontaineri: `Ctrl+Shift+P` → "Dev Containers: Rebuild Container"
+  - Varmista, että Docker Desktop on käynnissä (paikallista kehitystä varten)  
+  - Yritä rakentaa kontti uudelleen: `Ctrl+Shift+P` → "Dev Containers: Rebuild Container"
 
-- **Sovelluksen käännösvirheet?**  
-  - Varmista, että olet oikeassa kansiossa: `02-SetupDevEnvironment/examples/github-models`  
-  - Kokeile puhdistaa ja kääntää uudelleen: `mvn clean compile`
+- **Sovelluksen käännösvirheitä?**  
+  - Varmista, että olet oikeassa hakemistossa: `02-SetupDevEnvironment/examples/basic-chat-azure`  
+  - Yritä puhdistaa ja kääntää uudelleen: `mvn clean compile`
 
-> **Tarvitsetko apua?**: Jos ongelmat jatkuvat, avaa issue repositorioon, niin autamme.
+> **Tarvitsetko apua?**: Jos ongelmat jatkuvat, avaa issue repositoriossa, niin autamme sinua.
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
 **Vastuuvapauslauseke**:
-Tämä asiakirja on käännetty käyttämällä tekoälypohjaista käännöspalvelua [Co-op Translator](https://github.com/Azure/co-op-translator). Vaikka pyrimme tarkkuuteen, huomioithan, että automaattikäännöksissä voi esiintyä virheitä tai epätarkkuuksia. Alkuperäinen asiakirja sen alkuperäiskielellä on katsottava viralliseksi lähteeksi. Tärkeissä tiedoissa suositellaan ammattimaista ihmiskäännöstä. Emme ole vastuussa tämän käännöksen käytöstä aiheutuvista väärinkäsityksistä tai tulkinnoista.
+Tämä asiakirja on käännetty käyttämällä tekoälypohjaista käännöspalvelua [Co-op Translator](https://github.com/Azure/co-op-translator). Vaikka pyrimme tarkkuuteen, otathan huomioon, että automaattiset käännökset saattavat sisältää virheitä tai epätarkkuuksia. Alkuperäinen asiakirja sen alkuperäiskielellä on virallinen lähde. Tärkeissä asioissa suositellaan ammattimaista ihmiskäännöstä. Emme ole vastuussa tämän käännöksen käytöstä aiheutuvista väärinymmärryksistä tai tulkinnoista.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

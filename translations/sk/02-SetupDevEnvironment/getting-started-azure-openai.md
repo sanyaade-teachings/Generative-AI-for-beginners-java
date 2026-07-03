@@ -1,138 +1,151 @@
-# Nastavenie vývojového prostredia pre Azure OpenAI
+# Nastavenie vývojového prostredia pre Azure AI Foundry
 
-> **Rýchly štart**: Táto príručka je určená na nastavenie Azure OpenAI. Ak chcete okamžite začať s bezplatnými modelmi, použite [GitHub Models with Codespaces](./README.md#quick-start-cloud).
+> Tento sprievodca nastavuje modely **Azure AI Foundry** pre Java AI aplikácie v tomto kurze pomocou **overovania bez kľúčov** (Microsoft Entra ID) — nie je potrebné spravovať žiadne API kľúče. Ste nováčik v nástrojoch? Začnite so [sprievodcom vývojovým prostredím](./README.md).
 
-Táto príručka vám pomôže nastaviť modely Azure AI Foundry pre vaše Java AI aplikácie v tomto kurze.
+Tento sprievodca nastavuje modely **Azure AI Foundry** pre Java AI aplikácie v tomto kurze. Máte dve možnosti:
+
+- **Možnosť A — Provisionovanie pomocou `azd` + Bicep (odporúčané):** jeden príkaz nasadí Foundry účet a modely ako kód. Žiadne klikanie v portáli.
+- **Možnosť B — Vytvorte zdroje manuálne** v portáli Azure AI Foundry.
+
+Obe možnosti používajú **overovanie bez kľúčov** (Microsoft Entra ID) — nie je potrebné kopírovať alebo zverejňovať API kľúče.
 
 ## Obsah
 
-- [Rýchly prehľad nastavenia](../../../02-SetupDevEnvironment)
-- [Krok 1: Vytvorenie zdrojov Azure AI Foundry](../../../02-SetupDevEnvironment)
-  - [Vytvorenie Hubu a Projektu](../../../02-SetupDevEnvironment)
-  - [Nasadenie modelu GPT-4o-mini](../../../02-SetupDevEnvironment)
-- [Krok 2: Vytvorenie Codespace](../../../02-SetupDevEnvironment)
-- [Krok 3: Konfigurácia prostredia](../../../02-SetupDevEnvironment)
-- [Krok 4: Testovanie nastavenia](../../../02-SetupDevEnvironment)
-- [Čo ďalej?](../../../02-SetupDevEnvironment)
-- [Zdroje](../../../02-SetupDevEnvironment)
-- [Ďalšie zdroje](../../../02-SetupDevEnvironment)
+- [Čo sa vytvorí](#čo-sa-vytvorí)
+- [Požiadavky](#požiadavky)
+- [Možnosť A: Provisionovanie pomocou azd + Bicep (odporúčané)](#option-a-provision-with-azd--bicep-recommended)
+- [Možnosť B: Vytvorte zdroje manuálne](#možnosť-b-vytvorte-zdroje-manuálne)
+- [Nastavte svoje prostredie](#nastavte-svoje-prostredie)
+- [Otestujte nastavenie](#otestujte-nastavenie)
+- [Čo je ďalej?](#čo-je-ďalej)
+- [Zdroje](#zdroje)
+- [Ďalšie zdroje](#ďalšie-zdroje)
 
-## Rýchly prehľad nastavenia
+## Čo sa vytvorí
 
-1. Vytvorte zdroje Azure AI Foundry (Hub, Projekt, Model)
-2. Vytvorte Codespace s Java vývojovým kontajnerom
-3. Nakonfigurujte svoj súbor .env s povereniami Azure OpenAI
-4. Otestujte svoje nastavenie s ukážkovým projektom
+Bicep šablóny v priečinku [`infra/`](../../../02-SetupDevEnvironment/infra) vytvoria:
 
-## Krok 1: Vytvorenie zdrojov Azure AI Foundry
+- **Azure AI Foundry** účet (`Microsoft.CognitiveServices/accounts`, typ `AIServices`) s projektom
+- Nasadenie **chat** — `gpt-4o-mini`
+- Nasadenie **embedding** — `text-embedding-3-small` (použité v neskorších kapitolách)
+- **Priradenie role bez kľúča** (`Cognitive Services OpenAI User`), aby ste sa mohli prihlasovať cez `az login` namiesto správy kľúčov
 
-### Vytvorenie Hubu a Projektu
+## Požiadavky
 
-1. Prejdite na [Azure AI Foundry Portal](https://ai.azure.com/) a prihláste sa
-2. Kliknite na **+ Create** → **New hub** (alebo prejdite na **Management** → **All hubs** → **+ New hub**)
-3. Nakonfigurujte svoj hub:
-   - **Názov hubu**: napr. "MyAIHub"
-   - **Predplatné**: Vyberte svoje Azure predplatné
-   - **Skupina zdrojov**: Vytvorte novú alebo vyberte existujúcu
-   - **Lokalita**: Vyberte najbližšiu k vám
-   - **Účet úložiska**: Použite predvolený alebo nakonfigurujte vlastný
-   - **Key vault**: Použite predvolený alebo nakonfigurujte vlastný
-   - Kliknite na **Next** → **Review + create** → **Create**
-4. Po vytvorení kliknite na **+ New project** (alebo **Create project** z prehľadu hubu)
-   - **Názov projektu**: napr. "GenAIJava"
-   - Kliknite na **Create**
+- [Predplatné Azure](https://azure.microsoft.com/free/)
+- [Azure Developer CLI (`azd`)](https://aka.ms/azure-dev/install)
+- [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli)
+- [Java 21+](https://learn.microsoft.com/java/openjdk/download) a [Maven 3.9+](https://maven.apache.org/download.cgi)
 
-### Nasadenie modelu GPT-4o-mini
+## Možnosť A: Provisionovanie pomocou azd + Bicep (odporúčané)
 
-1. Vo svojom projekte prejdite na **Model catalog** a vyhľadajte **gpt-4o-mini**
-   - *Alternatíva: Prejdite na **Deployments** → **+ Create deployment***
-2. Kliknite na **Deploy** na karte modelu gpt-4o-mini
-3. Nakonfigurujte nasadenie:
-   - **Názov nasadenia**: "gpt-4o-mini"
-   - **Verzia modelu**: Použite najnovšiu
-   - **Typ nasadenia**: Štandardný
-4. Kliknite na **Deploy**
-5. Po nasadení prejdite na kartu **Deployments** a skopírujte tieto hodnoty:
-   - **Názov nasadenia** (napr. "gpt-4o-mini")
-   - **Cieľová URI** (napr. `https://your-hub-name.openai.azure.com/`) 
-      > **Dôležité**: Skopírujte iba základnú URL (napr. `https://myhub.openai.azure.com/`), nie celú cestu k endpointu.
-   - **Kľúč** (z časti Keys and Endpoint)
-
-> **Stále máte problémy?** Navštívte oficiálnu [dokumentáciu Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project)
-
-## Krok 2: Vytvorenie Codespace
-
-1. Forknite toto úložisko do svojho GitHub účtu
-   > **Poznámka**: Ak chcete upraviť základnú konfiguráciu, pozrite si [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
-2. Vo svojom forknutom úložisku kliknite na **Code** → kartu **Codespaces**
-3. Kliknite na **...** → **New with options...**
-![vytváranie codespace s možnosťami](../../../translated_images/sk/codespaces.9945ded8ceb431a5.webp)
-4. Vyberte **Dev container configuration**: 
-   - **Generative AI Java Development Environment**
-5. Kliknite na **Create codespace**
-
-## Krok 3: Konfigurácia prostredia
-
-Keď je váš Codespace pripravený, nastavte svoje poverenia Azure OpenAI:
-
-1. **Prejdite na ukážkový projekt z koreňa úložiska:**
-   ```bash
-   cd 02-SetupDevEnvironment/examples/basic-chat-azure
-   ```
-
-2. **Vytvorte svoj súbor .env:**
-   ```bash
-   cp .env.example .env
-   ```
-
-3. **Upravte súbor .env so svojimi povereniami Azure OpenAI:**
-   ```bash
-   # Your Azure OpenAI API key (from Azure AI Foundry portal)
-   AZURE_AI_KEY=your-actual-api-key-here
-   
-   # Your Azure OpenAI endpoint URL (e.g., https://myhub.openai.azure.com/)
-   AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-   ```
-
-   > **Bezpečnostná poznámka**: 
-   > - Nikdy neukladajte svoj `.env` súbor do verzionovacieho systému
-   > - Súbor `.env` je už zahrnutý v `.gitignore`
-   > - Uchovávajte svoje API kľúče v bezpečí a pravidelne ich rotujte
-
-## Krok 4: Testovanie nastavenia
-
-Spustite ukážkovú aplikáciu na otestovanie pripojenia Azure OpenAI:
+Zo zložky `02-SetupDevEnvironment`:
 
 ```bash
+cd 02-SetupDevEnvironment
+
+# Prihlásiť sa (oba nástroje)
+azd auth login
+az login
+
+# Poskytnite účet Foundry + nasadenie modelov
+azd up
+```
+
+`azd` vás vyzve na zadanie **názvu prostredia** (napríklad `genai-java`) a **regiónu**. Vyberte región, kde sú dostupné `gpt-4o-mini` a `text-embedding-3-small` — napríklad `eastus2` alebo `swedencentral`.
+
+Po dokončení provisionovania `azd`:
+
+1. Nasadí všetko definované v [`infra/main.bicep`](../../../02-SetupDevEnvironment/infra/main.bicep).
+2. Spustí postprovision hook, ktorý zapíše [`examples/basic-chat-azure/.env`](../../../02-SetupDevEnvironment/examples/basic-chat-azure) s vašou koncovou adresou a názvami nasadení (žiadne tajné údaje).
+
+> **Tip:** Kedykoľvek spusťte znova `azd up` na aplikovanie zmien. Spustením `azd down` všetko zmažete a zastavíte generovanie nákladov.
+
+Ak chcete vidieť vygenerované nastavenia:
+
+```bash
+azd env get-values
+```
+
+Teraz preskočte na [Otestujte nastavenie](#otestujte-nastavenie).
+
+## Možnosť B: Vytvorte zdroje manuálne
+
+Uprednostňujete portál? Vytvorte zdroje manuálne:
+
+1. Prejdite na [Azure AI Foundry portál](https://ai.azure.com/) a prihláste sa.
+2. **Vytvorte projekt** (tým sa vytvorí aj zdroj AI Foundry). Pomenujte ho napríklad `GenAIJava`.
+3. Vo svojom projekte otvorte **Models + endpoints** → **Deploy model** → **Deploy base model**.
+4. Nasadte **gpt-4o-mini** (názov nasadenia `gpt-4o-mini`). Rovnaký postup pre **text-embedding-3-small**, ak chcete použiť príklady s embeddingom.
+5. Z **Overview** skopírujte **endpoint** (napríklad `https://<resource>.openai.azure.com/`).
+6. Pridajte si prístup bez kľúča: na zdroji otvorte **Access control (IAM)** → **Add role assignment** → priraďte **Cognitive Services OpenAI User** svojmu účtu.
+
+> **Máte stále problémy?** Pozrite si [dokumentáciu Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects).
+
+## Nastavte svoje prostredie
+
+**Ak ste použili Možnosť A (`azd up`)**, váš súbor s nastaveniami je už vytvorený — nie je potrebné nič nastavovať. Preskočte na [Otestujte nastavenie](#otestujte-nastavenie).
+
+**Ak ste použili Možnosť B (manuálne)**, vytvorte si súbor `.env` z príkladu sami:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+cp .env.example .env
+```
+
+Upravte `.env` so svojou koncovou adresou (bez kľúča — autentifikácia je bez kľúča):
+
+```bash
+AZURE_OPENAI_ENDPOINT=https://<your-resource>.openai.azure.com/
+AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini
+```
+
+> **Bezpečnostná poznámka:** Nie je potrebné ukladať žiadny API kľúč. Autentifikujete sa cez Microsoft Entra ID pomocou `az login` (lokálne) alebo spravovanú identitu (v Azure). Súbor `.env` obsahuje iba ne-tajné nastavenia a je už zahrnutý v `.gitignore`.
+
+## Otestujte nastavenie
+
+Uistite sa, že ste prihlásení, aby overovanie bez kľúča mohlo získať token, potom spustite príklad:
+
+```bash
+cd 02-SetupDevEnvironment/examples/basic-chat-azure
+
+az login          # ak ešte nie ste prihlásený
 mvn clean spring-boot:run
 ```
 
-Mali by ste vidieť odpoveď od modelu GPT-4o-mini!
+Mali by ste vidieť odpoveď z modelu `gpt-4o-mini`!
 
-> **Používatelia VS Code**: Môžete tiež stlačiť `F5` vo VS Code na spustenie aplikácie. Konfigurácia spustenia je už nastavená na automatické načítanie vášho súboru `.env`.
+> **Používatelia VS Code:** Stlačte `F5` na spustenie. Aplikácia automaticky načíta váš `.env`.
 
-> **Kompletný príklad**: Pozrite si [End-to-End Azure OpenAI Example](./examples/basic-chat-azure/README.md) pre podrobné pokyny a riešenie problémov.
+> **Úplný príklad:** Podrobnosti a riešenie problémov nájdete v [Basic Chat s Azure AI Foundry príklade](./examples/basic-chat-azure/README.md).
 
-## Čo ďalej?
+## Čo je ďalej?
 
 **Nastavenie dokončené!** Teraz máte:
-- Azure OpenAI s nasadeným gpt-4o-mini
-- Lokálnu konfiguráciu súboru .env
-- Pripravené vývojové prostredie pre Javu
+- Azure AI Foundry s nasadenými `gpt-4o-mini` a `text-embedding-3-small`
+- Overovanie bez kľúča (Microsoft Entra ID) — žiadne kľúče na správu
+- Lokálny `.env` so svojou koncovou adresou a názvami nasadení
+- Vývojové prostredie Java pripravené na použitie
 
-**Pokračujte na** [Kapitolu 3: Základné techniky generatívnej AI](../03-CoreGenerativeAITechniques/README.md) a začnite budovať AI aplikácie!
+**Pokračujte na** [Kapitolu 3: Základné techniky generatívnej AI](../03-CoreGenerativeAITechniques/README.md) pre začiatok vývoja AI aplikácií!
 
 ## Zdroje
 
-- [Dokumentácia Azure AI Foundry](https://learn.microsoft.com/azure/ai-services/)
-- [Spring AI Azure OpenAI Dokumentácia](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
+- [Azure Developer CLI (azd)](https://aka.ms/azure-dev/install)
+- [Overovanie bez kľúča s Microsoft Entra ID](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
+- [Dokumentácia Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/)
+- [Spring AI Azure OpenAI Dokumentácia](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
 - [Azure OpenAI Java SDK](https://learn.microsoft.com/java/api/overview/azure/ai-openai-readme)
 
 ## Ďalšie zdroje
 
 - [Stiahnite si VS Code](https://code.visualstudio.com/Download)
 - [Získajte Docker Desktop](https://www.docker.com/products/docker-desktop)
-- [Dev Container Configuration](../../../.devcontainer/devcontainer.json)
+- [Konfigurácia vývojového kontajnera](../../../.devcontainer/devcontainer.json)
 
-**Upozornenie**:  
-Tento dokument bol preložený pomocou služby na automatický preklad [Co-op Translator](https://github.com/Azure/co-op-translator). Hoci sa snažíme o presnosť, upozorňujeme, že automatické preklady môžu obsahovať chyby alebo nepresnosti. Pôvodný dokument v jeho pôvodnom jazyku by mal byť považovaný za autoritatívny zdroj. Pre kritické informácie sa odporúča profesionálny ľudský preklad. Nenesieme zodpovednosť za akékoľvek nedorozumenia alebo nesprávne interpretácie vyplývajúce z použitia tohto prekladu.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Vyhlásenie o zodpovednosti**:
+Tento dokument bol preložený pomocou AI prekladateľskej služby [Co-op Translator](https://github.com/Azure/co-op-translator). Hoci sa snažíme o presnosť, vezmite prosím na vedomie, že automatické preklady môžu obsahovať chyby alebo nepresnosti. Pôvodný dokument v jeho natívnom jazyku by mal byť považovaný za autoritatívny zdroj. Pre kritické informácie sa odporúča profesionálny ľudský preklad. Nie sme zodpovední za žiadne nedorozumenia alebo nesprávne interpretácie vyplývajúce z použitia tohto prekladu.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

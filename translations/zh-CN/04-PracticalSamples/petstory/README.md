@@ -2,30 +2,30 @@
 
 ## 目录
 
-- [前置条件](../../../../04-PracticalSamples/petstory)
-- [理解项目结构](../../../../04-PracticalSamples/petstory)
-- [核心组件解析](../../../../04-PracticalSamples/petstory)
-  - [1. 主应用程序](../../../../04-PracticalSamples/petstory)
-  - [2. Web控制器](../../../../04-PracticalSamples/petstory)
-  - [3. 故事服务](../../../../04-PracticalSamples/petstory)
-  - [4. Web模板](../../../../04-PracticalSamples/petstory)
-  - [5. 配置](../../../../04-PracticalSamples/petstory)
-- [运行应用程序](../../../../04-PracticalSamples/petstory)
-- [整体工作流程](../../../../04-PracticalSamples/petstory)
-- [理解AI集成](../../../../04-PracticalSamples/petstory)
-- [下一步](../../../../04-PracticalSamples/petstory)
+- [先决条件](#先决条件)
+- [了解项目结构](#了解项目结构)
+- [核心组件讲解](#核心组件讲解)
+  - [1. 主应用程序](#1-主应用程序)
+  - [2. 网络控制器](#2-网络控制器)
+  - [3. 故事服务](#3-故事服务)
+  - [4. 网络模板](#4-网络模板)
+  - [5. 配置](#5-配置)
+- [运行应用程序](#运行应用程序)
+- [整体工作流程](#整体工作流程)
+- [理解AI集成](#理解ai集成)
+- [下一步](#下一步)
 
-## 前置条件
+## 先决条件
 
-开始之前，请确保您已准备好以下内容：
-- 安装了Java 21或更高版本
-- 使用Maven进行依赖管理
-- 拥有一个GitHub账户，并设置了具有`models:read`权限的个人访问令牌（PAT）
-- 对Java、Spring Boot和Web开发有基本了解
+开始之前，请确保您具备以下条件：
+- 安装了 Java 21 或更高版本
+- 安装了用于依赖管理的 Maven
+- 已部署 Azure AI Foundry 模型（通过 `azd up` 进行配置—参见 [第2章](../../02-SetupDevEnvironment/getting-started-azure-openai.md)），并使用 `az login` 登录（无密钥认证）
+- 具备 Java、Spring Boot 和网页开发的基础知识
 
-## 理解项目结构
+## 了解项目结构
 
-宠物故事项目包含以下重要文件：
+宠物故事项目包含几个重要的文件：
 
 ```
 petstory/
@@ -42,13 +42,13 @@ petstory/
 └── pom.xml                           # Maven dependencies
 ```
 
-## 核心组件解析
+## 核心组件讲解
 
 ### 1. 主应用程序
 
-**文件:** `PetStoryApplication.java`
+**文件：** `PetStoryApplication.java`
 
-这是我们Spring Boot应用程序的入口点：
+这是我们 Spring Boot 应用程序的入口：
 
 ```java
 @SpringBootApplication
@@ -59,16 +59,16 @@ public class PetStoryApplication {
 }
 ```
 
-**功能说明:**
-- `@SpringBootApplication`注解启用自动配置和组件扫描
-- 在端口8080上启动嵌入式Web服务器（Tomcat）
-- 自动创建所有必要的Spring Bean和服务
+**功能说明：**
+- `@SpringBootApplication` 注解启用自动配置和组件扫描
+- 在 8080 端口启动嵌入式（Tomcat）Web 服务器
+- 自动创建所有必要的 Spring Bean 和服务
 
-### 2. Web控制器
+### 2. 网络控制器
 
-**文件:** `PetController.java`
+**文件：** `PetController.java`
 
-负责处理所有Web请求和用户交互：
+负责处理所有网络请求和用户交互：
 
 ```java
 @Controller
@@ -82,7 +82,7 @@ public class PetController {
     
     @GetMapping("/")
     public String index() {
-        return "index";  // Returns index.html template
+        return "index";  // 返回 index.html 模板
     }
     
     @PostMapping("/generate-story")
@@ -90,24 +90,24 @@ public class PetController {
                                Model model, 
                                RedirectAttributes redirectAttributes) {
         
-        // Input validation
+        // 输入验证
         if (description.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please provide a description.");
             return "redirect:/";
         }
         
-        // Sanitize input for security
+        // 对输入进行安全过滤
         String sanitizedDescription = sanitizeInput(description);
         
-        // Generate story with error handling
+        // 生成故事并处理错误
         try {
             String story = storyService.generateStory(sanitizedDescription);
             model.addAttribute("caption", sanitizedDescription);
             model.addAttribute("story", story);
-            return "result";  // Returns result.html template
+            return "result";  // 返回 result.html 模板
             
         } catch (Exception e) {
-            // Use fallback story if AI fails
+            // 如果 AI 失败则使用备用故事
             String fallbackStory = generateFallbackStory(sanitizedDescription);
             model.addAttribute("story", fallbackStory);
             return "result";
@@ -117,21 +117,21 @@ public class PetController {
     private String sanitizeInput(String input) {
         return input.replaceAll("[<>\"'&]", "")  // Remove dangerous characters
                    .trim()
-                   .substring(0, Math.min(input.length(), 500));  // Limit length
+                   .substring(0, Math.min(input.length(), 500));  // 限制长度
     }
 }
 ```
 
-**关键功能:**
+**关键功能：**
 
-1. **路由处理**: `@GetMapping("/")`显示上传表单，`@PostMapping("/generate-story")`处理提交
-2. **输入验证**: 检查描述是否为空以及长度限制
-3. **安全性**: 清理用户输入以防止XSS攻击
-4. **错误处理**: 在AI服务失败时提供备用故事
-5. **模型绑定**: 使用Spring的`Model`将数据传递给HTML模板
+1. <strong>路由处理</strong>：`@GetMapping("/")` 显示上传表单，`@PostMapping("/generate-story")` 处理提交
+2. <strong>输入验证</strong>：检查描述是否为空和长度限制
+3. <strong>安全性</strong>：对用户输入进行清理，防止 XSS 攻击
+4. <strong>错误处理</strong>：AI 服务失败时提供备用故事
+5. <strong>模型绑定</strong>：使用 Spring 的 `Model` 向 HTML 模板传递数据
 
-**备用系统:**
-控制器包含预先编写的故事模板，当AI服务不可用时会使用这些模板：
+**备用系统：**
+当 AI 服务不可用时，控制器使用预先编写的故事模板：
 
 ```java
 private String generateFallbackStory(String description) {
@@ -141,7 +141,7 @@ private String generateFallbackStory(String description) {
         "In a cozy home filled with love, there lived an extraordinary pet..."
     };
     
-    // Use description hash for consistent responses
+    // 使用描述哈希以获得一致的响应
     int index = Math.abs(description.hashCode() % storyTemplates.length);
     return storyTemplates[index];
 }
@@ -149,9 +149,9 @@ private String generateFallbackStory(String description) {
 
 ### 3. 故事服务
 
-**文件:** `StoryService.java`
+**文件：** `StoryService.java`
 
-此服务与GitHub Models通信以生成故事：
+该服务与 Azure AI Foundry 通过无密钥认证进行通信以生成故事：
 
 ```java
 @Service
@@ -160,18 +160,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // Foundry 的 OpenAI 兼容端点位于 /openai/v1/
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // 使用 Microsoft Entra ID 进行无密钥身份验证（无 API 密钥）
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -182,16 +186,16 @@ public class StoryService {
         
         String userPrompt = "Write a fun short story about a pet described as: " + description;
         
-        // Configure the AI request
+        // 配置 AI 请求
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(modelName)
                 .addSystemMessage(systemPrompt)
                 .addUserMessage(userPrompt)
-                .maxCompletionTokens(500)  // Limit response length
-                .temperature(0.8)          // Control creativity (0.0-1.0)
+                .maxCompletionTokens(500)  // 限制响应长度
+                .temperature(0.8)          // 控制创造力（0.0-1.0）
                 .build();
         
-        // Send request and get response
+        // 发送请求并获取响应
         ChatCompletion response = openAIClient.chat().completions().create(params);
         
         return response.choices().get(0).message().content().orElse("");
@@ -199,19 +203,19 @@ public class StoryService {
 }
 ```
 
-**关键组件:**
+**关键组件：**
 
-1. **OpenAI客户端**: 使用配置为GitHub Models的官方OpenAI Java SDK
-2. **系统提示**: 设置AI的行为以编写适合家庭的宠物故事
-3. **用户提示**: 根据描述告诉AI具体要写什么故事
-4. **参数**: 控制故事长度和创意水平
-5. **错误处理**: 抛出异常，由控制器捕获并处理
+1. **OpenAI 客户端**：使用官方的 OpenAI Java SDK，配置为 Azure AI Foundry（无密钥）
+2. <strong>系统提示</strong>：设置 AI 行为，编写适合家庭的宠物故事
+3. <strong>用户提示</strong>：告诉 AI 根据描述编写故事
+4. <strong>参数</strong>：控制故事长度和创意水平
+5. <strong>错误处理</strong>：抛出异常，供控制器捕获和处理
 
-### 4. Web模板
+### 4. 网络模板
 
-**文件:** `index.html` (上传表单)
+**文件：** `index.html`（上传表单）
 
-用户描述宠物的主页面：
+主页面，用户在这里描述他们的宠物：
 
 ```html
 <!DOCTYPE html>
@@ -258,7 +262,7 @@ public class StoryService {
 </html>
 ```
 
-**文件:** `result.html` (故事展示)
+**文件：** `result.html`（故事展示）
 
 显示生成的故事：
 
@@ -293,16 +297,16 @@ public class StoryService {
 </html>
 ```
 
-**模板功能:**
+**模板特点：**
 
-1. **Thymeleaf集成**: 使用`th:`属性实现动态内容
-2. **响应式设计**: CSS样式适配移动端和桌面端
-3. **错误处理**: 向用户显示验证错误
-4. **客户端处理**: 使用JavaScript进行图像分析（基于Transformers.js）
+1. **Thymeleaf 集成**：使用 `th:` 属性实现动态内容
+2. <strong>响应式设计</strong>：CSS 样式支持移动端和桌面端
+3. <strong>错误处理</strong>：显示验证错误信息给用户
+4. <strong>客户端处理</strong>：使用 JavaScript 进行图像分析（基于 Transformers.js）
 
 ### 5. 配置
 
-**文件:** `application.properties`
+**文件：** `application.properties`
 
 应用程序的配置设置：
 
@@ -316,52 +320,55 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
-**配置说明:**
+**配置说明：**
 
-1. **文件上传**: 允许上传最大10MB的图片
-2. **日志记录**: 控制执行期间记录的信息
-3. **GitHub Models**: 指定使用的AI模型和端点
-4. **安全性**: 错误处理配置以避免暴露敏感信息
+1. <strong>文件上传</strong>：允许最大 10MB 图片
+2. <strong>日志</strong>：控制执行时记录的信息
+3. **Azure AI Foundry**：指定使用的端点和模型部署（无密钥认证）
+4. <strong>安全性</strong>：错误处理配置，避免暴露敏感信息
 
 ## 运行应用程序
 
-### 第一步: 设置GitHub令牌
+### 步骤 1：登录并设置终结点
 
-首先，您需要将GitHub令牌设置为环境变量：
+认证采用无密钥方式（Microsoft Entra ID），无需 API 密钥。请登录并设置您的 Foundry 终结点：
 
-**Windows (命令提示符):**
+**Windows（命令提示符）：**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-**Windows (PowerShell):**
+**Windows（PowerShell）：**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
-**Linux/macOS:**
+**Linux/macOS：**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-**为什么需要这样做:**
-- GitHub Models需要身份验证才能访问AI模型
-- 使用环境变量可以避免将敏感令牌暴露在源代码中
-- `models:read`权限提供AI推理的访问权限
+**为什么需要这样做：**
+- Azure AI Foundry 使用 Microsoft Entra ID 认证推断请求
+- 无密钥认证意味着源代码或环境中无需存储密钥
+- 您的账户需要在资源上拥有 **认知服务 OpenAI 用户** 角色
 
-### 第二步: 构建并运行
+### 步骤 2：构建并运行
 
-进入项目目录：
+切换到项目目录：
 ```bash
 cd 04-PracticalSamples/petstory
 ```
 
-构建应用程序：
+构建应用：
 ```bash
 mvn clean compile
 ```
@@ -371,51 +378,53 @@ mvn clean compile
 mvn spring-boot:run
 ```
 
-应用程序将在`http://localhost:8080`上启动。
+应用将在 `http://localhost:8080` 启动。
 
-### 第三步: 测试应用程序
+### 步骤 3：测试应用
 
-1. **打开**浏览器中的`http://localhost:8080`
-2. **描述**您的宠物（例如，“一只喜欢捡球的活泼金毛”）
-3. **点击**“生成故事”以获取AI生成的故事
-4. **或者**上传宠物图片以自动生成描述
-5. **查看**基于宠物描述生成的创意故事
+1. <strong>打开</strong> 浏览器访问 `http://localhost:8080`
+2. <strong>描述</strong> 您的宠物（例如：“一只喜欢捡球的活泼金毛”）
+3. <strong>点击</strong> “生成故事” 获取 AI 生成的故事
+4. <strong>或者</strong> 上传宠物图片自动生成描述
+5. <strong>查看</strong> 根据宠物描述创作的有趣故事
 
 ## 整体工作流程
 
-以下是生成宠物故事的完整流程：
+生成宠物故事的完整流程如下：
 
-1. **用户输入**: 您在Web表单中描述您的宠物
-2. **表单提交**: 浏览器发送POST请求到`/generate-story`
-3. **控制器处理**: `PetController`验证并清理输入
-4. **AI服务调用**: `StoryService`向GitHub Models API发送请求
-5. **故事生成**: AI根据描述生成创意故事
-6. **响应处理**: 控制器接收故事并将其添加到模型中
-7. **模板渲染**: Thymeleaf渲染`result.html`并显示故事
-8. **展示**: 用户在浏览器中看到生成的故事
+1. <strong>用户输入</strong>：您在网页表单中描述宠物
+2. <strong>表单提交</strong>：浏览器发送 POST 请求到 `/generate-story`
+3. <strong>控制器处理</strong>：`PetController` 验证并清理输入内容
+4. **AI 服务调用**：`StoryService` 向 Azure AI Foundry 模型发送请求
+5. <strong>故事生成</strong>：AI 根据描述创作故事
+6. <strong>响应处理</strong>：控制器接收故事并添加到模型中
+7. <strong>模板渲染</strong>：Thymeleaf 渲染 `result.html` 页面显示故事
+8. <strong>显示</strong>：用户浏览器中显示生成的故事
 
-**错误处理流程:**
-如果AI服务失败：
+**错误处理流程：**
+如果 AI 服务失败：
 1. 控制器捕获异常
-2. 使用预编写的模板生成备用故事
-3. 显示备用故事并提示AI不可用
-4. 用户仍然可以获得故事，确保良好的用户体验
+2. 使用预先写好的模板生成备用故事
+3. 显示备用故事并附有 AI 服务不可用的提示
+4. 用户仍可获得故事，确保良好的用户体验
 
 ## 理解AI集成
 
-### GitHub Models API
-应用程序使用GitHub Models，提供对各种AI模型的免费访问：
+### Azure AI Foundry（无密钥）
+应用使用 Azure AI Foundry，采用无密钥认证（Microsoft Entra ID）：
 
 ```java
-// Authentication with GitHub token
+// 无密钥认证 - 无需 API 密钥
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
 ### 提示工程
-服务使用精心设计的提示以获得良好的结果：
+服务使用精心设计的提示以获得良好结果：
 
 ```java
 String systemPrompt = "You are a creative storyteller who writes fun, " +
@@ -424,7 +433,7 @@ String systemPrompt = "You are a creative storyteller who writes fun, " +
 ```
 
 ### 响应处理
-提取并验证AI响应：
+提取并验证 AI 响应：
 
 ```java
 ChatCompletion response = openAIClient.chat().completions().create(params);
@@ -433,7 +442,11 @@ String story = response.choices().get(0).message().content().orElse("");
 
 ## 下一步
 
-有关更多示例，请参阅[第4章：实用样例](../README.md)
+更多示例，参见 [第04章：实用示例](../README.md)
 
-**免责声明**：  
-本文档使用AI翻译服务[Co-op Translator](https://github.com/Azure/co-op-translator)进行翻译。尽管我们努力确保翻译的准确性，但请注意，自动翻译可能包含错误或不准确之处。应以原始语言的文档作为权威来源。对于关键信息，建议使用专业人工翻译。我们对因使用本翻译而引起的任何误解或误读不承担责任。
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**免责声明**：
+本文件由 AI 翻译服务 [Co-op Translator](https://github.com/Azure/co-op-translator) 翻译完成。尽管我们力求准确，但请注意，自动翻译可能包含错误或不准确之处。原始语言版文件应视为权威来源。对于重要信息，建议使用专业人工翻译。我们对因使用本翻译而产生的任何误解或误释不承担责任。
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

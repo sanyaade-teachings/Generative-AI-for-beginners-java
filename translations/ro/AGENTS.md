@@ -1,80 +1,83 @@
 # AGENTS.md
 
-## Prezentare Generală a Proiectului
+## Prezentare generală a proiectului
 
-Acesta este un depozit educațional pentru învățarea dezvoltării AI Generative cu Java. Oferă un curs practic cuprinzător care acoperă Modele de Limbaj Extins (LLMs), ingineria prompturilor, embeddings, RAG (Generare Augmentată prin Recuperare) și Protocolul de Context al Modelului (MCP).
+Acesta este un depozit educațional pentru învățarea dezvoltării AI generative cu Java. Oferă un curs practic complet care acoperă Modelele Mari de Limbaj (LLM-uri), ingineria prompturilor, embedding-uri, RAG (Generare augmentată cu recuperare) și Protocolul Contextului Modelului (MCP).
 
-**Tehnologii Cheie:**
+**Tehnologii cheie:**
 - Java 21
 - Spring Boot 3.5.x
 - Spring AI 1.1.x
 - Maven
 - LangChain4j
-- Modele GitHub, Azure OpenAI și SDK-uri OpenAI
+- Azure AI Foundry, Azure OpenAI și SDK-urile OpenAI
 
 **Arhitectură:**
 - Mai multe aplicații Spring Boot independente organizate pe capitole
 - Proiecte exemplu care demonstrează diferite modele AI
 - Pregătit pentru GitHub Codespaces cu containere de dezvoltare preconfigurate
 
-## Comenzi de Configurare
+## Comenzi de configurare
 
-### Cerințe Prealabile
-- Java 21 sau mai recent
+### Cerințe preliminare
+- Java 21 sau versiune superioară
 - Maven 3.x
-- Token de acces personal GitHub (pentru Modele GitHub)
-- Opțional: Credențiale Azure OpenAI
+- Abonament Azure cu un deployment de model Azure AI Foundry (provisionare cu `azd up`)
+- Azure CLI (`az`) și Azure Developer CLI (`azd`), autentificat pentru autentificare fără chei
 
-### Configurarea Mediului
+### Configurarea mediului
 
 **Opțiunea 1: GitHub Codespaces (Recomandat)**
 ```bash
-# Fork the repository and create a codespace from GitHub UI
-# The dev container will automatically install all dependencies
-# Wait ~2 minutes for environment setup
+# Creează un fork al depozitului și creează un codespace din interfața GitHub
+# Containerul de dezvoltare va instala automat toate dependențele
+# Așteaptă aproximativ 2 minute pentru configurarea mediului
 ```
 
-**Opțiunea 2: Container Local de Dezvoltare**
+**Opțiunea 2: Container de dezvoltare local**
 ```bash
-# Clone repository
+# Clonează depozitul
 git clone https://github.com/microsoft/Generative-AI-for-beginners-java.git
 cd Generative-AI-for-beginners-java
 
-# Open in VS Code with Dev Containers extension
-# Reopen in Container when prompted
+# Deschide în VS Code cu extensia Dev Containers
+# Redeschide în Container când ți se cere
 ```
 
-**Opțiunea 3: Configurare Locală**
+**Opțiunea 3: Configurare locală**
 ```bash
-# Install dependencies
+# Instalează dependențele
 sudo apt-get update
 sudo apt-get install -y maven openjdk-21-jdk
 
-# Verify installation
+# Verifică instalarea
 java -version
 mvn -version
 ```
 
 ### Configurare
 
-**Configurarea Tokenului GitHub:**
+**Configurare Azure AI Foundry (fără chei, recomandat):**
 ```bash
-# Create a GitHub Personal Access Token
-# Set environment variable
-export GITHUB_TOKEN="your-token-here"
+# Provisionează contul Foundry + implementările modelului ca cod
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
+# azd scrie examples/basic-chat-azure/.env cu punctul tău final (fără cheie)
 ```
 
-**Configurarea Azure OpenAI (Opțional):**
+**Configurare manuală a endpoint-ului:**
 ```bash
-# For examples using Azure OpenAI
+# Dacă nu ați folosit azd, setați singur punctul final (autentificarea rămâne fără cheie prin az login)
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# Editează .env: AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com/
 ```
 
-## Flux de Lucru în Dezvoltare
+## Flux de lucru pentru dezvoltare
 
-### Structura Proiectului
+### Structura proiectului
 ```
 /
 ├── 01-IntroToGenAI/              # Chapter 1: Introduction
@@ -89,7 +92,7 @@ cp .env.example .env
 └── translations/                # Multi-language support
 ```
 
-### Rularea Aplicațiilor
+### Rularea aplicațiilor
 
 **Rularea unei aplicații Spring Boot:**
 ```bash
@@ -103,91 +106,91 @@ cd [project-directory]
 mvn clean install
 ```
 
-**Pornirea Serverului MCP Calculator:**
+**Pornirea MCP Calculator Server:**
 ```bash
 cd 04-PracticalSamples/calculator
 mvn spring-boot:run
-# Server runs on http://localhost:8080
+# Serverul rulează pe http://localhost:8080
 ```
 
-**Rularea Exemplelor Client:**
+**Rularea exemplelor de client:**
 ```bash
-# After starting the server in another terminal
+# După pornirea serverului într-un alt terminal
 cd 04-PracticalSamples/calculator
 
-# Direct MCP client
+# Client MCP direct
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient"
 
-# AI-powered client (requires GITHUB_TOKEN)
+# Client bazat pe AI (necesită AZURE_OPENAI_ENDPOINT + az login)
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient"
 
-# Interactive bot
+# Bot interactiv
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.Bot"
 ```
 
-### Reîncărcare Automată
-Spring Boot DevTools este inclus în proiectele care suportă reîncărcarea automată:
+### Hot Reload
+Spring Boot DevTools este inclus în proiectele care suportă încărcare la cald:
 ```bash
-# Changes to Java files will automatically reload when saved
+# Modificările fișierelor Java se vor reîncărca automat la salvare
 mvn spring-boot:run
 ```
 
-## Instrucțiuni de Testare
+## Instrucțiuni pentru testare
 
-### Rularea Testelor
+### Rularea testelor
 
-**Rularea tuturor testelor dintr-un proiect:**
+**Rulează toate testele dintr-un proiect:**
 ```bash
 cd [project-directory]
 mvn test
 ```
 
-**Rularea testelor cu ieșire detaliată:**
+**Rulează testele cu output detaliat:**
 ```bash
 mvn test -X
 ```
 
-**Rularea unei clase de test specifică:**
+**Rulează o clasă de test specifică:**
 ```bash
 mvn test -Dtest=CalculatorServiceTest
 ```
 
-### Structura Testelor
-- Fișierele de test utilizează JUnit 5 (Jupiter)
-- Clasele de test se află în `src/test/java/`
-- Exemplele client din proiectul calculatorului sunt în `src/test/java/com/microsoft/mcp/sample/client/`
+### Structura testelor
+- Fișierele de test folosesc JUnit 5 (Jupiter)
+- Clasele de test sunt situate în `src/test/java/`
+- Exemplele de client din proiectul calculator sunt în `src/test/java/com/microsoft/mcp/sample/client/`
 
-### Testare Manuală
+### Testare manuală
 Multe exemple sunt aplicații interactive care necesită testare manuală:
 
 1. Porniți aplicația cu `mvn spring-boot:run`
-2. Testați punctele de acces sau interacționați cu CLI
+2. Testați endpoint-urile sau interacționați cu CLI-ul
 3. Verificați dacă comportamentul așteptat corespunde documentației din README.md-ul fiecărui proiect
 
-### Testare cu Modele GitHub
-- Limite ale nivelului gratuit: 15 cereri/minut, 150/zi
-- Maximum 5 cereri simultane
-- Testați filtrarea conținutului cu exemple de AI responsabil
+### Testare cu Azure AI Foundry
+- Autentificați-vă cu `az login` înainte de a rula exemplele (autentificare fără chei)
+- Asigurați-vă că contul dvs. are rolul Cognitive Services OpenAI User pe resursa respectivă
+- Testați filtrarea conținutului cu exemplul responsible AI din Capitolul 5
 
-## Ghiduri de Stil pentru Cod
+## Ghid stilistic pentru cod
 
 ### Convenții Java
-- **Versiune Java:** Java 21 cu funcționalități moderne
+- **Versiunea Java:** Java 21 cu funcționalități moderne
 - **Stil:** Urmați convențiile standard Java
-- **Denumire:** 
+- **Denominare:** 
   - Clase: PascalCase
   - Metode/variabile: camelCase
   - Constante: UPPER_SNAKE_CASE
-  - Nume pachete: litere mici
+  - Numele pachetelor: lowercase
 
 ### Modele Spring Boot
-- Utilizați `@Service` pentru logica de afaceri
-- Utilizați `@RestController` pentru punctele de acces REST
+- Folosiți `@Service` pentru logica de afaceri
+- Folosiți `@RestController` pentru endpoint-urile REST
 - Configurare prin `application.yml` sau `application.properties`
-- Variabilele de mediu sunt preferate în locul valorilor hard-coded
-- Utilizați adnotarea `@Tool` pentru metodele expuse MCP
+- Variabilele de mediu sunt preferate în locul valorilor hardcodate
+- Folosiți adnotarea `@Tool` pentru metodele expuse prin MCP
 
-### Organizarea Fișierelor
+### Organizarea fișierelor
 ```
 src/
 ├── main/
@@ -208,149 +211,155 @@ src/
 
 ### Dependențe
 - Gestionate prin Maven `pom.xml`
-- BOM Spring AI pentru gestionarea versiunilor
-- LangChain4j pentru integrarea AI
-- Starter parent Spring Boot pentru dependențele Spring
+- Spring AI BOM pentru gestionarea versiunilor
+- LangChain4j pentru integrări AI
+- Spring Boot starter parent pentru dependențele Spring
 
-### Comentarii în Cod
+### Comentarii în cod
 - Adăugați JavaDoc pentru API-urile publice
-- Includeți comentarii explicative pentru interacțiunile complexe AI
+- Includeți comentarii explicative pentru interacțiuni AI complexe
 - Documentați clar descrierile instrumentelor MCP
 
-## Construire și Implementare
+## Construire și deploy
 
-### Construirea Proiectelor
+### Construirea proiectelor
 
-**Construire fără teste:**
+**Build fără teste:**
 ```bash
 mvn clean install -DskipTests
 ```
 
-**Construire cu toate verificările:**
+**Build cu toate verificările:**
 ```bash
 mvn clean install
 ```
 
-**Ambalarea aplicației:**
+**Pachetizare aplicație:**
 ```bash
 mvn package
-# Creates JAR in target/ directory
+# Creează JAR în directorul target/
 ```
 
-### Directoare de Ieșire
+### Directorii de output
 - Clase compilate: `target/classes/`
 - Clase de test: `target/test-classes/`
 - Fișiere JAR: `target/*.jar`
 - Artefacte Maven: `target/`
 
-### Configurare Specifică Mediului
+### Configurare specifică mediului
 
 **Dezvoltare:**
 ```yaml
-# application.yml
+# application.yml (keyless - no api-key; auth via DefaultAzureCredential)
 spring:
   ai:
-    openai:
-      api-key: ${GITHUB_TOKEN}
-      base-url: https://models.inference.ai.azure.com
+    azure:
+      openai:
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
 **Producție:**
-- Utilizați Modele Azure AI Foundry în loc de Modele GitHub
-- Actualizați baza-url la punctul de acces Azure OpenAI
-- Gestionați secretele prin Azure Key Vault sau variabile de mediu
+- Folosiți o identitate administrată în loc de `az login` pentru autentificare fără chei
+- Configurați `AZURE_OPENAI_ENDPOINT` să indice spre resursa Foundry de producție
+- Configurați prin variabile de mediu sau Azure Key Vault
 
-### Considerații de Implementare
+### Considerații pentru deploy
 - Acesta este un depozit educațional cu aplicații exemplu
-- Nu este proiectat pentru implementare în producție așa cum este
-- Exemplele demonstrează modele care pot fi adaptate pentru utilizare în producție
-- Consultați README.md-urile proiectelor individuale pentru note specifice de implementare
+- Nu este conceput pentru deploy în producție ca atare
+- Exemplele demonstrează modele ce pot fi adaptate pentru producție
+- Consultați README-urile fiecărui proiect pentru note specifice de deploy
 
-## Note Suplimentare
+## Note suplimentare
 
-### Modele GitHub vs Azure OpenAI
-- **Modele GitHub:** Nivel gratuit pentru învățare, fără necesitatea unui card de credit
-- **Azure OpenAI:** Pregătit pentru producție, necesită abonament Azure
-- Codul este compatibil între ambele - doar schimbați punctul de acces și cheia API
+### Azure AI Foundry
+- **Autentificare fără chei:** conectați-vă cu Microsoft Entra ID — fără chei API de gestionat
+- **Provisionare ca și cod:** Bicep + azd (`azd up`) creează contul și deployment-urile de model
+- Același cod compatibil OpenAI rulează local (`az login`) și în Azure (identitate administrată)
 
-### Lucrul cu Mai Multe Proiecte
+### Lucrul cu mai multe proiecte
 Fiecare proiect exemplu este independent:
 ```bash
-# Navigate to specific project
+# Navigați la proiectul specific
 cd 04-PracticalSamples/[project-name]
 
-# Each has its own pom.xml and can be built independently
+# Fiecare are propriul pom.xml și poate fi construit independent
 mvn clean install
 ```
 
-### Probleme Comune
+### Probleme comune
 
-**Nepotrivire Versiune Java:**
+**Neconcordanță versiune Java:**
 ```bash
-# Verify Java 21
+# Verifică Java 21
 java -version
-# Update JAVA_HOME if needed
+# Actualizează JAVA_HOME dacă este necesar
 export JAVA_HOME=/usr/lib/jvm/msopenjdk-current
 ```
 
-**Probleme la Descărcarea Dependențelor:**
+**Probleme la descărcarea dependențelor:**
 ```bash
-# Clear Maven cache and retry
+# Curățați memoria cache Maven și încercați din nou
 rm -rf ~/.m2/repository
 mvn clean install
 ```
 
-**Token GitHub Nefondat:**
+**Endpoint sau autentificare indisponibilă:**
 ```bash
-# Set in current session
-export GITHUB_TOKEN="your-token-here"
+# Setează punctul final în sesiunea curentă și autentifică-te (fără cheie)
+export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
+az login
 
-# Or use .env file in project directory
-echo "GITHUB_TOKEN=your-token-here" > .env
+# Sau folosește un fișier .env în directorul proiectului
+echo "AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/" > .env
 ```
 
-**Port Deja Utilizat:**
+**Port deja utilizat:**
 ```bash
-# Spring Boot uses port 8080 by default
-# Change in application.properties:
+# Spring Boot folosește implicit portul 8080
+# Schimbare în application.properties:
 server.port=8081
 ```
 
-### Suport Multi-Limbă
-- Documentație disponibilă în peste 45 de limbi prin traducere automată
-- Traduceri în directorul `translations/`
-- Traducerea gestionată prin fluxul de lucru GitHub Actions
+### Suport multi-limbaj
+- Documentația este disponibilă în peste 45 de limbi prin traducere automată
+- Traducerile sunt în directorul `translations/`
+- Traducerea este gestionată prin fluxul de lucru GitHub Actions
 
-### Parcurs de Învățare
+### Parcurs de învățare
 1. Începeți cu [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md)
 2. Urmați capitolele în ordine (01 → 05)
 3. Completați exemplele practice din fiecare capitol
 4. Explorați proiectele exemplu din Capitolul 4
-5. Învățați practici de AI responsabil în Capitolul 5
+5. Învațați practicile responsible AI în Capitolul 5
 
-### Container de Dezvoltare
+### Containerul de dezvoltare
 Fișierul `.devcontainer/devcontainer.json` configurează:
 - Mediu de dezvoltare Java 21
 - Maven preinstalat
 - Extensii Java pentru VS Code
-- Instrumente Spring Boot
+- Unelte Spring Boot
 - Integrare GitHub Copilot
 - Suport Docker-in-Docker
-- CLI Azure
+- Azure CLI
 
-### Considerații de Performanță
-- Nivelul gratuit al Modelelor GitHub are limite de rată
-- Utilizați dimensiuni adecvate pentru loturi la embeddings
-- Luați în considerare caching-ul pentru apeluri API repetate
-- Monitorizați utilizarea tokenurilor pentru optimizarea costurilor
+### Considerații de performanță
+- Deploy-urile Azure AI Foundry au cote per minut pentru tokeni/cereri
+- Folosiți dimensiuni de batch adecvate pentru embedding-uri
+- Luați în considerare cache pentru apelurile API repetate
+- Monitorizați consumul de tokeni pentru optimizarea costurilor
 
-### Note de Securitate
-- Nu comiteți niciodată fișiere `.env` (deja în `.gitignore`)
-- Utilizați variabile de mediu pentru cheile API
-- Tokenurile GitHub ar trebui să aibă permisiuni minime necesare
-- Urmați ghidurile de AI responsabil din Capitolul 5
+### Note de securitate
+- Nu comiteți fișiere `.env` (sunt deja în `.gitignore`)
+- Preferă autentificarea fără chei (Microsoft Entra ID) față de chei API
+- Folosiți identități administrate în Azure; `az login` pentru dezvoltare locală
+- Urmați ghidurile responsible AI din Capitolul 5
 
 ---
 
-**Declinare de responsabilitate**:  
-Acest document a fost tradus folosind serviciul de traducere AI [Co-op Translator](https://github.com/Azure/co-op-translator). Deși ne străduim să asigurăm acuratețea, vă rugăm să fiți conștienți că traducerile automate pot conține erori sau inexactități. Documentul original în limba sa maternă ar trebui considerat sursa autoritară. Pentru informații critice, se recomandă traducerea profesională realizată de un specialist uman. Nu ne asumăm responsabilitatea pentru eventualele neînțelegeri sau interpretări greșite care pot apărea din utilizarea acestei traduceri.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Declinare a responsabilității**:
+Acest document a fost tradus folosind serviciul de traducere AI [Co-op Translator](https://github.com/Azure/co-op-translator). În timp ce ne străduim pentru acuratețe, vă rugăm să rețineți că traducerile automate pot conține erori sau inexactități. Documentul original în limba sa nativă trebuie considerat sursa autorizată. Pentru informații critice, se recomandă traducerea profesională realizată de un om. Nu ne asumăm responsabilitatea pentru eventualele neînțelegeri sau interpretări greșite care decurg din utilizarea acestei traduceri.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

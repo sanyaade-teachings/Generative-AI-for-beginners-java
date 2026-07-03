@@ -2,7 +2,7 @@
 
 ## Projekto apžvalga
 
-Tai edukacinis saugyklos projektas, skirtas mokytis generatyvinio AI kūrimo su Java. Jame pateikiamas išsamus praktinis kursas, apimantis didelius kalbos modelius (LLMs), užklausų kūrimą, įterpimus, RAG (paieška praturtinta generacija) ir Modelio konteksto protokolą (MCP).
+Tai edukacinis repozitorijus, skirtas mokytis Generatyviosios AI kūrimo su Java. Jame pateikiamas išsamus praktinis kursas, apimantis Didelius kalbos modelius (LLM), užklausų inžineriją, įterpimus, RAG (Retrieval-Augmented Generation) ir Modelio konteksto protokolą (MCP).
 
 **Pagrindinės technologijos:**
 - Java 21
@@ -10,69 +10,72 @@ Tai edukacinis saugyklos projektas, skirtas mokytis generatyvinio AI kūrimo su 
 - Spring AI 1.1.x
 - Maven
 - LangChain4j
-- GitHub Models, Azure OpenAI ir OpenAI SDKs
+- Azure AI Foundry, Azure OpenAI ir OpenAI SDK
 
 **Architektūra:**
-- Keli atskiri Spring Boot programos, suskirstytos pagal skyrius
-- Pavyzdiniai projektai, demonstruojantys skirtingus AI modelius
-- Paruošta GitHub Codespaces su iš anksto sukonfigūruotais kūrimo konteineriais
+- Keli atskiri Spring Boot aplikacijų projektai, sugrupuoti pagal skyrius
+- Pavyzdiniai projektai, demonstruojantys įvairius AI modelius
+- Paruošta naudoti GitHub Codespaces su iš anksto sukonfigūruotomis kūrimo aplinkomis
 
-## Nustatymo komandos
+## Diegimo komandos
 
-### Reikalavimai
-- Java 21 ar naujesnė
+### Išankstiniai reikalavimai
+- Java 21 arba naujesnė
 - Maven 3.x
-- GitHub asmeninis prieigos raktas (GitHub Models)
-- Pasirinktinai: Azure OpenAI prisijungimo duomenys
+- Azure prenumerata su Azure AI Foundry modelio diegimu (sukuriama su `azd up`)
+- Azure CLI (`az`) ir Azure Developer CLI (`azd`), prisijungę naudotojai be raktų (keyless auth)
 
-### Aplinkos nustatymas
+### Aplinkos konfigūracija
 
-**1 variantas: GitHub Codespaces (rekomenduojama)**
+**Pasirinkimas 1: GitHub Codespaces (rekomenduojama)**
 ```bash
-# Fork the repository and create a codespace from GitHub UI
-# The dev container will automatically install all dependencies
-# Wait ~2 minutes for environment setup
+# Sukurkite šaką (fork) saugykloje ir sukurkite kodų erdvę (codespace) iš GitHub sąsajos
+# Kūrimo konteineris automatiškai įdiegs visas priklausomybes
+# Palaukite apie 2 minutes, kol bus paruošta aplinka
 ```
 
-**2 variantas: Vietinis kūrimo konteineris**
+**Pasirinkimas 2: Vietinis kūrimo konteineris**
 ```bash
-# Clone repository
+# Klonuoti repozitoriją
 git clone https://github.com/microsoft/Generative-AI-for-beginners-java.git
 cd Generative-AI-for-beginners-java
 
-# Open in VS Code with Dev Containers extension
-# Reopen in Container when prompted
+# Atidaryti VS Code su Dev Containers plėtiniu
+# Pakartotinai atidaryti konteineryje, kai bus paprašyta
 ```
 
-**3 variantas: Vietinis nustatymas**
+**Pasirinkimas 3: Vietinis diegimas**
 ```bash
-# Install dependencies
+# Įdiekite priklausomybes
 sudo apt-get update
 sudo apt-get install -y maven openjdk-21-jdk
 
-# Verify installation
+# Patikrinkite diegimą
 java -version
 mvn -version
 ```
 
 ### Konfigūracija
 
-**GitHub rakto nustatymas:**
+**Azure AI Foundry diegimas (be raktų, rekomenduojama):**
 ```bash
-# Create a GitHub Personal Access Token
-# Set environment variable
-export GITHUB_TOKEN="your-token-here"
+# Sukurkite Foundry paskyrą + modelių diegimus kaip kodą
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
+# azd įrašo examples/basic-chat-azure/.env su jūsų galiniu tašku (be rakto)
 ```
 
-**Azure OpenAI nustatymas (pasirinktinai):**
+**Rankinė galinio taško konfigūracija:**
 ```bash
-# For examples using Azure OpenAI
+# Jei nenaudojote azd, patys nustatykite galinį tašką (autentifikacija lieka be rakto per az login)
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# Redaguokite .env: AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com/
 ```
 
-## Kūrimo procesas
+## Kūrimo darbo eiga
 
 ### Projekto struktūra
 ```
@@ -89,103 +92,103 @@ cp .env.example .env
 └── translations/                # Multi-language support
 ```
 
-### Programų paleidimas
+### Aplikacijų paleidimas
 
-**Spring Boot programos paleidimas:**
+**Spring Boot aplikacijos paleidimas:**
 ```bash
 cd [project-directory]
 mvn spring-boot:run
 ```
 
-**Projekto kūrimas:**
+**Projekto kompiliavimas:**
 ```bash
 cd [project-directory]
 mvn clean install
 ```
 
-**MCP skaičiuoklės serverio paleidimas:**
+**MCP skaičiuoklio serverio paleidimas:**
 ```bash
 cd 04-PracticalSamples/calculator
 mvn spring-boot:run
-# Server runs on http://localhost:8080
+# Serveris veikia adresu http://localhost:8080
 ```
 
-**Kliento pavyzdžių paleidimas:**
+**Klientų pavyzdžių paleidimas:**
 ```bash
-# After starting the server in another terminal
+# Po serverio paleidimo kitame terminale
 cd 04-PracticalSamples/calculator
 
-# Direct MCP client
+# Tiesioginis MCP klientas
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient"
 
-# AI-powered client (requires GITHUB_TOKEN)
+# AI varomas klientas (reikia AZURE_OPENAI_ENDPOINT + az prisijungimo)
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient"
 
-# Interactive bot
+# Interaktyvus botas
 mvn exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.Bot"
 ```
 
-### Karštasis perkrovimas
-Spring Boot DevTools įtrauktas į projektus, kurie palaiko karštąjį perkrovimą:
+### Karštasis persikrovimas
+Spring Boot DevTools įtrauktos į projektus, kurie palaiko karštąjį persikrovimą:
 ```bash
-# Changes to Java files will automatically reload when saved
+# Pakeitimai Java failuose bus automatiškai perkraunami juos išsaugojus
 mvn spring-boot:run
 ```
 
 ## Testavimo instrukcijos
 
-### Testų paleidimas
+### Testų vykdymas
 
-**Paleisti visus projekto testus:**
+**Visų projekto testų paleidimas:**
 ```bash
 cd [project-directory]
 mvn test
 ```
 
-**Paleisti testus su išsamia išvestimi:**
+**Testų paleidimas su išsamia išvestimi:**
 ```bash
 mvn test -X
 ```
 
-**Paleisti konkrečią testų klasę:**
+**Konkrečios testų klasės paleidimas:**
 ```bash
 mvn test -Dtest=CalculatorServiceTest
 ```
 
 ### Testų struktūra
 - Testų failai naudoja JUnit 5 (Jupiter)
-- Testų klasės yra `src/test/java/`
-- Kliento pavyzdžiai skaičiuoklės projekte yra `src/test/java/com/microsoft/mcp/sample/client/`
+- Testų klasės yra `src/test/java/` kataloge
+- Klientų pavyzdžiai skaičiuoklio projekte yra `src/test/java/com/microsoft/mcp/sample/client/`
 
 ### Rankinis testavimas
-Daugelis pavyzdžių yra interaktyvios programos, reikalaujančios rankinio testavimo:
+Daugelis pavyzdžių yra interaktyvios aplikacijos, kurios reikalauja rankinio testavimo:
 
-1. Paleiskite programą su `mvn spring-boot:run`
-2. Testuokite galinius taškus arba sąveikaukite su CLI
-3. Patikrinkite, ar tikėtinas elgesys atitinka dokumentaciją kiekvieno projekto README.md
+1. Paleiskite aplikaciją komanda `mvn spring-boot:run`
+2. Testuokite galinius taškus arba bendraukite per komandų eilutę
+3. Patikrinkite, ar elgsena atitinka kiekvieno projekto README.md dokumentacijoje aprašytus lūkesčius
 
-### Testavimas su GitHub Models
-- Nemokamo plano apribojimai: 15 užklausų/minutę, 150 per dieną
-- Maksimaliai 5 lygiagrečios užklausos
-- Testuokite turinio filtravimą su atsakingo AI pavyzdžiais
+### Testavimas su Azure AI Foundry
+- Prisijunkite su `az login` prieš paleisdami pavyzdžius (be raktų autentifikavimas)
+- Užtikrinkite, kad jūsų paskyra turi Cognitive Services OpenAI User vaidmenį resurse
+- Testuokite turinio filtravimą su atsakingos AI pavyzdžiu 5 skyriuje
 
 ## Kodo stiliaus gairės
 
 ### Java konvencijos
 - **Java versija:** Java 21 su moderniomis funkcijomis
-- **Stilius:** Laikykitės standartinių Java konvencijų
+- **Stilius:** Laikytis standartinių Java konvencijų
 - **Pavadinimai:** 
   - Klasės: PascalCase
   - Metodai/kintamieji: camelCase
   - Konstantos: UPPER_SNAKE_CASE
-  - Paketų pavadinimai: mažosios raidės
+  - Paketo pavadinimai: mažosiomis raidėmis
 
 ### Spring Boot modeliai
-- Naudokite `@Service` verslo logikai
-- Naudokite `@RestController` REST galiniams taškams
+- Naudoti `@Service` verslo logikai
+- Naudoti `@RestController` REST galiniams taškams
 - Konfigūracija per `application.yml` arba `application.properties`
-- Aplinkos kintamieji yra geriau nei kietai užkoduotos reikšmės
-- Naudokite `@Tool` anotaciją MCP eksponuojamiems metodams
+- Aplinkos kintamieji preferuojami prieš kietai užkoduotas reikšmes
+- Naudoti `@Tool` anotaciją MCP eksponuotoms metodams
 
 ### Failų organizavimas
 ```
@@ -208,14 +211,14 @@ src/
 
 ### Priklausomybės
 - Valdomos per Maven `pom.xml`
-- Spring AI BOM versijų valdymui
+- Naudojamas Spring AI BOM versijų valdymui
 - LangChain4j AI integracijoms
 - Spring Boot starter parent Spring priklausomybėms
 
 ### Kodo komentarai
-- Pridėkite JavaDoc viešiems API
-- Įtraukite paaiškinamuosius komentarus sudėtingoms AI sąveikoms
-- Aiškiai dokumentuokite MCP įrankių aprašymus
+- Rašyti JavaDoc viešajam API
+- Įtraukti paaiškinamuosius komentarus sudėtingiems AI sąveikoms
+- Aiškiai dokumentuoti MCP įrankių aprašymus
 
 ## Kūrimas ir diegimas
 
@@ -231,105 +234,109 @@ mvn clean install -DskipTests
 mvn clean install
 ```
 
-**Programos paketavimas:**
+**Aplikacijos paketavimas:**
 ```bash
 mvn package
-# Creates JAR in target/ directory
+# Sukuria JAR failą target/ kataloge
 ```
 
 ### Išvesties katalogai
-- Kompiliuoti klasės failai: `target/classes/`
+- Surinktos klasės: `target/classes/`
 - Testų klasės: `target/test-classes/`
 - JAR failai: `target/*.jar`
 - Maven artefaktai: `target/`
 
-### Konfigūracija pagal aplinką
+### Aplinkos specifinė konfiguracija
 
-**Kūrimas:**
+**Vystymui:**
 ```yaml
-# application.yml
+# application.yml (keyless - no api-key; auth via DefaultAzureCredential)
 spring:
   ai:
-    openai:
-      api-key: ${GITHUB_TOKEN}
-      base-url: https://models.inference.ai.azure.com
+    azure:
+      openai:
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
-**Produkcija:**
-- Naudokite Azure AI Foundry Models vietoj GitHub Models
-- Atnaujinkite bazinį URL į Azure OpenAI galinį tašką
-- Valdykite slaptažodžius per Azure Key Vault arba aplinkos kintamuosius
+**Gamybai:**
+- Naudoti valdomą tapatybę vietoje `az login` keyless autentifikavimui
+- Nustatyti `AZURE_OPENAI_ENDPOINT` į savo gamybinį Foundry resursą
+- Valdyti konfigūraciją per aplinkos kintamuosius arba Azure Key Vault
 
-### Diegimo svarstymai
-- Tai edukacinis saugyklos projektas su pavyzdinėmis programomis
-- Nėra skirtas tiesioginiam diegimui kaip yra
-- Pavyzdžiai demonstruoja modelius, kuriuos galima pritaikyti produkcijai
-- Žr. atskirų projektų README failus dėl konkrečių diegimo pastabų
+### Diegimo pastabos
+- Tai edukacinis repozitorijus su pavyzdinėmis aplikacijomis
+- Nėra skirtas gamybiniam diegimui be papildomų adaptacijų
+- Pavyzdžiai demonstruoja modelius, kuriuos galima pritaikyti gamybinėms reikmėms
+- Peržiūrėkite individualių projektų README.md dėl konkrečių diegimo pastabų
 
 ## Papildomos pastabos
 
-### GitHub Models vs Azure OpenAI
-- **GitHub Models:** Nemokamas planas mokymuisi, nereikia kredito kortelės
-- **Azure OpenAI:** Paruoštas produkcijai, reikalinga Azure prenumerata
-- Kodas suderinamas su abiem - tiesiog pakeiskite galinį tašką ir API raktą
+### Azure AI Foundry
+- **Keyless autentifikacija:** jungtis per Microsoft Entra ID — nereikia valdyti API raktų
+- **Pankodinis diegimas:** Bicep + azd (`azd up`) sukuria paskyrą ir modelių diegimus
+- Toks pats OpenAI suderinamas kodas veikia vietoje (`az login`) ir Azure aplinkoje (valdomos tapatybės)
 
 ### Darbas su keliais projektais
 Kiekvienas pavyzdinis projektas yra atskiras:
 ```bash
-# Navigate to specific project
+# Pereikite į konkretų projektą
 cd 04-PracticalSamples/[project-name]
 
-# Each has its own pom.xml and can be built independently
+# Kiekvienas turi savo pom.xml ir gali būti statomas nepriklausomai
 mvn clean install
 ```
 
 ### Dažnos problemos
 
-**Java versijos neatitikimas:**
+**Java versijų neatitikimas:**
 ```bash
-# Verify Java 21
+# Patikrinti Java 21
 java -version
-# Update JAVA_HOME if needed
+# Atnaujinti JAVA_HOME, jei reikia
 export JAVA_HOME=/usr/lib/jvm/msopenjdk-current
 ```
 
 **Priklausomybių atsisiuntimo problemos:**
 ```bash
-# Clear Maven cache and retry
+# Išvalykite Maven talpyklą ir bandykite dar kartą
 rm -rf ~/.m2/repository
 mvn clean install
 ```
 
-**GitHub rakto nerasta:**
+**Galinio taško arba prisijungimo nepavykimas:**
 ```bash
-# Set in current session
-export GITHUB_TOKEN="your-token-here"
+# Nustatykite galutinį tašką dabartinėje sesijoje ir prisijunkite (be rakto)
+export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
+az login
 
-# Or use .env file in project directory
-echo "GITHUB_TOKEN=your-token-here" > .env
+# Arba naudokite .env failą projekto kataloge
+echo "AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/" > .env
 ```
 
-**Portas jau naudojamas:**
+**Prievadas jau užimtas:**
 ```bash
-# Spring Boot uses port 8080 by default
-# Change in application.properties:
+# Spring Boot pagal numatytuosius nustatymus naudoja 8080 prievadą
+# Keisti application.properties faile:
 server.port=8081
 ```
 
-### Daugiakalbė parama
+### Daugiakalbystės palaikymas
 - Dokumentacija prieinama daugiau nei 45 kalbomis per automatinį vertimą
 - Vertimai saugomi `translations/` kataloge
-- Vertimą valdo GitHub Actions darbo eiga
+- Vertimo valdymas atliekamas per GitHub Actions darbo eigą
 
 ### Mokymosi kelias
 1. Pradėkite nuo [02-SetupDevEnvironment](02-SetupDevEnvironment/README.md)
-2. Sekite skyrius iš eilės (01 → 05)
+2. Sekite skyrius pagal eilę (01 → 05)
 3. Atlikite praktinius pavyzdžius kiekviename skyriuje
 4. Tyrinėkite pavyzdinius projektus 4 skyriuje
-5. Mokykitės atsakingo AI praktikų 5 skyriuje
+5. Mokykitės atsakingos AI praktikos 5 skyriuje
 
 ### Kūrimo konteineris
-`.devcontainer/devcontainer.json` konfigūruoja:
+Failas `.devcontainer/devcontainer.json` konfigūruoja:
 - Java 21 kūrimo aplinką
 - Iš anksto įdiegtą Maven
 - VS Code Java plėtinius
@@ -338,19 +345,21 @@ server.port=8081
 - Docker-in-Docker palaikymą
 - Azure CLI
 
-### Našumo svarstymai
-- GitHub Models nemokamas planas turi apribojimus
-- Naudokite tinkamus partijų dydžius įterpimams
-- Apsvarstykite talpyklą pakartotiniams API skambučiams
-- Stebėkite žetonų naudojimą, kad optimizuotumėte išlaidas
+### Veikimo našumo aspektai
+- Azure AI Foundry diegimuose yra minučių tokenų/užklausų kvotos
+- Naudokite tinkamus paketus įterpimams
+- Apsvarstykite kešavimą pakartotinėms API užklausoms
+- Stebėkite tokenų naudojimą kaštų optimizavimui
 
 ### Saugumo pastabos
-- Niekada neįtraukite `.env` failų (jau yra `.gitignore`)
-- Naudokite aplinkos kintamuosius API raktams
-- GitHub raktai turėtų turėti minimaliai reikalingus leidimus
-- Laikykitės atsakingo AI gairių 5 skyriuje
+- Niekada nekelkite `.env` failų (jie jau įtraukti į `.gitignore`)
+- Prioritetinis keyless autentifikavimas (Microsoft Entra ID) prieš API raktus
+- Naudokite valdomas tapatybes Azure; `az login` vietiniam vystymui
+- Vadovaukitės atsakingos AI gairėmis 5 skyriuje
 
 ---
 
-**Atsakomybės apribojimas**:  
-Šis dokumentas buvo išverstas naudojant AI vertimo paslaugą [Co-op Translator](https://github.com/Azure/co-op-translator). Nors stengiamės užtikrinti tikslumą, prašome atkreipti dėmesį, kad automatiniai vertimai gali turėti klaidų ar netikslumų. Originalus dokumentas jo gimtąja kalba turėtų būti laikomas autoritetingu šaltiniu. Kritinei informacijai rekomenduojama naudoti profesionalų žmogaus vertimą. Mes neprisiimame atsakomybės už nesusipratimus ar neteisingus interpretavimus, atsiradusius dėl šio vertimo naudojimo.
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Atsakomybės apribojimas**:
+Šis dokumentas buvo išverstas naudojant dirbtinio intelekto vertimo paslaugą [Co-op Translator](https://github.com/Azure/co-op-translator). Nors siekiame tikslumo, prašome atkreipti dėmesį, kad automatiniai vertimai gali turėti klaidų ar netikslumų. Originalus dokumentas jo gimtąja kalba laikomas autoritetingu šaltiniu. Svarbiai informacijai rekomenduojama naudoti profesionalų žmogiškąjį vertimą. Mes neatsakome už jokius nesusipratimus ar neteisingą interpretaciją, kilusią naudojantis šiuo vertimu.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

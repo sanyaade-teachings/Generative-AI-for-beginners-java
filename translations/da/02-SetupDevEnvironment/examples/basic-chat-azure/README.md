@@ -1,122 +1,77 @@
-# Grundlæggende Chat med Azure OpenAI - End-to-End Eksempel
+# Grundlæggende Chat med Azure AI Foundry - End-to-End Eksempel
 
-Dette eksempel viser, hvordan man opretter en simpel Spring Boot-applikation, der forbinder til Azure OpenAI og tester din opsætning.
+Dette eksempel er en simpel Spring Boot-applikation, der forbinder til en **Azure AI Foundry**-model ved hjælp af **keyless authentication** (Microsoft Entra ID) og tester din opsætning. Den bruger Spring AI's `ChatClient`.
 
 ## Indholdsfortegnelse
 
-- [Forudsætninger](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Hurtig Start](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Konfigurationsmuligheder](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Mulighed 1: Miljøvariabler (.env-fil) - Anbefalet](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Mulighed 2: GitHub Codespace Secrets](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Kørsel af Applikationen](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Ved Brug af Maven](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Ved Brug af VS Code](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Forventet Output](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Konfigurationsreference](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Miljøvariabler](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Spring Konfiguration](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Fejlfinding](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Almindelige Problemer](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-  - [Debug-tilstand](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Næste Skridt](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
-- [Ressourcer](../../../../../02-SetupDevEnvironment/examples/basic-chat-azure)
+- [Forudsætninger](#forudsætninger)
+- [Kom hurtigt i gang](#kom-hurtigt-i-gang)
+- [Hvordan autentificering virker](#hvordan-autentificering-virker)
+- [Kørsel af applikationen](#kørsel-af-applikationen)
+  - [Brug af Maven](#brug-af-maven)
+  - [Brug af VS Code](#brug-af-vs-code)
+  - [Forventet output](#forventet-output)
+- [Konfigurationsreference](#konfigurationsreference)
+  - [Miljøvariabler](#miljøvariabler)
+  - [Spring-konfiguration](#spring-konfiguration)
+- [Fejlfinding](#fejlfinding)
+  - [Almindelige problemer](#almindelige-problemer)
+  - [Debug-tilstand](#debug-tilstand)
+- [Næste skridt](#næste-skridt)
+- [Ressourcer](#ressourcer)
 
 ## Forudsætninger
 
 Før du kører dette eksempel, skal du sikre dig, at du har:
 
-- Fuldført [Azure OpenAI opsætningsguiden](../../getting-started-azure-openai.md)  
-- Udrullet Azure OpenAI-ressource (via Azure AI Foundry-portalen)  
-- Udrullet gpt-4o-mini model (eller alternativ)  
-- API-nøgle og endpoint-URL fra Azure  
+- En Azure AI Foundry-ressource med en `gpt-4o-mini`-udrulning — opret den med `azd up` eller manuelt via [Azure AI Foundry opsætningsvejledning](../../getting-started-azure-openai.md)
+- Rollen **Cognitive Services OpenAI User** på den ressource (de Bicep-skabeloner tildeler denne til dig)
+- [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli), logget ind med `az login`
+- Java 21+ og Maven 3.9+
 
-## Hurtig Start
+> **Ingen API-nøgle krævet** — autentificering sker keyless via Microsoft Entra ID.
+
+## Kom hurtigt i gang
 
 ```bash
-# 1. Navigate to project
+# 1. Naviger til projektet
 cd 02-SetupDevEnvironment/examples/basic-chat-azure
 
-# 2. Configure credentials
-cp .env.example .env
-# Edit .env with your Azure OpenAI credentials
+# 2. Log ind, så keyless auth kan få et token
+az login
 
-# 3. Run the application
+# 3. Konfigurer slutpunktet
+#    - Hvis du kørte `azd up`, blev .env skrevet for dig (spring dette over).
+#    - Ellers kopier skabelonen og sæt AZURE_OPENAI_ENDPOINT:
+cp .env.example .env
+
+# 4. Kør applikationen
 mvn spring-boot:run
 ```
 
-## Konfigurationsmuligheder
+## Hvordan autentificering virker
 
-### Mulighed 1: Miljøvariabler (.env-fil) - Anbefalet
+Dette eksempel autentificerer med **Microsoft Entra ID** — der er ingen API-nøgle.
 
-**Trin 1: Opret din konfigurationsfil**
-```bash
-cp .env.example .env
-```
+Når kun `spring.ai.azure.openai.endpoint` er sat (og ingen api-nøgle), bygger Spring AI Azure OpenAI-klienten med [`DefaultAzureCredential`](https://learn.microsoft.com/java/api/com.azure.identity.defaultazurecredential). Den credential finder automatisk en token fra din `az login` session lokalt eller fra en managed identity, når den kører i Azure — så den samme kode virker begge steder uden ændringer.
 
-**Trin 2: Tilføj dine Azure OpenAI-legitimationsoplysninger**
-```bash
-# Your Azure OpenAI API key (from Azure AI Foundry portal)
-AZURE_AI_KEY=your-actual-api-key-here
+## Kørsel af applikationen
 
-# Your Azure OpenAI endpoint URL (e.g., https://your-hub-name.openai.azure.com/)
-AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-> **Sikkerhedsnotat**: 
-> - Undlad at committe din `.env`-fil til versionskontrol
-> - `.env`-filen er allerede inkluderet i `.gitignore`
-> - Hold dine API-nøgler sikre og roter dem regelmæssigt
-
-### Mulighed 2: GitHub Codespace Secrets
-
-For GitHub Codespaces skal du indstille disse secrets i dit repository:
-- `AZURE_AI_KEY` - Din Azure OpenAI API-nøgle
-- `AZURE_AI_ENDPOINT` - Din Azure OpenAI endpoint-URL
-
-Applikationen registrerer og bruger automatisk disse secrets.
-
-### Alternativ: Direkte Miljøvariabler
-
-<details>
-<summary>Klik for at se platform-specifikke kommandoer</summary>
-
-**Linux/macOS (bash/zsh):**
-```bash
-export AZURE_AI_KEY=your-actual-api-key-here
-export AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (Command Prompt):**
-```cmd
-set AZURE_AI_KEY=your-actual-api-key-here
-set AZURE_AI_ENDPOINT=https://your-hub-name.openai.azure.com/
-```
-
-**Windows (PowerShell):**
-```powershell
-$env:AZURE_AI_KEY="your-actual-api-key-here"
-$env:AZURE_AI_ENDPOINT="https://your-hub-name.openai.azure.com/"
-```
-</details>
-
-## Kørsel af Applikationen
-
-### Ved Brug af Maven
+### Brug af Maven
 
 ```bash
 mvn spring-boot:run
 ```
 
-### Ved Brug af VS Code
+### Brug af VS Code
 
 1. Åbn projektet i VS Code
 2. Tryk på `F5` eller brug "Run and Debug"-panelet
-3. Vælg "Spring Boot-BasicChatApplication"-konfigurationen
+3. Vælg "Spring Boot-BasicChatApplication" konfigurationen
 
-> **Note**: VS Code-konfigurationen indlæser automatisk din .env-fil
+> **Bemærk**: VS Code-konfigurationen indlæser automatisk din .env-fil
 
-### Forventet Output
+### Forventet output
 
 ```
 Starting Basic Chat with Azure OpenAI...
@@ -136,47 +91,49 @@ Success! Azure OpenAI connection is working correctly.
 
 ### Miljøvariabler
 
-| Variabel | Beskrivelse | Påkrævet | Eksempel |
-|----------|-------------|----------|---------|
-| `AZURE_AI_KEY` | Azure OpenAI API-nøgle | Ja | `abc123...` |
-| `AZURE_AI_ENDPOINT` | Azure OpenAI endpoint-URL | Ja | `https://my-hub.openai.azure.com/` |
-| `AZURE_AI_MODEL_DEPLOYMENT` | Model-udrulningsnavn | Nej | `gpt-4o-mini` (standard) |
+| Variabel | Beskrivelse | Krævet | Eksempel |
+|----------|-------------|---------|----------|
+| `AZURE_OPENAI_ENDPOINT` | Foundry (Azure OpenAI) endpoint URL | Ja | `https://my-resource.openai.azure.com/` |
+| `AZURE_OPENAI_DEPLOYMENT` | Navn på chat model-udrulning | Nej | `gpt-4o-mini` (standard) |
 
-### Spring Konfiguration
+> Der findes **ingen** API-nøgle-variabel — autentificering sker keyless (Microsoft Entra ID via `az login`).
+
+### Spring-konfiguration
 
 `application.yml`-filen konfigurerer:
-- **API-nøgle**: `${AZURE_AI_KEY}` - Fra miljøvariabel
-- **Endpoint**: `${AZURE_AI_ENDPOINT}` - Fra miljøvariabel  
-- **Model**: `${AZURE_AI_MODEL_DEPLOYMENT:gpt-4o-mini}` - Fra miljøvariabel med fallback
-- **Temperatur**: `0.7` - Styrer kreativitet (0.0 = deterministisk, 1.0 = kreativ)
+- **Endpoint**: `${AZURE_OPENAI_ENDPOINT}` - Fra miljøvariabel
+- **Deployment**: `${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}` - Fra miljøvariabel med fallback
+- **Auth**: keyless — ingen `api-key` sat, så Spring AI bruger `DefaultAzureCredential`
+- **Temperature**: `0.7` - Kontrollerer kreativitet (0.0 = deterministisk, 1.0 = kreativ)
 - **Max Tokens**: `500` - Maksimal svarlængde
 
 ## Fejlfinding
 
-### Almindelige Problemer
+### Almindelige problemer
 
 <details>
-<summary><strong>Fejl: "API-nøglen er ikke gyldig"</strong></summary>
+<summary><strong>Fejl: 401 / "PermissionDenied" / token fejl</strong></summary>
 
-- Tjek, at din `AZURE_AI_KEY` er korrekt indstillet i din `.env`-fil
-- Bekræft, at API-nøglen er kopieret præcist fra Azure AI Foundry-portalen
-- Sørg for, at der ikke er ekstra mellemrum eller anførselstegn omkring nøglen
+- Kør `az login` — keyless auth kræver aktiv login for at hente en token
+- Bekræft, at din konto har rollen **Cognitive Services OpenAI User** på ressourcen
+- Hvis du lige har tildelt rollen, vent et øjeblik for udbredelse
+- Bekræft, at du er i det rigtige tenant/abonnement (`az account show`)
 </details>
 
 <details>
-<summary><strong>Fejl: "Endpoint er ikke gyldigt"</strong></summary>
+<summary><strong>Fejl: "The endpoint is not valid" / forbindelsesfejl</strong></summary>
 
-- Sørg for, at din `AZURE_AI_ENDPOINT` inkluderer den fulde URL (f.eks. `https://your-hub-name.openai.azure.com/`)
-- Tjek for konsistens med afsluttende skråstreg
-- Bekræft, at endpoint matcher din Azure-udrulningsregion
+- Sørg for, at `AZURE_OPENAI_ENDPOINT` er den fulde basis-URL (f.eks. `https://your-resource.openai.azure.com/`)
+- Tjek konvention for afsluttende skråstreg
+- Bekræft at endpoint matcher din udrullede ressource (`azd env get-values`)
 </details>
 
 <details>
-<summary><strong>Fejl: "Udrulningen blev ikke fundet"</strong></summary>
+<summary><strong>Fejl: "The deployment was not found"</strong></summary>
 
-- Bekræft, at dit model-udrulningsnavn matcher præcist det, der er udrullet i Azure
-- Tjek, at modellen er succesfuldt udrullet og aktiv
-- Prøv at bruge standard-udrulningsnavnet: `gpt-4o-mini`
+- Bekræft, at `AZURE_OPENAI_DEPLOYMENT` matcher et udrulningsnavn i Azure
+- Tjek at modellen er succesfuldt udrullet og aktiv
+- Standardnavnet for udrulning er `gpt-4o-mini`
 </details>
 
 <details>
@@ -184,13 +141,12 @@ Success! Azure OpenAI connection is working correctly.
 
 - Sørg for, at din `.env`-fil er i projektets rodmappe (samme niveau som `pom.xml`)
 - Prøv at køre `mvn spring-boot:run` i VS Codes integrerede terminal
-- Tjek, at VS Code Java-udvidelsen er korrekt installeret
-- Bekræft, at launch-konfigurationen har `"envFile": "${workspaceFolder}/.env"`
+- Tjek at VS Code Java-udvidelsen er korrekt installeret
 </details>
 
 ### Debug-tilstand
 
-For at aktivere detaljeret logning, fjern kommentaren fra disse linjer i `application.yml`:
+For at aktivere detaljeret logning skal du afkommentere disse linjer i `application.yml`:
 
 ```yaml
 logging:
@@ -199,18 +155,22 @@ logging:
     com.azure: DEBUG
 ```
 
-## Næste Skridt
+## Næste skridt
 
-**Opsætning Fuldført!** Fortsæt din læringsrejse:
+**Opsætningen er fuldført!** Fortsæt din læringsrejse:
 
-[Kapitel 3: Kerne Generative AI Teknikker](../../../03-CoreGenerativeAITechniques/README.md)
+[Kapitel 3: Core Generative AI Techniques](../../../03-CoreGenerativeAITechniques/README.md)
 
 ## Ressourcer
 
-- [Spring AI Azure OpenAI Dokumentation](https://docs.spring.io/spring-ai/reference/api/clients/azure-openai-chat.html)
-- [Azure OpenAI Service Dokumentation](https://learn.microsoft.com/azure/ai-services/openai/)
+- [Spring AI Azure OpenAI Dokumentation](https://docs.spring.io/spring-ai/reference/api/chat/azure-openai-chat.html)
+- [Keyless autentificering med Microsoft Entra ID](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/configure-entra-id)
 - [Azure AI Foundry Portal](https://ai.azure.com/)
-- [Azure AI Foundry Dokumentation](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry&pivots=hub-project)
+- [Azure AI Foundry Dokumentation](https://learn.microsoft.com/azure/ai-foundry/)
 
-**Ansvarsfraskrivelse**:  
-Dette dokument er blevet oversat ved hjælp af AI-oversættelsestjenesten [Co-op Translator](https://github.com/Azure/co-op-translator). Selvom vi bestræber os på nøjagtighed, skal du være opmærksom på, at automatiserede oversættelser kan indeholde fejl eller unøjagtigheder. Det originale dokument på dets oprindelige sprog bør betragtes som den autoritative kilde. For kritisk information anbefales professionel menneskelig oversættelse. Vi påtager os intet ansvar for misforståelser eller fejltolkninger, der måtte opstå som følge af brugen af denne oversættelse.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Ansvarsfraskrivelse**:
+Dette dokument er blevet oversat ved hjælp af AI-oversættelsestjenesten [Co-op Translator](https://github.com/Azure/co-op-translator). Selvom vi bestræber os på nøjagtighed, skal du være opmærksom på, at automatiserede oversættelser kan indeholde fejl eller unøjagtigheder. Det originale dokument på dets oprindelige sprog bør betragtes som den autoritative kilde. For kritisk information anbefales professionel menneskelig oversættelse. Vi påtager os intet ansvar for misforståelser eller fejltolkninger, der opstår som følge af brugen af denne oversættelse.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

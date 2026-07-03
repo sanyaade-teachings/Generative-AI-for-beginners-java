@@ -1,31 +1,31 @@
-# पाळीव प्राणी कथा जनरेटर ट्यूटोरियल नवशिक्यांसाठी
+# प्राणी कथा जनरेटर ट्युटोरियल नवशिक्यांसाठी
 
-## विषय सूची
+## अनुक्रमणिका
 
-- [पूर्वतयारी](../../../../04-PracticalSamples/petstory)
-- [प्रकल्प संरचना समजून घेणे](../../../../04-PracticalSamples/petstory)
-- [मुख्य घटकांचे स्पष्टीकरण](../../../../04-PracticalSamples/petstory)
-  - [1. मुख्य अनुप्रयोग](../../../../04-PracticalSamples/petstory)
-  - [2. वेब कंट्रोलर](../../../../04-PracticalSamples/petstory)
-  - [3. कथा सेवा](../../../../04-PracticalSamples/petstory)
-  - [4. वेब टेम्पलेट्स](../../../../04-PracticalSamples/petstory)
-  - [5. कॉन्फिगरेशन](../../../../04-PracticalSamples/petstory)
-- [अनुप्रयोग चालवणे](../../../../04-PracticalSamples/petstory)
-- [सर्व घटक कसे एकत्र काम करतात](../../../../04-PracticalSamples/petstory)
-- [एआय एकत्रीकरण समजून घेणे](../../../../04-PracticalSamples/petstory)
-- [पुढील पायऱ्या](../../../../04-PracticalSamples/petstory)
+- [पूर्वशर्ता](#पूर्वशर्ता)
+- [प्रकल्प रचनेचे आकलन](#प्रकल्प-रचनेचे-आकलन)
+- [मुख्य घटकांचे स्पष्टीकरण](#मुख्य-घटकांचे-स्पष्टीकरण)
+  - [1. मुख्य अनुप्रयोग](#1-मुख्य-अनुप्रयोग)
+  - [2. वेब कंट्रोलर](#2-वेब-कंट्रोलर)
+  - [3. कथा सेवा](#3-कथा-सेवा)
+  - [4. वेब टेम्प्लेट्स](#4-वेब-टेम्प्लेट्स)
+  - [5. संयोजन](#5-संयोजन)
+- [अॅप्लिकेशन चालविणे](#अॅप्लिकेशन-चालविणे)
+- [हे कसे एकत्र काम करते](#हे-कसे-एकत्र-काम-करते)
+- [एआय समाकलन समजून घेणे](#एआय-समाकलन-समजून-घेणे)
+- [पुढील पावले](#पुढील-पावले)
 
-## पूर्वतयारी
+## पूर्वशर्ता
 
-सुरुवात करण्यापूर्वी, खात्री करा की तुमच्याकडे खालील गोष्टी आहेत:
-- Java 21 किंवा त्याहून अधिक आवृत्ती स्थापित केलेली आहे
-- Maven डिपेंडन्सी व्यवस्थापनासाठी
-- `models:read` स्कोपसह वैयक्तिक प्रवेश टोकन (PAT) असलेले GitHub खाते
-- Java, Spring Boot, आणि वेब विकासाची मूलभूत समज
+प्रारंभ करण्यापूर्वी, खालील गोष्टींची खात्री करा:
+- जावा 21 किंवा त्यापेक्षा उच्च आवृत्ती स्थापित आहे
+- अवलंबित्व व्यवस्थापनासाठी मावेन वापरले आहे
+- Azure AI Foundry मॉडेल तैनात केले आहे (ते `azd up` ने तयार करा — पाहा [अध्याय 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md)), `az login` (कीलेस प्रमाणीकरण) वापरून साइन इन केले आहे
+- जावा, स्प्रिंग बूट आणि वेब विकासाची मूलभूत समज
 
-## प्रकल्प संरचना समजून घेणे
+## प्रकल्प रचनेचे आकलन
 
-पाळीव प्राणी कथा प्रकल्पामध्ये काही महत्त्वाचे फाइल्स आहेत:
+पाळीव प्राणी कथा प्रकल्पामध्ये काही महत्त्वाच्या फाइल्स आहेत:
 
 ```
 petstory/
@@ -48,7 +48,7 @@ petstory/
 
 **फाइल:** `PetStoryApplication.java`
 
-हे आमच्या Spring Boot अनुप्रयोगाचे प्रवेश बिंदू आहे:
+हा आमच्या स्प्रिंग बूट अनुप्रयोगाचा प्रवेश बिंदू आहे:
 
 ```java
 @SpringBootApplication
@@ -59,10 +59,10 @@ public class PetStoryApplication {
 }
 ```
 
-**याचा उपयोग:**
-- `@SpringBootApplication` अॅनोटेशन ऑटो-कॉन्फिगरेशन आणि घटक स्कॅनिंग सक्षम करते
-- पोर्ट 8080 वर एम्बेडेड वेब सर्व्हर (Tomcat) सुरू करते
-- आवश्यक असलेल्या सर्व Spring बीन्स आणि सेवांची स्वयंचलित निर्मिती करते
+**हे काय करते:**
+- `@SpringBootApplication` अ‍ॅनोटेशन स्वयंचलित संरचना आणि घटक स्कॅनिंग सक्षम करते
+- पोर्ट 8080 वर एंबेडेड वेब सर्व्हर (टॉमकॅट) चालू करते
+- आवश्यक असलेले सर्व स्प्रिंग बीन आणि सेवा आपोआप तयार करते
 
 ### 2. वेब कंट्रोलर
 
@@ -82,7 +82,7 @@ public class PetController {
     
     @GetMapping("/")
     public String index() {
-        return "index";  // Returns index.html template
+        return "index";  // index.html टेम्प्लेट परत करते
     }
     
     @PostMapping("/generate-story")
@@ -90,24 +90,24 @@ public class PetController {
                                Model model, 
                                RedirectAttributes redirectAttributes) {
         
-        // Input validation
+        // इनपुट वैधता तपासणी
         if (description.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please provide a description.");
             return "redirect:/";
         }
         
-        // Sanitize input for security
+        // सुरक्षिततेसाठी इनपुट स्वच्छ करा
         String sanitizedDescription = sanitizeInput(description);
         
-        // Generate story with error handling
+        // त्रुटी हाताळणीसह कथा तयार करा
         try {
             String story = storyService.generateStory(sanitizedDescription);
             model.addAttribute("caption", sanitizedDescription);
             model.addAttribute("story", story);
-            return "result";  // Returns result.html template
+            return "result";  // result.html टेम्प्लेट परत करते
             
         } catch (Exception e) {
-            // Use fallback story if AI fails
+            // AI अयशस्वी झाल्यास फॉलबॅक कथा वापरा
             String fallbackStory = generateFallbackStory(sanitizedDescription);
             model.addAttribute("story", fallbackStory);
             return "result";
@@ -117,21 +117,21 @@ public class PetController {
     private String sanitizeInput(String input) {
         return input.replaceAll("[<>\"'&]", "")  // Remove dangerous characters
                    .trim()
-                   .substring(0, Math.min(input.length(), 500));  // Limit length
+                   .substring(0, Math.min(input.length(), 500));  // लांबी मर्यादित करा
     }
 }
 ```
 
 **मुख्य वैशिष्ट्ये:**
 
-1. **मार्ग हाताळणी**: `@GetMapping("/")` अपलोड फॉर्म दाखवते, `@PostMapping("/generate-story")` सबमिशन्स प्रक्रिया करते
-2. **इनपुट पडताळणी**: रिक्त वर्णन आणि लांबी मर्यादा तपासते
-3. **सुरक्षा**: वापरकर्ता इनपुट स्वच्छ करते जेणेकरून XSS हल्ले टाळता येतील
-4. **त्रुटी हाताळणी**: एआय सेवा अयशस्वी झाल्यास फॉलबॅक कथा प्रदान करते
-5. **मॉडेल बाइंडिंग**: Spring च्या `Model` वापरून HTML टेम्पलेट्समध्ये डेटा पास करते
+1. **मार्ग हाताळणी**: `@GetMapping("/")` अपलोड फॉर्म दर्शवतो, `@PostMapping("/generate-story")` सबमिशन्स प्रक्रिया करतो
+2. **इनपुट पडताळणी**: वर्णन रिक्त आहे की नाही आणि लांबी मर्यादा तपासते
+3. **सुरक्षा**: वापरकर्त्याच्या इनपुटचे एक्सएसएस हल्ले टाळण्यासाठी शुद्धीकरण करते
+4. **त्रुटी हाताळणी**: जेव्हा एआय सेवा अयशस्वी होते तेव्हा पर्यायी कहाण्या प्रदान करते
+5. **मॉडेल बाइंडिंग**: स्प्रिंगच्या `Model` चा वापर करून HTML टेम्प्लेट्सना डेटा पाठवते
 
-**फॉलबॅक प्रणाली:**
-कंट्रोलरमध्ये पूर्व-लिखित कथा टेम्पलेट्स समाविष्ट आहेत, जेव्हा एआय सेवा अनुपलब्ध असते तेव्हा वापरले जातात:
+**पर्यायी व्यवस्था:**
+कंट्रोलरमध्ये पूर्वलिखित कथा टेम्प्लेट्स असतात जे AI सेवा अनुपलब्ध असताना वापरले जातात:
 
 ```java
 private String generateFallbackStory(String description) {
@@ -141,7 +141,7 @@ private String generateFallbackStory(String description) {
         "In a cozy home filled with love, there lived an extraordinary pet..."
     };
     
-    // Use description hash for consistent responses
+    // सुसंगत प्रतिसादांसाठी वर्णन हॅश वापरा
     int index = Math.abs(description.hashCode() % storyTemplates.length);
     return storyTemplates[index];
 }
@@ -151,7 +151,7 @@ private String generateFallbackStory(String description) {
 
 **फाइल:** `StoryService.java`
 
-ही सेवा GitHub Models शी संवाद साधून कथा तयार करते:
+ही सेवा Azure AI Foundry शी संवाद साधून कीलेस प्रमाणीकरण वापरून कथा तयार करते:
 
 ```java
 @Service
@@ -160,18 +160,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // Foundry चा OpenAI-सुसंगत एंडपॉइंट /openai/v1/ अंतर्गत आहे
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // Microsoft Entra ID सह कीलेस प्रमाणीकरण (कोणतीही API की नाही)
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -182,16 +186,16 @@ public class StoryService {
         
         String userPrompt = "Write a fun short story about a pet described as: " + description;
         
-        // Configure the AI request
+        // AI विनंती कॉन्फिगर करा
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(modelName)
                 .addSystemMessage(systemPrompt)
                 .addUserMessage(userPrompt)
-                .maxCompletionTokens(500)  // Limit response length
-                .temperature(0.8)          // Control creativity (0.0-1.0)
+                .maxCompletionTokens(500)  // प्रतिसादाची लांबाई मर्यादित करा
+                .temperature(0.8)          // सर्जनशीलता नियंत्रित करा (0.0-1.0)
                 .build();
         
-        // Send request and get response
+        // विनंती पाठवा आणि प्रतिसाद मिळवा
         ChatCompletion response = openAIClient.chat().completions().create(params);
         
         return response.choices().get(0).message().content().orElse("");
@@ -201,17 +205,17 @@ public class StoryService {
 
 **मुख्य घटक:**
 
-1. **OpenAI क्लायंट**: GitHub Models साठी कॉन्फिगर केलेले अधिकृत OpenAI Java SDK वापरते
-2. **सिस्टम प्रॉम्प्ट**: एआयला कौटुंबिक-अनुकूल पाळीव प्राणी कथा लिहिण्याचे वर्तन सेट करते
-3. **वापरकर्ता प्रॉम्प्ट**: वर्णनावर आधारित एआयला नेमकी कथा लिहिण्यास सांगते
-4. **पॅरामीटर्स**: कथा लांबी आणि सर्जनशीलता स्तर नियंत्रित करते
-5. **त्रुटी हाताळणी**: कंट्रोलर पकडतो आणि हाताळतो अशा अपवादांना फेकते
+1. **OpenAI क्लायंट**: Azure AI Foundry साठी अधिकृत OpenAI जावा SDK वापरते (कीलेस)
+2. **सिस्टम प्रॉम्प्ट**: AI चे वर्तन पाळीव प्राण्यांच्या कुटुंब-सुसंगत कथा लिहिण्यासाठी सेट करते
+3. **वापरकर्ता प्रॉम्प्ट**: वर्णनानुसार AI ला नेमकी कोणती कथा लिहावी हे सांगते
+4. **पॅरामीटर्स**: कथांची लांबी आणि सर्जनशीलता नियंत्रित करते
+5. **त्रुटी हाताळणी**: अपवाद टाकते जे कंट्रोलर पकडते आणि हाताळते
 
-### 4. वेब टेम्पलेट्स
+### 4. वेब टेम्प्लेट्स
 
 **फाइल:** `index.html` (अपलोड फॉर्म)
 
-मुख्य पृष्ठ जिथे वापरकर्ते त्यांच्या पाळीव प्राण्यांचे वर्णन करतात:
+मुख्य पृष्ठ जिथे वापरकर्ते त्यांच्या प्राण्यांचे वर्णन करतात:
 
 ```html
 <!DOCTYPE html>
@@ -260,7 +264,7 @@ public class StoryService {
 
 **फाइल:** `result.html` (कथा प्रदर्शन)
 
-तयार केलेली कथा दाखवते:
+निर्मित कथा दर्शवते:
 
 ```html
 <!DOCTYPE html>
@@ -293,18 +297,18 @@ public class StoryService {
 </html>
 ```
 
-**टेम्पलेट वैशिष्ट्ये:**
+**टेम्प्लेट वैशिष्ट्ये:**
 
-1. **Thymeleaf एकत्रीकरण**: डायनॅमिक सामग्रीसाठी `th:` गुणधर्म वापरते
-2. **प्रतिसादात्मक डिझाइन**: मोबाइल आणि डेस्कटॉपसाठी CSS स्टाइलिंग
-3. **त्रुटी हाताळणी**: वापरकर्त्यांना पडताळणी त्रुटी दाखवते
-4. **क्लायंट-साइड प्रक्रिया**: प्रतिमा विश्लेषणासाठी JavaScript (Transformers.js वापरून)
+1. **थाइमलीफ समाकलन**: गतिशील सामग्रीसाठी `th:` अ‍ॅट्रीब्युट्स वापरले जातात
+2. **उत्तरदायी डिझाईन**: मोबाइल आणि डेस्कटॉपसाठी CSS शैलीकरण
+3. **त्रुटी हाताळणी**: वापरकर्त्यांना पडताळणी त्रुटी दाखविते
+4. **क्लायंट-साइड प्रक्रिया**: इमेज विश्लेषणासाठी JavaScript वापर (Transformers.js वापरून)
 
-### 5. कॉन्फिगरेशन
+### 5. संयोजन
 
 **फाइल:** `application.properties`
 
-अनुप्रयोगासाठी कॉन्फिगरेशन सेटिंग्ज:
+अॅप्लिकेशनसाठी संयोजन सेटिंग्ज:
 
 ```properties
 spring.application.name=pet-story-app
@@ -316,52 +320,55 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
-**कॉन्फिगरेशन स्पष्टीकरण:**
+**संयोजन स्पष्टीकरण:**
 
-1. **फाइल अपलोड**: 10MB पर्यंत प्रतिमा परवानगी देते
-2. **लॉगिंग**: अंमलबजावणी दरम्यान कोणती माहिती लॉग केली जाते ते नियंत्रित करते
-3. **GitHub Models**: कोणता एआय मॉडेल आणि एंडपॉइंट वापरायचा ते निर्दिष्ट करते
-4. **सुरक्षा**: संवेदनशील माहिती उघड होऊ नये यासाठी त्रुटी हाताळणी कॉन्फिगरेशन
+1. **फाइल अपलोड**: 10MB पर्यंत इमेजेसची अनुमती देते
+2. **लॉगिंग**: कार्यान्वयनादरम्यान कोणती माहिती लॉग करायची ते नियंत्रित करते
+3. **Azure AI Foundry**: वापरण्यासाठी एंडपॉइंट आणि मॉडेल तैनात निर्दिष्ट करते (कीलेस प्रमाणीकरण)
+4. **सुरक्षा**: संवेदनशील माहिती उघड न होण्यासाठी त्रुटी हाताळणी संयोजन
 
-## अनुप्रयोग चालवणे
+## अॅप्लिकेशन चालविणे
 
-### चरण 1: तुमचा GitHub टोकन सेट करा
+### पाऊल 1: साइन इन करा आणि तुमचा एंडपॉइंट सेट करा
 
-प्रथम, तुमचा GitHub टोकन पर्यावरणीय व्हेरिएबल म्हणून सेट करा:
+प्रमाणीकरण कीलेस आहे (Microsoft Entra ID), त्यामुळे कोणतीही API की नाही. साइन इन करा आणि तुमचा Foundry एंडपॉइंट सेट करा:
 
-**Windows (कमांड प्रॉम्प्ट):**
+**विंडोज (कमांड प्रॉम्प्ट):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-**Windows (PowerShell):**
+**विंडोज (पॉवरशेल):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
-**Linux/macOS:**
+**लिनक्स/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-**याची गरज का आहे:**
-- GitHub Models एआय मॉडेल्समध्ये प्रवेश करण्यासाठी प्रमाणीकरण आवश्यक आहे
-- पर्यावरणीय व्हेरिएबल्स वापरल्याने संवेदनशील टोकन स्रोत कोडपासून दूर राहतात
-- `models:read` स्कोप एआय इनफरन्समध्ये प्रवेश प्रदान करतो
+**हे का आवश्यक आहे:**
+- Azure AI Foundry Microsoft Entra ID वापरून इन्फरन्स विनंत्या प्रमाणीकरण करते
+- कीलेस प्रमाणीकरण म्हणजे तुमच्या स्रोत कोड किंवा वातावरणात कोणतेही गुपित नाहीत
+- तुमच्या खात्याला त्या संसाधनावर **Cognitive Services OpenAI User** भूमिका हवी आहे
 
-### चरण 2: बिल्ड आणि रन करा
+### पाऊल 2: बिल्ड आणि चालवा
 
-प्रकल्प निर्देशिकेत जा:
+प्रकल्प डिरेक्टरीमध्ये बदला:
 ```bash
 cd 04-PracticalSamples/petstory
 ```
 
-अनुप्रयोग बिल्ड करा:
+अॅप्लिकेशन बिल्ड करा:
 ```bash
 mvn clean compile
 ```
@@ -371,50 +378,52 @@ mvn clean compile
 mvn spring-boot:run
 ```
 
-अनुप्रयोग `http://localhost:8080` वर सुरू होईल.
+अॅप्लिकेशन `http://localhost:8080` वर सुरू होईल.
 
-### चरण 3: अनुप्रयोगाची चाचणी करा
+### पाऊल 3: अॅप्लिकेशन चाचणी करा
 
-1. **उघडा** `http://localhost:8080` तुमच्या ब्राउझरमध्ये
-2. **वर्णन करा** तुमच्या पाळीव प्राण्याचे मजकूर क्षेत्रात (उदा., "एक खेळकर गोल्डन रिट्रीव्हर जो फेच खेळायला आवडतो")
-3. **क्लिक करा** "Generate Story" एआय-निर्मित कथा मिळवण्यासाठी
-4. **पर्यायाने**, पाळीव प्राण्याची प्रतिमा अपलोड करा जेणेकरून वर्णन आपोआप तयार होईल
-5. **पहा** तुमच्या पाळीव प्राण्याच्या वर्णनावर आधारित सर्जनशील कथा
+1. **ब्राउझरमध्ये उघडा** `http://localhost:8080`
+2. **तुमच्या प्राण्याचे वर्णन करा** (उदा., "एक खेळकर गोल्डन रिट्रीव्हर जो फेच खेळायला आवडतो")
+3. **"कथा तयार करा" वर क्लिक करा** AI-निर्मित कथा प्राप्त करण्यासाठी
+4. **पर्यायीपणे**, पाळीव प्राण्याचा फोटो अपलोड करा आणि वर्णन आपोआप तयार करा
+5. **तयार केलेली सर्जनशील कथा पाहा** तुमच्या प्राण्याच्या वर्णनावर आधारित
 
-## सर्व घटक कसे एकत्र काम करतात
+## हे कसे एकत्र काम करते
 
-जेव्हा तुम्ही पाळीव प्राणी कथा तयार करता तेव्हा संपूर्ण प्रवाह असा आहे:
+पाळीव प्राणी कथा तयार करताना पूर्ण प्रक्रिया अशी आहे:
 
-1. **वापरकर्ता इनपुट**: तुम्ही वेब फॉर्मवर तुमच्या पाळीव प्राण्याचे वर्णन करता
-2. **फॉर्म सबमिशन**: ब्राउझर `/generate-story` ला POST विनंती पाठवतो
-3. **कंट्रोलर प्रक्रिया**: `PetController` इनपुट पडताळतो आणि स्वच्छ करतो
-4. **एआय सेवा कॉल**: `StoryService` GitHub Models API ला विनंती पाठवतो
-5. **कथा निर्मिती**: एआय वर्णनावर आधारित सर्जनशील कथा तयार करतो
-6. **प्रतिसाद हाताळणी**: कंट्रोलर कथा प्राप्त करतो आणि ती मॉडेलमध्ये जोडतो
-7. **टेम्पलेट रेंडरिंग**: Thymeleaf `result.html` कथा सह रेंडर करते
-8. **प्रदर्शन**: वापरकर्त्याला त्यांच्या ब्राउझरमध्ये तयार केलेली कथा दिसते
+1. **वापरकर्ता इनपुट**: तुम्ही वेब फॉर्मवर तुमच्या प्राण्याचे वर्णन करता
+2. **फॉर्म सबमिशन**: ब्राउझर POST विनंती `/generate-story` कडे पाठवतो
+3. **कंट्रोलर प्रक्रिया**: `PetController` इनपुटची पडताळणी आणि शुद्धीकरण करतो
+4. **एआय सेवा कॉल**: `StoryService` Azure AI Foundry मॉडेलला विनंती पाठवतो
+5. **कथा निर्मिती**: AI वर्णनानुसार सर्जनशील कथा तयार करतो
+6. **प्रतिसाद हाताळणी**: कंट्रोलर कथाअंगीकृत करून मॉडेलमध्ये जोडतो
+7. **टेम्प्लेट रेंडरिंग**: थाइमलीफ `result.html` कथेसह रेंडर करतो
+8. **प्रदर्शन**: वापरकर्त्याला ब्राउझरमध्ये तयार कथा दिसते
 
-**त्रुटी हाताळणी प्रवाह:**
-जर एआय सेवा अयशस्वी झाली:
+**त्रुटी हाताळणी प्रक्रिया:**
+जर AI सेवा अयशस्वी झाली:
 1. कंट्रोलर अपवाद पकडतो
-2. पूर्व-लिखित टेम्पलेट्स वापरून फॉलबॅक कथा तयार करतो
-3. एआय अनुपलब्धतेबद्दल नोटसह फॉलबॅक कथा प्रदर्शित करतो
-4. वापरकर्त्याला तरीही कथा मिळते, चांगला वापरकर्ता अनुभव सुनिश्चित करतो
+2. पूर्वलिखित टेम्प्लेट्स वापरून पर्यायी कथा तयार करतो
+3. AI अनुपलब्धतेबाबत सूचना असलेली पर्यायी कथा दर्शवतो
+4. वापरकर्त्याला अजूनही कथा मिळते, चांगला वापरकर्ता अनुभव सुनिश्चित होतो
 
-## एआय एकत्रीकरण समजून घेणे
+## एआय समाकलन समजून घेणे
 
-### GitHub Models API
-अनुप्रयोग GitHub Models वापरतो, जे विविध एआय मॉडेल्ससाठी विनामूल्य प्रवेश प्रदान करते:
+### Azure AI Foundry (कीलेस)
+अॅप्लिकेशन Microsoft Entra ID सह कीलेस प्रमाणीकरण वापरून Azure AI Foundry वापरते:
 
 ```java
-// Authentication with GitHub token
+// कीलेस प्रमाणीकरण - कोणतीही API की नाही
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
-### प्रॉम्प्ट इंजिनिअरिंग
+### प्रॉम्प्ट अभियांत्रिकी
 सेवा चांगले परिणाम मिळवण्यासाठी काळजीपूर्वक तयार केलेले प्रॉम्प्ट वापरते:
 
 ```java
@@ -424,16 +433,20 @@ String systemPrompt = "You are a creative storyteller who writes fun, " +
 ```
 
 ### प्रतिसाद प्रक्रिया
-एआय प्रतिसाद काढला जातो आणि पडताळला जातो:
+AI प्रतिसाद काढून घेऊन पडताळला जातो:
 
 ```java
 ChatCompletion response = openAIClient.chat().completions().create(params);
 String story = response.choices().get(0).message().content().orElse("");
 ```
 
-## पुढील पायऱ्या
+## पुढील पावले
 
-अधिक उदाहरणांसाठी, [Chapter 04: Practical samples](../README.md) पहा
+अधिक उदाहरणांसाठी, पहा [अध्याय 04: व्यावहारिक नमुने](../README.md)
 
-**अस्वीकरण**:  
-हा दस्तऐवज AI भाषांतर सेवा [Co-op Translator](https://github.com/Azure/co-op-translator) वापरून भाषांतरित करण्यात आला आहे. आम्ही अचूकतेसाठी प्रयत्नशील असलो तरी कृपया लक्षात ठेवा की स्वयंचलित भाषांतरे त्रुटी किंवा अचूकतेच्या अभावाने युक्त असू शकतात. मूळ भाषेतील दस्तऐवज हा अधिकृत स्रोत मानला जावा. महत्त्वाच्या माहितीसाठी व्यावसायिक मानवी भाषांतराची शिफारस केली जाते. या भाषांतराचा वापर करून उद्भवलेल्या कोणत्याही गैरसमज किंवा चुकीच्या अर्थासाठी आम्ही जबाबदार राहणार नाही.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**अस्वीकरण**:
+हा दस्तऐवज AI भाषांतर सेवा [Co-op Translator](https://github.com/Azure/co-op-translator) चा वापर करून अनुवादित केला आहे. जरी आम्ही अचूकतेसाठी प्रयत्न करतो, तरी कृपया लक्षात घ्या की स्वयंचलित भाषांतरांमध्ये त्रुटी किंवा अचूकतेची कमतरता असू शकते. मूळ दस्तऐवज त्याच्या मूळ भाषेत अधिकृत स्रोत मानला पाहिजे. महत्त्वाची माहिती असल्यास, व्यावसायिक मानवी भाषांतराची शिफारस केली जाते. या भाषांतराच्या वापरामुळे उद्भवणाऱ्या कोणत्याही गैरसमज किंवा चुकीच्या अर्थलावणीसाठी आम्ही जबाबदार नाही.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

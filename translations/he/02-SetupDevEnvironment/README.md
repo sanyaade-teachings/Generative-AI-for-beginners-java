@@ -1,254 +1,226 @@
 # הקמת סביבת הפיתוח ל-AI גנרטיבי עבור Java
 
-> **התחלה מהירה**: כתבו קוד בענן תוך 2 דקות - עברו ל-[הגדרת GitHub Codespaces](../../../02-SetupDevEnvironment) - אין צורך בהתקנה מקומית ומשתמש בדגמי github!
-
-> **מעוניינים ב-Azure OpenAI?**, ראו את [מדריך ההגדרה של Azure OpenAI](getting-started-azure-openai.md) עם צעדים ליצירת משאב Azure OpenAI חדש.
+> **התחלה מהירה:** ספק את דגמי ה-AI שלך ב-**Azure AI Foundry** כקוד עם Bicep + `azd` בכמה דקות — ראה את [מדריך ההתקנה של Azure AI Foundry](getting-started-azure-openai.md). האימות הוא **ללא מפתח** (Microsoft Entra ID), כך שאין מפתחות API לנהל.
 
 ## מה תלמדו
 
-- הקמת סביבת פיתוח Java ליישומי AI
-- בחירת והגדרת סביבת הפיתוח המועדפת עליכם (cloud-first עם Codespaces, מכולת פיתוח מקומית, או התקנה מקומית מלאה)
-- בדיקת ההגדרה שלכם על ידי חיבור לדגמי GitHub
+- להקים סביבת פיתוח Java ליישומי AI
+- לבחור ולהגדיר את סביבת הפיתוח המועדפת עליך (מובנה לענן עם Codespaces, מכולת פיתוח מקומית, או התקנה מקומית מלאה)
+- לבדוק את ההתקנה על ידי חיבור לדגם של Azure AI Foundry
 
 ## תוכן העניינים
 
-- [מה תלמדו](../../../02-SetupDevEnvironment)
-- [מבוא](../../../02-SetupDevEnvironment)
-- [שלב 1: הקמת סביבת הפיתוח שלכם](../../../02-SetupDevEnvironment)
-  - [אפשרות א: GitHub Codespaces (מומלץ)](../../../02-SetupDevEnvironment)
-  - [אפשרות ב: מכולת פיתוח מקומית](../../../02-SetupDevEnvironment)
-  - [אפשרות ג: השתמשו בהתקנה מקומית קיימת](../../../02-SetupDevEnvironment)
-- [שלב 2: יצירת אסימון גישה אישי GitHub](../../../02-SetupDevEnvironment)
-- [שלב 3: בדיקת ההגדרה שלכם](../../../02-SetupDevEnvironment)
-- [פתרון בעיות](../../../02-SetupDevEnvironment)
-- [סיכום](../../../02-SetupDevEnvironment)
-- [השלבים הבאים](../../../02-SetupDevEnvironment)
+- [מה תלמדו](#מה-תלמדו)
+- [מבוא](#מבוא)
+- [שלב 1: הקמת סביבת הפיתוח](#שלב-1-הקמת-סביבת-הפיתוח)
+  - [אפשרות A: GitHub Codespaces (מומלץ)](#אפשרות-a-github-codespaces-מומלץ)
+  - [אפשרות B: מכולת פיתוח מקומית](#אפשרות-b-מכולת-פיתוח-מקומית)
+  - [אפשרות C: שימוש בהתקנה מקומית קיימת](#אפשרות-c-שימוש-בהתקנה-מקומית-קיימת)
+- [שלב 2: הקמת Azure AI Foundry](#שלב-2-הקמת-azure-ai-foundry)
+- [שלב 3: בדיקת ההתקנה](#שלב-3-בדיקת-ההתקנה)
+- [פתרון בעיות](#פתרון-בעיות)
+- [סיכום](#סיכום)
+- [שלבים הבאים](#שלבים-הבאים)
 
 ## מבוא
 
-פרק זה ינחה אתכם בהקמת סביבת פיתוח. נשתמש ב**דגמי GitHub** כדוגמה העיקרית כי הם חינמיים, קלים להגדרה עם חשבון GitHub בלבד, לא דורשים כרטיס אשראי, ומציעים גישה למספר דגמים לניסויים.
+פרק זה ינחה אותך בהקמת סביבת פיתוח. נשתמש ב-**Azure AI Foundry** עבור הדגמים לאורך כל הקורס. אתה מספק את הדגמים כקוד באמצעות Bicep ו-Azure Developer CLI (`azd`), ואז מתחבר עם **אימות ללא מפתח** (Microsoft Entra ID) — אין צורך להעתיק או לשתף מפתחות API.
 
-**אין צורך בהתקנה מקומית!** אתם יכולים להתחיל לכתוב קוד מיד באמצעות GitHub Codespaces, שמספק סביבת פיתוח מלאה בדפדפן שלכם.
+**אין צורך בהתקנה מקומית!** ניתן להשתמש ב-GitHub Codespaces, המספקת סביבת פיתוח מלאה בדפדפן שלך, ולספק את Foundry משם.
 
-<img src="../../../translated_images/he/models.cb07f8af0d724e4d.webp" alt="צילום מסך: דגמי GitHub" width="50%">
+אנו משתמשים ב-**Azure AI Foundry** בקורס זה כי הוא:
+- **מסופק כקוד** — ריצה אחת של `azd up` מפעילה את החשבון והפריסות של הדגמים
+- **ללא מפתח** — התחבר עם חשבון Azure שלך או זהות מנוהלת
+- **מוכן לייצור** — הקוד זהה פועל גם מקומית וגם ב-Azure
+- **גמיש** — החלף דגמים על ידי שינוי שם פריסה, בלי לשנות את הקוד
 
-ממליצים להשתמש ב-[**דגמי GitHub**](https://github.com/marketplace?type=models) לקורס זה מפני שהם:
-- **חינם** להתחלה
-- **קלים** להגדרה עם חשבון GitHub בלבד
-- **בלי צורך בכרטיס אשראי**
-- **מספר דגמים** זמינים לניסויים
-
-> **הערה**: לדגמי GitHub בהם משתמשים באימון זה יש הגבלות חינמיות כאלה:
-> - 15 בקשות לדקה (150 ביום)
-> - כ-8,000 מילים כניסה, כ-4,000 מילים יציאה לכל בקשה
-> - 5 בקשות במקביל
-> 
-> לשימוש בביצוע, שדרגו ל-Azure AI Foundry Models עם חשבון Azure שלכם. הקוד שלכם לא יצטרך להשתנות. ראה את [תיעוד Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/quickstart-github-models).
+> **הערה**: פריסות Azure AI Foundry מחויבות לפי טוקן (תשלום לפי שימוש). ראה את [מדריך ההתקנה של Azure AI Foundry](getting-started-azure-openai.md) לפרטים על הפריסה, האזור והעלויות.
 
 
-## שלב 1: הקמת סביבת הפיתוח שלכם
+## שלב 1: הקמת סביבת הפיתוח
 
 <a name="quick-start-cloud"></a>
 
-יצרנו מכולת פיתוח קונפיגורציה מראש כדי לצמצם זמן הקמה ולהבטיח שיש לכם את כל הכלים הנחוצים לקורס AI גנרטיבי עבור Java. בחרו את גישת הפיתוח המועדפת עליכם:
+יצרנו מכולת פיתוח מוגדרת מראש בכדי למזער את זמן ההתקנה ולהבטיח שיש לך את כל הכלים הדרושים לקורס Generative AI ל-Java זה. בחר את גישת הפיתוח המועדפת עליך:
 
-### אפשרויות הגדרת סביבה:
+### אפשרויות הקמת סביבה:
 
-#### אפשרות א: GitHub Codespaces (מומלץ)
+#### אפשרות A: GitHub Codespaces (מומלץ)
 
-**התחילו לכתוב קוד תוך 2 דקות - אין צורך בהתקנה מקומית!**
+**התחל לקודד תוך 2 דקות - אין צורך בהתקנה מקומית!**
 
-1. צרו Fork למאגר זה לחשבון ה-GitHub שלכם  
-   > **הערה**: במידה ואתם רוצים לערוך את ההגדרה הבסיסית, עיינו ב-[Dev Container Configuration](../../../.devcontainer/devcontainer.json)
-2. לחצו על **Code** → לשונית **Codespaces** → **...** → **חדש עם אפשרויות...**
-3. השתמשו בהגדרות ברירת המחדל – זה יבחר את **Dev container configuration**: **Generative AI Java Development Environment** מכולת הפיתוח המותאמת לקורס זה
-4. לחצו על **Create codespace**
-5. המתינו כ-2 דקות לסיום ההכנה של הסביבה
-6. המשיכו ל[שלב 2: יצירת אסימון GitHub](../../../02-SetupDevEnvironment)
+1. בצע Fork למאגר זה לחשבון ה-GitHub שלך
+   > **הערה**: אם ברצונך לערוך את הקונפיגורציה הבסיסית עיין ב-[Dev Container Configuration](../../../.devcontainer/devcontainer.json)
+2. לחץ על **Code** → לשונית **Codespaces** → **...** → **New with options...**
+3. השתמש בערכים המוגדרים כבר – זה יבחר את **Dev container configuration**: **סביבת פיתוח Java ל-AI גנרטיבי** - מכולת פיתוח מותאמת שנוצרה עבור הקורס
+4. לחץ על **Create codespace**
+5. המתן ~2 דקות עד לסיום הטעינה של הסביבה
+6. המשך ל-[שלב 2: הקמת Azure AI Foundry](#שלב-2-הקמת-azure-ai-foundry)
 
-<img src="../../../translated_images/he/codespaces.9945ded8ceb431a5.webp" alt="צילום מסך: תת-תפריט Codespaces" width="50%">
+<img src="../../../translated_images/he/codespaces.9945ded8ceb431a5.webp" alt="צילום מסך: תפריט משנה של Codespaces" width="50%">
 
-<img src="../../../translated_images/he/image.833552b62eee7766.webp" alt="צילום מסך: חדש עם אפשרויות" width="50%">
+<img src="../../../translated_images/he/image.833552b62eee7766.webp" alt="צילום מסך: New with options" width="50%">
 
-<img src="../../../translated_images/he/codespaces-create.b44a36f728660ab7.webp" alt="צילום מסך: אפשרויות יצירת codespace" width="50%">
+<img src="../../../translated_images/he/codespaces-create.b44a36f728660ab7.webp" alt="צילום מסך: אפשרויות יצירת Codespace" width="50%">
 
 
-> **יתרונות Codespaces**:  
-> - אין צורך בהתקנה מקומית  
-> - פועל בכל מכשיר עם דפדפן  
-> - מוגדר מראש עם כל הכלים וההתלויות  
-> - 60 שעות חינם בחודש לחשבונות אישיים  
-> - סביבה עקבית לכל הלומדים
+> **היתרונות של Codespaces**:
+> - אין צורך בהתקנה מקומית
+> - עובד בכל מכשיר עם דפדפן
+> - מוגדר מראש עם כל הכלים והתלויות
+> - 60 שעות חינם לחודש לחשבונות אישיים
+> - סביבת עבודה אחידה לכל הלומדים
 
-#### אפשרות ב: מכולת פיתוח מקומית
+#### אפשרות B: מכולת פיתוח מקומית
 
 **למפתחים שמעדיפים פיתוח מקומי עם Docker**
 
-1. צרו Fork ו-clone למאגר זה למחשב המקומי שלכם  
-   > **הערה**: במידה ואתם רוצים לערוך את ההגדרה הבסיסית, עיינו ב-[Dev Container Configuration](../../../.devcontainer/devcontainer.json)
-2. התקינו את [Docker Desktop](https://www.docker.com/products/docker-desktop/) ו-[VS Code](https://code.visualstudio.com/)
-3. התקינו את [הרחבת Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) ב-VS Code
-4. פתחו את תיקיית המאגר ב-VS Code
-5. כאשר תתבקשו, לחצו **Reopen in Container** (או הקישו `Ctrl+Shift+P` → "Dev Containers: Reopen in Container")
-6. המתינו שהמכולה תיבנה ותתחיל
-7. המשיכו ל[שלב 2: יצירת אסימון GitHub](../../../02-SetupDevEnvironment)
+1. בצע Fork ו-Clone של המאגר הזה למחשב המקומי שלך
+   > **הערה**: אם ברצונך לערוך את הקונפיגורציה הבסיסית עיין ב-[Dev Container Configuration](../../../.devcontainer/devcontainer.json)
+2. התקן את [Docker Desktop](https://www.docker.com/products/docker-desktop/) ואת [VS Code](https://code.visualstudio.com/)
+3. התקן את [תוסף Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) ב-VS Code
+4. פתח את תיקיית המאגר ב-VS Code
+5. כאשר יופיע, לחץ על **Reopen in Container** (או השתמש ב-`Ctrl+Shift+P` → "Dev Containers: Reopen in Container")
+6. המתן עד שהמכולה תיבנה ותפעל
+7. המשך ל-[שלב 2: הקמת Azure AI Foundry](#שלב-2-הקמת-azure-ai-foundry)
 
 <img src="../../../translated_images/he/devcontainer.21126c9d6de64494.webp" alt="צילום מסך: הגדרת מכולת פיתוח" width="50%">
 
-<img src="../../../translated_images/he/image-3.bf93d533bbc84268.webp" alt="צילום מסך: סיום בניית מכולת פיתוח" width="50%">
+<img src="../../../translated_images/he/image-3.bf93d533bbc84268.webp" alt="צילום מסך: בניית מכולת פיתוח הושלמה" width="50%">
 
-#### אפשרות ג: השתמשו בהתקנה מקומית קיימת
+#### אפשרות C: שימוש בהתקנה מקומית קיימת
 
 **למפתחים עם סביבות Java קיימות**
 
-דרישות מוקדמות:  
-- [Java 21+](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html)  
-- [Maven 3.9+](https://maven.apache.org/download.cgi)  
-- [VS Code](https://code.visualstudio.com) או סביבת הפיתוח המועדפת עליכם
+דרישות מוקדמות:
+- [Java 21+](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html) 
+- [Maven 3.9+](https://maven.apache.org/download.cgi)
+- [VS Code](https://code.visualstudio.com) או ה-IDE המועדף עליך
 
-צעדים:  
-1. העתיקו את המאגר למחשב המקומי שלכם  
-2. פתחו את הפרויקט ב-IDE שלכם  
-3. המשיכו ל[שלב 2: יצירת אסימון GitHub](../../../02-SetupDevEnvironment)
+שלבים:
+1. בצע Clone למאגר זה למחשב המקומי שלך
+2. פתח את הפרויקט ב-IDE שלך
+3. המשך ל-[שלב 2: הקמת Azure AI Foundry](#שלב-2-הקמת-azure-ai-foundry)
 
-> **טיפ מקצועי**: אם יש לכם מכשיר חלש, אבל רוצים VS Code מקומית, השתמשו ב-GitHub Codespaces! ניתן לחבר את VS Code המקומי שלכם ל-Codespace בענן ולקבל את הטוב משני העולמות.
+> **טיפ מקצועי**: אם יש לך מחשב עם מפרט נמוך אך תרצה VS Code מקומית, השתמש ב-GitHub Codespaces! תוכל לחבר את VS Code המקומי שלך ל-Codespace בענן ולקבל את הטוב משני העולמות.
 
-<img src="../../../translated_images/he/image-2.fc0da29a6e4d2aff.webp" alt="צילום מסך: מופע מכולת פיתוח מקומית שנוצרה" width="50%">
+<img src="../../../translated_images/he/image-2.fc0da29a6e4d2aff.webp" alt="צילום מסך: מופע מכולת פיתוח מקומית שנוצר" width="50%">
 
 
-## שלב 2: יצירת אסימון גישה אישי GitHub
+## שלב 2: הקמת Azure AI Foundry
 
-1. עברו אל [הגדרות GitHub](https://github.com/settings/profile) ובחרו **Settings** מתפריט הפרופיל שלכם.
-2. בסרגל הצד השמאלי, לחצו על **Developer settings** (לרוב בתחתית).
-3. תחת **Personal access tokens**, לחצו על **Fine-grained tokens** (או גשו ישירות עם [קישור](https://github.com/settings/personal-access-tokens)).
-4. לחצו על **Generate new token**.
-5. תחת "Token name", כתבו שם מתאר (למשל, `GenAI-Java-Course-Token`).
-6. הגדירו תאריך תפוגה (מומלץ: 7 ימים כדי לשמור על בטיחות).
-7. תחת "Resource owner", בחרו את חשבון המשתמש שלכם.
-8. תחת "Repository access", בחרו את המאגר/ים שברצונכם להשתמש עימם עם דגמי GitHub (או "כל המאגר/ים" במידת הצורך).
-9. תחת "Account permissions", מצאו **Models** והגדרו ל**קריאה בלבד**.
-10. לחצו על **Generate token**.
-11. **העתיקו ושמרו את האסימון עכשיו** – לא תראו אותו שוב!
+פרוס את דגמי ה-AI של הקורס ל-Azure AI Foundry כקוד. משורש המאגר:
 
-> **טיפ ביטחון**: השתמשו בטווח ההרשאות המזערי הדרוש ובזמן תפוגה קצר ככל האפשר לאסימוני הגישה שלכם.
-
-## שלב 3: בדיקת ההגדרה שלכם עם דוגמת דגמי GitHub
-
-לאחר שסביבת הפיתוח שלכם מוכנה, בואו נבדוק את האינטגרציה עם דגמי GitHub באמצעות אפליקציית הדוגמה ב-[`02-SetupDevEnvironment/examples/github-models`](../../../02-SetupDevEnvironment/examples/github-models).
-
-1. פותחים טרמינל בסביבת הפיתוח שלכם.
-2. עוברים אל דוגמת דגמי GitHub:  
-   ```bash
-   cd 02-SetupDevEnvironment/examples/github-models
-   ```
-3. הגדירו את אסימון GitHub שלכם כמשתנה סביבה:  
-   ```bash
-   # macOS/Linux
-   export GITHUB_TOKEN=your_token_here
-   
-   # Windows (שורת הפקודה)
-   set GITHUB_TOKEN=your_token_here
-   
-   # Windows (PowerShell)
-   $env:GITHUB_TOKEN="your_token_here"
-   ```
-  
-4. הריצו את האפליקציה:  
-   ```bash
-   mvn compile exec:java -Dexec.mainClass="com.example.githubmodels.App"
-   ```
-  
-תראו פלט דומה ל:  
-```text
-Using model: gpt-4.1-nano
-Sending request to GitHub Models...
-Response: Hello World!
+```bash
+cd 02-SetupDevEnvironment
+azd auth login
+az login
+azd up
 ```
   
+`azd` יבקש שם סביבה ואזור, יספק חשבון Azure AI Foundry עם פריסות `gpt-4o-mini` ו-`text-embedding-3-small`, ויכתוב את נקודת הקצה בקובץ `.env` של הדוגמה — הכל עם **אימות ללא מפתח** (אין מפתחות API).
+
+> **מדריך מלא:** ראה את [מדריך ההקמה ל-Azure AI Foundry](getting-started-azure-openai.md) לתנאים מוקדמים, אלטרנטיבה ידנית (פורטאל), הנחיות לאיזור, והערות על עלויות וניקוי.
+
+## שלב 3: בדיקת ההתקנה
+
+לאחר שהדגמים ב-Foundry הוקמו, בדוק את החיבור עם אפליקציית הדוגמה ב-[`02-SetupDevEnvironment/examples/basic-chat-azure`](../../../02-SetupDevEnvironment/examples/basic-chat-azure).
+
+1. פתח את הטרמינל בסביבת הפיתוח שלך.  
+2. עבור לדוגמה:  
+   ```bash
+   cd 02-SetupDevEnvironment/examples/basic-chat-azure
+   ```
+  
+3. ודא שאתה מחובר (אימות ללא מפתח זקוק לטוקן):  
+   ```bash
+   az login
+   ```
+   
+> אם הפעלת `azd up`, קובץ `.env` עם נקודת הקצה כבר נכתב עבורך.  
+4. הפעל את האפליקציה:  
+   ```bash
+   mvn clean spring-boot:run
+   ```
+  
+עליך לראות תגובה מהדגם `gpt-4o-mini`.
+
 ### הבנת קוד הדוגמה
 
-קודם כל, נבין מה הרצנו עכשיו. הדוגמה תחת `examples/github-models` משתמשת ב-SDK של OpenAI ל-Java כדי להתחבר לדגמי GitHub:
+הדוגמה תחת `examples/basic-chat-azure` היא אפליקציית Spring Boot שמשתמשת ב-**Spring AI** להתחבר ל-Azure AI Foundry עם התחברות ללא מפתח.
 
-**מה הקוד הזה עושה:**  
-- **מתחבר** לדגמי GitHub באמצעות אסימון הגישה האישי שלכם  
-- **שולח** הודעה פשוטה "Say Hello World!" למודל ה-AI  
-- **מקבל** ומציג את התגובה של ה-AI  
-- **מאמת** שההגדרה שלכם פועלת כראוי
+**מה שהקוד עושה:**
+- **מתחבר** אל Azure AI Foundry באמצעות ההתחברות שלך ל-Azure (Microsoft Entra ID) — אין מפתח API
+- **שולח** פקודה לדגם `gpt-4o-mini`
+- **מקבל** ומציג את תגובת ה-AI
+- **מאמת** שההתקנה שלך עובדת כראוי
 
-**תלות עיקרית** (ב-`pom.xml`):  
+**תלות מפתח** (ב-`pom.xml`):  
 ```xml
 <dependency>
-    <groupId>com.openai</groupId>
-    <artifactId>openai-java</artifactId>
-    <version>2.12.0</version>
+    <groupId>org.springframework.ai</groupId>
+    <artifactId>spring-ai-starter-model-azure-openai</artifactId>
 </dependency>
 ```
   
-**קוד ראשי** (`App.java`):  
-```java
-// התחבר למודלים של GitHub באמצעות OpenAI Java SDK
-OpenAIClient client = OpenAIOkHttpClient.builder()
-    .apiKey(pat)
-    .baseUrl("https://models.inference.ai.azure.com")
-    .build();
-
-// צור בקשת השלמת שיחה
-ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
-    .model(modelId)
-    .addSystemMessage("You are a concise assistant.")
-    .addUserMessage("Say Hello World!")
-    .build();
-
-// קבל תגובת בינה מלאכותית
-ChatCompletion response = client.chat().completions().create(params);
-System.out.println("Response: " + response.choices().get(0).message().content().orElse("No response content"));
+**קונפיגורציה** (`application.yml`):  
+```yaml
+spring:
+  ai:
+    azure:
+      openai:
+        # Endpoint only - no api-key. Spring AI uses DefaultAzureCredential (keyless).
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        chat:
+          options:
+            deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
   
 ## סיכום
 
-מעולה! עכשיו הכל מוכן:
+מעולה! עכשיו יש לך את כל מה שצריך:
 
-- יצרתם אסימון גישה אישי ל-GitHub עם ההרשאות הנכונות לגישה לדגמי AI
-- הפעלתם את סביבת הפיתוח Java שלכם (בין אם Codespaces, מכולת פיתוח, או מקומית)
-- התחברתם לדגמי GitHub באמצעות ה-SDK של OpenAI ל-Java לפיתוח AI חינמי
-- בדקתם שהכל עובד עם דוגמה פשוטה שמתקשרת עם דגמי AI
+- דגמי Azure AI Foundry מסופקים כקוד עם Bicep + `azd`
+- סביבת הפיתוח Java שלך פועלת (בין אם Codespaces, מכולות פיתוח, או מקומית)
+- התחברת ל-Azure AI Foundry עם אימות ללא מפתח (Microsoft Entra ID) — ללא מפתחות API
+- בדקת שהכל עובד עם דוגמה פשוטה שמדברת עם הדגם שלך
 
-## השלבים הבאים
+## שלבים הבאים
 
-[פרק 3: טכניקות ליבה של AI גנרטיבי](../03-CoreGenerativeAITechniques/README.md)
+[פרק 3: טכניקות מרכזיות ב-AI גנרטיבי](../03-CoreGenerativeAITechniques/README.md)
 
 ## פתרון בעיות
 
-נתקלתם בבעיות? הנה בעיות נפוצות ופתרונות:
+יש לך בעיות? הנה בעיות נפוצות ופתרונות:
 
-- **האסימון לא עובד?**  
-  - ודאו שהעתקתם את כל האסימון ללא רווחים מיותרים  
-  - וודאו שהאסימון מוגדר נכון כמשתנה סביבה  
-  - בדקו שלאסימון יש את ההרשאות הנכונות (Models: קריאה בלבד)
+- **האימות נכשל (401/403)?**  
+  - הרץ `az login` — האימות הוא ללא מפתח, חייב להיות מחובר  
+  - וודא שלחשבון שלך יש את התפקיד **Cognitive Services OpenAI User** במשאב  
+  - אם הרגע סיפקת, המתן דקה להשלמת הקצאת התפקיד
 
 - **Maven לא נמצא?**  
-  - אם אתם משתמשים במכולות/Codespaces, Maven מותקן מראש  
-  - בהתקנה מקומית, ודאו ש-Java 21+ ו-Maven 3.9+ מותקנים  
-  - נסו `mvn --version` לוודא התקנה
+  - אם משתמש ב-dev containers/Codespaces, Maven מותקן מראש  
+  - בהתקנה מקומית ודא ש-Java 21+ ו-Maven 3.9+ מותקנים  
+  - נסה להריץ `mvn --version` לאימות ההתקנה
 
-- **בעיות חיבור?**  
-  - בדקו את חיבור האינטרנט שלכם  
-  - וודאו ש-GitHub נגיש מהרשת שלכם  
-  - ודאו שאינכם מאחורי חומת אש החוסמת את נקודת הקצה של דגמי GitHub
+- **`azd` לא נמצא או ההקמה נכשלת?**  
+  - התקן את [Azure Developer CLI](https://aka.ms/azure-dev/install) והריץ `azd auth login`  
+  - בחר אזור שבו `gpt-4o-mini` זמין (למשל `eastus2`)  
+  - ראה את [מדריך ההקמה של Azure AI Foundry](getting-started-azure-openai.md) לפרטים
 
-- **מכולת פיתוח לא מתחילה?**  
-  - ודאו ש-Docker Desktop פועל (לפיתוח מקומי)  
-  - נסו לבנות מחדש את המכולה: `Ctrl+Shift+P` → "Dev Containers: Rebuild Container"
+- **מכולת הפיתוח לא מתחילה?**  
+  - ודא ש-Docker Desktop רץ (להתקנה מקומית)  
+  - נסה לבנות מחדש את המכולה: `Ctrl+Shift+P` → "Dev Containers: Rebuild Container"
 
 - **שגיאות קומפילציה של האפליקציה?**  
-  - וודאו שאתם בתיקייה הנכונה: `02-SetupDevEnvironment/examples/github-models`  
-  - נסו לנקות ולבנות מחדש: `mvn clean compile`
+  - ודא שאתה בתיקייה הנכונה: `02-SetupDevEnvironment/examples/basic-chat-azure`  
+  - נסה לנקות ולבנות מחדש: `mvn clean compile`
 
-> **צריכים עזרה?**: עדיין יש בעיות? פתחו בעיה במאגר ונעזור לכם.
+> **זקוק לעזרה?**: עדיין יש בעיות? פתח Issue במאגר ונעזור לך.
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**כתב ויתור**:  
-מסמך זה תורגם בשירות תרגום מבוסס בינה מלאכותית [Co-op Translator](https://github.com/Azure/co-op-translator). למרות שאנו שואפים לדיוק, יש לקחת בחשבון כי תרגומים אוטומטיים עלולים להכיל טעויות או אי-דיוקים. המסמך המקורי בשפתו המקורית נחשב למקור הסמכותי. למידע קריטי מומלץ להיעזר בתרגום מקצועי של אדם. איננו אחראים לכל אי הבנה או פרשנות שגויה הנובעת משימוש בתרגום זה.
+**כתב ויתור**:
+מסמך זה תורגם באמצעות שירות תרגום אוטומטי [Co-op Translator](https://github.com/Azure/co-op-translator). למרות שאנו שואפים לדיוק, יש לקחת בחשבון שתרגומים אוטומטיים עלולים להכיל שגיאות או אי-דיוקים. יש להחשיב את המסמך המקורי בשפתו הטבעית כמקור הסמכות. למידע קריטי מומלץ להשתמש בתרגום מקצועי על ידי מתרגם אדם. אנו לא אחראים לכל אי-הבנה או פירוש שגוי הנובע מהשימוש בתרגום זה.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

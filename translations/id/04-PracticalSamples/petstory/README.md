@@ -2,25 +2,25 @@
 
 ## Daftar Isi
 
-- [Prasyarat](../../../../04-PracticalSamples/petstory)
-- [Memahami Struktur Proyek](../../../../04-PracticalSamples/petstory)
-- [Penjelasan Komponen Inti](../../../../04-PracticalSamples/petstory)
-  - [1. Aplikasi Utama](../../../../04-PracticalSamples/petstory)
-  - [2. Pengontrol Web](../../../../04-PracticalSamples/petstory)
-  - [3. Layanan Cerita](../../../../04-PracticalSamples/petstory)
-  - [4. Template Web](../../../../04-PracticalSamples/petstory)
-  - [5. Konfigurasi](../../../../04-PracticalSamples/petstory)
-- [Menjalankan Aplikasi](../../../../04-PracticalSamples/petstory)
-- [Bagaimana Semua Ini Bekerja Bersama](../../../../04-PracticalSamples/petstory)
-- [Memahami Integrasi AI](../../../../04-PracticalSamples/petstory)
-- [Langkah Selanjutnya](../../../../04-PracticalSamples/petstory)
+- [Prasyarat](#prasyarat)
+- [Memahami Struktur Proyek](#memahami-struktur-proyek)
+- [Penjelasan Komponen Inti](#penjelasan-komponen-inti)
+  - [1. Aplikasi Utama](#1-aplikasi-utama)
+  - [2. Pengontrol Web](#2-pengontrol-web)
+  - [3. Layanan Cerita](#3-layanan-cerita)
+  - [4. Template Web](#4-template-web)
+  - [5. Konfigurasi](#5-konfigurasi)
+- [Menjalankan Aplikasi](#menjalankan-aplikasi)
+- [Cara Kerja Keseluruhan](#cara-kerja-keseluruhan)
+- [Memahami Integrasi AI](#memahami-integrasi-ai)
+- [Langkah Berikutnya](#langkah-berikutnya)
 
 ## Prasyarat
 
 Sebelum memulai, pastikan Anda memiliki:
-- Java 21 atau versi lebih tinggi terinstal
-- Maven untuk manajemen dependensi
-- Akun GitHub dengan token akses pribadi (PAT) dengan cakupan `models:read`
+- Java 21 atau yang lebih tinggi terpasang
+- Maven untuk manajemen ketergantungan
+- Deployment model Azure AI Foundry (siapkan dengan `azd up` — lihat [Bab 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md)), masuk dengan `az login` (otomatis tanpa kunci)
 - Pemahaman dasar tentang Java, Spring Boot, dan pengembangan web
 
 ## Memahami Struktur Proyek
@@ -59,10 +59,10 @@ public class PetStoryApplication {
 }
 ```
 
-**Apa yang dilakukan:**
+**Fungsi ini:**
 - Anotasi `@SpringBootApplication` mengaktifkan konfigurasi otomatis dan pemindaian komponen
-- Memulai server web tersemat (Tomcat) pada port 8080
-- Secara otomatis membuat semua bean dan layanan Spring yang diperlukan
+- Memulai server web bawaan (Tomcat) pada port 8080
+- Membuat semua bean dan layanan Spring yang diperlukan secara otomatis
 
 ### 2. Pengontrol Web
 
@@ -82,7 +82,7 @@ public class PetController {
     
     @GetMapping("/")
     public String index() {
-        return "index";  // Returns index.html template
+        return "index";  // Mengembalikan template index.html
     }
     
     @PostMapping("/generate-story")
@@ -90,24 +90,24 @@ public class PetController {
                                Model model, 
                                RedirectAttributes redirectAttributes) {
         
-        // Input validation
+        // Validasi input
         if (description.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please provide a description.");
             return "redirect:/";
         }
         
-        // Sanitize input for security
+        // Membersihkan input untuk keamanan
         String sanitizedDescription = sanitizeInput(description);
         
-        // Generate story with error handling
+        // Menghasilkan cerita dengan penanganan kesalahan
         try {
             String story = storyService.generateStory(sanitizedDescription);
             model.addAttribute("caption", sanitizedDescription);
             model.addAttribute("story", story);
-            return "result";  // Returns result.html template
+            return "result";  // Mengembalikan template result.html
             
         } catch (Exception e) {
-            // Use fallback story if AI fails
+            // Gunakan cerita cadangan jika AI gagal
             String fallbackStory = generateFallbackStory(sanitizedDescription);
             model.addAttribute("story", fallbackStory);
             return "result";
@@ -117,21 +117,21 @@ public class PetController {
     private String sanitizeInput(String input) {
         return input.replaceAll("[<>\"'&]", "")  // Remove dangerous characters
                    .trim()
-                   .substring(0, Math.min(input.length(), 500));  // Limit length
+                   .substring(0, Math.min(input.length(), 500));  // Batasi panjang
     }
 }
 ```
 
 **Fitur utama:**
 
-1. **Penanganan Rute**: `@GetMapping("/")` menampilkan formulir unggah, `@PostMapping("/generate-story")` memproses pengiriman
+1. **Penanganan Rute**: `@GetMapping("/")` menampilkan form unggah, `@PostMapping("/generate-story")` memproses pengiriman
 2. **Validasi Input**: Memeriksa deskripsi kosong dan batas panjang
 3. **Keamanan**: Membersihkan input pengguna untuk mencegah serangan XSS
-4. **Penanganan Kesalahan**: Memberikan cerita cadangan saat layanan AI gagal
-5. **Pengikatan Model**: Mengirimkan data ke template HTML menggunakan `Model` Spring
+4. **Penanganan Kesalahan**: Menyediakan cerita cadangan saat layanan AI gagal
+5. **Pengikatan Model**: Mengirim data ke template HTML menggunakan Spring `Model`
 
 **Sistem Cadangan:**
-Pengontrol menyertakan template cerita yang telah ditulis sebelumnya yang digunakan saat layanan AI tidak tersedia:
+Pengontrol mencakup template cerita yang sudah ditulis sebelumnya yang digunakan bila layanan AI tidak tersedia:
 
 ```java
 private String generateFallbackStory(String description) {
@@ -141,7 +141,7 @@ private String generateFallbackStory(String description) {
         "In a cozy home filled with love, there lived an extraordinary pet..."
     };
     
-    // Use description hash for consistent responses
+    // Gunakan hash deskripsi untuk respons yang konsisten
     int index = Math.abs(description.hashCode() % storyTemplates.length);
     return storyTemplates[index];
 }
@@ -151,7 +151,7 @@ private String generateFallbackStory(String description) {
 
 **File:** `StoryService.java`
 
-Layanan ini berkomunikasi dengan GitHub Models untuk menghasilkan cerita:
+Layanan ini berkomunikasi dengan Azure AI Foundry untuk menghasilkan cerita dengan otentikasi tanpa kunci:
 
 ```java
 @Service
@@ -160,18 +160,22 @@ public class StoryService {
     private final OpenAIClient openAIClient;
     private final String modelName;
     
-    public StoryService(@Value("${github.models.endpoint}") String endpoint,
-                       @Value("${github.models.model}") String modelName) {
-        
-        String githubToken = System.getenv("GITHUB_TOKEN");
-        if (githubToken == null || githubToken.isBlank()) {
-            throw new IllegalStateException("GITHUB_TOKEN environment variable must be set");
+    public StoryService(@Value("${azure.openai.endpoint:}") String endpoint,
+                       @Value("${azure.openai.deployment:gpt-4o-mini}") String modelName) {
+        this.modelName = modelName;
+        if (endpoint == null || endpoint.isBlank()) {
+            endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         }
         
-        // Create OpenAI client configured for GitHub Models
+        // Endpoint yang kompatibel dengan OpenAI Foundry berada di bawah /openai/v1/
+        String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1/";
+        
+        // Autentikasi tanpa kunci dengan Microsoft Entra ID (tanpa kunci API)
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
         this.openAIClient = OpenAIOkHttpClient.builder()
-                .baseUrl(endpoint)
-                .apiKey(githubToken)
+                .baseUrl(baseUrl)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
                 .build();
     }
     
@@ -182,16 +186,16 @@ public class StoryService {
         
         String userPrompt = "Write a fun short story about a pet described as: " + description;
         
-        // Configure the AI request
+        // Konfigurasikan permintaan AI
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(modelName)
                 .addSystemMessage(systemPrompt)
                 .addUserMessage(userPrompt)
-                .maxCompletionTokens(500)  // Limit response length
-                .temperature(0.8)          // Control creativity (0.0-1.0)
+                .maxCompletionTokens(500)  // Batasi panjang respons
+                .temperature(0.8)          // Kontrol kreativitas (0.0-1.0)
                 .build();
         
-        // Send request and get response
+        // Kirim permintaan dan dapatkan respons
         ChatCompletion response = openAIClient.chat().completions().create(params);
         
         return response.choices().get(0).message().content().orElse("");
@@ -201,15 +205,15 @@ public class StoryService {
 
 **Komponen utama:**
 
-1. **Klien OpenAI**: Menggunakan SDK Java resmi OpenAI yang dikonfigurasi untuk GitHub Models
-2. **Prompt Sistem**: Mengatur perilaku AI untuk menulis cerita hewan peliharaan yang ramah keluarga
-3. **Prompt Pengguna**: Memberitahu AI cerita apa yang harus ditulis berdasarkan deskripsi
-4. **Parameter**: Mengontrol panjang cerita dan tingkat kreativitas
-5. **Penanganan Kesalahan**: Melemparkan pengecualian yang ditangkap dan ditangani oleh pengontrol
+1. **Klien OpenAI**: Menggunakan SDK Java OpenAI resmi yang dikonfigurasi untuk Azure AI Foundry (tanpa kunci)
+2. **Prompt Sistem**: Menetapkan perilaku AI untuk menulis cerita hewan peliharaan yang ramah keluarga
+3. **Prompt Pengguna**: Memberi tahu AI persis cerita apa yang harus dibuat berdasarkan deskripsi
+4. **Parameter**: Mengatur panjang dan tingkat kreativitas cerita
+5. **Penanganan Kesalahan**: Melempar pengecualian yang ditangani oleh pengontrol
 
 ### 4. Template Web
 
-**File:** `index.html` (Formulir Unggah)
+**File:** `index.html` (Form Unggah)
 
 Halaman utama tempat pengguna mendeskripsikan hewan peliharaan mereka:
 
@@ -293,18 +297,18 @@ Menampilkan cerita yang dihasilkan:
 </html>
 ```
 
-**Fitur Template:**
+**Fitur template:**
 
 1. **Integrasi Thymeleaf**: Menggunakan atribut `th:` untuk konten dinamis
-2. **Desain Responsif**: Styling CSS untuk perangkat seluler dan desktop
-3. **Penanganan Kesalahan**: Menampilkan kesalahan validasi kepada pengguna
-4. **Pemrosesan Sisi Klien**: JavaScript untuk analisis gambar (menggunakan Transformers.js)
+2. **Desain Responsif**: Styling CSS untuk perangkat mobile dan desktop
+3. **Penanganan Kesalahan**: Menampilkan kesalahan validasi ke pengguna
+4. **Proses Klien**: JavaScript untuk analisis gambar (menggunakan Transformers.js)
 
 ### 5. Konfigurasi
 
 **File:** `application.properties`
 
-Pengaturan konfigurasi untuk aplikasi:
+Pengaturan konfigurasi aplikasi:
 
 ```properties
 spring.application.name=pet-story-app
@@ -316,52 +320,55 @@ spring.servlet.multipart.max-request-size=10MB
 # Logging configuration
 logging.level.com.example.petstory=INFO
 
-# GitHub Models configuration
-github.models.endpoint=https://models.github.ai/inference
-github.models.model=openai/gpt-4.1-nano
+# Azure AI Foundry (keyless) configuration
+azure.openai.endpoint=${AZURE_OPENAI_ENDPOINT:}
+azure.openai.deployment=${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
 ```
 
-**Penjelasan Konfigurasi:**
+**Penjelasan konfigurasi:**
 
-1. **Unggah File**: Mengizinkan gambar hingga 10MB
-2. **Logging**: Mengontrol informasi apa yang dicatat selama eksekusi
-3. **GitHub Models**: Menentukan model AI dan endpoint yang digunakan
-4. **Keamanan**: Konfigurasi penanganan kesalahan untuk menghindari pengungkapan informasi sensitif
+1. **Unggah Berkas**: Mengizinkan gambar hingga 10MB
+2. **Logging**: Mengontrol informasi yang dicatat selama eksekusi
+3. **Azure AI Foundry**: Menentukan endpoint dan deployment model yang digunakan (autentikasi tanpa kunci)
+4. **Keamanan**: Konfigurasi penanganan kesalahan agar tidak mengekspos informasi sensitif
 
 ## Menjalankan Aplikasi
 
-### Langkah 1: Atur Token GitHub Anda
+### Langkah 1: Masuk dan Setel Endpoint Anda
 
-Pertama, Anda perlu mengatur token GitHub Anda sebagai variabel lingkungan:
+Autentikasi menggunakan keyless (Microsoft Entra ID), jadi tanpa kunci API. Masuk dan setel endpoint Foundry Anda:
 
 **Windows (Command Prompt):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+az login
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+az login
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+az login
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-**Mengapa ini diperlukan:**
-- GitHub Models memerlukan autentikasi untuk mengakses model AI
-- Menggunakan variabel lingkungan menjaga token sensitif tetap aman dari kode sumber
-- Cakupan `models:read` memberikan akses ke inferensi AI
+**Mengapa ini perlu:**
+- Azure AI Foundry menggunakan Microsoft Entra ID untuk mengautentikasi permintaan inferensi
+- Otentikasi tanpa kunci berarti tidak ada rahasia di kode sumber atau lingkungan Anda
+- Akun Anda harus memiliki peran **Cognitive Services OpenAI User** pada resource tersebut
 
-### Langkah 2: Bangun dan Jalankan
+### Langkah 2: Build dan Jalankan
 
-Navigasikan ke direktori proyek:
+Masuk ke direktori proyek:
 ```bash
 cd 04-PracticalSamples/petstory
 ```
 
-Bangun aplikasi:
+Build aplikasi:
 ```bash
 mvn clean compile
 ```
@@ -376,46 +383,48 @@ Aplikasi akan berjalan di `http://localhost:8080`.
 ### Langkah 3: Uji Aplikasi
 
 1. **Buka** `http://localhost:8080` di browser Anda
-2. **Deskripsikan** hewan peliharaan Anda di area teks (misalnya, "Golden retriever yang suka bermain dan mengambil bola")
-3. **Klik** "Generate Story" untuk mendapatkan cerita yang dihasilkan AI
-4. **Sebagai alternatif**, unggah gambar hewan peliharaan untuk secara otomatis menghasilkan deskripsi
+2. **Jelaskan** hewan peliharaan Anda di area teks (misalnya, "Seekor golden retriever yang lincah dan suka mengambil bola")
+3. **Klik** "Generate Story" untuk mendapatkan cerita AI yang dihasilkan
+4. **Sebagai alternatif**, unggah gambar hewan peliharaan untuk otomatis menghasilkan deskripsi
 5. **Lihat** cerita kreatif berdasarkan deskripsi hewan peliharaan Anda
 
-## Bagaimana Semua Ini Bekerja Bersama
+## Cara Kerja Keseluruhan
 
 Berikut alur lengkap saat Anda menghasilkan cerita hewan peliharaan:
 
-1. **Input Pengguna**: Anda mendeskripsikan hewan peliharaan Anda di formulir web
-2. **Pengiriman Formulir**: Browser mengirimkan permintaan POST ke `/generate-story`
+1. **Input Pengguna**: Anda mendeskripsikan hewan peliharaan di form web
+2. **Pengiriman Form**: Browser mengirim permintaan POST ke `/generate-story`
 3. **Pemrosesan Pengontrol**: `PetController` memvalidasi dan membersihkan input
-4. **Panggilan Layanan AI**: `StoryService` mengirimkan permintaan ke API GitHub Models
+4. **Panggilan Layanan AI**: `StoryService` mengirim permintaan ke model Azure AI Foundry
 5. **Pembuatan Cerita**: AI menghasilkan cerita kreatif berdasarkan deskripsi
 6. **Penanganan Respons**: Pengontrol menerima cerita dan menambahkannya ke model
-7. **Rendering Template**: Thymeleaf merender `result.html` dengan cerita
+7. **Render Template**: Thymeleaf merender `result.html` dengan cerita tersebut
 8. **Tampilan**: Pengguna melihat cerita yang dihasilkan di browser mereka
 
 **Alur Penanganan Kesalahan:**
 Jika layanan AI gagal:
 1. Pengontrol menangkap pengecualian
-2. Menghasilkan cerita cadangan menggunakan template yang telah ditulis sebelumnya
-3. Menampilkan cerita cadangan dengan catatan tentang ketidaktersediaan AI
-4. Pengguna tetap mendapatkan cerita, memastikan pengalaman pengguna yang baik
+2. Membuat cerita cadangan menggunakan template yang sudah dibuat
+3. Menampilkan cerita cadangan dengan catatan bahwa AI tidak tersedia
+4. Pengguna tetap mendapat cerita, memastikan pengalaman pengguna tetap baik
 
 ## Memahami Integrasi AI
 
-### API GitHub Models
-Aplikasi menggunakan GitHub Models, yang menyediakan akses gratis ke berbagai model AI:
+### Azure AI Foundry (tanpa kunci)
+Aplikasi menggunakan Azure AI Foundry dengan autentikasi tanpa kunci (Microsoft Entra ID):
 
 ```java
-// Authentication with GitHub token
+// Otentikasi tanpa kunci - tanpa kunci API
+DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 this.openAIClient = OpenAIOkHttpClient.builder()
-    .baseUrl("https://models.github.ai/inference")
-    .apiKey(githubToken)
+    .baseUrl(endpoint + "openai/v1/")
+    .credential(BearerTokenCredential.create(
+        AuthenticationUtil.getBearerTokenSupplier(credential, "https://ai.azure.com/.default")))
     .build();
 ```
 
-### Teknik Prompt
-Layanan menggunakan prompt yang dirancang dengan hati-hati untuk mendapatkan hasil yang baik:
+### Rekayasa Prompt
+Layanan menggunakan prompt yang dirancang dengan cermat untuk mendapatkan hasil baik:
 
 ```java
 String systemPrompt = "You are a creative storyteller who writes fun, " +
@@ -424,16 +433,20 @@ String systemPrompt = "You are a creative storyteller who writes fun, " +
 ```
 
 ### Pemrosesan Respons
-Respons AI diekstraksi dan divalidasi:
+Respons AI diambil dan divalidasi:
 
 ```java
 ChatCompletion response = openAIClient.chat().completions().create(params);
 String story = response.choices().get(0).message().content().orElse("");
 ```
 
-## Langkah Selanjutnya
+## Langkah Berikutnya
 
-Untuk contoh lebih lanjut, lihat [Bab 04: Contoh Praktis](../README.md)
+Untuk contoh lebih lanjut, lihat [Bab 04: Contoh praktis](../README.md)
 
-**Penafian**:  
-Dokumen ini telah diterjemahkan menggunakan layanan penerjemahan AI [Co-op Translator](https://github.com/Azure/co-op-translator). Meskipun kami berusaha untuk memberikan terjemahan yang akurat, harap diperhatikan bahwa terjemahan otomatis mungkin mengandung kesalahan atau ketidakakuratan. Dokumen asli dalam bahasa aslinya harus dianggap sebagai sumber yang otoritatif. Untuk informasi yang bersifat kritis, disarankan menggunakan jasa penerjemahan profesional oleh manusia. Kami tidak bertanggung jawab atas kesalahpahaman atau penafsiran yang keliru yang timbul dari penggunaan terjemahan ini.
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Penafian**:
+Dokumen ini telah diterjemahkan menggunakan layanan terjemahan AI [Co-op Translator](https://github.com/Azure/co-op-translator). Meskipun kami berupaya untuk mencapai akurasi, harap diketahui bahwa terjemahan otomatis mungkin mengandung kesalahan atau ketidakakuratan. Dokumen asli dalam bahasa aslinya harus dianggap sebagai sumber yang sah. Untuk informasi penting, disarankan menggunakan terjemahan profesional oleh manusia. Kami tidak bertanggung jawab atas kesalahpahaman atau penafsiran yang keliru yang timbul dari penggunaan terjemahan ini.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

@@ -1,14 +1,10 @@
 # Core Generative AI Techniques Tutorial 
 
-[![Core Generative AI Techniques](https://img.youtube.com/vi/ZUgN6gTjlPE/0.jpg)](https://www.youtube.com/watch?v=ZUgN6gTjlPE "Core Generative AI Techniques")
-
-> **Video overview:** [Watch "Core Generative AI Techniques" on YouTube](https://www.youtube.com/watch?v=ZUgN6gTjlPE), or click di thumbnail wey dey top.
-
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
 - [Getting Started](#getting-started)
-  - [Step 1: Set Your Environment Variable](#step-1-set-your-environment-variable)
+  - [Step 1: Configure Your Foundry Endpoint](#step-1-configure-your-foundry-endpoint)
   - [Step 2: Navigate to the Examples Directory](#step-2-navigate-to-the-examples-directory)
 - [Model Selection Guide](#model-selection-guide)
 - [Tutorial 1: LLM Completions and Chat](#tutorial-1-llm-completions-and-chat)
@@ -23,35 +19,42 @@
 
 ## Overview
 
-Dis tutorial go show you how to use core generative AI techniques with Java and GitHub Models. You go learn how to interact wit Large Language Models (LLMs), do function calling, use retrieval-augmented generation (RAG), and use responsible AI practices.
+Dis tutorial dey show hands-on examples of core generative AI techniques using Java and Azure AI Foundry. You go learn how to interact with Large Language Models (LLMs), implement function calling, use retrieval-augmented generation (RAG), and apply responsible AI practices.
 
 ## Prerequisites
 
-Before you start, make sure say:
-- You get Java 21 or pass am installed
-- Maven for managing dependencies
-- You get GitHub account wit personal access token (PAT)
+Before you begin, make sure say you get:
+- Java 21 or above install
+- Maven for dependency management
+- Azure AI Foundry model deployment (set am up with `azd up` — see [Chapter 2](../02-SetupDevEnvironment/getting-started-azure-openai.md))
+- The [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), sign in with `az login` (keyless authentication)
 
 ## Getting Started
 
-### Step 1: Set Your Environment Variable
+> **Fastest way — run for VS Code (F5):** After you don do `azd up` (Chapter 2) and `az login`, open **Run and Debug** (`Ctrl+Shift+D`), select config like **Ch03: LLM Completions & Chat**, then press **F5**. The endpoint go load automatically from `.env` wey `azd up` create — so you fit skip Step 1 below. For interactive chat, type for terminal and put `exit` to quit. Run configs dey for [`.vscode/launch.json`](../../../.vscode/launch.json).
+>
+> You prefer command line? Just do Step 1 and Step 2 below.
 
-First, you need set your GitHub token as environment variable. Dis token go allow you use GitHub Models for free.
+### Step 1: Configure Your Foundry Endpoint
+
+These examples use **keyless authentication** (Microsoft Entra ID) to connect to Azure AI Foundry. Sign in with `az login`, come set your Foundry endpoint as environment variable. If you don provision with `azd up`, get road like this: `azd env get-value AZURE_OPENAI_ENDPOINT`.
 
 **Windows (Command Prompt):**
 ```cmd
-set GITHUB_TOKEN=your_github_token_here
+set AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN="your_github_token_here"
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
 ```
 
 **Linux/macOS:**
 ```bash
-export GITHUB_TOKEN=your_github_token_here
+export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
+
+> Di examples use `gpt-4o-mini` deployment normally. You fit change am with `AZURE_OPENAI_DEPLOYMENT` environment variable.
 
 ### Step 2: Navigate to the Examples Directory
 
@@ -61,67 +64,62 @@ cd 03-CoreGenerativeAITechniques/examples/
 
 ## Model Selection Guide
 
-Dis examples use different models wey dem optimize for their specific use cases:
+All dis examples dey use **`gpt-4o-mini`** deployment wey dem provision for [Chapter 2](../02-SetupDevEnvironment/getting-started-azure-openai.md):
 
-**GPT-4.1-nano** (Completions example):
-- Ultra-fast and ultra-cheap
-- Perfect for basic text completion and chat
-- Best for learning how to interact wit LLMs
-
-**GPT-4o-mini** (Functions, RAG, and Responsible AI examples):
-- Small but fully-featured "omni workhorse" model
-- Reliable for advanced capabilities across vendors:
+**GPT-4o-mini:**
+- Small but get full package "omni workhorse" model
+- E dey support advanced features well well:
   - Vision processing
-  - JSON/structured outputs  
+  - JSON/structured outputs
   - Tool/function calling
-- Get more capabilities than nano, so examples go work steady
+- Fast and palatable price, still show all features wey dis tutorial need
 
-> **Why dis matter**: While "nano" models dey good for speed and cost, "mini" models dey safer when you want reliable access to advanced features like function calling, wey no always dey fully available for nano models for all hosting providers.
+> **Tip**: Deployment name na di one wey `AZURE_OPENAI_DEPLOYMENT` environment variable hold (default na `gpt-4o-mini`), so you fit point your examples go different deployment without changing code.
 
 ## Tutorial 1: LLM Completions and Chat
 
 **File:** `src/main/java/com/example/genai/techniques/completions/LLMCompletionsApp.java`
 
-### Wetin Dis Example Teach You
+### Wetin Dis Example Teach
 
-Dis example dey show the core ways wey Large Language Model (LLM) dey work through OpenAI API, including how to setup client wit GitHub Models, message structure for system and user prompts, how conversation keep state through message history, and how to tune parameters to control response length and creativity.
+Dis example dey show di main way Large Language Model (LLM) dey work through the Azure OpenAI API, including how to start keyless client with Azure AI Foundry, pattern for system and user prompt messages, how to manage conversation state by gathering message history, plus how to tune parameter to control response length and creativity level.
 
 ### Key Code Concepts
 
 #### 1. Client Setup
 ```java
-// Make di AI client
+// Make di AI client wit keyless auth (Microsoft Entra ID)
 OpenAIClient client = new OpenAIClientBuilder()
-    .endpoint("https://models.inference.ai.azure.com")
-    .credential(new StaticTokenCredential(pat))
+    .endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"))
+    .credential(new DefaultAzureCredentialBuilder().build())
     .buildClient();
 ```
 
-Dis one dey create connection to GitHub Models using your token.
+Dis one dey create connection to Azure AI Foundry using your `az login` credentials — no need API key.
 
 #### 2. Simple Completion
 ```java
 List<ChatRequestMessage> messages = List.of(
-    // System message set how AI go dey behave
+    // System message dey set how AI go behave
     new ChatRequestSystemMessage("You are a helpful Java expert."),
-    // User message get the real question
+    // User message get the real question inside
     new ChatRequestUserMessage("Explain Java streams briefly.")
 );
 
 ChatCompletionsOptions options = new ChatCompletionsOptions(messages)
-    .setModel("gpt-4.1-nano")  // Quick, cheap model for simple completions
+    .setModel("gpt-4o-mini")   // Your Foundry deployment name
     .setMaxTokens(200)         // Make response no too long
     .setTemperature(0.7);      // Control how creative e go be (0.0-1.0)
 ```
 
 #### 3. Conversation Memory
 ```java
-// Add AI response make conversation history still dey
+// Add AI tok wey e talk make we still sabi wetin dem don yarn before
 messages.add(new ChatRequestAssistantMessage(aiResponse));
 messages.add(new ChatRequestUserMessage("Follow-up question"));
 ```
 
-The AI go remember previous messages if you include them for next requests.
+AI go remember previous messages only if you carry dem for next requests.
 
 ### Run the Example
 ```bash
@@ -130,19 +128,19 @@ mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.completions
 
 ### Wetin Go Happen When You Run Am
 
-1. **Simple Completion**: AI go answer Java question with system prompt guidance
-2. **Multi-turn Chat**: AI go keep context across many questions
-3. **Interactive Chat**: You fit talk real talk with the AI
+1. **Simple Completion**: AI go answer Java question with system prompt guide
+2. **Multi-turn Chat**: AI go maintain context through many questions
+3. **Interactive Chat**: You fit hold real conversation with AI
 
 ## Tutorial 2: Function Calling
 
 **File:** `src/main/java/com/example/genai/techniques/functions/FunctionsApp.java`
 
-### Wetin Dis Example Teach You
+### Wetin Dis Example Teach
 
-Function calling dey allow AI models to request execution of external tools and APIs through structured protocol wey model go analyze natural language request, find which function to call with parameters using JSON Schema, then process results to make contextual responses, while the actual function execution dey remain under developer control for security and reliability.
+Function calling allow AI models request make external tools and APIs run through structured protocol where model go analyze natural language request, decide which functions to call with correct parameters via JSON Schema, then process results to generate contextual response, while actual function running dey control by developer for safety and reliability.
 
-> **Note**: Dis example use `gpt-4o-mini` because function calling need reliable tool calling wey no full expose for nano models for all platforms.
+> **Note**: Dis example use `gpt-4o-mini` because function calling need reliable tool calling wey nano models for all hosts no fit fully provide.
 
 ### Key Code Concepts
 
@@ -167,18 +165,18 @@ weatherFunction.setParameters(BinaryData.fromString("""
     """));
 ```
 
-Dis one dey tell AI which functions dey available and how to use am.
+This one tell AI which functions dem get and how to use dem.
 
 #### 2. Function Execution Flow
 ```java
-// 1. AI dey request make e call function
+// 1. AI dey request make e call one function
 if (choice.getFinishReason() == CompletionsFinishReason.TOOL_CALLS) {
     ChatCompletionsFunctionToolCall functionCall = ...;
     
     // 2. You go run the function
     String result = simulateWeatherFunction(functionCall.getFunction().getArguments());
     
-    // 3. You go give di result back to AI
+    // 3. You go give the result back to AI
     messages.add(new ChatRequestToolMessage(result, toolCall.getId()));
     
     // 4. AI go give di final answer with di function result
@@ -190,7 +188,7 @@ if (choice.getFinishReason() == CompletionsFinishReason.TOOL_CALLS) {
 ```java
 private static String simulateWeatherFunction(String arguments) {
     // Parse arguments and call real weather API
-    // For demo, we go return mock data
+    // For demo, we return mock data
     return """
         {
             "city": "Seattle",
@@ -208,24 +206,24 @@ mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.functions.F
 
 ### Wetin Go Happen When You Run Am
 
-1. **Weather Function**: AI go request weather data for Seattle, you go give am, AI go form response
-2. **Calculator Function**: AI go request calculation (15% of 240), you go compute am, AI go explain result
+1. **Weather Function**: AI go ask for weather data for Seattle, you go provide am, AI go format correct response
+2. **Calculator Function**: AI go request calculation (15% of 240), you go do am, AI go explain result
 
 ## Tutorial 3: RAG (Retrieval-Augmented Generation)
 
 **File:** `src/main/java/com/example/genai/techniques/rag/SimpleReaderDemo.java`
 
-### Wetin Dis Example Teach You
+### Wetin Dis Example Teach
 
-Retrieval-Augmented Generation (RAG) dey combine information retrieval with language generation by adding external document context into AI prompts, so models fit give accurate answers based on specific knowledge instead of old or inaccurate training data, while dem maintain clear boundary between user questions and official info sources thru good prompt engineering.
+Retrieval-Augmented Generation (RAG) combine info retrieval with language generation by adding external document context inside AI prompts, so models fit give accurate answer based on specific knowledge sources instead of old or wrong training data, plus keep clear gap between user question and trusted info sources through smart prompt engineering.
 
-> **Note**: Dis example use `gpt-4o-mini` so e go fit handle structured prompts well and treat document context consistently, which important for good RAG.
+> **Note**: Dis example use `gpt-4o-mini` to make sure say dem fit process structured prompts correct and handle document context steady, important for good RAG work.
 
 ### Key Code Concepts
 
 #### 1. Document Loading
 ```java
-// Make you load your knowledge source
+// Load your knowledge source na
 String doc = Files.readString(Paths.get("document.txt"));
 ```
 
@@ -241,7 +239,7 @@ List<ChatRequestMessage> messages = List.of(
 );
 ```
 
-Di triple quotes dey help AI to sabi the difference between context and question.
+Triple quotes help AI separate context from question.
 
 #### 3. Safe Response Handling
 ```java
@@ -253,7 +251,7 @@ if (response != null && response.getChoices() != null && !response.getChoices().
 }
 ```
 
-Always check API responses so e no go crash.
+Always check API responses make e no crash.
 
 ### Run the Example
 ```bash
@@ -262,21 +260,21 @@ mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.rag.SimpleR
 
 ### Wetin Go Happen When You Run Am
 
-1. The program go load `document.txt` (get info about GitHub Models)
-2. You go ask question about di document
-3. AI go answer based on di document only, no use general knowledge
+1. Program go load `document.txt` (gots info about Azure AI Foundry)
+2. You ask question about dat document
+3. AI go answer based only on document content, e no go use e general sabi
 
-Try ask: "Wetin be GitHub Models?" vs "How weather be now?"
+Try ask: "Wetin be Azure AI Foundry?" vs "How weather di be?"
 
 ## Tutorial 4: Responsible AI
 
-**File:** `src/main/java/com/example/genai/techniques/responsibleai/ResponsibleGithubModels.java`
+**File:** `src/main/java/com/example/genai/techniques/responsibleai/ResponsibleAIDemo.java`
 
-### Wetin Dis Example Teach You
+### Wetin Dis Example Teach
 
-Di Responsible AI example go show why e important to put safety measures inside AI applications. E show how modern AI safety systems dey work through two main ways: hard blocks (HTTP 400 errors from safety filters) and soft refusals (polite "I can't assist with that" replies from the model). Dis example show how production AI apps suppose handle content policy breaks well with exception handling, refusal detection, user feedback, and fallback response plans.
+Responsible AI example dey show how important e be to add safety measures for AI apps. E show how modern AI safety systems dey run through two main ways: hard blocks (HTTP 400 errors from safety filters) and soft refusals (gentle "I no fit help with that" replies from model). Dis example show how production AI app suppose handle content policy breaches gently through exception handling, refusal detection, user feedback, and fallback response strategies.
 
-> **Note**: Dis example use `gpt-4o-mini` because e dey give consistent and reliable safety responses for different harmful content types, so safety system go clear.
+> **Note**: Dis example use `gpt-4o-mini` because e dey give more constant and reliable safety responses for many types of harmful content, so safety system fit show well.
 
 ### Key Code Concepts
 
@@ -284,11 +282,11 @@ Di Responsible AI example go show why e important to put safety measures inside 
 ```java
 private void testPromptSafety(String prompt, String category) {
     try {
-        // Try get AI talk back
+        // Try make AI yan back
         ChatCompletions response = client.getChatCompletions(modelId, options);
         String content = response.getChoices().get(0).getMessage().getContent();
         
-        // Check if di model no gree di request (soft refusal)
+        // Check if di model no gree the request (soft refusal)
         if (isRefusalResponse(content)) {
             System.out.println("[REFUSED BY MODEL]");
             System.out.println("✓ This is GOOD - the AI refused to generate harmful content!");
@@ -333,16 +331,16 @@ private boolean isRefusalResponse(String response) {
 
 ### Run the Example
 ```bash
-mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleGithubModels"
+mvn compile exec:java -Dexec.mainClass="com.example.genai.techniques.responsibleai.ResponsibleAIDemo"
 ```
 
 ### Wetin Go Happen When You Run Am
 
-Program go test different harmful prompts and show how AI safety system dey work in two ways:
+Program go test different harmful prompts and show how AI safety system dey work by two ways:
 
-1. **Hard Blocks**: HTTP 400 errors when safety filters block content before e reach model
-2. **Soft Refusals**: Model go polite refuse like "I can't assist with that" (common for modern models)
-3. **Safe Content**: Legit requests go generate normally
+1. **Hard Blocks**: HTTP 400 errors when content block by safety filters before e reach model
+2. **Soft Refusals**: Model go respond with politeness like "I no fit help with that" (common for modern models)
+3. **Safe Content**: Legit requests go run normally
 
 Expected output for harmful prompts:
 ```
@@ -353,28 +351,26 @@ Status: [REFUSED BY MODEL]
 ✓ This is GOOD - the AI refused to generate harmful content!
 ```
 
-Dis one dey show say **both hard blocks and soft refusals mean the safety system dey work properly**.
+Dis one dey show say **both hard blocks and soft refusals show safety system dey work well**.
 
 ## Common Patterns Across Examples
 
 ### Authentication Pattern
-All examples dey use dis pattern to authenticate wit GitHub Models:
+All examples dey use this keyless pattern to authenticate with Azure AI Foundry:
 
 ```java
-String pat = System.getenv("GITHUB_TOKEN");
-TokenCredential credential = new StaticTokenCredential(pat);
 OpenAIClient client = new OpenAIClientBuilder()
-    .endpoint("https://models.inference.ai.azure.com")
-    .credential(credential)
+    .endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"))
+    .credential(new DefaultAzureCredentialBuilder().build())
     .buildClient();
 ```
 
 ### Error Handling Pattern
 ```java
 try {
-    // AI wok
+    // AI work
 } catch (HttpResponseException e) {
-    // Manage API wahala dem (rate limits, safety filters)
+    // Manage API wahala (rate limits, safety filter dem)
 } catch (Exception e) {
     // Manage general wahala dem (network, parsing)
 }
@@ -390,7 +386,7 @@ List<ChatRequestMessage> messages = List.of(
 
 ## Next Steps
 
-Ready to start use these techniques? Make we build some real applications!
+Ready make you use these techniques for work? Make we build real apps now!
 
 [Chapter 04: Practical samples](../04-PracticalSamples/README.md)
 
@@ -398,22 +394,22 @@ Ready to start use these techniques? Make we build some real applications!
 
 ### Common Issues
 
-**"GITHUB_TOKEN not set"**
-- Make sure say you set the environment variable
-- Check say your token get `models:read` scope
+**"AZURE_OPENAI_ENDPOINT no set"**
+- Make sure you set environment variable
+- Run `az login` — e no need key (Microsoft Entra ID)
 
-**"No response from API"**
+**"No response from API" / 401 / 403**
 - Check your internet connection
-- Make sure your token valid
-- Check if you don reach rate limit
+- Confirm you sign in with `az login` and get Cognitive Services OpenAI User role
+- Check if you don reach deployment quota limits
 
 **Maven compilation errors**
-- Make sure you get Java 21 or higher
-- Run `mvn clean compile` to update dependencies
+- Confirm you get Java 21 or higher
+- Run `mvn clean compile` to refresh dependencies
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
-**Disclaimer**:  
-Dis document don translate wit AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). Even though we dey try make am correct, abeg make you sabi say automated translations fit get some mistakes or error. Di original document wey dey im native language na di correct and official source. For important information, make person wey sabi translate am well follow do am. We no go responsible for any misunderstanding or wrong meaning wey fit show because of dis translation.
+**Disclaimer**:
+Dis document don translate wit AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). Even tho we dey try make am correct, abeg make you know say automated translation fit get errors or mistakes. Di original document for dia own language na im be di correct source. For important info, make person wey sabi human translation do am. We no go responsible for any misunderstanding or wrong understanding wey fit happen because of dis translation.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->
