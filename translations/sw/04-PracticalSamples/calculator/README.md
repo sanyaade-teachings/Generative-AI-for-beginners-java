@@ -1,35 +1,35 @@
-# MCP Calculator Tutorial kwa Waanzilishi
+# Mafunzo ya Kihesabu ya MCP kwa Waanzilishi
 
-## Meza ya Yaliyomo
+## Jedwali la Yaliyomo
 
-- [Unachojifunza](#unachojifunza)
+- [Utakachojifunza](#utakachojifunza)
 - [Mahitaji ya Awali](#mahitaji-ya-awali)
 - [Kuelewa Muundo wa Mradi](#kuelewa-muundo-wa-mradi)
-- [Vipengele Muhimu Vilivyoelezewa](#vipengele-muhimu-vilivyoelezewa)
+- [Vipengele Muhimu Vilivyoelezwa](#vipengele-muhimu-vilivyoelezwa)
   - [1. Programu Kuu](#1-programu-kuu)
   - [2. Huduma ya Kihesabu](#2-huduma-ya-kihesabu)
-  - [3. Mteja wa MCP Mtandaoni](#3-mteja-wa-mcp-mtandaoni)
-  - [4. Mteja Aliyetumia AI](#4-mteja-aliyetumia-ai)
-- [Kukimbia Mifano](#kukimbia-mifano)
+  - [3. Mteja wa MCP Moja kwa Moja](#3-mteja-wa-mcp-moja-kwa-moja)
+  - [4. Mteja Anayezingatia AI](#4-mteja-anayezingatia-ai)
+- [Kukimbiza Mifano](#kukimbiza-mifano)
 - [Jinsi Yote Hufanya Kazi Pamoja](#jinsi-yote-hufanya-kazi-pamoja)
 - [Hatua Zinazofuata](#hatua-zinazofuata)
 
-## Unachojifunza
+## Utakachojifunza
 
-Mafunzo haya yanaeleza jinsi ya kujenga huduma ya kihesabu kwa kutumia Model Context Protocol (MCP). Utaunda uelewa wa:
+Mafunzo haya yanaeleza jinsi ya kujenga huduma ya kihesabu kwa kutumia Itifaki ya Muktadha wa Mfano (MCP). Utaelewa:
 
 - Jinsi ya kuunda huduma ambayo AI inaweza kuitumia kama chombo
 - Jinsi ya kuanzisha mawasiliano ya moja kwa moja na huduma za MCP
-- Jinsi mifano ya AI inaweza kuchagua moja kwa moja ni vifaa gani vitumike
-- Tofauti kati ya simu za moja kwa moja za itifaki na mwingiliano wenye msaada wa AI
+- Jinsi mifano ya AI inaweza kuchagua moja kwa moja ni zana gani za kutumia
+- Tofauti kati ya miito ya itifaki ya moja kwa moja na mwingiliano unaosaidiwa na AI
 
 ## Mahitaji ya Awali
 
 Kabla ya kuanza, hakikisha una:
 - Java 21 au zaidi imewekwa
 - Maven kwa usimamizi wa utegemezi
-- Uwekaji wa mfano wa Azure AI Foundry (uwekee kwa `azd up` — angalia [Sura ya 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
-- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), umeingia kwa `az login` (uthibitisho bila funguo)
+- Uwekaji wa mfano wa Azure AI Foundry (utengeneze kwa `azd up` — angalia [Sura ya 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
+- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), umeingia kwa kutumia `az login` (uthibitishaji bila funguo)
 - Uelewa wa msingi wa Java na Spring Boot
 
 ## Kuelewa Muundo wa Mradi
@@ -47,13 +47,13 @@ calculator/
     └── Bot.java                          # Simple chat interface
 ```
 
-## Vipengele Muhimu Vilivyoelezewa
+## Vipengele Muhimu Vilivyoelezwa
 
 ### 1. Programu Kuu
 
 **Faili:** `McpServerApplication.java`
 
-Huu ni mlango wa kuingilia wa huduma yetu ya kihesabu. Ni programu ya kawaida ya Spring Boot yenye nyongeza moja maalum:
+Hii ni sehemu ya kuingia ya huduma yetu ya kihesabu. Ni programu ya kawaida ya Spring Boot na ongezeko moja maalum:
 
 ```java
 @SpringBootApplication
@@ -71,15 +71,15 @@ public class McpServerApplication {
 ```
 
 **Hii hufanya nini:**
-- Inaendesha seva ya wavuti ya Spring Boot kwenye bandari 8080
-- Inaunda `ToolCallbackProvider` inayofanya mbinu zetu za kihesabu zipatikane kama zana za MCP
-- Kielezi `@Bean` kinaambia Spring kusimamia kama sehemu ambayo sehemu zingine zinaweza kuitumia
+- Huanza seva ya mtandao ya Spring Boot kwenye bandari 8080
+- Inaunda `ToolCallbackProvider` inayofanya njia za kihesabu zetu zipatikane kama zana za MCP
+- Alama `@Bean` inamwambia Spring kusimamia hii kama sehemu inayoweza kutumika na sehemu zingine
 
 ### 2. Huduma ya Kihesabu
 
 **Faili:** `CalculatorService.java`
 
-Hapa ndipo hesabu zote hufanyika. Kila njia imeandikwa kwa `@Tool` ili iweze kupatikana kupitia MCP:
+Hapa ndipo hesabu zote zinafanyika. Kila njia imesanifiwa na `@Tool` ili ifikike kupitia MCP:
 
 ```java
 @Service
@@ -105,29 +105,29 @@ public class CalculatorService {
 }
 ```
 
-**Sifa kuu:**
+**Sifa Muhimu:**
 
-1. **Kielezi cha `@Tool`**: Kinaonyesha MCP kwamba njia hii inaweza kuitwa na wateja wa nje
-2. **Maelezo ya Wazi**: Kila chombo kinaelezo kinachosaidia mifano ya AI kuelewa lini kiitumie
-3. **Muundo Thabiti wa Kurudisha**: Operesheni zote hurudisha mistari inayoweza kusomwa binadamu kama "5.00 + 3.00 = 8.00"
-4. **Shughulikiaji la Makosa**: Kugawanya kwa sifuri na mizizi hasi hurudisha ujumbe wa kosa
+1. **Alama ya `@Tool`**: Hii inamwambia MCP kwamba njia hii inaweza kuitwa na wateja wa nje
+2. **Maelezo Wazi**: Kila zana ina maelezo yanayosaidia mifano ya AI kuelewa lini ya kuitumia
+3. **Mwonekano Thabiti wa Matokeo**: Matendo yote hurudisha herufi zinazoweza kusomeka na binadamu kama "5.00 + 3.00 = 8.00"
+4. **Ushughulikiaji wa Makosa**: Mgawanyiko kwa sifuri na mizizi hasi hurudisha ujumbe wa makosa
 
-**Operesheni Zinazopatikana:**
-- `add(a, b)` - Huongeza nambari mbili
-- `subtract(a, b)` - Hukata nambari ya pili kutoka ya kwanza
-- `multiply(a, b)` - Huzidisha nambari mbili
-- `divide(a, b)` - Hugaisha ya kwanza kwa ya pili (kwa ukaguzi wa sifuri)
-- `power(base, exponent)` - Huinua msingi kwa nguvu ya exponent
-- `squareRoot(number)` - Hukokotoa mzizi wa mraba (kwa ukaguzi hasi)
-- `modulus(a, b)` - Hurudisha jinsi ya kuachwa kwa mgawanyo
-- `absolute(number)` - Hurudisha thamani kamili
-- `help()` - Hurudisha habari kuhusu operesheni zote
+**Matendo Yanayopatikana:**
+- `add(a, b)` - Kuongeza nambari mbili
+- `subtract(a, b)` - Kutoa ya pili kutoka ya kwanza
+- `multiply(a, b)` - Kuzidisha nambari mbili
+- `divide(a, b)` - Kugawanya ya kwanza kwa ya pili (kwa ukaguzi wa sifuri)
+- `power(base, exponent)` - Kuweka msingi katika nguvu ya exponent
+- `squareRoot(number)` - Kukokotoa mzizi wa mraba (kwa ukaguzi wa hasi)
+- `modulus(a, b)` - Kurudisha mabaki ya mgawanyiko
+- `absolute(number)` - Kurudisha thamani isiyo na alama
+- `help()` - Kutoa taarifa kuhusu matendo yote
 
-### 3. Mteja wa MCP Mtandaoni
+### 3. Mteja wa MCP Moja kwa Moja
 
 **Faili:** `SDKClient.java`
 
-Mteja huyu husalimiana moja kwa moja na seva ya MCP bila kutumia AI. Huitisha kazi maalum za kihesabu kwa mikono:
+Mteja huyu husema moja kwa moja na seva ya MCP bila kutumia AI. Anaita kwa mikono kazi maalum za kihesabu:
 
 ```java
 public class SDKClient {
@@ -143,11 +143,11 @@ public class SDKClient {
         var client = McpClient.sync(this.transport).build();
         client.initialize();
         
-        // Orodhesha zana zinazopatikana
+        // Orodha ya zana zilizopatikana
         ListToolsResult toolsList = client.listTools();
         System.out.println("Available Tools = " + toolsList);
         
-        // Piga simu kwa kazi maalum za kifaa cha kuhesabu
+        // Piga simu kwa kazi maalum za kalkuleta
         CallToolResult resultAdd = client.callTool(
             new CallToolRequest("add", Map.of("a", 5.0, "b", 3.0))
         );
@@ -164,20 +164,20 @@ public class SDKClient {
 ```
 
 **Hii hufanya nini:**
-1. **Inaunganisha** na seva ya kihesabu kwenye `http://localhost:8080` kwa kutumia muundo wa builder
+1. **Inaunganisha** na seva ya kihesabu kwenye `http://localhost:8080` kwa kutumia muundo wa muundaji
 2. **Inaorodhesha** zana zote zinazopatikana (kazi zetu za kihesabu)
-3. **Huitisha** kazi maalum kwa vigezo halisi
+3. **Huita** kazi maalum kwa vigezo kamili
 4. **Inachapisha** matokeo moja kwa moja
 
-**Kumbuka:** Mfano huu hutumia utegemezi wa Spring AI 1.1.0-SNAPSHOT, ulioweka muundo wa builder kwa `WebFluxSseClientTransport`. Ikiwa unatumia toleo la zamani linalo thibitishwa, unaweza kuhitaji kutumia muundaji wa moja kwa moja badala yake.
+**Kumbuka:** Mfano huu unatumia utegemezi wa Spring AI 1.1.0-SNAPSHOT, ulioleta muundo wa muundaji kwa `WebFluxSseClientTransport`. Ikiwa unatumia toleo la zamani thabiti, huenda ukahitaji kutumia mjenzi wa moja kwa moja badala yake.
 
-**Lini kutumia hii:** Unapojua hasa hesabu unayotaka kufanya na unataka kuitisha programmatically.
+**Unapotumia:** Unapojua haswa hesabu gani unayotaka kufanya na unataka kuiita kwa njia ya programu.
 
-### 4. Mteja Aliyetumia AI
+### 4. Mteja Anayezingatia AI
 
 **Faili:** `LangChain4jClient.java`
 
-Mteja huyu hutumia mfano wa AI (GPT-4o-mini) ambaye anaweza moja kwa moja kuamua ni zana gani za kihesabu zitumike:
+Mteja huyu hutumia mfano wa AI (GPT-4o-mini) ambaye anaweza kuchagua moja kwa moja ni zana gani ya kihesabu kutumia:
 
 ```java
 public class LangChain4jClient {
@@ -195,7 +195,7 @@ public class LangChain4jClient {
                 .modelName("gpt-4o-mini")
                 .build();
 
-        // Unganisha na seva yetu ya kipimo MCP
+        // Unganisha na seva yetu ya kisanduku MCP
         McpTransport transport = new HttpMcpTransport.Builder()
                 .sseUrl("http://localhost:8080/sse")
                 .logRequests(true)  // Inaonyesha kile AI inachofanya
@@ -206,18 +206,18 @@ public class LangChain4jClient {
                 .transport(transport)
                 .build();
 
-        // Mpa AI ufikiaji wa zana zetu za kipimo
+        // Toa AI ufikiaji kwa zana zetu za kisanduku
         ToolProvider toolProvider = McpToolProvider.builder()
                 .mcpClients(List.of(mcpClient))
                 .build();
 
-        // Unda roboti ya AI inayoweza kutumia kipimo chetu
+        // Unda roboti ya AI inayoweza kutumia kisanduku chetu
         Bot bot = AiServices.builder(Bot.class)
                 .chatLanguageModel(model)
                 .toolProvider(toolProvider)
                 .build();
 
-        // Sasa tunaweza kumuomba AI kufanya mahesabu kwa lugha asilia
+        // Sasa tunaweza kumwomba AI kufanya mahesabu kwa lugha ya asili
         String response = bot.chat("Calculate the sum of 24.5 and 17.3 using the calculator service");
         System.out.println(response);
 
@@ -228,22 +228,22 @@ public class LangChain4jClient {
 ```
 
 **Hii hufanya nini:**
-1. **Hutangaza** muunganiko wa mfano wa AI kwa kutumia tokeni yako ya GitHub
+1. **Inaunda** muunganisho wa mfano wa AI kwa kutumia uthibitishaji bila funguo (Microsoft Entra ID)
 2. **Inaunganisha** AI na seva yetu ya MCP ya kihesabu
-3. **Inampa** AI ufikiaji wa zana zote za kihesabu zetu
-4. **Inaruhusu** maombi kwa lugha ya asili kama "Hesabu jumla ya 24.5 na 17.3"
+3. **Inampa** AI upatikanaji wa zana zote za kihesabu zetu
+4. **Inaruhusu** maombi ya lugha asilia kama "Hesabu jumla ya 24.5 na 17.3"
 
-**AI hufanya moja kwa moja:**
+**AI moja kwa moja:**
 - Huelewa unataka kuongeza nambari
-- Huchagua chombo cha `add`
-- Huitisha `add(24.5, 17.3)`
-- Hurudisha matokeo kama jibu la asili
+- Huchagua zana ya `add`
+- Huita `add(24.5, 17.3)`
+- Hurudisha matokeo katika jibu la asili
 
-## Kukimbia Mifano
+## Kukimbiza Mifano
 
 ### Hatua ya 1: Anzisha Seva ya Kihesabu
 
-Kwanza, ingia na weka anwani yako ya Azure AI Foundry (inahitajika kwa mteja wa AI — uthibitisho bila funguo, hakuna funguo za API):
+Kwanza, ingia na weka anwani yako ya Azure AI Foundry (inahitajika kwa mteja wa AI — uthibitishaji bila funguo, bila ufunguo wa API):
 
 **Windows:**
 ```cmd
@@ -268,22 +268,22 @@ Seva itaanza kwenye `http://localhost:8080`. Utauona:
 Started McpServerApplication in X.XXX seconds
 ```
 
-### Hatua ya 2: Jaribu kwa Mteja wa Moja kwa Moja
+### Hatua ya 2: Jaribu na Mteja wa Moja kwa Moja
 
-Katika terminal **MPYA** na Seva bado ikiwa inakimbia, endesha mteja wa MCP wa moja kwa moja:
+Katika terminal **MPYA** huku Seva ikiantia kazi, endesha mteja wa MCP wa moja kwa moja:
 ```bash
 cd 04-PracticalSamples/calculator
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient" -Dexec.classpathScope=test
 ```
 
-Utaona output kama:
+Utaona matokeo kama:
 ```
 Available Tools = [add, subtract, multiply, divide, power, squareRoot, modulus, absolute, help]
 Add Result = 5.00 + 3.00 = 8.00
 Square Root Result = √16.00 = 4.00
 ```
 
-### Hatua ya 3: Jaribu kwa Mteja wa AI
+### Hatua ya 3: Jaribu na Mteja wa AI
 
 ```bash
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient" -Dexec.classpathScope=test
@@ -297,24 +297,24 @@ The square root of 144 is 12.
 
 ### Hatua ya 4: Funga Seva ya MCP
 
-Unapomaliza kujaribu, unaweza kusitisha mteja wa AI kwa kubonyeza `Ctrl+C` kwenye terminal yake. Seva ya MCP itaendelea kazi mpaka usitishe wewe.
+Ukimaliza kupima, unaweza kusitisha mteja wa AI kwa kubonyeza `Ctrl+C` kwenye terminal yake. Seva ya MCP itaendelea kuendesha hadi utakapotaka kuiacha.
 Kusitisha seva, bonyeza `Ctrl+C` kwenye terminal inayoendesha.
 
 ## Jinsi Yote Hufanya Kazi Pamoja
 
-Hii ni mfululizo kamili unapomuuliza AI "Ni 5 + 3 gani?":
+Hivi ndivyo mtiririko kamili unavyokuwa unapoambia AI "Ni 5 + 3?":
 
 1. **Wewe** unauliza AI kwa lugha ya asili
-2. **AI** inachambua ombi lako na kugundua unataka kuongeza
-3. **AI** huita seva ya MCP: `add(5.0, 3.0)`
-4. **Huduma ya Kihesabu** hufanya: `5.0 + 3.0 = 8.0`
+2. **AI** inachambua ombi lako na kutambua unataka kuongeza
+3. **AI** inaita seva ya MCP: `add(5.0, 3.0)`
+4. **Huduma ya Kihesabu** inafanya: `5.0 + 3.0 = 8.0`
 5. **Huduma ya Kihesabu** hurudisha: `"5.00 + 3.00 = 8.00"`
-6. **AI** hupokea matokeo na kutengeneza jibu la kawaida
+6. **AI** inapokea matokeo na kuandaa jibu la asili
 7. **Wewe** unapata: "Jumla ya 5 na 3 ni 8"
 
 ## Hatua Zinazofuata
 
-Kwa mifano zaidi, angalia [Sura 04: Sampuli za Vitendo](../README.md)
+Kwa mifano zaidi, angalia [Sura ya 04: Sampuli za Vitendo](../README.md)
 
 ---
 
