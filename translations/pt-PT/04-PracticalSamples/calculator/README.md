@@ -2,35 +2,35 @@
 
 ## Índice
 
-- [O Que Vai Aprender](#o-que-vai-aprender)
+- [O que Vai Aprender](#o-que-vai-aprender)
 - [Pré-requisitos](#pré-requisitos)
 - [Compreender a Estrutura do Projeto](#compreender-a-estrutura-do-projeto)
 - [Componentes Principais Explicados](#componentes-principais-explicados)
   - [1. Aplicação Principal](#1-aplicação-principal)
   - [2. Serviço de Calculadora](#2-serviço-de-calculadora)
   - [3. Cliente MCP Direto](#3-cliente-mcp-direto)
-  - [4. Cliente com IA](#4-cliente-com-ia)
+  - [4. Cliente Alimentado por IA](#4-cliente-alimentado-por-ia)
 - [Executar os Exemplos](#executar-os-exemplos)
-- [Como Tudo Funciona Junto](#como-tudo-funciona-junto)
+- [Como Tudo Funciona em Conjunto](#como-tudo-funciona-em-conjunto)
 - [Próximos Passos](#próximos-passos)
 
-## O Que Vai Aprender
+## O que Vai Aprender
 
-Este tutorial explica como criar um serviço de calculadora usando o Protocolo de Contexto do Modelo (MCP). Vai entender:
+Este tutorial explica como construir um serviço de calculadora utilizando o Protocolo de Contexto de Modelo (MCP). Vai compreender:
 
 - Como criar um serviço que a IA pode usar como ferramenta
 - Como configurar comunicação direta com serviços MCP
-- Como modelos de IA podem escolher automaticamente que ferramentas usar
-- A diferença entre chamadas diretas do protocolo e interações assistidas por IA
+- Como os modelos de IA podem escolher automaticamente quais ferramentas usar
+- A diferença entre chamadas de protocolo diretas e interações assistidas por IA
 
 ## Pré-requisitos
 
 Antes de começar, certifique-se de que tem:
 - Java 21 ou superior instalado
 - Maven para gestão de dependências
-- Um deployment de modelo Azure AI Foundry (provisionar com `azd up` — veja [Capítulo 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
-- A [CLI do Azure](https://learn.microsoft.com/cli/azure/install-azure-cli), autenticado com `az login` (autenticação sem chave)
-- Noções básicas de Java e Spring Boot
+- Uma implantação de modelo Azure AI Foundry (forneça-a com `azd up` — veja o [Capítulo 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
+- O [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), autenticado com `az login` (autenticação sem chave)
+- Conhecimentos básicos de Java e Spring Boot
 
 ## Compreender a Estrutura do Projeto
 
@@ -72,14 +72,14 @@ public class McpServerApplication {
 
 **O que isto faz:**
 - Inicia um servidor web Spring Boot na porta 8080
-- Cria um `ToolCallbackProvider` que torna disponíveis os métodos da calculadora como ferramentas MCP
-- A anotação `@Bean` instrui o Spring a gerir este componente para uso por outras partes
+- Cria um `ToolCallbackProvider` que torna os métodos da nossa calculadora disponíveis como ferramentas MCP
+- A anotação `@Bean` indica ao Spring para gerir isto como um componente que outras partes podem usar
 
 ### 2. Serviço de Calculadora
 
 **Ficheiro:** `CalculatorService.java`
 
-Aqui é onde toda a matemática acontece. Cada método está marcado com `@Tool` para ficar disponível via MCP:
+Aqui é onde toda a matemática acontece. Cada método está marcado com `@Tool` para estar disponível via MCP:
 
 ```java
 @Service
@@ -107,18 +107,18 @@ public class CalculatorService {
 
 **Características principais:**
 
-1. **Anotação `@Tool`**: Informa o MCP que este método pode ser chamado por clientes externos
-2. **Descrições Claras**: Cada ferramenta tem uma descrição que ajuda modelos de IA a perceber quando usá-la
-3. **Formato Consistente de Retorno**: Todas as operações devolvem strings legíveis, como "5.00 + 3.00 = 8.00"
-4. **Tratamento de Erros**: Divisão por zero e raízes quadradas de números negativos retornam mensagens de erro
+1. **Anotação `@Tool`**: Indica ao MCP que este método pode ser chamado por clientes externos
+2. **Descrições Claras**: Cada ferramenta tem uma descrição que ajuda os modelos de IA a perceber quando usá-la
+3. **Formato Consistente de Retorno**: Todas as operações retornam strings legíveis como "5.00 + 3.00 = 8.00"
+4. **Gestão de Erros**: Divisão por zero e raízes quadradas negativas retornam mensagens de erro
 
 **Operações Disponíveis:**
 - `add(a, b)` - Soma dois números
-- `subtract(a, b)` - Subtrai o segundo ao primeiro
+- `subtract(a, b)` - Subtrai o segundo do primeiro
 - `multiply(a, b)` - Multiplica dois números
 - `divide(a, b)` - Divide o primeiro pelo segundo (com verificação de zero)
-- `power(base, exponent)` - Eleva base à potência do expoente
-- `squareRoot(number)` - Calcula raiz quadrada (com verificação de negativo)
+- `power(base, exponent)` - Eleva a base à potência do expoente
+- `squareRoot(number)` - Calcula a raiz quadrada (com verificação de negativo)
 - `modulus(a, b)` - Retorna o resto da divisão
 - `absolute(number)` - Retorna o valor absoluto
 - `help()` - Retorna informações sobre todas as operações
@@ -165,19 +165,19 @@ public class SDKClient {
 
 **O que isto faz:**
 1. **Liga-se** ao servidor da calculadora em `http://localhost:8080` usando o padrão builder
-2. **Lista** todas as ferramentas disponíveis (funções da calculadora)
+2. **Lista** todas as ferramentas disponíveis (as funções da calculadora)
 3. **Chama** funções específicas com parâmetros exatos
 4. **Imprime** os resultados diretamente
 
-**Nota:** Este exemplo usa a dependência Spring AI 1.1.0-SNAPSHOT, que introduziu um padrão builder para o `WebFluxSseClientTransport`. Se estiver a usar uma versão estável anterior, poderá precisar usar o construtor direto.
+**Nota:** Este exemplo usa a dependência Spring AI 1.1.0-SNAPSHOT, que introduziu um padrão builder para `WebFluxSseClientTransport`. Se usar uma versão estável mais antiga, pode ser necessário usar o construtor direto.
 
-**Quando usar isto:** Quando souber exatamente que cálculo quer executar e quiser chamá-lo programaticamente.
+**Quando usar isto:** Quando souber exatamente que cálculo quer realizar e pretende chamá-lo programaticamente.
 
-### 4. Cliente com IA
+### 4. Cliente Alimentado por IA
 
 **Ficheiro:** `LangChain4jClient.java`
 
-Este cliente usa um modelo de IA (GPT-4o-mini) que pode decidir automaticamente quais ferramentas da calculadora usar:
+Este cliente usa um modelo IA (GPT-4o-mini) que pode decidir automaticamente quais as ferramentas da calculadora a usar:
 
 ```java
 public class LangChain4jClient {
@@ -195,7 +195,7 @@ public class LangChain4jClient {
                 .modelName("gpt-4o-mini")
                 .build();
 
-        // Ligar ao nosso servidor de calculadora MCP
+        // Ligar ao nosso servidor MCP da calculadora
         McpTransport transport = new HttpMcpTransport.Builder()
                 .sseUrl("http://localhost:8080/sse")
                 .logRequests(true)  // Mostra o que a IA está a fazer
@@ -228,22 +228,22 @@ public class LangChain4jClient {
 ```
 
 **O que isto faz:**
-1. **Cria** uma ligação ao modelo de IA usando o seu token GitHub
+1. **Cria** uma ligação ao modelo IA usando autenticação sem chave (Microsoft Entra ID)
 2. **Liga** a IA ao nosso servidor MCP da calculadora
-3. **Dá** acesso à IA a todas as ferramentas da calculadora
+3. **Concede** à IA acesso a todas as ferramentas da calculadora
 4. **Permite** pedidos em linguagem natural como "Calcular a soma de 24.5 e 17.3"
 
 **A IA automaticamente:**
 - Percebe que quer adicionar números
 - Escolhe a ferramenta `add`
 - Chama `add(24.5, 17.3)`
-- Devolve o resultado numa resposta natural
+- Retorna o resultado numa resposta natural
 
 ## Executar os Exemplos
 
 ### Passo 1: Iniciar o Servidor da Calculadora
 
-Primeiro, autentique-se e defina o endpoint do Azure AI Foundry (necessário para o cliente IA — autenticação sem chave, sem API key):
+Primeiro, faça login e configure o endpoint Azure AI Foundry (necessário para o cliente IA — autenticação sem chave, sem chave API):
 
 **Windows:**
 ```cmd
@@ -270,13 +270,13 @@ Started McpServerApplication in X.XXX seconds
 
 ### Passo 2: Testar com Cliente Direto
 
-Numa nova consola **com o servidor ainda a correr**, execute o cliente MCP direto:
+Num terminal **NOVO** enquanto o servidor ainda está a correr, execute o cliente MCP direto:
 ```bash
 cd 04-PracticalSamples/calculator
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient" -Dexec.classpathScope=test
 ```
 
-Vai ver uma saída como:
+Verá uma saída como:
 ```
 Available Tools = [add, subtract, multiply, divide, power, squareRoot, modulus, absolute, help]
 Add Result = 5.00 + 3.00 = 8.00
@@ -289,7 +289,7 @@ Square Root Result = √16.00 = 4.00
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient" -Dexec.classpathScope=test
 ```
 
-Vai ver a IA a usar automaticamente as ferramentas:
+Verá a IA a usar as ferramentas automaticamente:
 ```
 The sum of 24.5 and 17.3 is 41.8.
 The square root of 144 is 12.
@@ -297,24 +297,24 @@ The square root of 144 is 12.
 
 ### Passo 4: Fechar o Servidor MCP
 
-Quando terminar os testes, pode parar o cliente IA com `Ctrl+C` no terminal dele. O servidor MCP continuará a correr até parar manualmente.
-Para parar o servidor, pressione `Ctrl+C` no terminal onde está a funcionar.
+Quando terminar os testes, pode fechar o cliente IA pressionando `Ctrl+C` no terminal dele. O servidor MCP continuará a correr até o parar.
+Para parar o servidor, pressione `Ctrl+C` no terminal onde está a correr.
 
-## Como Tudo Funciona Junto
+## Como Tudo Funciona em Conjunto
 
-Aqui está o fluxo completo quando pergunta à IA "Quanto é 5 + 3?":
+Eis o fluxo completo quando pergunta à IA "Quanto é 5 + 3?":
 
-1. **Você** faz a pergunta à IA em linguagem natural
-2. **IA** analisa o pedido e percebe que quer adição
-3. **IA** chama o servidor MCP: `add(5.0, 3.0)`
-4. **Serviço de Calculadora** executa: `5.0 + 3.0 = 8.0`
-5. **Serviço de Calculadora** devolve: `"5.00 + 3.00 = 8.00"`
-6. **IA** recebe o resultado e formata uma resposta natural
+1. **Você** pergunta à IA em linguagem natural
+2. **A IA** analisa o pedido e percebe que quer adição
+3. **A IA** chama o servidor MCP: `add(5.0, 3.0)`
+4. **O Serviço da Calculadora** calcula: `5.0 + 3.0 = 8.0`
+5. **O Serviço da Calculadora** devolve: `"5.00 + 3.00 = 8.00"`
+6. **A IA** recebe o resultado e formata uma resposta natural
 7. **Você** recebe: "A soma de 5 e 3 é 8"
 
 ## Próximos Passos
 
-Para mais exemplos, veja [Capítulo 04: Exemplos práticos](../README.md)
+Para mais exemplos, veja o [Capítulo 04: Exemplos práticos](../README.md)
 
 ---
 
