@@ -1,40 +1,40 @@
 # MCP-laskinopas aloittelijoille
 
-## Sisällysluettelo
+## Sisällys
 
 - [Mitä opit](#mitä-opit)
 - [Esivaatimukset](#esivaatimukset)
-- [Projektin rakenteen ymmärtäminen](#projektin-rakenteen-ymmärrys)
-- [Keskeiset osat selitettynä](#keskeiset-osat-selitettynä)
+- [Projektirakenteen ymmärtäminen](#projektirakenteen-ymmäärtäminen)
+- [Ydinosa-alueet selitettynä](#ydinosa-alueet-selitettynä)
   - [1. Pääsovellus](#1-pääsovellus)
   - [2. Laskinpalvelu](#2-laskinpalvelu)
   - [3. Suora MCP-asiakas](#3-suora-mcp-asiakas)
-  - [4. AI-voimainen asiakas](#4-ai-voimainen-asiakas)
-- [Esimerkkien ajaminen](#esimerkkien-ajaminen)
-- [Miten kaikki toimii yhdessä](#miten-kaikki-toimii-yhdessä)
-- [Seuraavat askeleet](#seuraavat-askelmat)
+  - [4. AI-tehostettu asiakas](#4-ai-tehostettu-asiakas)
+- [Esimerkkien suorittaminen](#esimerkkien-suorittaminen)
+- [Kuinka kaikki toimii yhdessä](#kuinka-kaikki-toimii-yhdessä)
+- [Seuraavat askeleet](#seuraavat-askellet)
 
 ## Mitä opit
 
-Tässä oppaassa selitetään, miten rakennetaan laskinpalvelu käyttäen Model Context Protocolia (MCP). Ymmärrät:
+Tässä oppaassa selitetään, kuinka rakennetaan laskinpalvelu käyttäen Model Context Protocol (MCP) -protokollaa. Ymmärrät:
 
-- Miten luodaan palvelu, jota AI voi käyttää työkaluna
-- Miten asetetaan suora yhteys MCP-palveluihin
-- Miten AI-mallit voivat automaattisesti valita käytettävät työkalut
-- Ero suoran protokollakutsun ja AI-avusteisen vuorovaikutuksen välillä
+- Kuinka luodaan palvelu, jota tekoäly voi käyttää työkaluna
+- Kuinka määrittää suora yhteys MCP-palveluihin
+- Kuinka tekoälymallit voivat automaattisesti valita käytettävät työkalut
+- Ero suoran protokollakutsun ja tekoälyn avustamien vuorovaikutusten välillä
 
 ## Esivaatimukset
 
 Ennen aloittamista varmista, että sinulla on:
-- Asennettuna Java 21 tai uudempi
+- Java 21 tai uudempi asennettuna
 - Maven riippuvuuksien hallintaan
-- Azure AI Foundry -mallivienti (perusta `azd up` -komennolla — katso [Luku 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
-- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) asennettuna, ja kirjauduttu `az login` (avainvapaa autentikointi)
+- Azure AI Foundry -mallin käyttöönotto (otetaan käyttöön `azd up` -komennolla — katso [Luku 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
+- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) asennettuna ja kirjautuneena `az login` -komennolla (avaimeton tunnistus)
 - Perustiedot Javasta ja Spring Bootista
 
-## Projektin rakenteen ymmärrys
+## Projektirakenteen ymmärtäminen
 
-Laskinprojekti sisältää useita tärkeitä tiedostoja:
+Laskinprojektissa on useita tärkeitä tiedostoja:
 
 ```
 calculator/
@@ -47,13 +47,13 @@ calculator/
     └── Bot.java                          # Simple chat interface
 ```
 
-## Keskeiset osat selitettynä
+## Ydinosa-alueet selitettynä
 
 ### 1. Pääsovellus
 
 **Tiedosto:** `McpServerApplication.java`
 
-Tämä on laskinpalvelumme käynnistyspiste. Kyseessä on tavallinen Spring Boot -sovellus yhdellä erityisellä lisällä:
+Tämä on laskinpalvelumme käynnistyspiste. Se on tavallinen Spring Boot -sovellus yhdellä erityisellä lisällä:
 
 ```java
 @SpringBootApplication
@@ -71,15 +71,15 @@ public class McpServerApplication {
 ```
 
 **Mitä tämä tekee:**
-- Käynnistää Spring Boot -web-palvelimen porttiin 8080
+- Käynnistää Spring Boot -verkkopalvelimen portissa 8080
 - Luo `ToolCallbackProvider`-komponentin, joka tekee laskimen metodit saataville MCP-työkaluina
-- `@Bean`-annotaatio kertoo Springille, että tämä hallitaan komponenttina, jota muut osat voivat käyttää
+- `@Bean`-annotaatio kertoo Springille, että tämä hallitaan komponenttina muiden osien käyttöön
 
 ### 2. Laskinpalvelu
 
 **Tiedosto:** `CalculatorService.java`
 
-Täällä tapahtuvat kaikki laskutoimitukset. Jokainen metodi on merkitty `@Tool`-annotaatiolla, jotta ne ovat käytettävissä MCP:n kautta:
+Täällä tapahtuu kaikki laskenta. Jokainen metodi on merkitty `@Tool`-annotaatiolla, jotta se on saatavilla MCP:n kautta:
 
 ```java
 @Service
@@ -105,29 +105,29 @@ public class CalculatorService {
 }
 ```
 
-**Tärkeimmät ominaisuudet:**
+**Keskeiset ominaisuudet:**
 
 1. **`@Tool`-annotaatio**: Ilmoittaa MCP:lle, että tätä metodia voivat kutsua ulkoiset asiakkaat
-2. **Selkeät kuvaukset**: Jokaisella työkalulla on kuvaus, joka auttaa AI-malleja ymmärtämään, milloin sitä käytetään
-3. **Yhtenäinen palautusmuoto**: Kaikki operaatiot palauttavat ihmisenlukuisia merkkijonoja, kuten "5.00 + 3.00 = 8.00"
-4. **Virheenkäsittely**: Nollalla jakaminen ja negatiiviset neliöjuuret palauttavat virheilmoituksia
+2. **Selkeät kuvaukset**: Jokaisella työkalulla on kuvaus, joka auttaa tekoälymalleja ymmärtämään, milloin sitä käytetään
+3. **Yhtenäinen palautusmuoto**: Kaikki toiminnot palauttavat ihmisen luettavia merkkijonoja kuten "5.00 + 3.00 = 8.00"
+4. **Virheiden käsittely**: Nollalla jakaminen ja negatiiviset neliöjuuret palauttavat virheilmoituksia
 
-**Saatavilla olevat toiminnot:**
+**Saatavilla olevat operaatiot:**
 - `add(a, b)` - Laskee kahden luvun summan
 - `subtract(a, b)` - Vähentää toisen luvun ensimmäisestä
 - `multiply(a, b)` - Kertoo kaksi lukua
-- `divide(a, b)` - Jakaa ensimmäisen luvun toisella (tarkistaa nollalla jakamisen)
-- `power(base, exponent)` - Korottaa kantaluvun eksponentin potenssiin
+- `divide(a, b)` - Jakaa ensimmäisen luvun toisella (sisältää nollantarkastuksen)
+- `power(base, exponent)` - Korottaa kannan eksponenttiin
 - `squareRoot(number)` - Laskee neliöjuuren (tarkistaa negatiivisuuden)
-- `modulus(a, b)` - Palauttaa jakamisen jäännöksen
-- `absolute(number)` - Palauttaa luvun itseisarvon
-- `help()` - Palauttaa tietoa kaikista toiminnoista
+- `modulus(a, b)` - Palauttaa jakolaskun jäännöksen
+- `absolute(number)` - Palauttaa itseisarvon
+- `help()` - Palauttaa tietoja kaikista toiminnoista
 
 ### 3. Suora MCP-asiakas
 
 **Tiedosto:** `SDKClient.java`
 
-Tämä asiakas keskustelee suoraan MCP-palvelimen kanssa ilman AI:tä. Se kutsuu manuaalisesti tiettyjä laskimen funktioita:
+Tämä asiakas keskustelee suoraan MCP-palvelimen kanssa ilman tekoälyä. Se kutsuu käsin tiettyjä laskinfunktioita:
 
 ```java
 public class SDKClient {
@@ -143,7 +143,7 @@ public class SDKClient {
         var client = McpClient.sync(this.transport).build();
         client.initialize();
         
-        // Listaa saatavilla olevat työkalut
+        // Listaa käytettävissä olevat työkalut
         ListToolsResult toolsList = client.listTools();
         System.out.println("Available Tools = " + toolsList);
         
@@ -164,26 +164,26 @@ public class SDKClient {
 ```
 
 **Mitä tämä tekee:**
-1. **Yhdistää** laskinpalvelimeen osoitteessa `http://localhost:8080` käyttäen rakennusmallia
+1. **Yhdistää** laskinpalvelimeen osoitteessa `http://localhost:8080` käyttäen builder-kuviota
 2. **Listaa** kaikki saatavilla olevat työkalut (laskimen funktiot)
-3. **Kutsuu** tiettyjä funktioita tarkkojen parametrien kanssa
+3. **Kutsuu** tarkkoja funktioita annetuilla parametreilla
 4. **Tulostaa** tulokset suoraan
 
-**Huom:** Tämä esimerkki käyttää Spring AI 1.1.0-SNAPSHOT -riippuvuutta, joka toi rakennusmallin `WebFluxSseClientTransport`-luokkaan. Jos käytät vanhempaa vakaata versiota, saatat joutua käyttämään suoraa konstruktoria.
+**Huom:** Tämä esimerkki käyttää Spring AI 1.1.0-SNAPSHOT -riippuvuutta, joka toi mukanaan builder-kuvion `WebFluxSseClientTransport`-komponentille. Jos käytät aiempaa vakaata versiota, saatat tarvita suoraa konstruktoria.
 
-**Mihin käyttää:** Kun tiedät täsmälleen, mitä laskutoimitusta haluat tehdä ja haluat kutsua sen ohjelmallisesti.
+**Milloin käyttää:** Kun tiedät tarkasti, minkä laskutoiminnon haluat tehdä ja haluat kutsua sen ohjelmallisesti.
 
-### 4. AI-voimainen asiakas
+### 4. AI-tehostettu asiakas
 
 **Tiedosto:** `LangChain4jClient.java`
 
-Tämä asiakas käyttää AI-mallia (GPT-4o-mini), joka osaa automaattisesti päättää, mitä laskintyökaluja käyttää:
+Tämä asiakas käyttää AI-mallia (GPT-4o-mini), joka voi automaattisesti valita, mitä laskintyökaluja käyttää:
 
 ```java
 public class LangChain4jClient {
     
     public static void main(String[] args) throws Exception {
-        // Määritä tekoälymalli (Azure AI Foundry, avaimeton tunnistus Microsoft Entra ID:n kautta)
+        // Määritä tekoälymalli (Azure AI Foundry, avaimeton todennus Microsoft Entra ID:n kautta)
         String endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1";
         String token = new DefaultAzureCredentialBuilder().build()
@@ -206,7 +206,7 @@ public class LangChain4jClient {
                 .transport(transport)
                 .build();
 
-        // Anna tekoälylle pääsy laskentatyökaluihimme
+        // Anna tekoälylle pääsy laskintyökaluihimme
         ToolProvider toolProvider = McpToolProvider.builder()
                 .mcpClients(List.of(mcpClient))
                 .build();
@@ -228,22 +228,22 @@ public class LangChain4jClient {
 ```
 
 **Mitä tämä tekee:**
-1. **Luo** AI-mallin yhteyden GitHub-tunnisteesi avulla
-2. **Yhdistää** AI:n laskin-MCP-palvelimeemme
-3. **Antaa** AI:lle pääsyn kaikkiin laskintyökaluihimme
-4. **Mahdollistaa** luonnollisen kielen pyynnöt, kuten "Laske lukujen 24,5 ja 17,3 summa"
+1. **Luo** tekoälymalliyhteyden avaimettomalla tunnistuksella (Microsoft Entra ID)
+2. **Yhdistää** tekoälyn laskin MCP -palvelimeemme
+3. **Antaa** tekoälylle pääsyn kaikkiin laskintyökaluihimme
+4. **Mahdollistaa** luonnolliskieliset pyynnöt kuten "Laske lukujen 24.5 ja 17.3 summa"
 
-**AI tekee automaattisesti:**
-- Ymmärtää, että haluat laskea summan
+**Tekoäly automaattisesti:**
+- Ymmärtää haluat lisätä luvut
 - Valitsee `add`-työkalun
 - Kutsuu `add(24.5, 17.3)`
-- Palauttaa tuloksen luonnollisessa vastauksessa
+- Palauttaa tuloksen luonnollisella vastauksella
 
-## Esimerkkien ajaminen
+## Esimerkkien suorittaminen
 
 ### Vaihe 1: Käynnistä laskinpalvelin
 
-Kirjaudu ensin sisään ja määritä Azure AI Foundry -päätepiste (tarvitaan AI-asiakkaalle — avainvapaa autentikointi):
+Kirjaudu ensin sisään ja aseta Azure AI Foundry -päätepiste (tarvitaan tekoälyasiakkaalle — avaimeton tunnistus, ei API-avainta):
 
 **Windows:**
 ```cmd
@@ -270,7 +270,7 @@ Started McpServerApplication in X.XXX seconds
 
 ### Vaihe 2: Testaa suoralla asiakkaalla
 
-Uudessa terminaalissa palvelimen ollessa käynnissä, suorita suora MCP-asiakas:
+Uudessa terminaalissa palvelimen vielä käydessä suorita suora MCP-asiakas:
 ```bash
 cd 04-PracticalSamples/calculator
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient" -Dexec.classpathScope=test
@@ -283,13 +283,13 @@ Add Result = 5.00 + 3.00 = 8.00
 Square Root Result = √16.00 = 4.00
 ```
 
-### Vaihe 3: Testaa AI-asiakkaalla
+### Vaihe 3: Testaa tekoälyasiakkaalla
 
 ```bash
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient" -Dexec.classpathScope=test
 ```
 
-Näet AI:n automaattisesti käyttävän työkaluja:
+Näet tekoälyn käyttävän automaattisesti työkaluja:
 ```
 The sum of 24.5 and 17.3 is 41.8.
 The square root of 144 is 12.
@@ -297,24 +297,24 @@ The square root of 144 is 12.
 
 ### Vaihe 4: Sulje MCP-palvelin
 
-Kun olet valmis testaamaan, voit pysäyttää AI-asiakkaan painamalla `Ctrl+C` sen terminaalissa. MCP-palvelin jatkaa käynnissä, kunnes pysäytät sen.
-Pysäytä palvelin painamalla `Ctrl+C` siinä terminaalissa, jossa se on käynnistetty.
+Kun olet valmis testaamaan, voit pysäyttää tekoälyasiakkaan painamalla `Ctrl+C` sen terminaalissa. MCP-palvelin pysyy käynnissä, kunnes pysäytät sen.
+Palvelimen pysäyttämiseen paina `Ctrl+C` siinä terminaalissa, jossa se on käynnissä.
 
-## Miten kaikki toimii yhdessä
+## Kuinka kaikki toimii yhdessä
 
-Tässä on kokonaisprosessi, kun kysyt AI:lta "Paljonko on 5 + 3?":
+Näin koko prosessi etenee, kun kysyt tekoälyltä "Paljonko on 5 + 3?":
 
-1. **Sinä** kysyt AI:ta luonnollisella kielellä
-2. **AI** analysoi pyyntösi ja tajuaa, että haluat laskea yhteen
-3. **AI** kutsuu MCP-palvelinta: `add(5.0, 3.0)`
-4. **Laskinpalvelu** suorittaa laskun: `5.0 + 3.0 = 8.0`
+1. **Sinä** kysyt tekoälyltä luonnollisella kielellä
+2. **Tekoäly** analysoi pyyntösi ja tunnistaa halun laskea summa
+3. **Tekoäly** kutsuu MCP-palvelinta: `add(5.0, 3.0)`
+4. **Laskinpalvelu** suorittaa: `5.0 + 3.0 = 8.0`
 5. **Laskinpalvelu** palauttaa: `"5.00 + 3.00 = 8.00"`
-6. **AI** vastaanottaa tuloksen ja muodostaa luonnollisen vastauksen
+6. **Tekoäly** vastaanottaa tuloksen ja muotoilee luonnollisen vastauksen
 7. **Sinä** saat vastauksen: "Lukujen 5 ja 3 summa on 8"
 
 ## Seuraavat askeleet
 
-Lisää esimerkkejä löydät [Luvusta 04: Käytännön esimerkit](../README.md)
+Lisää esimerkkejä löydät kohdasta [Luku 04: Käytännön esimerkit](../README.md)
 
 ---
 

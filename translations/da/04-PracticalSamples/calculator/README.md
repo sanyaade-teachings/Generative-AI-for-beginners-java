@@ -4,14 +4,14 @@
 
 - [Hvad Du Vil Lære](#hvad-du-vil-lære)
 - [Forudsætninger](#forudsætninger)
-- [Forståelse af Projektstrukturen](#forståelse-af-projektstrukturen)
+- [Forstå Projektstrukturen](#forstå-projektstrukturen)
 - [Kernekomponenter Forklaret](#kernekomponenter-forklaret)
   - [1. Hovedapplikation](#1-hovedapplikation)
   - [2. Calculator Service](#2-calculator-service)
   - [3. Direkte MCP Client](#3-direkte-mcp-client)
-  - [4. AI-drevet Client](#4-ai-drevet-client)
+  - [4. AI-Drevet Client](#4-ai-drevet-client)
 - [Køre Eksemplerne](#køre-eksemplerne)
-- [Hvordan Det Hele Fungerer Sammen](#hvordan-det-hele-fungerer-sammen)
+- [Hvordan Det Hele Virker Sammen](#hvordan-det-hele-virker-sammen)
 - [Næste Skridt](#næste-skridt)
 
 ## Hvad Du Vil Lære
@@ -19,20 +19,20 @@
 Denne tutorial forklarer, hvordan man bygger en calculator service ved brug af Model Context Protocol (MCP). Du vil forstå:
 
 - Hvordan man opretter en service, som AI kan bruge som et værktøj
-- Hvordan man opstiller direkte kommunikation med MCP services
-- Hvordan AI-modeller automatisk kan vælge hvilke værktøjer der skal bruges
-- Forskellen mellem direkte protokolkald og AI-assisterede interaktioner
+- Hvordan man opsætter direkte kommunikation med MCP services
+- Hvordan AI-modeller automatisk kan vælge, hvilke værktøjer der skal bruges
+- Forskellen mellem direkte protokolopkald og AI-assisterede interaktioner
 
 ## Forudsætninger
 
-Før du starter, sørg for at have:
+Før du går i gang, sørg for at du har:
 - Java 21 eller nyere installeret
 - Maven til afhængighedsstyring
-- En Azure AI Foundry model deployment (opret den med `azd up` — se [Kapitel 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
-- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), logget ind med `az login` (nøglefri autentificering)
-- Grundlæggende forståelse af Java og Spring Boot
+- En Azure AI Foundry model-udrulning (provisionér den med `azd up` — se [Kapitel 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
+- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), logget ind med `az login` (nøglefri autentifikation)
+- Grundlæggende kendskab til Java og Spring Boot
 
-## Forståelse af Projektstrukturen
+## Forstå Projektstrukturen
 
 Calculator-projektet har flere vigtige filer:
 
@@ -53,7 +53,7 @@ calculator/
 
 **Fil:** `McpServerApplication.java`
 
-Dette er indgangspunktet for vores calculator-service. Det er en standard Spring Boot-applikation med en særlig tilføjelse:
+Dette er startpunktet for vores calculator service. Det er en standard Spring Boot-applikation med én særlig tilføjelse:
 
 ```java
 @SpringBootApplication
@@ -72,14 +72,14 @@ public class McpServerApplication {
 
 **Dette gør:**
 - Starter en Spring Boot webserver på port 8080
-- Opretter en `ToolCallbackProvider`, der gør vores calculator metoder tilgængelige som MCP-værktøjer
-- `@Bean`-annotationen fortæller Spring at administrere dette som en komponent, som andre dele kan bruge
+- Opretter en `ToolCallbackProvider`, som gør vores calculator-metoder tilgængelige som MCP-værktøjer
+- `@Bean`-annotationen fortæller Spring, at dette skal administreres som en komponent, som andre dele kan bruge
 
 ### 2. Calculator Service
 
 **Fil:** `CalculatorService.java`
 
-Her foregår al matematikken. Hver metode er markeret med `@Tool` for at gøre den tilgængelig gennem MCP:
+Her foregår al matematik. Hver metode er markeret med `@Tool` for at gøre den tilgængelig via MCP:
 
 ```java
 @Service
@@ -105,21 +105,21 @@ public class CalculatorService {
 }
 ```
 
-**Nøglefunktioner:**
+**Vigtige funktioner:**
 
-1. **`@Tool` Annotation**: Dette fortæller MCP, at denne metode kan kaldes af eksterne klienter
+1. **`@Tool` Annotation**: Fortæller MCP, at denne metode kan kaldes af eksterne klienter
 2. **Klar Beskrivelse**: Hvert værktøj har en beskrivelse, der hjælper AI-modeller med at forstå, hvornår det skal bruges
 3. **Konsistent Returformat**: Alle operationer returnerer menneskeligt læsbare strenge som "5.00 + 3.00 = 8.00"
-4. **Fejlhåndtering**: Division med nul og negative kvadratrødder returnerer fejlbeskeder
+4. **Fejlhåndtering**: Division med nul og negative kvadratrødder returnerer fejlsvar
 
 **Tilgængelige Operationer:**
 - `add(a, b)` - Lægger to tal sammen
-- `subtract(a, b)` - Trækker det andet tal fra det første
+- `subtract(a, b)` - Trækker det andet fra det første tal
 - `multiply(a, b)` - Ganger to tal
-- `divide(a, b)` - Dividerer det første tal med det andet (med nul-tjek)
-- `power(base, exponent)` - Oprører basen til eksponenten
-- `squareRoot(number)` - Beregner kvadratroden (med negativt tjek)
-- `modulus(a, b)` - Returnerer resten ved division
+- `divide(a, b)` - Dividerer første tal med det andet (med nul-tjek)
+- `power(base, exponent)` - Opsætter base til eksponenten
+- `squareRoot(number)` - Beregner kvadratrod (med negativt-tjek)
+- `modulus(a, b)` - Returnerer resten af division
 - `absolute(number)` - Returnerer absolutværdien
 - `help()` - Returnerer information om alle operationer
 
@@ -127,7 +127,7 @@ public class CalculatorService {
 
 **Fil:** `SDKClient.java`
 
-Denne klient kommunikerer direkte med MCP serveren uden at bruge AI. Den kalder manuelt specifikke calculator-funktioner:
+Denne klient kommunikerer direkte med MCP-serveren uden at bruge AI. Den kalder manuelt specifikke calculator-funktioner:
 
 ```java
 public class SDKClient {
@@ -147,7 +147,7 @@ public class SDKClient {
         ListToolsResult toolsList = client.listTools();
         System.out.println("Available Tools = " + toolsList);
         
-        // Kald specifikke lommeregnerfunktioner
+        // Kald specifikke kalkulatorfunktioner
         CallToolResult resultAdd = client.callTool(
             new CallToolRequest("add", Map.of("a", 5.0, "b", 3.0))
         );
@@ -164,26 +164,26 @@ public class SDKClient {
 ```
 
 **Dette gør:**
-1. **Forbinder** til calculator-serveren på `http://localhost:8080` ved brug af builder-pattern
+1. **Forbinder** til calculator serveren på `http://localhost:8080` ved brug af builder-mønsteret
 2. **Lister** alle tilgængelige værktøjer (vores calculator-funktioner)
 3. **Kalder** specifikke funktioner med præcise parametre
-4. **Printer** resultaterne direkte
+4. **Udskriver** resultaterne direkte
 
-**Bemærk:** Dette eksempel bruger Spring AI 1.1.0-SNAPSHOT afhængigheden, som introducerede builder pattern for `WebFluxSseClientTransport`. Hvis du bruger en ældre stabil version, skal du muligvis bruge konstruktøren direkte i stedet.
+**Bemærk:** Dette eksempel bruger afhængigheden Spring AI 1.1.0-SNAPSHOT, som introducerede et builder-mønster til `WebFluxSseClientTransport`. Hvis du bruger en ældre stabil version, skal du muligvis bruge den direkte konstruktør i stedet.
 
-**Hvornår du bruger dette:** Når du præcist ved, hvilken beregning du vil udføre, og du ønsker at kalde den programmatisk.
+**Hvornår man bruger dette:** Når du præcist ved, hvilken beregning du vil foretage, og ønsker at kalde den programmatisk.
 
-### 4. AI-drevet Client
+### 4. AI-Drevet Client
 
 **Fil:** `LangChain4jClient.java`
 
-Denne klient bruger en AI-model (GPT-4o-mini), som automatisk kan beslutte, hvilke calculator-værktøjer der skal bruges:
+Denne klient bruger en AI-model (GPT-4o-mini), som automatisk kan afgøre, hvilke calculator-værktøjer der skal bruges:
 
 ```java
 public class LangChain4jClient {
     
     public static void main(String[] args) throws Exception {
-        // Opsæt AI-modellen (Azure AI Foundry, nøglefri godkendelse via Microsoft Entra ID)
+        // Opsæt AI-modellen (Azure AI Foundry, nøgleløs godkendelse via Microsoft Entra ID)
         String endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1";
         String token = new DefaultAzureCredentialBuilder().build()
@@ -198,7 +198,7 @@ public class LangChain4jClient {
         // Forbind til vores calculator MCP-server
         McpTransport transport = new HttpMcpTransport.Builder()
                 .sseUrl("http://localhost:8080/sse")
-                .logRequests(true)  // Viser hvad AI'en laver
+                .logRequests(true)  // Viser, hvad AI'en gør
                 .logResponses(true)
                 .build();
 
@@ -206,7 +206,7 @@ public class LangChain4jClient {
                 .transport(transport)
                 .build();
 
-        // Giv AI adgang til vores calculator-værktøjer
+        // Giv AI'en adgang til vores calculator-værktøjer
         ToolProvider toolProvider = McpToolProvider.builder()
                 .mcpClients(List.of(mcpClient))
                 .build();
@@ -217,7 +217,7 @@ public class LangChain4jClient {
                 .toolProvider(toolProvider)
                 .build();
 
-        // Nu kan vi bede AI'en om at udføre beregninger på naturligt sprog
+        // Nu kan vi bede AI'en om at udføre beregninger i naturligt sprog
         String response = bot.chat("Calculate the sum of 24.5 and 17.3 using the calculator service");
         System.out.println(response);
 
@@ -228,13 +228,13 @@ public class LangChain4jClient {
 ```
 
 **Dette gør:**
-1. **Opretter** en AI-modelforbindelse med dit GitHub-token
-2. **Forbinder** AI med vores calculator MCP-server
+1. **Opretter** en AI-modelforbindelse ved brug af nøglefri autentifikation (Microsoft Entra ID)
+2. **Forbinder** AI til vores calculator MCP-server
 3. **Giver** AI adgang til alle vores calculator-værktøjer
-4. **Tillader** naturlige sprog-anmodninger som "Beregn summen af 24.5 og 17.3"
+4. **Tillader** naturlige sproganmodninger som "Beregn summen af 24.5 og 17.3"
 
-**AI'en gør automatisk:**
-- Forstår, at du ønsker at lægge tal sammen
+**AI’en gør automatisk:**
+- Forstår at du vil lægge tal sammen
 - Vælger `add`-værktøjet
 - Kalder `add(24.5, 17.3)`
 - Returnerer resultatet i et naturligt svar
@@ -243,7 +243,7 @@ public class LangChain4jClient {
 
 ### Trin 1: Start Calculator Serveren
 
-Først skal du logge ind og sætte din Azure AI Foundry endpoint (nødvendigt for AI-client — nøglefri autentificering, ingen API-nøgle):
+Først, log ind og sæt din Azure AI Foundry-endpoint (krævet for AI-klienten — nøglefri autentifikation, ingen API-nøgle):
 
 **Windows:**
 ```cmd
@@ -263,14 +263,14 @@ cd 04-PracticalSamples/calculator
 mvn clean spring-boot:run
 ```
 
-Serveren starter på `http://localhost:8080`. Du bør se:
+Serveren starter på `http://localhost:8080`. Du skulle se:
 ```
 Started McpServerApplication in X.XXX seconds
 ```
 
 ### Trin 2: Test med Direkte Client
 
-I et **NYT** terminalvindue med serveren stadig kørende, kør den direkte MCP client:
+I et **NYT** terminalvindue mens serveren stadig kører, kør den direkte MCP-klient:
 ```bash
 cd 04-PracticalSamples/calculator
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient" -Dexec.classpathScope=test
@@ -289,7 +289,7 @@ Square Root Result = √16.00 = 4.00
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient" -Dexec.classpathScope=test
 ```
 
-Du vil se AI'en automatisk bruge værktøjer:
+Du vil se AI’en automatisk bruge værktøjer:
 ```
 The sum of 24.5 and 17.3 is 41.8.
 The square root of 144 is 12.
@@ -297,15 +297,15 @@ The square root of 144 is 12.
 
 ### Trin 4: Luk MCP Serveren
 
-Når du er færdig med at teste, kan du stoppe AI clienten ved at trykke `Ctrl+C` i dens terminal. MCP serveren fortsætter med at køre, indtil du stopper den.
-For at stoppe serveren, tryk `Ctrl+C` i terminalen, hvor den kører.
+Når du er færdig med testen, kan du stoppe AI-klienten ved at trykke `Ctrl+C` i dens terminal. MCP-serveren kører videre indtil du stopper den.
+For at stoppe serveren, tryk `Ctrl+C` i det terminalvindue, hvor den kører.
 
-## Hvordan Det Hele Fungerer Sammen
+## Hvordan Det Hele Virker Sammen
 
-Her er det komplette flow, når du spørger AI'en "Hvad er 5 + 3?":
+Her er hele flowet, når du spørger AI’en: "Hvad er 5 + 3?":
 
-1. **Du** stiller AI'en et spørgsmål på naturligt sprog
-2. **AI** analyserer din anmodning og forstår, at du ønsker addition
+1. **Du** spørger AI med naturligt sprog
+2. **AI** analyserer din forespørgsel og forstår, at du ønsker addition
 3. **AI** kalder MCP-serveren: `add(5.0, 3.0)`
 4. **Calculator Service** udfører: `5.0 + 3.0 = 8.0`
 5. **Calculator Service** returnerer: `"5.00 + 3.00 = 8.00"`
