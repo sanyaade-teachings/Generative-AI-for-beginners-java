@@ -3,27 +3,27 @@
 
 ![AI Generatif untuk Pemula - Edisi Java](../../translated_images/ms/beg-genai-series.8b48be9951cc574c.webp)
 
-**Komitmen Masa**: Keseluruhan bengkel boleh diselesaikan secara dalam talian tanpa penyediaan tempatan. Penyediaan persekitaran mengambil masa 2 minit, dengan penerokaan contoh memerlukan 1-3 jam bergantung pada kedalaman penerokaan.
+**Komitmen Masa**: Seluruh bengkel boleh diselesaikan secara dalam talian tanpa pemasangan tempatan. Persiapan persekitaran mengambil masa 2 minit, dengan meneroka contoh memerlukan 1-3 jam bergantung pada kedalaman penerokaan.
 
-> **Mula Dengan Cepat** 
+> **Mula Pantas**
 
 1. Fork repositori ini ke akaun GitHub anda
 2. Klik **Code** → tab **Codespaces** → **...** → **New with options...**
-3. Gunakan tetapan lalai – ini akan memilih bekas Pembangunan yang dibuat untuk kursus ini
+3. Gunakan tetapan lalai – ini akan memilih kontena Pembangunan yang dicipta untuk kursus ini
 4. Klik **Create codespace**
-5. Tunggu ~2 minit untuk persekitaran siap
-6. Terus lompat ke [Contoh pertama](./02-SetupDevEnvironment/README.md#step-2-create-a-github-personal-access-token)
+5. Tunggu kira-kira 2 minit untuk persekitaran siap
+6. Pergi terus ke [Bab 2: Sediakan Azure AI Foundry](./02-SetupDevEnvironment/README.md#step-2-provision-azure-ai-foundry)
 
-## Sokongan Pelbagai Bahasa
+## Sokongan Berbilang Bahasa
 
-### Disokong melalui GitHub Action (Automatik & Sentiasa Dikemas Kini)
+### Disokong melalui GitHub Action (Automatik & Sentiasa Dikemaskini)
 
 <!-- CO-OP TRANSLATOR LANGUAGES TABLE START -->
-[Arab](../ar/README.md) | [Benggali](../bn/README.md) | [Bulgaria](../bg/README.md) | [Burma (Myanmar)](../my/README.md) | [Cina (Dipermudahkan)](../zh-CN/README.md) | [Cina (Tradisional, Hong Kong)](../zh-HK/README.md) | [Cina (Tradisional, Macau)](../zh-MO/README.md) | [Cina (Tradisional, Taiwan)](../zh-TW/README.md) | [Kroasia](../hr/README.md) | [Czech](../cs/README.md) | [Denmark](../da/README.md) | [Belanda](../nl/README.md) | [Estonia](../et/README.md) | [Finland](../fi/README.md) | [Perancis](../fr/README.md) | [Jerman](../de/README.md) | [Yunani](../el/README.md) | [Ibrani](../he/README.md) | [Hindi](../hi/README.md) | [Hungary](../hu/README.md) | [Indonesia](../id/README.md) | [Itali](../it/README.md) | [Jepun](../ja/README.md) | [Kannada](../kn/README.md) | [Khmer](../km/README.md) | [Korea](../ko/README.md) | [Lithuania](../lt/README.md) | [Melayu](./README.md) | [Malayalam](../ml/README.md) | [Marathi](../mr/README.md) | [Nepali](../ne/README.md) | [Pidgin Nigeria](../pcm/README.md) | [Norway](../no/README.md) | [Parsi (Farsi)](../fa/README.md) | [Poland](../pl/README.md) | [Portugis (Brazil)](../pt-BR/README.md) | [Portugis (Portugal)](../pt-PT/README.md) | [Punjabi (Gurmukhi)](../pa/README.md) | [Romania](../ro/README.md) | [Rusia](../ru/README.md) | [Serbia (Cyrillic)](../sr/README.md) | [Slovak](../sk/README.md) | [Slovenia](../sl/README.md) | [Sepanyol](../es/README.md) | [Swahili](../sw/README.md) | [Sweden](../sv/README.md) | [Tagalog (Filipina)](../tl/README.md) | [Tamil](../ta/README.md) | [Telugu](../te/README.md) | [Thai](../th/README.md) | [Turki](../tr/README.md) | [Ukrain](../uk/README.md) | [Urdu](../ur/README.md) | [Vietnam](../vi/README.md)
+[Arabic](../ar/README.md) | [Bengali](../bn/README.md) | [Bulgarian](../bg/README.md) | [Burmese (Myanmar)](../my/README.md) | [Chinese (Simplified)](../zh-CN/README.md) | [Chinese (Traditional, Hong Kong)](../zh-HK/README.md) | [Chinese (Traditional, Macau)](../zh-MO/README.md) | [Chinese (Traditional, Taiwan)](../zh-TW/README.md) | [Croatian](../hr/README.md) | [Czech](../cs/README.md) | [Danish](../da/README.md) | [Dutch](../nl/README.md) | [Estonian](../et/README.md) | [Finnish](../fi/README.md) | [French](../fr/README.md) | [German](../de/README.md) | [Greek](../el/README.md) | [Hebrew](../he/README.md) | [Hindi](../hi/README.md) | [Hungarian](../hu/README.md) | [Indonesian](../id/README.md) | [Italian](../it/README.md) | [Japanese](../ja/README.md) | [Kannada](../kn/README.md) | [Khmer](../km/README.md) | [Korean](../ko/README.md) | [Lithuanian](../lt/README.md) | [Malay](./README.md) | [Malayalam](../ml/README.md) | [Marathi](../mr/README.md) | [Nepali](../ne/README.md) | [Nigerian Pidgin](../pcm/README.md) | [Norwegian](../no/README.md) | [Persian (Farsi)](../fa/README.md) | [Polish](../pl/README.md) | [Portuguese (Brazil)](../pt-BR/README.md) | [Portuguese (Portugal)](../pt-PT/README.md) | [Punjabi (Gurmukhi)](../pa/README.md) | [Romanian](../ro/README.md) | [Russian](../ru/README.md) | [Serbian (Cyrillic)](../sr/README.md) | [Slovak](../sk/README.md) | [Slovenian](../sl/README.md) | [Spanish](../es/README.md) | [Swahili](../sw/README.md) | [Swedish](../sv/README.md) | [Tagalog (Filipino)](../tl/README.md) | [Tamil](../ta/README.md) | [Telugu](../te/README.md) | [Thai](../th/README.md) | [Turkish](../tr/README.md) | [Ukrainian](../uk/README.md) | [Urdu](../ur/README.md) | [Vietnamese](../vi/README.md)
 
 > **Lebih Suka Klon Secara Tempatan?**
 >
-> Repositori ini termasuk lebih 50 terjemahan bahasa yang secara signifikan meningkatkan saiz muat turun. Untuk klon tanpa terjemahan, gunakan sparse checkout:
+> Repositori ini merangkumi lebih dari 50 terjemahan bahasa yang secara signifikan meningkatkan saiz muat turun. Untuk klon tanpa terjemahan, gunakan sparse checkout:
 >
 > **Bash / macOS / Linux:**
 > ```bash
@@ -39,7 +39,7 @@
 > git sparse-checkout set --no-cone "/*" "!translations" "!translated_images"
 > ```
 >
-> Ini memberikan anda semua yang anda perlukan untuk menamatkan kursus dengan muat turun yang lebih pantas.
+> Ini memberikan anda segala yang anda perlukan untuk menyelesaikan kursus dengan muat turun lebih pantas.
 <!-- CO-OP TRANSLATOR LANGUAGES TABLE END -->
 
 ## Struktur Kursus & Laluan Pembelajaran
@@ -47,22 +47,22 @@
 ### **Bab 1: Pengenalan kepada AI Generatif**
 - **Konsep Teras**: Memahami Model Bahasa Besar, token, embedding, dan keupayaan AI
 - **Ekosistem AI Java**: Gambaran keseluruhan Spring AI dan OpenAI SDK
-- **Protokol Konteks Model**: Pengenalan kepada MCP dan peranannya dalam komunikasi agen AI
-- **Aplikasi Praktikal**: Senario dunia sebenar termasuk chatbot dan penjanaan kandungan
+- **Protokol Konteks Model**: Pengenalan MCP dan peranannya dalam komunikasi ejen AI
+- **Aplikasi Praktikal**: Senario dunia nyata termasuk chatbot dan penjanaan kandungan
 - **[→ Mula Bab 1](./01-IntroToGenAI/README.md)**
 
-### **Bab 2: Penyediaan Persekitaran Pembangunan**
-- **Azure AI Foundry**: Menyediakan penyebaran model sebagai kod dengan Bicep dan Azure Developer CLI (azd)
-- **Spring Boot + Spring AI**: Amalan terbaik untuk pembangunan aplikasi AI perniagaan
-- **Pengesahan Tanpa Kunci**: Sambung dengan selamat menggunakan Microsoft Entra ID — tiada kunci API untuk diurus
-- **Alat Pembangunan**: Konfigurasi bekas Docker, VS Code, dan GitHub Codespaces
+### **Bab 2: Persediaan Persekitaran Pembangunan**
+- **Azure AI Foundry**: Sediakan penyebaran model sebagai kod dengan Bicep dan Azure Developer CLI (azd)
+- **Spring Boot + Spring AI**: Amalan terbaik untuk pembangunan aplikasi AI perusahaan
+- **Pengautentikasian Tanpa Kunci**: Sambung dengan selamat menggunakan Microsoft Entra ID — tiada kunci API untuk diurus
+- **Alat Pembangunan**: Konfigurasi kontena Docker, VS Code, dan GitHub Codespaces
 - **[→ Mula Bab 2](./02-SetupDevEnvironment/README.md)**
 
-### **Bab 3: Teknik Teras AI Generatif**
-- **Kejuruteraan Prompt**: Teknik untuk jawapan model AI terbaik
-- **Embedding & Operasi Vektor**: Melaksanakan carian semantik dan padanan kesamaan
-- **Penjanaan Dipertingkatkan dengan Pengambilan (RAG)**: Gabungkan AI dengan sumber data sendiri
-- **Panggilan Fungsi**: Memperluaskan keupayaan AI dengan alat dan plugin khusus
+### **Bab 3: Teknik AI Generatif Teras**
+- **Reka Bentuk Prompt**: Teknik untuk respons model AI yang optimum
+- **Embedding & Operasi Vektor**: Pelaksanaan carian semantik dan padanan kesamaan
+- **Penjanaan Berasaskan Pengambilan (RAG)**: Gabungkan AI dengan sumber data anda sendiri
+- **Panggilan Fungsi**: Luaskan keupayaan AI dengan alat dan plugin tersuai
 - **[→ Mula Bab 3](./03-CoreGenerativeAITechniques/README.md)**
 
 ### **Bab 4: Aplikasi Praktikal & Projek**
@@ -71,10 +71,10 @@
 - **Perkhidmatan Kalkulator MCP** (`calculator/`): Pelaksanaan asas Model Context Protocol dengan Spring AI
 - **[→ Mula Bab 4](./04-PracticalSamples/README.md)**
 
-### **Bab 5: Pembangunan AI Bertanggungjawab**
-- **Keselamatan Kandungan Azure AI Foundry**: Uji penapisan kandungan terbina dalam dan mekanisme keselamatan (blok keras dan penolakan lembut)
-- **Demo AI Bertanggungjawab**: Contoh praktikal menunjukkan bagaimana sistem keselamatan AI moden berfungsi
-- **Amalan Terbaik**: Garis panduan penting untuk pembangunan dan penyebaran AI beretika
+### **Bab 5: Pembangunan AI yang Bertanggungjawab**
+- **Keselamatan Kandungan Azure AI Foundry**: Uji penapisan kandungan terbina dalam dan mekanisme keselamatan (sekatan keras dan penolakan lembut)
+- **Demo AI Bertanggungjawab**: Contoh praktikal yang menunjukkan cara sistem keselamatan AI moden berfungsi
+- **Amalan Terbaik**: Garis panduan penting untuk pembangunan dan penyebaran AI yang beretika
 - **[→ Mula Bab 5](./05-ResponsibleGenAI/README.md)**
 
 ## Sumber Tambahan
@@ -86,11 +86,11 @@
 [![LangChain untuk Pemula](https://img.shields.io/badge/LangChain%20for%20Beginners-22C55E?style=for-the-badge&labelColor=E5E7EB&color=0553D6)](https://github.com/microsoft/langchain-for-beginners?WT.mc_id=m365-94501-dwahlin)
 ---
 
-### Azure / Edge / MCP / Agen
+### Azure / Edge / MCP / Agents
 [![AZD untuk Pemula](https://img.shields.io/badge/AZD%20for%20Beginners-0078D4?style=for-the-badge&labelColor=E5E7EB&color=0078D4)](https://github.com/microsoft/AZD-for-beginners?WT.mc_id=academic-105485-koreyst)
 [![Edge AI untuk Pemula](https://img.shields.io/badge/Edge%20AI%20for%20Beginners-00B8E4?style=for-the-badge&labelColor=E5E7EB&color=00B8E4)](https://github.com/microsoft/edgeai-for-beginners?WT.mc_id=academic-105485-koreyst)
 [![MCP untuk Pemula](https://img.shields.io/badge/MCP%20for%20Beginners-009688?style=for-the-badge&labelColor=E5E7EB&color=009688)](https://github.com/microsoft/mcp-for-beginners?WT.mc_id=academic-105485-koreyst)
-[![Agen AI untuk Pemula](https://img.shields.io/badge/AI%20Agents%20for%20Beginners-00C49A?style=for-the-badge&labelColor=E5E7EB&color=00C49A)](https://github.com/microsoft/ai-agents-for-beginners?WT.mc_id=academic-105485-koreyst)
+[![Ejen AI untuk Pemula](https://img.shields.io/badge/AI%20Agents%20for%20Beginners-00C49A?style=for-the-badge&labelColor=E5E7EB&color=00C49A)](https://github.com/microsoft/ai-agents-for-beginners?WT.mc_id=academic-105485-koreyst)
 
 ---
  
@@ -107,27 +107,27 @@
 [![Sains Data untuk Pemula](https://img.shields.io/badge/Data%20Science%20for%20Beginners-84CC16?style=for-the-badge&labelColor=E5E7EB&color=84CC16)](https://aka.ms/datascience-beginners?WT.mc_id=academic-105485-koreyst)
 [![AI untuk Pemula](https://img.shields.io/badge/AI%20for%20Beginners-A3E635?style=for-the-badge&labelColor=E5E7EB&color=A3E635)](https://aka.ms/ai-beginners?WT.mc_id=academic-105485-koreyst)
 [![Keselamatan Siber untuk Pemula](https://img.shields.io/badge/Cybersecurity%20for%20Beginners-F97316?style=for-the-badge&labelColor=E5E7EB&color=F97316)](https://github.com/microsoft/Security-101?WT.mc_id=academic-96948-sayoung)
-[![Web Dev for Beginners](https://img.shields.io/badge/Web%20Dev%20for%20Beginners-EC4899?style=for-the-badge&labelColor=E5E7EB&color=EC4899)](https://aka.ms/webdev-beginners?WT.mc_id=academic-105485-koreyst)
-[![IoT for Beginners](https://img.shields.io/badge/IoT%20for%20Beginners-14B8A6?style=for-the-badge&labelColor=E5E7EB&color=14B8A6)](https://aka.ms/iot-beginners?WT.mc_id=academic-105485-koreyst)
-[![XR Development for Beginners](https://img.shields.io/badge/XR%20Development%20for%20Beginners-38BDF8?style=for-the-badge&labelColor=E5E7EB&color=38BDF8)](https://github.com/microsoft/xr-development-for-beginners?WT.mc_id=academic-105485-koreyst)
+[![Pembangunan Web untuk Pemula](https://img.shields.io/badge/Web%20Dev%20for%20Beginners-EC4899?style=for-the-badge&labelColor=E5E7EB&color=EC4899)](https://aka.ms/webdev-beginners?WT.mc_id=academic-105485-koreyst)
+[![IoT untuk Pemula](https://img.shields.io/badge/IoT%20for%20Beginners-14B8A6?style=for-the-badge&labelColor=E5E7EB&color=14B8A6)](https://aka.ms/iot-beginners?WT.mc_id=academic-105485-koreyst)
+[![Pembangunan XR untuk Pemula](https://img.shields.io/badge/XR%20Development%20for%20Beginners-38BDF8?style=for-the-badge&labelColor=E5E7EB&color=38BDF8)](https://github.com/microsoft/xr-development-for-beginners?WT.mc_id=academic-105485-koreyst)
 
 ---
  
 ### Siri Copilot
-[![Copilot for AI Paired Programming](https://img.shields.io/badge/Copilot%20for%20AI%20Paired%20Programming-FACC15?style=for-the-badge&labelColor=E5E7EB&color=FACC15)](https://aka.ms/GitHubCopilotAI?WT.mc_id=academic-105485-koreyst)
-[![Copilot for C#/.NET](https://img.shields.io/badge/Copilot%20for%20C%23/.NET-FBBF24?style=for-the-badge&labelColor=E5E7EB&color=FBBF24)](https://github.com/microsoft/mastering-github-copilot-for-dotnet-csharp-developers?WT.mc_id=academic-105485-koreyst)
-[![Copilot Adventure](https://img.shields.io/badge/Copilot%20Adventure-FDE68A?style=for-the-badge&labelColor=E5E7EB&color=FDE68A)](https://github.com/microsoft/CopilotAdventures?WT.mc_id=academic-105485-koreyst)
+[![Copilot untuk Pengaturcaraan Berpasangan AI](https://img.shields.io/badge/Copilot%20for%20AI%20Paired%20Programming-FACC15?style=for-the-badge&labelColor=E5E7EB&color=FACC15)](https://aka.ms/GitHubCopilotAI?WT.mc_id=academic-105485-koreyst)
+[![Copilot untuk C#/.NET](https://img.shields.io/badge/Copilot%20for%20C%23/.NET-FBBF24?style=for-the-badge&labelColor=E5E7EB&color=FBBF24)](https://github.com/microsoft/mastering-github-copilot-for-dotnet-csharp-developers?WT.mc_id=academic-105485-koreyst)
+[![Pengembaraan Copilot](https://img.shields.io/badge/Copilot%20Adventure-FDE68A?style=for-the-badge&labelColor=E5E7EB&color=FDE68A)](https://github.com/microsoft/CopilotAdventures?WT.mc_id=academic-105485-koreyst)
 <!-- CO-OP TRANSLATOR OTHER COURSES END -->
 
 ## Mendapatkan Bantuan
 
-Jika anda tersekat atau mempunyai sebarang soalan tentang membina aplikasi AI. Sertai pembelajar lain dan pembangun berpengalaman dalam perbincangan tentang MCP. Ia adalah komuniti yang menyokong di mana soalan dialu-alukan dan pengetahuan dikongsi dengan bebas.
+Jika anda tersekat atau mempunyai sebarang soalan tentang membina aplikasi AI. Sertai para pelajar dan pembangun berpengalaman dalam perbincangan mengenai MCP. Ia adalah komuniti yang menyokong di mana soalan dialu-alukan dan pengetahuan dikongsi secara percuma.
 
 [![Microsoft Foundry Discord](https://dcbadge.limes.pink/api/server/nTYy5BXMWG)](https://discord.gg/nTYy5BXMWG)
 
-Jika anda mempunyai maklum balas produk atau ralat semasa membina lawati:
+Jika anda mempunyai maklum balas produk atau ralat semasa membina, lawati:
 
-[![Microsoft Foundry Developer Forum](https://img.shields.io/badge/GitHub-Microsoft_Foundry_Developer_Forum-blue?style=for-the-badge&logo=github&color=000000&logoColor=fff)](https://aka.ms/foundry/forum)
+[![Forum Pembangun Microsoft Foundry](https://img.shields.io/badge/GitHub-Microsoft_Foundry_Developer_Forum-blue?style=for-the-badge&logo=github&color=000000&logoColor=fff)](https://aka.ms/foundry/forum)
 
 ---
 
