@@ -1,29 +1,29 @@
-# បច្ចេកវិទ្យា AI បង្កើតសម្រាប់អ្នកចាប់ផ្តើម - កំណត់ជាភាសា Java
+# បច្ចេកវិទ្យាបង្កើត AI សម្រាប់អ្នកចាប់ផ្តើម - កំណែ Java
 [![Microsoft Foundry Discord](https://dcbadge.limes.pink/api/server/nTYy5BXMWG)](https://discord.gg/nTYy5BXMWG)
 
 ![Generative AI for Beginners - Java Edition](../../translated_images/km/beg-genai-series.8b48be9951cc574c.webp)
 
-**ការប្តេជ្ញាចិត្តពេលវេលា**: វគ្គបង្រៀនទាំងមូលអាចបញ្ចប់តាមអនឡាញដោយគ្មានការតំឡើងក្នុងកន្លែង។ ការតំឡើងបរិយាកាសប្រើប្រាស់ចំណាយពេលប្រហែល 2 នាទី ហើយការស្វែងយល់ពីគំរូប្រើប្រាស់ពេលវេលា 1-3 ម៉ោងអាស្រ័យលើកម្រិតនៃការស្វែងយល់។
+**ពេលវេលាដំណើរការ**: វគ្គបណ្តុះបណ្តាលទាំងមូលអាចបញ្ចប់បានតាមអ៊ិនធឺណិតដោយមិនចាំបាច់ដំឡើងនៅក្នុងម៉ាស៊ីន។ ការតំឡើងបរិយាកាសប្រើប្រាស់យកពេល 2 នាទី ជាមួយការស្វែងរកឧទាហរណ៍ដែលត្រូវការពេល 1-3 ម៉ោងអាស្រ័យលើការស្វែងរកជ្រាលជ្រៅ។
 
-> **ការចាប់ផ្តើមយ៉ាងរហ័ស** 
+> **ចាប់ផ្តើមយ៉ាងលឿន**
 
-1. កូនស្មើរ រកមូលដ្ឋានកូដនេះទៅគណនី GitHub របស់អ្នក
-2. ចុច **Code** → ផ្ទាំង **Codespaces** → **...** → **New with options...**
-3. ប្រើការកំណត់លំនាំដើម – នេះនឹងជ្រើសប្រអប់ភាសារអភិវឌ្ឍដែលបានបង្កើតសម្រាប់វគ្គនេះ
+1. Fork ឃ្លាំងកូដនេះទៅគណនី GitHub របស់អ្នក
+2. ចុច **Code** → ទំព័រ **Codespaces** → **...** → **New with options...**
+3. ប្រើតម្លៃលំនាំដើម - នេះនឹងជ្រើសរើស Development container ដែលបានបង្កើតសម្រាប់វគ្គសិក្សានេះ
 4. ចុច **Create codespace**
-5. រង់ចាំប្រហែល ~2 នាទី សម្រាប់បរិយាកាសត្រៀមរួច
-6. ទៅផ្ទាល់ទៅកាន់ [ឧទាហរណ៍ដំបូង](./02-SetupDevEnvironment/README.md#step-2-create-a-github-personal-access-token)
+5. រង់ចាំ ~2 នាទីសម្រាប់បរិយាកាសត្រៀមរួច
+6. ផ្លាស់ទៅត្រង់ [ជំពូក 2: Provision Azure AI Foundry](./02-SetupDevEnvironment/README.md#step-2-provision-azure-ai-foundry)
 
-## ការគាំទ្រភាសាច្រើន
+## គាំទ្រភាសាច្រើន
 
-### គាំទ្រតាមរយៈ GitHub Action (ស្វ័យប្រវត្តិ & អាប់ដេតជានិច្ច)
+### គាំទ្រដោយ GitHub Action (ស្វ័យប្រវត្តិ និងតែងតែទាន់សម័យ)
 
 <!-- CO-OP TRANSLATOR LANGUAGES TABLE START -->
-[អារ៉ាប់](../ar/README.md) | [បង់ក្លា](../bn/README.md) | [ប៊ុលហ្គារី](../bg/README.md) | [ម្យ៉ាន់ម៉ា (ភាសាចិន)](../my/README.md) | [ចិន (សាមញ្ញ)](../zh-CN/README.md) | [ចិន (ប្រពៃណី, ហុងកុង)](../zh-HK/README.md) | [ចិន (ប្រពៃណី, ម៉ាកាវ)](../zh-MO/README.md) | [ចិន (ប្រពៃណី, តៃវ៉ាន់)](../zh-TW/README.md) | [ក្រូអាត](../hr/README.md) | [ចេច](../cs/README.md) | [ដាណឺម៉ា](../da/README.md) | [ដូជា](../nl/README.md) | [អេស្តូនី](../et/README.md) | [ហ្វិន្លង់](../fi/README.md) | [បារាំង](../fr/README.md) | [អាល្លឺម៉ង់](../de/README.md) | [ក្រេក](../el/README.md) | [ហេប្រ៊ូ](../he/README.md) | [ហិណ្ឌី](../hi/README.md) | [ហុងគ្រី](../hu/README.md) | [ឥណ្ឌូនេស៊ី](../id/README.md) | [អ៊ីតាលី](../it/README.md) | [ជប៉ុន](../ja/README.md) | [កណ្ណាដា](../kn/README.md) | [ខ្មែរ](./README.md) | [កូរ៉េ](../ko/README.md) | [ល៊ីទុយអាណា](../lt/README.md) | [ម៉ាឡេស៊ី](../ms/README.md) | [ម៉ាឡាលាម](../ml/README.md) | [ម៉ារាធី](../mr/README.md) | [នេប៉ាល](../ne/README.md) | [ភីជាំង​នៃ​ណាញជេរី](../pcm/README.md) | [ណ័រ៉េវ៉េល](../no/README.md) | [ភាសាព្រីស៊្យ៉ាន់ (ហ្វាស៊ី)](../fa/README.md) | [ប៉ូឡូញ](../pl/README.md) | [ប៉ូរទុយហ្គាល់ (ប្រេស៊ីល)](../pt-BR/README.md) | [ប៉ូរទុយហ្គាល់ (ប៉ូរទុយហ្គាល់)](../pt-PT/README.md) | [ពាណជាប៊ី (គួរ​មុខី)](../pa/README.md) | [រ៉ូមានី](../ro/README.md) | [រុស្ស៊ី](../ru/README.md) | [សឺរប៊ី (ស៊ីរីលិក)](../sr/README.md) | [ស្លូវ៉ាក់](../sk/README.md) | [ស្លូវេនី](../sl/README.md) | [អេស្ប៉ាញ](../es/README.md) | [ស្វាហ៊ីលី](../sw/README.md) | [ស៊ុយអែដ](../sv/README.md) | [តាឡាហ្គោ (ហ្វីលីពីណូ)](../tl/README.md) | [តាមីល](../ta/README.md) | [តេលូហ្គូ](../te/README.md) | [ថៃ](../th/README.md) | [ទួរគី](../tr/README.md) | [អ៊ុយក្រែន](../uk/README.md) | [អ៊ុយរឌូ](../ur/README.md) | [វៀតណាម](../vi/README.md)
+[អារ៉ាបិក](../ar/README.md) | [បង្លាដី](../bn/README.md) | [ប៊ុលហ្គារី](../bg/README.md) | [ភាសាប៊ឺម៉ា (မြန်မာ)](../my/README.md) | [ចិន (ភាសាជាមូលដ្ឋាន)](../zh-CN/README.md) | [ចិន (ប្រពៃណី, ហុងកុង)](../zh-HK/README.md) | [ចិន (ប្រពៃណី, ម៉ាកាវ)](../zh-MO/README.md) | [ចិន (ប្រពៃណី, តៃវ៉ាន់)](../zh-TW/README.md) | [ក្រោអាទីស](../hr/README.md) | [ចិច](../cs/README.md) | [ដាណីម៉៉ាក់](../da/README.md) | [ហូឡង់](../nl/README.md) | [អេស្តូនី](../et/README.md) | [ហ្វินឡង់](../fi/README.md) | [បារាំង](../fr/README.md) | [អាល្លឺម៉ង់](../de/README.md) | [ក្រិច](../el/README.md) | [ហេប្រ៊ូវ](../he/README.md) | [ហិណ្ឌី](../hi/README.md) | [ហុងគ្រី](../hu/README.md) | [ឥណ្ឌូនេស៊ី](../id/README.md) | [អ៊ីតាលី](../it/README.md) | [ជប៉ុន](../ja/README.md) | [កណាដា](../kn/README.md) | [ខ្មែរ](./README.md) | [កូរ៉េ](../ko/README.md) | [លីទុយអានី](../lt/README.md) | [ម៉ាឡៃ](../ms/README.md) | [ម៉ាឡាឡាឡាំ](../ml/README.md) | [ម៉ារា�ធី](../mr/README.md) | [នេប៉ាល់](../ne/README.md) | [ភាសាពីជិន នីហជេរៀ](../pcm/README.md) | [ន័រវែជី](../no/README.md) | [បារშირ (ហ្វាស៊ី)](../fa/README.md) | [ប៉ូឡូញ](../pl/README.md) | [ព័រទុយហ្គាល់ (ប្រេស៊ីល)](../pt-BR/README.md) | [ព័រទុយហ្គាល់ (ប្រទេសព័រទុយហ្គាល់)](../pt-PT/README.md) | [ភាសាពុជាប៊ី (កុម្មុយហ្គ៊ី)](../pa/README.md) | [រូមានី](../ro/README.md) | [រុស្ស៊ី](../ru/README.md) | [សឺប៊ី (ស៊ីរិលិច)](../sr/README.md) | [ស្លូវ៉ាគ](../sk/README.md) | [ស្លូវេនី](../sl/README.md) | [ស្ប៉ាញ](../es/README.md) | [ស្វាហ៊ីលី](../sw/README.md) | [ស៊ុយអែត](../sv/README.md) | [តាឡាហ្គោ (ហ្វ៊ីលីពីន)](../tl/README.md) | [តាមីល](../ta/README.md) | [ទេលូហ្គូ](../te/README.md) | [ថៃ](../th/README.md) | [ទួរគី](../tr/README.md) | [អ៊ុយក្រែន](../uk/README.md) | [អ៊ួរឌូ](../ur/README.md) | [វៀតណាម](../vi/README.md)
 
-> **ចូលចិត្តបញ្ចូលក្នុងកុំព្យូទ័រនៅក្នុងតំបន់មែនទេ?**
+> **ចង់បញ្ចូលកូដនៅក្នុងម៉ាស៊ីនរបស់អ្នកទេ?**
 >
-> មូលដ្ឋានកូដនេះមានការបកប្រែជាង 50+ ភាសា ដែលបង្កើនទំហំទាញយកយ៉ាងច្រើន។ ដើម្បីចម្លងគ្មានការបកប្រែ អ្នកអាចប្រើ sparse checkout៖
+> ឃ្លាំងកូដនេះមានបទបកប្រែជាភាសា 50+ ដែលបន្ថែមទំហំទាញយកយ៉ាងច្រើន។ ដើម្បីបញ្ចូលដោយគ្មានការប្រែភាសា សូមប្រើ sparse checkout:
 >
 > **Bash / macOS / Linux:**
 > ```bash
@@ -39,45 +39,45 @@
 > git sparse-checkout set --no-cone "/*" "!translations" "!translated_images"
 > ```
 >
-> នេះបង្រួមតម្លៃបញ្ចប់វគ្គដែលអ្នកត្រូវការជាមួយការទាញយកលឿនជាងមុន។
+> វានាំឱ្យអ្នកមានគ្រប់អ្វីដែលអ្នកត្រូវការសម្រាប់បញ្ចប់វគ្គសិក្សានេះដោយការទាញយកលឿនជាងមុន។
 <!-- CO-OP TRANSLATOR LANGUAGES TABLE END -->
 
-## រចនាសម្ព័ន្ធវគ្គបណ្តុះបណ្តាល និងផ្លូវសិក្សា
+## រចនាសម្ព័ន្ធវគ្គសិក្សា និងផ្លូវការសិក្សា
 
-### **ជំពូកទី 1៖ ការណែនាំអំពី AI បង្កើត**
-- **កំណត់គន្លឹះសំខាន់ៗ**៖ ការយល់ដឹងអំពីម៉ូឌែលភាសាធំៗ, តូគិន, embeddings និងសមត្ថភាព AI
-- **បរិយាកាស AI Java**៖ ទិដ្ឋភាពទូលំទូលាយនៃ Spring AI និង OpenAI SDKs
-- **ពិធីសាស្រ្ត Model Context Protocol**៖ ការណែនាំ MCP និងតួនាទីរបស់វាក្នុងការទំនាក់ទំនងតាមភ្នាក់ងារ AI
-- **ការអនុវត្តនៅក្នុងជីវិតពិត**៖ ស្ថានភាពពិតប្រាកដ រួមទាំង chatbot និងការបង្កើតមាតិកា
-- **[→ ចាប់ផ្តើមជំពូកទី 1](./01-IntroToGenAI/README.md)**
+### **ជំពូកទី 1: ការជូនដំណឹងអំពីបច្ចេកវិទ្យាបង្កើត AI**
+- **គំនិតមូលដ្ឋាន**: យល់ដឹងអំពីម៉ូដែលភាសាធំៗ, token, embeddings, និងសមត្ថភាព AI
+- **បរិស្ថាន Java AI**: សង្ខេបអំពី Spring AI និង OpenAI SDKs
+- **Model Context Protocol**: រាប់បញ្ចូល MCP និងតួនាទីរបស់វាក្នុងការទំនាក់ទំនងរវាងភ្នែកAI
+- **ករណីការ​ប្រើប្រាស់ជាក់ស្តែង**: ស្ថានការ​ពិត​ជាក់ស្តែងរួមទាំង chatbot និងការបង្កើតមាតិកា
+- **[→ ចាប់ផ្តើមជំពូក 1](./01-IntroToGenAI/README.md)**
 
-### **ជំពូកទី 2៖ ការតំឡើងបរិយាកាសអភិវឌ្ឍន៍**
-- **Azure AI Foundry**៖ ផ្ដល់សេវាកម្មចែកចាយម៉ូឌែលជាកូដជាមួយ Bicep និង Azure Developer CLI (azd)
-- **Spring Boot + Spring AI**៖ អនុវត្តលទ្ធផលល្អបំផុតសម្រាប់ការអភិវឌ្ឍកម្មវិធី AI សម្រាប់សហគ្រាស
-- **សំងាត់គ្មានគ្រាប់សោ**៖ ភ្ជាប់ដោយសុវត្ថិភាពជាមួយ Microsoft Entra ID — គ្មានកូនសោ API ត្រូវគ្រប់គ្រង
-- **ឧបករណ៍អភិវឌ្ឍន៍**៖ កុងតឺន័រ Docker, VS Code និងការកំណត់ GitHub Codespaces
-- **[→ ចាប់ផ្តើមជំពូកទី 2](./02-SetupDevEnvironment/README.md)**
+### **ជំពូកទី 2: ការតំឡើងបរិយាកាសអភិវឌ្ឍន៍**
+- **Azure AI Foundry**: Provision ការចេញផ្សាយម៉ូដែលជាគោលការណ៍កូដជាមួយ Bicep និង Azure Developer CLI (azd)
+- **Spring Boot + Spring AI**: វិធីល្អបំផុតសម្រាប់អភិវឌ្ឍកម្មវិធី AI សម្រាប់សហគ្រាស
+- **Keyless Authentication**: តភ្ជាប់ដោយសុវត្ថិភាពជាមួយ Microsoft Entra ID — មិនចាំបាច់មានកូនសោ API
+- **ឧបករណ៍អភិវឌ្ឍន៍**: កុងតឺណ័រ Docker, VS Code, និងការកំណត់ GitHub Codespaces
+- **[→ ចាប់ផ្តើមជំពូក 2](./02-SetupDevEnvironment/README.md)**
 
-### **ជំពូកទី 3៖ បច្ចេកទេសចម្បងនៃ AI បង្កើត**
-- **ការជំនាញបង្កើតលំនាំ**៖ បច្ចេកទេសសម្រាប់ការឆ្លើយតបម៉ូឌែល AI ឲ្យល្អបំផុត
-- **Embeddings និងប្រតិបត្តិការវិចទ័រ**៖ អនុវត្តស្វែងរកអត្ថន័យ និងការប្រៀបធៀបលក្ខណៈស្រដៀង
-- **Retrieval-Augmented Generation (RAG)**៖ បញ្ចូល AI ជាមួយប្រភពទិន្នន័យផ្ទាល់ខ្លួនរបស់អ្នក
-- **ការហៅមុខងារ**៖ បន្ថែមសមត្ថភាព AI ជាមួយឧបករណ៍ និងផ្នែកបន្ថែមផ្ទាល់ខ្លួន
-- **[→ ចាប់ផ្តើមជំពូកទី 3](./03-CoreGenerativeAITechniques/README.md)**
+### **ជំពូកទី 3: បច្ចេកទេសស្នូលបង្កើត AI**
+- **Prompt Engineering**: បច្ចេកទេសសម្រាប់ចម្លើយម៉ូដែល AI ល្អបំផុត
+- **Embeddings និងប្រតិបត្តិការវ៉ិចទ័រ**: អនុវត្តស្វែងរកតាមអត្ថន័យ និងការផ្គូផ្គងស្រដៀងគ្នា
+- **Retrieval-Augmented Generation (RAG)**: ផ្សំនឹង AI ជាមួយប្រភពទិន្នន័យផ្ទាល់ខ្លួន
+- **Function Calling**: ពង្រីកសមត្ថភាព AI ជាមួយឧបករណ៍ និងផ្លាស៊ីនផ្ទាល់ខ្លួន
+- **[→ ចាប់ផ្តើមជំពូក 3](./03-CoreGenerativeAITechniques/README.md)**
 
-### **ជំពូកទី 4៖ ការអនុវត្តន៍ក្នុងជីវិតពិត និងគម្រោង**
-- **កម្មវិធីបង្កើតរឿងច្រៀងសត្វចិញ្ចឹម** (`petstory/`): ការបង្កើតមាតិការចនាដោយ Azure AI Foundry
-- **កម្មវិធីបង្ហាញ Foundry Local** (`foundrylocal/`): ការបញ្ចូលម៉ូឌែល AI ក្នុងតំបន់ជាមួយ OpenAI Java SDK
-- **សេវាកម្មគណនាគ្រប់គ្រង MCP** (`calculator/`): អនុវត្តផ្នែក Model Context Protocol មូលដ្ឋានជាមួយ Spring AI
-- **[→ ចាប់ផ្តើមជំពូកទី 4](./04-PracticalSamples/README.md)**
+### **ជំពូកទី 4: ករណីប្រើប្រាស់ និងគម្រោងជាក់ស្តែង**
+- **កម្មវិធីបង្កើតរឿងរ៉ាវសត្វចិញ្ចឹម** (`petstory/`): បង្កើតមាតិកាបែបច្នៃប្រឌិតជាមួយ Azure AI Foundry
+- **ការតំណាង Foundry ក្នុងម៉ាស៊ីនថែមតែជិត** (`foundrylocal/`): ដំណើរការម៉ូដែល AI ក្នុងម៉ាស៊ីនដោយប្រើ OpenAI Java SDK
+- **សេវាកម្មគណនា MCP** (`calculator/`): អនុវត្ត Model Context Protocol ជាមូលដ្ឋានជាមួយ Spring AI
+- **[→ ចាប់ផ្តើមជំពូក 4](./04-PracticalSamples/README.md)**
 
-### **ជំពូកទី 5៖ ការអភិវឌ្ឍ AI ដ៏ទទួលខុសត្រូវ**
-- **Azure AI Foundry សុវត្ថិភាពមាតិកា**៖ សាកល្បងការត្រួតពិនិត្យមាតិកា និងមុខងារសុវត្ថិភាព (ការរារាំងរឹងមាំ និងការបដិសេធប្រាក់ទន់)
-- **ការបង្ហាញ AI សូមទណ្ឌកម្ម**៖ ឧទាហរណ៍ដាក់អាជីពណែនាំរបៀបដែលប្រព័ន្ធសុវត្ថិភាព AI សម័យទំនើបដំណើរការជាក់ស្តែង
-- **វិធីសាស្រ្តល្អបំផុត**៖ យោបល់សំខាន់ៗសម្រាប់ការអភិវឌ្ឍ និងចែកចាយ AI ដោយមានទំនួលខុសត្រូវ
-- **[→ ចាប់ផ្តើមជំពូកទី 5](./05-ResponsibleGenAI/README.md)**
+### **ជំពូកទី 5: ការអភិវឌ្ឍ AI ដោយគោរពក្រមបញ្ញត្តិ**
+- **Azure AI Foundry Content Safety**: សាកល្បងមេកានិចបំផុតក្នុងការត្រួតពិនិត្យមាតិកា និងសុវត្ថិភាព (ប្លុកតឹង និងការព្រមានទន់)
+- **ការបង្ហាញសុវត្ថិភាព AI**: ឧទាហរណ៍ជាក់ស្តែងបង្ហាញពីរបៀបប្រព័ន្ធសុវត្ថិភាព AI សម័យថ្មីដំណើរការ
+- **វិធីល្អបំផុត**: ណែនាំសម្រាប់ការអភិវឌ្ឍ និងចេញផ្សាយ AI យ៉ាងមានទំនួលខុសត្រូវ
+- **[→ ចាប់ផ្តើមជំពូក 5](./05-ResponsibleGenAI/README.md)**
 
-## ឯកសារបន្ថែម
+## ឯកសារឧបករណ៍បន្ថែម
 
 <!-- CO-OP TRANSLATOR OTHER COURSES START -->
 ### LangChain
@@ -90,11 +90,11 @@
 [![AZD សម្រាប់អ្នកចាប់ផ្តើម](https://img.shields.io/badge/AZD%20for%20Beginners-0078D4?style=for-the-badge&labelColor=E5E7EB&color=0078D4)](https://github.com/microsoft/AZD-for-beginners?WT.mc_id=academic-105485-koreyst)
 [![Edge AI សម្រាប់អ្នកចាប់ផ្តើម](https://img.shields.io/badge/Edge%20AI%20for%20Beginners-00B8E4?style=for-the-badge&labelColor=E5E7EB&color=00B8E4)](https://github.com/microsoft/edgeai-for-beginners?WT.mc_id=academic-105485-koreyst)
 [![MCP សម្រាប់អ្នកចាប់ផ្តើម](https://img.shields.io/badge/MCP%20for%20Beginners-009688?style=for-the-badge&labelColor=E5E7EB&color=009688)](https://github.com/microsoft/mcp-for-beginners?WT.mc_id=academic-105485-koreyst)
-[![AI Agents សម្រាប់អ្នកចាប់ផ្តើម](https://img.shields.io/badge/AI%20Agents%20for%20Beginners-00C49A?style=for-the-badge&labelColor=E5E7EB&color=00C49A)](https://github.com/microsoft/ai-agents-for-beginners?WT.mc_id=academic-105485-koreyst)
+[![កម្មវិធីភ្នែក AI សម្រាប់អ្នកចាប់ផ្តើម](https://img.shields.io/badge/AI%20Agents%20for%20Beginners-00C49A?style=for-the-badge&labelColor=E5E7EB&color=00C49A)](https://github.com/microsoft/ai-agents-for-beginners?WT.mc_id=academic-105485-koreyst)
 
 ---
  
-### ស៊េរី Generative AI
+### បណ្តោះអាសន្ន Generative AI
 [![Generative AI សម្រាប់អ្នកចាប់ផ្តើម](https://img.shields.io/badge/Generative%20AI%20for%20Beginners-8B5CF6?style=for-the-badge&labelColor=E5E7EB&color=8B5CF6)](https://github.com/microsoft/generative-ai-for-beginners?WT.mc_id=academic-105485-koreyst)
 [![Generative AI (.NET)](https://img.shields.io/badge/Generative%20AI%20(.NET)-9333EA?style=for-the-badge&labelColor=E5E7EB&color=9333EA)](https://github.com/microsoft/Generative-AI-for-beginners-dotnet?WT.mc_id=academic-105485-koreyst)
 [![Generative AI (Java)](https://img.shields.io/badge/Generative%20AI%20(Java)-C084FC?style=for-the-badge&labelColor=E5E7EB&color=C084FC)](https://github.com/microsoft/generative-ai-for-beginners-java?WT.mc_id=academic-105485-koreyst)
@@ -102,31 +102,30 @@
 
 ---
  
-### ការសិក្សាជាគោល
+### ការសិក្សាដើម
 [![ML សម្រាប់អ្នកចាប់ផ្តើម](https://img.shields.io/badge/ML%20for%20Beginners-22C55E?style=for-the-badge&labelColor=E5E7EB&color=22C55E)](https://aka.ms/ml-beginners?WT.mc_id=academic-105485-koreyst)
-[![វិទ្យាសាស្ត្រ​ទិន្នន័យ​សម្រាប់អ្នកចាប់ផ្តើម](https://img.shields.io/badge/Data%20Science%20for%20Beginners-84CC16?style=for-the-badge&labelColor=E5E7EB&color=84CC16)](https://aka.ms/datascience-beginners?WT.mc_id=academic-105485-koreyst)
+[![Data Science សម្រាប់អ្នកចាប់ផ្តើម](https://img.shields.io/badge/Data%20Science%20for%20Beginners-84CC16?style=for-the-badge&labelColor=E5E7EB&color=84CC16)](https://aka.ms/datascience-beginners?WT.mc_id=academic-105485-koreyst)
 [![AI សម្រាប់អ្នកចាប់ផ្តើម](https://img.shields.io/badge/AI%20for%20Beginners-A3E635?style=for-the-badge&labelColor=E5E7EB&color=A3E635)](https://aka.ms/ai-beginners?WT.mc_id=academic-105485-koreyst)
-[![សន្តិសុខកុំព្យូទ័រសម្រាប់អ្នកចាប់ផ្តើម](https://img.shields.io/badge/Cybersecurity%20for%20Beginners-F97316?style=for-the-badge&labelColor=E5E7EB&color=F97316)](https://github.com/microsoft/Security-101?WT.mc_id=academic-96948-sayoung)
-
-[![វិប ដេវ សម្រាប់ភាគីដំបូង](https://img.shields.io/badge/Web%20Dev%20for%20Beginners-EC4899?style=for-the-badge&labelColor=E5E7EB&color=EC4899)](https://aka.ms/webdev-beginners?WT.mc_id=academic-105485-koreyst)
-[![IoT សម្រាប់ភាគីដំបូង](https://img.shields.io/badge/IoT%20for%20Beginners-14B8A6?style=for-the-badge&labelColor=E5E7EB&color=14B8A6)](https://aka.ms/iot-beginners?WT.mc_id=academic-105485-koreyst)
-[![ការអភិវឌ្ឍ XR សម្រាប់ភាគីដំបូង](https://img.shields.io/badge/XR%20Development%20for%20Beginners-38BDF8?style=for-the-badge&labelColor=E5E7EB&color=38BDF8)](https://github.com/microsoft/xr-development-for-beginners?WT.mc_id=academic-105485-koreyst)
+[![សុវត្ថិភាពបច្ចេកវិទ្យា (Cybersecurity) សម្រាប់អ្នកចាប់ផ្តើម](https://img.shields.io/badge/Cybersecurity%20for%20Beginners-F97316?style=for-the-badge&labelColor=E5E7EB&color=F97316)](https://github.com/microsoft/Security-101?WT.mc_id=academic-96948-sayoung)
+[![អ្នកអភិវឌ្ឍន៍វេបសម្រាប់អ្នកចាប់ផ្តើម](https://img.shields.io/badge/Web%20Dev%20for%20Beginners-EC4899?style=for-the-badge&labelColor=E5E7EB&color=EC4899)](https://aka.ms/webdev-beginners?WT.mc_id=academic-105485-koreyst)
+[![IoT សម្រាប់អ្នកចាប់ផ្តើម](https://img.shields.io/badge/IoT%20for%20Beginners-14B8A6?style=for-the-badge&labelColor=E5E7EB&color=14B8A6)](https://aka.ms/iot-beginners?WT.mc_id=academic-105485-koreyst)
+[![ការអភិវឌ្ឍ XR សម្រាប់អ្នកចាប់ផ្តើម](https://img.shields.io/badge/XR%20Development%20for%20Beginners-38BDF8?style=for-the-badge&labelColor=E5E7EB&color=38BDF8)](https://github.com/microsoft/xr-development-for-beginners?WT.mc_id=academic-105485-koreyst)
 
 ---
  
 ### ស៊េរី Copilot
-[![Copilot សម្រាប់ការសរសេរកម្មវិធីរួមគ្នាជាមួយ AI](https://img.shields.io/badge/Copilot%20for%20AI%20Paired%20Programming-FACC15?style=for-the-badge&labelColor=E5E7EB&color=FACC15)](https://aka.ms/GitHubCopilotAI?WT.mc_id=academic-105485-koreyst)
+[![Copilot សម្រាប់ការសរសេរកម្មវិធីរួមជាមួយ AI](https://img.shields.io/badge/Copilot%20for%20AI%20Paired%20Programming-FACC15?style=for-the-badge&labelColor=E5E7EB&color=FACC15)](https://aka.ms/GitHubCopilotAI?WT.mc_id=academic-105485-koreyst)
 [![Copilot សម្រាប់ C#/.NET](https://img.shields.io/badge/Copilot%20for%20C%23/.NET-FBBF24?style=for-the-badge&labelColor=E5E7EB&color=FBBF24)](https://github.com/microsoft/mastering-github-copilot-for-dotnet-csharp-developers?WT.mc_id=academic-105485-koreyst)
 [![ការផ្សងព្រេង Copilot](https://img.shields.io/badge/Copilot%20Adventure-FDE68A?style=for-the-badge&labelColor=E5E7EB&color=FDE68A)](https://github.com/microsoft/CopilotAdventures?WT.mc_id=academic-105485-koreyst)
 <!-- CO-OP TRANSLATOR OTHER COURSES END -->
 
-## របៀបទទួលបានជំនួយ
+## ទទួលបានជំនួយ
 
-បើអ្នកពិបាកឬមានសំណួរអំពីការបង្កើតកម្មវិធី AI។ ចូលរួមជាមួយអ្នករៀននិងអ្នកអភិវឌ្ឍដែលមានបទពិសោធន៍ក្នុងការពិភាក្សាអំពី MCP។ នេះគឺជាសហគមន៍គាំទ្រដែលសំណួរត្រូវបានទទួលយក និងចែករំលែកចំណេះដឹងដោយសេរី។
+បើអ្នកឈ្នះឬមានសំណួរណាមួយអំពីការបង្កើតកម្មវិធី AI។ ចូលរួមជាមួយសិស្សរៀន និង អភិវឌ្ឍន៍ដែលមានបទពិសោធន៍ក្នុងការពិភាក្សាអំពី MCP។ វាជាសហគមន៍គាំទ្រដែលសំណួរត្រូវបានស្វាគមន៍ ហើយចំណេះដឹងត្រូវបានចែករំលែកដោយមិនគិតថ្លៃ។
 
 [![Microsoft Foundry Discord](https://dcbadge.limes.pink/api/server/nTYy5BXMWG)](https://discord.gg/nTYy5BXMWG)
 
-ប្រសិនបើអ្នកមានមតិយោបល់អំពីផលិតផល ឬកំហុសពេលកំពុងបង្កើត សូមទៅកាន់៖
+បើអ្នកមានមតិយោបល់ផលិតផល ឬ មានកំហុសពេលកំពុងបង្កើត សូមទៅ៖
 
 [![Microsoft Foundry Developer Forum](https://img.shields.io/badge/GitHub-Microsoft_Foundry_Developer_Forum-blue?style=for-the-badge&logo=github&color=000000&logoColor=fff)](https://aka.ms/foundry/forum)
 
