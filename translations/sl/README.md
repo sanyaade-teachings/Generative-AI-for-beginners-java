@@ -3,27 +3,27 @@
 
 ![Generativna AI za začetnike - Java izdaja](../../translated_images/sl/beg-genai-series.8b48be9951cc574c.webp)
 
-**Časovna zaveza**: Cel delavnico lahko opravite spletno brez lokalne namestitve. Nastavitev okolja traja 2 minuti, raziskovanje primerov pa zahteva 1-3 ure, odvisno od globine raziskovanja.
+**Časovna zaveza**: Celoten delavnico lahko opravite na spletu brez lokalne namestitve. Nastavitev okolja traja 2 minuti, raziskovanje primerov pa zahteva 1-3 ure, odvisno od globine raziskovanja.
 
-> **Hiter začetek**
+> **Hiter začetek** 
 
-1. Razvezi ta repozitorij na svoj GitHub račun
-2. Klikni **Code** → zavihek **Codespaces** → **...** → **New with options...**
-3. Uporabi privzete nastavitve – s tem bo izbran razvojni kontejner, ustvarjen za ta tečaj
-4. Klikni **Create codespace**
-5. Počakaj približno 2 minuti, da je okolje pripravljeno
-6. Pojdi neposredno na [Prvi primer](./02-SetupDevEnvironment/README.md#step-2-create-a-github-personal-access-token)
+1. Zgled tega repozitorija na svoj GitHub račun
+2. Kliknite **Code** → zavihek **Codespaces** → **...** → **New with options...**
+3. Uporabite privzete nastavitve – to bo izbralo razvojni kontejner, ustvarjen za ta tečaj
+4. Kliknite **Create codespace**
+5. Počakajte približno 2 minuti, da bo okolje pripravljeno
+6. Pojdite neposredno na [Poglavje 2: Provision Azure AI Foundry](./02-SetupDevEnvironment/README.md#step-2-provision-azure-ai-foundry)
 
 ## Podpora za več jezikov
 
-### Podprto preko GitHub akcije (avtomatizirano in vedno na tekočem)
+### Podprto preko GitHub Actions (avtomatizirano in vedno posodobljeno)
 
 <!-- CO-OP TRANSLATOR LANGUAGES TABLE START -->
-[Arabščina](../ar/README.md) | [Bengalščina](../bn/README.md) | [Bolgarščina](../bg/README.md) | [Burmanščina (Myanmar)](../my/README.md) | [Kitajščina (poenostavljena)](../zh-CN/README.md) | [Kitajščina (tradicionalna, Hong Kong)](../zh-HK/README.md) | [Kitajščina (tradicionalna, Macau)](../zh-MO/README.md) | [Kitajščina (tradicionalna, Tajvan)](../zh-TW/README.md) | [Hrvaščina](../hr/README.md) | [Češčina](../cs/README.md) | [Danščina](../da/README.md) | [Nizozemščina](../nl/README.md) | [Estonščina](../et/README.md) | [Finščina](../fi/README.md) | [Francoščina](../fr/README.md) | [Nemščina](../de/README.md) | [Grščina](../el/README.md) | [Hebrejščina](../he/README.md) | [Hindijščina](../hi/README.md) | [Madžarščina](../hu/README.md) | [Indonezijščina](../id/README.md) | [Italijanščina](../it/README.md) | [Japonščina](../ja/README.md) | [Kannada](../kn/README.md) | [Kmerski](../km/README.md) | [Korejščina](../ko/README.md) | [Litvanščina](../lt/README.md) | [Malajščina](../ms/README.md) | [Malajalam](../ml/README.md) | [Maratščina](../mr/README.md) | [Nepalščina](../ne/README.md) | [Nigerijski pidžin](../pcm/README.md) | [Norveščina](../no/README.md) | [Perzijščina (Farsi)](../fa/README.md) | [Poljščina](../pl/README.md) | [Portugalščina (Brazilija)](../pt-BR/README.md) | [Portugalščina (Portugalska)](../pt-PT/README.md) | [Pandžabščina (Gurmukhi)](../pa/README.md) | [Romunščina](../ro/README.md) | [Ruščina](../ru/README.md) | [Srbščina (cirilica)](../sr/README.md) | [Slovaščina](../sk/README.md) | [Slovenščina](./README.md) | [Španščina](../es/README.md) | [Švahilščina](../sw/README.md) | [Švedščina](../sv/README.md) | [Tagalog (Filipino)](../tl/README.md) | [Tamilščina](../ta/README.md) | [Telugu](../te/README.md) | [Tajščina](../th/README.md) | [Turščina](../tr/README.md) | [Ukrajinščina](../uk/README.md) | [Urdu](../ur/README.md) | [Vietnamščina](../vi/README.md)
+[Arabščina](../ar/README.md) | [Bengalščina](../bn/README.md) | [Bolgarščina](../bg/README.md) | [Burmščina (Mjanmar)](../my/README.md) | [Kitajščina (poenostavljena)](../zh-CN/README.md) | [Kitajščina (tradicionalna, Hong Kong)](../zh-HK/README.md) | [Kitajščina (tradicionalna, Macau)](../zh-MO/README.md) | [Kitajščina (tradicionalna, Tajvan)](../zh-TW/README.md) | [Hrvaščina](../hr/README.md) | [Češčina](../cs/README.md) | [Danščina](../da/README.md) | [Nizozemščina](../nl/README.md) | [Estonščina](../et/README.md) | [Finščina](../fi/README.md) | [Francoščina](../fr/README.md) | [Nemščina](../de/README.md) | [Grščina](../el/README.md) | [Hebrejščina](../he/README.md) | [Hindijščina](../hi/README.md) | [Madžarščina](../hu/README.md) | [Indonezijščina](../id/README.md) | [Italijanščina](../it/README.md) | [Japonščina](../ja/README.md) | [Kannada](../kn/README.md) | [Khmer](../km/README.md) | [Korejščina](../ko/README.md) | [Litvanščina](../lt/README.md) | [Malajščina](../ms/README.md) | [Malajalščina](../ml/README.md) | [Maratščina](../mr/README.md) | [Nepalščina](../ne/README.md) | [Nigerijski pidžin](../pcm/README.md) | [Norveščina](../no/README.md) | [Perzijščina (Farsi)](../fa/README.md) | [Poljščina](../pl/README.md) | [Portugalščina (Brazilija)](../pt-BR/README.md) | [Portugalščina (Portugalska)](../pt-PT/README.md) | [Pandžabščina (Gurmukhi)](../pa/README.md) | [Romunščina](../ro/README.md) | [Ruščina](../ru/README.md) | [Srbščina (cirilica)](../sr/README.md) | [Slovaščina](../sk/README.md) | [Slovenščina](./README.md) | [Španščina](../es/README.md) | [Suahili](../sw/README.md) | [Švedščina](../sv/README.md) | [Tagalog (Filipino)](../tl/README.md) | [Tamil](../ta/README.md) | [Telugu](../te/README.md) | [Tajščina](../th/README.md) | [Turščina](../tr/README.md) | [Ukrajinščina](../uk/README.md) | [Urdu](../ur/README.md) | [Vietnamski](../vi/README.md)
 
 > **Raje klonirati lokalno?**
 >
-> Ta repozitorij vključuje več kot 50 prevodov, kar znatno poveča velikost prenosa. Če želite klonirati brez prevodov, uporabite sparse checkout:
+> Ta repozitorij vključuje več kot 50 prevodov jezikov, kar znatno poveča velikost prenosa. Če želite klonirati brez prevodov, uporabite sparse checkout:
 >
 > **Bash / macOS / Linux:**
 > ```bash
@@ -39,43 +39,43 @@
 > git sparse-checkout set --no-cone "/*" "!translations" "!translated_images"
 > ```
 >
-> Tako dobite vse, kar potrebujete za zaključek tečaja z veliko hitrejšim prenosom.
+> To vam zagotavlja vse, kar potrebujete za dokončanje tečaja z veliko hitrejšim prenosom.
 <!-- CO-OP TRANSLATOR LANGUAGES TABLE END -->
 
 ## Struktura tečaja in učna pot
 
 ### **Poglavje 1: Uvod v generativno AI**
-- **Osnovni pojmi**: Razumevanje velikih jezikovnih modelov, tokenov, vdelav (embeddings) in zmožnosti AI
+- **Osnovni koncepti**: Razumevanje velikih jezikovnih modelov, tokenov, vdelav in zmogljivosti AI
 - **Java AI ekosistem**: Pregled Spring AI in OpenAI SDK-jev
-- **Protokol konteksta modela**: Uvod v MCP in njegova vloga pri komunikaciji AI agentov
-- **Praktične uporabe**: Resnični primeri vključno s klepetalniki in ustvarjanjem vsebine
-- **[→ Začni poglavje 1](./01-IntroToGenAI/README.md)**
+- **Protokol konteksta modela**: Uvod v MCP in njegova vloga v komunikaciji AI agentov
+- **Praktične uporabe**: Resnični scenariji, vključno s klepetalnicami in generiranjem vsebine
+- **[→ Začnite s Poglavjem 1](./01-IntroToGenAI/README.md)**
 
 ### **Poglavje 2: Nastavitev razvojnega okolja**
-- **Azure AI Foundry**: Zagotavljanje uvajanja modelov kot kode z Bicep in Azure Developer CLI (azd)
+- **Azure AI Foundry**: Zagotovite nameščanje modelov kot kodo z Bicep in Azure Developer CLI (azd)
 - **Spring Boot + Spring AI**: Najboljše prakse za razvoj podjetniških AI aplikacij
-- **Avtentikacija brez ključev**: Varnostna povezava z Microsoft Entra ID – brez upravljanja API ključev
-- **Razvojna orodja**: Kontejnerji Docker, VS Code in konfiguracija GitHub Codespaces
-- **[→ Začni poglavje 2](./02-SetupDevEnvironment/README.md)**
+- **Avtentikacija brez ključev**: Varna povezava z Microsoft Entra ID — brez upravljanja API ključev
+- **Razvojna orodja**: Docker kontejnerji, VS Code in konfiguracija GitHub Codespaces
+- **[→ Začnite s Poglavjem 2](./02-SetupDevEnvironment/README.md)**
 
-### **Poglavje 3: Osnovne tehnike generativne AI**
-- **Oblikovanje pozivov (prompt engineering)**: Tehnike za optimalne odgovore AI modelov
-- **Vdelave (embeddings) in vektorske operacije**: Izvedba semantičnega iskanja ter primerjave podobnosti
-- **Generacija z obogateno pridobitvijo (RAG)**: Povezava AI z vašimi podatkovnimi viri
-- **Klicanje funkcij**: Razširitev zmogljivosti AI z lastnimi orodji in vtičniki
-- **[→ Začni poglavje 3](./03-CoreGenerativeAITechniques/README.md)**
+### **Poglavje 3: Osnovne generativne AI tehnike**
+- **Prompt inženiring**: Tehnike za optimalne odzive AI modelov
+- **Vdelave in vektorske operacije**: Implementacija semantičnega iskanja in ujemanja podobnosti
+- **Generacija s podporo iskanja (RAG)**: Združevanje AI z vašimi lastnimi podatkovnimi viri
+- **Klic funkcij**: Razširite zmogljivosti AI s prilagojenimi orodji in vtičniki
+- **[→ Začnite s Poglavjem 3](./03-CoreGenerativeAITechniques/README.md)**
 
-### **Poglavje 4: Praktične aplikacije in projekti**
-- **Generator zgodbe o hišnem ljubljenčku** (`petstory/`): Ustvarjalno generiranje vsebin z Azure AI Foundry
-- **Foundry lokalni demo** (`foundrylocal/`): Lokalna integracija AI modela z OpenAI Java SDK
-- **MCP kalkulator storitev** (`calculator/`): Osnovna implementacija protokola Model Context s Spring AI
-- **[→ Začni poglavje 4](./04-PracticalSamples/README.md)**
+### **Poglavje 4: Praktične uporabe in projekti**
+- **Generator zgodb o hišnih ljubljenčkih** (`petstory/`): Kreativno generiranje vsebin z Azure AI Foundry
+- **Foundry lokalna demonstracija** (`foundrylocal/`): Lokalna integracija AI modela z OpenAI Java SDK
+- **MCP storitev kalkulatorja** (`calculator/`): Osnovna implementacija protokola Model Context z Spring AI
+- **[→ Začnite s Poglavjem 4](./04-PracticalSamples/README.md)**
 
-### **Poglavje 5: Odgovoren razvoj AI**
-- **Varnost vsebine Azure AI Foundry**: Testiranje vgrajenih filtrov vsebine in varnostnih mehanizmov (trdi bloki in mehki zavrnitve)
-- **Demo odgovorne AI**: Praktičen primer delovanja sodobnih varnostnih sistemov AI
-- **Najboljše prakse**: Ključna navodila za etični razvoj in uvajanje AI
-- **[→ Začni poglavje 5](./05-ResponsibleGenAI/README.md)**
+### **Poglavje 5: Odgovorni razvoj AI**
+- **Azure AI Foundry varnost vsebine**: Preizkusite vgrajeno filtriranje vsebine in varnostne mehanizme (trdi bloki in mehki zavrnitve)
+- **Demonstracija odgovorne AI**: Praktičen primer delovanja sodobnih varnostnih sistemov AI
+- **Najboljše prakse**: Ključna navodila za etičen razvoj in uvajanje AI
+- **[→ Začnite s Poglavjem 5](./05-ResponsibleGenAI/README.md)**
 
 ## Dodatni viri
 
@@ -90,11 +90,11 @@
 [![AZD za začetnike](https://img.shields.io/badge/AZD%20for%20Beginners-0078D4?style=for-the-badge&labelColor=E5E7EB&color=0078D4)](https://github.com/microsoft/AZD-for-beginners?WT.mc_id=academic-105485-koreyst)
 [![Edge AI za začetnike](https://img.shields.io/badge/Edge%20AI%20for%20Beginners-00B8E4?style=for-the-badge&labelColor=E5E7EB&color=00B8E4)](https://github.com/microsoft/edgeai-for-beginners?WT.mc_id=academic-105485-koreyst)
 [![MCP za začetnike](https://img.shields.io/badge/MCP%20for%20Beginners-009688?style=for-the-badge&labelColor=E5E7EB&color=009688)](https://github.com/microsoft/mcp-for-beginners?WT.mc_id=academic-105485-koreyst)
-[![AI agenti za začetnike](https://img.shields.io/badge/AI%20Agents%20for%20Beginners-00C49A?style=for-the-badge&labelColor=E5E7EB&color=00C49A)](https://github.com/microsoft/ai-agents-for-beginners?WT.mc_id=academic-105485-koreyst)
+[![AI Agenti za začetnike](https://img.shields.io/badge/AI%20Agents%20for%20Beginners-00C49A?style=for-the-badge&labelColor=E5E7EB&color=00C49A)](https://github.com/microsoft/ai-agents-for-beginners?WT.mc_id=academic-105485-koreyst)
 
 ---
  
-### Serija generativne AI
+### Serija Generativna AI
 [![Generativna AI za začetnike](https://img.shields.io/badge/Generative%20AI%20for%20Beginners-8B5CF6?style=for-the-badge&labelColor=E5E7EB&color=8B5CF6)](https://github.com/microsoft/generative-ai-for-beginners?WT.mc_id=academic-105485-koreyst)
 [![Generativna AI (.NET)](https://img.shields.io/badge/Generative%20AI%20(.NET)-9333EA?style=for-the-badge&labelColor=E5E7EB&color=9333EA)](https://github.com/microsoft/Generative-AI-for-beginners-dotnet?WT.mc_id=academic-105485-koreyst)
 [![Generativna AI (Java)](https://img.shields.io/badge/Generative%20AI%20(Java)-C084FC?style=for-the-badge&labelColor=E5E7EB&color=C084FC)](https://github.com/microsoft/generative-ai-for-beginners-java?WT.mc_id=academic-105485-koreyst)
@@ -102,15 +102,15 @@
 
 ---
  
-### Osnove učenja
-[![Strojno učenje za začetnike](https://img.shields.io/badge/ML%20for%20Beginners-22C55E?style=for-the-badge&labelColor=E5E7EB&color=22C55E)](https://aka.ms/ml-beginners?WT.mc_id=academic-105485-koreyst)
+### Osnoven učni program
+[![ML za začetnike](https://img.shields.io/badge/ML%20for%20Beginners-22C55E?style=for-the-badge&labelColor=E5E7EB&color=22C55E)](https://aka.ms/ml-beginners?WT.mc_id=academic-105485-koreyst)
 [![Podatkovna znanost za začetnike](https://img.shields.io/badge/Data%20Science%20for%20Beginners-84CC16?style=for-the-badge&labelColor=E5E7EB&color=84CC16)](https://aka.ms/datascience-beginners?WT.mc_id=academic-105485-koreyst)
 [![AI za začetnike](https://img.shields.io/badge/AI%20for%20Beginners-A3E635?style=for-the-badge&labelColor=E5E7EB&color=A3E635)](https://aka.ms/ai-beginners?WT.mc_id=academic-105485-koreyst)
 [![Kibernetska varnost za začetnike](https://img.shields.io/badge/Cybersecurity%20for%20Beginners-F97316?style=for-the-badge&labelColor=E5E7EB&color=F97316)](https://github.com/microsoft/Security-101?WT.mc_id=academic-96948-sayoung)
 
 [![Spletni razvoj za začetnike](https://img.shields.io/badge/Web%20Dev%20for%20Beginners-EC4899?style=for-the-badge&labelColor=E5E7EB&color=EC4899)](https://aka.ms/webdev-beginners?WT.mc_id=academic-105485-koreyst)
 [![IoT za začetnike](https://img.shields.io/badge/IoT%20for%20Beginners-14B8A6?style=for-the-badge&labelColor=E5E7EB&color=14B8A6)](https://aka.ms/iot-beginners?WT.mc_id=academic-105485-koreyst)
-[![Razvoj XR za začetnike](https://img.shields.io/badge/XR%20Development%20for%20Beginners-38BDF8?style=for-the-badge&labelColor=E5E7EB&color=38BDF8)](https://github.com/microsoft/xr-development-for-beginners?WT.mc_id=academic-105485-koreyst)
+[![XR razvoj za začetnike](https://img.shields.io/badge/XR%20Development%20for%20Beginners-38BDF8?style=for-the-badge&labelColor=E5E7EB&color=38BDF8)](https://github.com/microsoft/xr-development-for-beginners?WT.mc_id=academic-105485-koreyst)
 
 ---
  
@@ -122,11 +122,11 @@
 
 ## Iskanje pomoči
 
-Če se zataknete ali imate vprašanja glede ustvarjanja AI aplikacij. Pridružite se drugim učencem in izkušenim razvijalcem v razpravah o MCP. To je podporna skupnost, kjer so vprašanja dobrodošla in kjer se znanje prosto deli.
+Če naletite na težave ali imate vprašanja o izdelavi AI aplikacij. Pridružite se drugim učencem in izkušenim razvijalcem v razpravah o MCP. Je podporna skupnost, kjer so vprašanja dobrodošla in kjer se znanje prosto deli.
 
 [![Microsoft Foundry Discord](https://dcbadge.limes.pink/api/server/nTYy5BXMWG)](https://discord.gg/nTYy5BXMWG)
 
-Če imate povratne informacije o izdelku ali napake med izdelavo, obiščite:
+Če imate povratne informacije o izdelku ali napake med izdelavo obiščite:
 
 [![Microsoft Foundry Developer Forum](https://img.shields.io/badge/GitHub-Microsoft_Foundry_Developer_Forum-blue?style=for-the-badge&logo=github&color=000000&logoColor=fff)](https://aka.ms/foundry/forum)
 

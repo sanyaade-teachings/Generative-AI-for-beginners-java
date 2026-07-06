@@ -1,38 +1,38 @@
-# MCP Kalkulačka - tutoriál pro začátečníky
+# MCP Kalkulačka Tutorial pro Začátečníky
 
 ## Obsah
 
-- [Co se naučíte](#co-se-naučíte)
-- [Předpoklady](#předpoklady)
-- [Pochopení struktury projektu](#pochopení-struktury-projektu)
-- [Vysvětlení hlavních komponent](#vysvětlení-hlavních-komponent)
-  - [1. Hlavní aplikace](#1-hlavní-aplikace)
-  - [2. Kalkulační služba](#2-kalkulační-služba)
-  - [3. Přímý MCP klient](#3-přímý-mcp-klient)
-  - [4. Klient využívající AI](#4-klient-využívající-ai)
-- [Spuštění příkladů](#spuštění-příkladů)
-- [Jak to spolu funguje](#jak-to-spolu-funguje)
-- [Další kroky](#další-kroky)
+- [Co se Naučíte](#co-se-naučíte)
+- [Požadavky](#požadavky)
+- [Porozumění Struktuře Projektu](#porozumění-struktuře-projektu)
+- [Vysvětlení Hlavních Komponent](#vysvětlení-hlavních-komponent)
+  - [1. Hlavní Aplikace](#1-hlavní-aplikace)
+  - [2. Kalkulační Služba](#2-kalkulační-služba)
+  - [3. Přímý MCP Klient](#3-přímý-mcp-klient)
+  - [4. Klient Pohlížený Umělou Inteligencí](#4-klient-pohlížený-umělou-inteligencí)
+- [Spuštění Příkladů](#spuštění-příkladů)
+- [Jak To Všechno Funguje Dohromady](#jak-to-všechno-funguje-dohromady)
+- [Další Kroky](#další-kroky)
 
-## Co se naučíte
+## Co se Naučíte
 
-V tomto tutoriálu se naučíte, jak vytvořit kalkulační službu pomocí Model Context Protocol (MCP). Pochopíte:
+Tento tutoriál vysvětluje, jak vytvořit kalkulační službu pomocí Model Context Protocol (MCP). Pochopíte:
 
-- Jak vytvořit službu, kterou může AI používat jako nástroj
+- Jak vytvořit službu, kterou může AI využít jako nástroj
 - Jak nastavit přímou komunikaci se službami MCP
-- Jak si AI modely automaticky vyberou, které nástroje použít
-- Rozdíl mezi přímými voláními protokolu a interakcemi s asistencí AI
+- Jak modely AI mohou automaticky vybírat, které nástroje použít
+- Rozdíl mezi přímými voláními protokolu a interakcemi asistovanými AI
 
-## Předpoklady
+## Požadavky
 
 Než začnete, ujistěte se, že máte:
-- Nainstalovanou Javu 21 nebo novější
+- Nainstalovanou Javu 21 nebo vyšší
 - Maven pro správu závislostí
-- Nasazený model Azure AI Foundry (zprovozněte příkazem `azd up` — viz [Kapitola 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
+- Nasazení modelu Azure AI Foundry (zprovozněte příkazem `azd up` — viz [Kapitola 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
 - [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), přihlášený příkazem `az login` (autentizace bez klíče)
-- Základní znalost Java a Spring Boot
+- Základní znalost Javy a Spring Boot
 
-## Pochopení struktury projektu
+## Porozumění Struktuře Projektu
 
 Projekt kalkulačky obsahuje několik důležitých souborů:
 
@@ -47,13 +47,13 @@ calculator/
     └── Bot.java                          # Simple chat interface
 ```
 
-## Vysvětlení hlavních komponent
+## Vysvětlení Hlavních Komponent
 
-### 1. Hlavní aplikace
+### 1. Hlavní Aplikace
 
 **Soubor:** `McpServerApplication.java`
 
-Toto je vstupní bod naší kalkulační služby. Je to standardní aplikace Spring Boot s jedním speciálním doplňkem:
+Toto je vstupní bod naší kalkulační služby. Je to standardní Spring Boot aplikace s jedním speciálním doplňkem:
 
 ```java
 @SpringBootApplication
@@ -71,15 +71,15 @@ public class McpServerApplication {
 ```
 
 **Co to dělá:**
-- Spustí webový server Spring Boot na portu 8080
-- Vytvoří `ToolCallbackProvider`, který zpřístupní metody kalkulačky jako nástroje MCP
-- Anotace `@Bean` říká Springu, aby toto spravoval jako komponentu, kterou mohou využívat jiné části
+- Spouští webový server Spring Boot na portu 8080
+- Vytváří `ToolCallbackProvider`, který zpřístupňuje naše kalkulační metody jako MCP nástroje
+- Anotace `@Bean` říká Springu, aby tuto komponentu spravoval a aby ji mohly používat ostatní části aplikace
 
-### 2. Kalkulační služba
+### 2. Kalkulační Služba
 
 **Soubor:** `CalculatorService.java`
 
-Tady se děje veškerá matematika. Každá metoda je označena `@Tool`, aby byla dostupná přes MCP:
+Zde se děje veškerá matematika. Každá metoda je označena anotací `@Tool`, aby byla dostupná přes MCP:
 
 ```java
 @Service
@@ -107,27 +107,27 @@ public class CalculatorService {
 
 **Hlavní vlastnosti:**
 
-1. **Anotace `@Tool`**: Říká MCP, že tuto metodu mohou volat externí klienti
-2. **Srozumitelné popisy**: Každý nástroj má popis, který pomáhá AI modelům pochopit, kdy jej použít
-3. **Konzistentní formát výsledku**: Všechny operace vrací lidsky čitelné řetězce jako "5.00 + 3.00 = 8.00"
-4. **Zpracování chyb**: Dělení nulou a odmocnina ze záporného čísla vrací chybové hlášky
+1. **Anotace `@Tool`**: Umožňuje MCP, aby tuto metodu volali externí klienti
+2. **Jasné popisy**: Každý nástroj má popis, který pomáhá AI modelům pochopit, kdy jej použít
+3. **Konzistentní formát návratové hodnoty**: Všechny operace vracejí lidsky čitelné řetězce jako "5.00 + 3.00 = 8.00"
+4. **Zpracování chyb**: Dělení nulou a odmocnina z negativního čísla vrací chybová hlášení
 
 **Dostupné operace:**
 - `add(a, b)` - Sčítá dvě čísla
 - `subtract(a, b)` - Odečítá druhé číslo od prvního
 - `multiply(a, b)` - Násobí dvě čísla
-- `divide(a, b)` - Dělí první číslo druhým (s kontrolou nulou)
+- `divide(a, b)` - Dělí první číslo druhým (kontrola nulou)
 - `power(base, exponent)` - Umocňuje základ na exponent
-- `squareRoot(number)` - Vypočítá druhou odmocninu (s kontrolou záporných vstupů)
+- `squareRoot(number)` - Vypočítá druhou odmocninu (kontrola na záporné číslo)
 - `modulus(a, b)` - Vrací zbytek po dělení
-- `absolute(number)` - Vrací absolutní hodnotu čísla
+- `absolute(number)` - Vrací absolutní hodnotu
 - `help()` - Vrací informace o všech operacích
 
-### 3. Přímý MCP klient
+### 3. Přímý MCP Klient
 
 **Soubor:** `SDKClient.java`
 
-Tento klient komunikuje přímo s MCP serverem bez použití AI. Ručně volá specifické kalkulační funkce:
+Tento klient komunikuje přímo se serverem MCP bez použití AI. Ručně volá specifické kalkulační funkce:
 
 ```java
 public class SDKClient {
@@ -164,20 +164,20 @@ public class SDKClient {
 ```
 
 **Co to dělá:**
-1. **Připojuje se** ke kalkulačnímu serveru na `http://localhost:8080` pomocí builder patternu
-2. **Vylistuje** všechny dostupné nástroje (naše kalkulační funkce)
+1. **Připojuje se** k serveru kalkulačky na `http://localhost:8080` pomocí builder patternu
+2. **Vypisuje** všechny dostupné nástroje (naše kalkulační funkce)
 3. **Volá** konkrétní funkce s přesnými parametry
-4. **Vypisuje** výsledky přímo
+4. **Tiskne** výsledky přímo
 
 **Poznámka:** Tento příklad používá závislost Spring AI 1.1.0-SNAPSHOT, která zavedla builder pattern pro `WebFluxSseClientTransport`. Pokud používáte starší stabilní verzi, možná budete muset použít přímý konstruktor.
 
-**Kdy to použít:** Pokud přesně víte, jaký výpočet chcete provést, a chcete jej volat programově.
+**Kdy použít:** Když přesně víte, jaký výpočet chcete provést, a chcete ho volat programově.
 
-### 4. Klient využívající AI
+### 4. Klient Pohlížený Umělou Inteligencí
 
 **Soubor:** `LangChain4jClient.java`
 
-Tento klient využívá AI model (GPT-4o-mini), který automaticky rozhoduje, které kalkulační nástroje použít:
+Tento klient používá AI model (GPT-4o-mini), který může automaticky rozhodnout, které kalkulační nástroje použít:
 
 ```java
 public class LangChain4jClient {
@@ -198,7 +198,7 @@ public class LangChain4jClient {
         // Připojte se k našemu serveru kalkulačky MCP
         McpTransport transport = new HttpMcpTransport.Builder()
                 .sseUrl("http://localhost:8080/sse")
-                .logRequests(true)  // Ukazuje, co AI právě dělá
+                .logRequests(true)  // Zobrazuje, co AI právě dělá
                 .logResponses(true)
                 .build();
 
@@ -206,7 +206,7 @@ public class LangChain4jClient {
                 .transport(transport)
                 .build();
 
-        // Dejte AI přístup k našim kalkulačním nástrojům
+        // Dejte AI přístup k našim kalkulačkovým nástrojům
         ToolProvider toolProvider = McpToolProvider.builder()
                 .mcpClients(List.of(mcpClient))
                 .build();
@@ -228,10 +228,10 @@ public class LangChain4jClient {
 ```
 
 **Co to dělá:**
-1. **Vytvoří** propojení k AI modelu pomocí vašeho GitHub tokenu
-2. **Připojí** AI ke kalkulačnímu MCP serveru
-3. **Dá** AI přístup ke všem kalkulačním nástrojům
-4. **Umožní** přirozené jazykové požadavky jako "Spočítej součet 24.5 a 17.3"
+1. **Vytváří** připojení k AI modelu s autentizací bez klíče (Microsoft Entra ID)
+2. **Připojuje** AI ke kalkulačnímu MCP serveru
+3. **Dává** AI přístup ke všem kalkulačním nástrojům
+4. **Umožňuje** přirozené jazykové požadavky jako „Vypočítej součet 24.5 a 17.3“
 
 **AI automaticky:**
 - Chápe, že chcete sčítat čísla
@@ -239,11 +239,11 @@ public class LangChain4jClient {
 - Zavolá `add(24.5, 17.3)`
 - Vrátí výsledek v přirozené odpovědi
 
-## Spuštění příkladů
+## Spuštění Příkladů
 
-### Krok 1: Spusťte kalkulační server
+### Krok 1: Spusťte Server Kalkulačky
 
-Nejprve se přihlaste a nastavte váš Azure AI Foundry endpoint (potřebné pro AI klienta — autentizace bez klíče, bez API klíče):
+Nejdříve se přihlaste a nastavte svůj Azure AI Foundry endpoint (potřebné pro AI klienta — autentizace bez klíče, bez API klíče):
 
 **Windows:**
 ```cmd
@@ -263,12 +263,12 @@ cd 04-PracticalSamples/calculator
 mvn clean spring-boot:run
 ```
 
-Server poběží na `http://localhost:8080`. Měli byste vidět:
+Server se spustí na `http://localhost:8080`. Měli byste vidět:
 ```
 Started McpServerApplication in X.XXX seconds
 ```
 
-### Krok 2: Otestujte s přímým klientem
+### Krok 2: Otestujte s Přímým Klientem
 
 V **NOVÉM** terminálu, zatímco server běží, spusťte přímého MCP klienta:
 ```bash
@@ -283,7 +283,7 @@ Add Result = 5.00 + 3.00 = 8.00
 Square Root Result = √16.00 = 4.00
 ```
 
-### Krok 3: Otestujte s AI klientem
+### Krok 3: Otestujte s AI Klientem
 
 ```bash
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient" -Dexec.classpathScope=test
@@ -295,24 +295,24 @@ The sum of 24.5 and 17.3 is 41.8.
 The square root of 144 is 12.
 ```
 
-### Krok 4: Ukončete MCP server
+### Krok 4: Ukončete MCP Server
 
-Když skončíte s testováním, můžete ukončit AI klienta stiskem `Ctrl+C` v jeho terminálu. MCP server poběží dál, dokud jej nezastavíte.
+Až skončíte s testováním, AI klienta zastavíte stiskem `Ctrl+C` v jeho terminálu. MCP server poběží dál, dokud ho nezastavíte.
 Pro zastavení serveru stiskněte `Ctrl+C` v terminálu, kde běží.
 
-## Jak to spolu funguje
+## Jak To Všechno Funguje Dohromady
 
-Zde je kompletní postup, když se AI zeptáte „Kolik je 5 + 3?“:
+Zde je kompletní průběh, když se AI zeptáte „Kolik je 5 + 3?“:
 
-1. **Vy** položíte AI otázku v přirozeném jazyce
-2. **AI** analyzuje váš dotaz a pozná, že chcete sčítat
+1. **Vy** se ptáte AI přirozeným jazykem
+2. **AI** analyzuje požadavek a pochopí, že chcete sčítat
 3. **AI** zavolá MCP server: `add(5.0, 3.0)`
-4. **Kalkulační služba** provede výpočet: `5.0 + 3.0 = 8.0`
-5. **Kalkulační služba** vrátí: `"5.00 + 3.00 = 8.00"`
-6. **AI** přijme výsledek a vytvoří odpověď v přirozeném jazyce
-7. **Vy** dostanete odpověď: "Součet 5 a 3 je 8"
+4. **Kalkulační Služba** provede: `5.0 + 3.0 = 8.0`
+5. **Kalkulační Služba** vrátí: `"5.00 + 3.00 = 8.00"`
+6. **AI** přijme výsledek a vytvoří přirozenou odpověď
+7. **Vy** dostanete: „Součet 5 a 3 je 8“
 
-## Další kroky
+## Další Kroky
 
 Pro více příkladů viz [Kapitola 04: Praktické ukázky](../README.md)
 

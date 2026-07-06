@@ -1,40 +1,40 @@
-# MCP Rechner Tutorial für Einsteiger
+# MCP Rechner Tutorial für Anfänger
 
 ## Inhaltsverzeichnis
 
-- [Was du lernen wirst](#was-du-lernen-wirst)
+- [Was Sie lernen werden](#was-sie-lernen-werden)
 - [Voraussetzungen](#voraussetzungen)
 - [Das Projektstruktur verstehen](#das-projektstruktur-verstehen)
-- [Wesentliche Komponenten erklärt](#wesentliche-komponenten-erklärt)
+- [Erklärung der Kernkomponenten](#erkl%C3%A4rung-der-kernkomponenten)
   - [1. Hauptanwendung](#1-hauptanwendung)
   - [2. Rechner-Service](#2-rechner-service)
   - [3. Direkter MCP-Client](#3-direkter-mcp-client)
-  - [4. KI-unterstützter Client](#4-ki-unterstützter-client)
-- [Die Beispiele ausführen](#die-beispiele-ausführen)
-- [Wie alles zusammen funktioniert](#wie-alles-zusammen-funktioniert)
-- [Nächste Schritte](#nächste-schritte)
+  - [4. KI-basierter Client](#4-ki-basierter-client)
+- [Ausführen der Beispiele](#ausf%C3%BChren-der-beispiele)
+- [So funktioniert das Zusammenspiel](#so-funktioniert-das-zusammenspiel)
+- [Nächste Schritte](#n%C3%A4chste-schritte)
 
-## Was du lernen wirst
+## Was Sie lernen werden
 
-Dieses Tutorial erklärt, wie man einen Rechner-Service mit dem Model Context Protocol (MCP) erstellt. Du wirst verstehen:
+Dieses Tutorial erklärt, wie man einen Rechner-Service mit dem Model Context Protocol (MCP) erstellt. Sie verstehen:
 
-- Wie man einen Service erstellt, den KI als Werkzeug verwenden kann
-- Wie man direkte Kommunikation mit MCP-Services einrichtet
-- Wie KI-Modelle automatisch entscheiden können, welche Werkzeuge verwendet werden
-- Der Unterschied zwischen direkten Protokollaufrufen und KI-gestützten Interaktionen
+- Wie man einen Service erstellt, den KI als Werkzeug nutzen kann
+- Wie man direkte Kommunikation mit MCP-Diensten einrichtet
+- Wie KI-Modelle automatisch entscheiden, welche Werkzeuge verwendet werden
+- Den Unterschied zwischen direkten Protokollaufrufen und KI-gestützten Interaktionen
 
 ## Voraussetzungen
 
-Bevor du beginnst, stelle sicher, dass du hast:
-- Java 21 oder höher installiert
-- Maven für das Abhängigkeitsmanagement
-- Eine Azure AI Foundry Modellbereitstellung (bereitgestellt mit `azd up` — siehe [Kapitel 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
-- Die [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), angemeldet mit `az login` (schlüssellose Authentifizierung)
-- Grundlegendes Verständnis von Java und Spring Boot
+Bevor Sie starten, stellen Sie sicher, dass Sie:
+- Java 21 oder höher installiert haben
+- Maven für das Abhängigkeitsmanagement nutzen
+- Eine Azure AI Foundry Modellbereitstellung haben (stellen Sie sie mit `azd up` bereit — siehe [Kapitel 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
+- Die [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installiert und mit `az login` angemeldet (authentifizierung ohne Schlüssel)
+- Grundkenntnisse in Java und Spring Boot besitzen
 
 ## Das Projektstruktur verstehen
 
-Das Rechner-Projekt enthält mehrere wichtige Dateien:
+Das Rechnerprojekt hat mehrere wichtige Dateien:
 
 ```
 calculator/
@@ -47,13 +47,13 @@ calculator/
     └── Bot.java                          # Simple chat interface
 ```
 
-## Wesentliche Komponenten erklärt
+## Erklärung der Kernkomponenten
 
 ### 1. Hauptanwendung
 
 **Datei:** `McpServerApplication.java`
 
-Dies ist der Einstiegspunkt unseres Rechner-Services. Es handelt sich um eine Standard-Spring-Boot-Anwendung mit einer speziellen Ergänzung:
+Dies ist der Einstiegspunkt unseres Rechner-Services. Es handelt sich um eine Standard-Spring-Boot-Anwendung mit einer besonderen Ergänzung:
 
 ```java
 @SpringBootApplication
@@ -71,15 +71,15 @@ public class McpServerApplication {
 ```
 
 **Was das bewirkt:**
-- Startet einen Spring Boot Webserver auf Port 8080
+- Startet einen Spring-Boot-Webserver auf Port 8080
 - Erstellt einen `ToolCallbackProvider`, der unsere Rechner-Methoden als MCP-Werkzeuge verfügbar macht
-- Die `@Bean`-Annotation sagt Spring, diese Komponente zu verwalten, damit andere Teile sie nutzen können
+- Die `@Bean`-Annotation teilt Spring mit, dass dies eine verwaltete Komponente ist, die andere Teile nutzen können
 
 ### 2. Rechner-Service
 
 **Datei:** `CalculatorService.java`
 
-Hier findet die ganze Mathematik statt. Jede Methode ist mit `@Tool` markiert, um sie über MCP verfügbar zu machen:
+Hier findet die gesamte Mathematik statt. Jede Methode ist mit `@Tool` versehen, um sie über MCP verfügbar zu machen:
 
 ```java
 @Service
@@ -108,26 +108,26 @@ public class CalculatorService {
 **Wichtige Merkmale:**
 
 1. **`@Tool` Annotation**: Signalisiert MCP, dass diese Methode von externen Clients aufgerufen werden kann
-2. **Klare Beschreibungen**: Jedes Tool hat eine Beschreibung, die KI-Modellen hilft zu verstehen, wann es verwendet werden soll
-3. **Konsistentes Rückgabeformat**: Alle Operationen liefern menschenlesbare Strings wie „5.00 + 3.00 = 8.00“
+2. **Klare Beschreibungen**: Jedes Werkzeug hat eine Beschreibung, die KI-Modellen hilft zu verstehen, wann es verwendet werden soll
+3. **Konsistentes Rückgabeformat**: Alle Operationen geben gut lesbare Strings zurück wie „5.00 + 3.00 = 8.00“
 4. **Fehlerbehandlung**: Division durch Null und negative Quadratwurzeln geben Fehlermeldungen zurück
 
 **Verfügbare Operationen:**
-- `add(a, b)` – Addiert zwei Zahlen
-- `subtract(a, b)` – Subtrahiert zweite von erster Zahl
-- `multiply(a, b)` – Multipliziert zwei Zahlen
-- `divide(a, b)` – Teilt erste durch zweite Zahl (mit Null-Prüfung)
-- `power(base, exponent)` – Erhöht Basis auf die Potenz Exponent
-- `squareRoot(number)` – Berechnet Quadratwurzel (mit Negativ-Prüfung)
-- `modulus(a, b)` – Gibt den Rest der Division zurück
-- `absolute(number)` – Gibt den Absolutwert zurück
-- `help()` – Liefert Informationen über alle Operationen
+- `add(a, b)` - Addiert zwei Zahlen
+- `subtract(a, b)` - Subtrahiert die zweite von der ersten Zahl
+- `multiply(a, b)` - Multipliziert zwei Zahlen
+- `divide(a, b)` - Dividiert die erste durch die zweite (mit Nullprüfung)
+- `power(base, exponent)` - Potenziert Basis mit Exponent
+- `squareRoot(number)` - Berechnet die Quadratwurzel (mit Negativprüfung)
+- `modulus(a, b)` - Gibt den Rest der Division zurück
+- `absolute(number)` - Gibt den Absolutwert zurück
+- `help()` - Gibt Informationen über alle Operationen zurück
 
 ### 3. Direkter MCP-Client
 
 **Datei:** `SDKClient.java`
 
-Dieser Client kommuniziert direkt mit dem MCP-Server ohne KI zu verwenden. Er ruft manuell spezifische Rechnerfunktionen auf:
+Dieser Client kommuniziert direkt mit dem MCP-Server, ohne KI zu verwenden. Er ruft manuell bestimmte Rechnerfunktionen auf:
 
 ```java
 public class SDKClient {
@@ -147,7 +147,7 @@ public class SDKClient {
         ListToolsResult toolsList = client.listTools();
         System.out.println("Available Tools = " + toolsList);
         
-        // Bestimmte Taschenrechnerfunktionen aufrufen
+        // Spezifische Taschenrechnerfunktionen aufrufen
         CallToolResult resultAdd = client.callTool(
             new CallToolRequest("add", Map.of("a", 5.0, "b", 3.0))
         );
@@ -164,16 +164,16 @@ public class SDKClient {
 ```
 
 **Was das bewirkt:**
-1. **Verbindet** sich zum Rechner-Server unter `http://localhost:8080` mit dem Builder-Pattern
+1. **Verbindet** sich über das Builder-Pattern mit dem Rechner-Server unter `http://localhost:8080`
 2. **Listet** alle verfügbaren Werkzeuge (unsere Rechnerfunktionen) auf
-3. **Ruft auf** spezifische Funktionen mit exakten Parametern auf
+3. **Ruft** bestimmte Funktionen mit exakten Parametern auf
 4. **Gibt** die Ergebnisse direkt aus
 
-**Hinweis:** Dieses Beispiel nutzt die Spring AI 1.1.0-SNAPSHOT-Dependency, die ein Builder-Pattern für den `WebFluxSseClientTransport` eingeführt hat. Wenn du eine ältere stabile Version nutzt, musst du möglicherweise den direkten Konstruktor verwenden.
+**Hinweis:** Dieses Beispiel verwendet die Spring AI 1.1.0-SNAPSHOT-Abhängigkeit, welche ein Builder-Pattern für den `WebFluxSseClientTransport` eingeführt hat. Falls Sie eine ältere stabile Version verwenden, müssen Sie möglicherweise den direkten Konstruktor verwenden.
 
-**Wann du das benutzt:** Wenn du genau weißt, welche Berechnung du ausführen möchtest und sie programmatisch aufrufen willst.
+**Wann verwenden:** Wenn Sie genau wissen, welche Berechnung Sie ausführen möchten und diese programmatisch aufrufen wollen.
 
-### 4. KI-unterstützter Client
+### 4. KI-basierter Client
 
 **Datei:** `LangChain4jClient.java`
 
@@ -195,7 +195,7 @@ public class LangChain4jClient {
                 .modelName("gpt-4o-mini")
                 .build();
 
-        // Verbinden Sie sich mit unserem Rechner-MCP-Server
+        // Verbinden Sie sich mit unserem Calculator MCP-Server
         McpTransport transport = new HttpMcpTransport.Builder()
                 .sseUrl("http://localhost:8080/sse")
                 .logRequests(true)  // Zeigt, was die KI gerade macht
@@ -206,12 +206,12 @@ public class LangChain4jClient {
                 .transport(transport)
                 .build();
 
-        // Gewähren Sie der KI Zugriff auf unsere Rechner-Tools
+        // Geben Sie der KI Zugriff auf unsere Calculator-Werkzeuge
         ToolProvider toolProvider = McpToolProvider.builder()
                 .mcpClients(List.of(mcpClient))
                 .build();
 
-        // Erstellen Sie einen KI-Bot, der unseren Rechner verwenden kann
+        // Erstellen Sie einen KI-Bot, der unseren Calculator verwenden kann
         Bot bot = AiServices.builder(Bot.class)
                 .chatLanguageModel(model)
                 .toolProvider(toolProvider)
@@ -228,22 +228,22 @@ public class LangChain4jClient {
 ```
 
 **Was das bewirkt:**
-1. **Erstellt** eine KI-Modell-Verbindung mit deinem GitHub-Token
+1. **Erstellt** eine KI-Modellverbindung mit schlüsselloser Authentifizierung (Microsoft Entra ID)
 2. **Verbindet** die KI mit unserem Rechner-MCP-Server
 3. **Gibt** der KI Zugriff auf alle unsere Rechner-Werkzeuge
-4. **Ermöglicht** natürlichsprachige Anfragen wie „Berechne die Summe von 24,5 und 17,3“
+4. **Ermöglicht** natürliche Sprachabfragen wie „Berechne die Summe von 24,5 und 17,3“
 
 **Die KI macht automatisch:**
-- Versteht, dass du Zahlen addieren möchtest
-- Wählt das Tool `add`
+- Versteht, dass Sie Zahlen addieren wollen
+- Wählt das Werkzeug `add` aus
 - Ruft `add(24.5, 17.3)` auf
 - Gibt das Ergebnis in einer natürlichen Antwort zurück
 
-## Die Beispiele ausführen
+## Ausführen der Beispiele
 
-### Schritt 1: Rechner-Server starten
+### Schritt 1: Starten Sie den Rechner-Server
 
-Melde dich zuerst an und setze deinen Azure AI Foundry Endpunkt (benötigt für den KI-Client — schlüssellose Authentifizierung, kein API-Schlüssel):
+Melden Sie sich zuerst an und setzen Sie Ihren Azure AI Foundry Endpunkt (benötigt für den KI-Client — authentifizierung ohne Schlüssel, kein API-Schlüssel):
 
 **Windows:**
 ```cmd
@@ -257,60 +257,60 @@ az login
 export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-Starte den Server:
+Starten Sie den Server:
 ```bash
 cd 04-PracticalSamples/calculator
 mvn clean spring-boot:run
 ```
 
-Der Server läuft auf `http://localhost:8080`. Du solltest sehen:
+Der Server startet unter `http://localhost:8080`. Sie sollten sehen:
 ```
 Started McpServerApplication in X.XXX seconds
 ```
 
-### Schritt 2: Mit direktem Client testen
+### Schritt 2: Testen mit direktem Client
 
-In einem **NEUEN** Terminal, während der Server noch läuft, starte den direkten MCP-Client:
+In einem **NEUEN** Terminalfenster bei laufendem Server führen Sie den direkten MCP-Client aus:
 ```bash
 cd 04-PracticalSamples/calculator
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient" -Dexec.classpathScope=test
 ```
 
-Du siehst eine Ausgabe wie:
+Sie sehen eine Ausgabe ähnlich:
 ```
 Available Tools = [add, subtract, multiply, divide, power, squareRoot, modulus, absolute, help]
 Add Result = 5.00 + 3.00 = 8.00
 Square Root Result = √16.00 = 4.00
 ```
 
-### Schritt 3: Mit KI-Client testen
+### Schritt 3: Testen mit KI-Client
 
 ```bash
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient" -Dexec.classpathScope=test
 ```
 
-Du siehst, wie die KI automatisch Werkzeuge verwendet:
+Sie sehen, wie die KI automatisch Werkzeuge verwendet:
 ```
 The sum of 24.5 and 17.3 is 41.8.
 The square root of 144 is 12.
 ```
 
-### Schritt 4: MCP-Server schließen
+### Schritt 4: Schließen Sie den MCP-Server
 
-Wenn du fertig bist, kannst du den KI-Client mit `Ctrl+C` im Terminal stoppen. Der MCP-Server läuft weiter, bis du ihn stoppst.
-Um den Server zu beenden, drücke `Ctrl+C` im Terminal, in dem er läuft.
+Wenn Sie fertig sind, können Sie den KI-Client mit `Strg+C` im Terminal stoppen. Der MCP-Server läuft weiter, bis Sie ihn stoppen.
+Zum Beenden des Servers drücken Sie `Strg+C` im Terminal, in dem er läuft.
 
-## Wie alles zusammen funktioniert
+## So funktioniert das Zusammenspiel
 
-Hier ist der komplette Ablauf, wenn du die KI fragst: „Was ist 5 + 3?“:
+Hier ist der komplette Ablauf, wenn Sie die KI fragen: „Was ist 5 + 3?“:
 
-1. **Du** stellst der KI eine Frage in natürlicher Sprache
-2. **Die KI** analysiert die Anfrage und erkennt, dass du Addition möchtest
+1. **Sie** fragen die KI in natürlicher Sprache
+2. **Die KI** analysiert Ihre Anfrage und erkennt, dass Sie addieren wollen
 3. **Die KI** ruft den MCP-Server auf: `add(5.0, 3.0)`
-4. **Der Rechner-Service** führt die Rechnung aus: `5.0 + 3.0 = 8.0`
+4. **Der Rechner-Service** führt aus: `5.0 + 3.0 = 8.0`
 5. **Der Rechner-Service** gibt zurück: `"5.00 + 3.00 = 8.00"`
 6. **Die KI** erhält das Ergebnis und formuliert eine natürliche Antwort
-7. **Du** bekommst: „Die Summe von 5 und 3 ist 8“
+7. **Sie** bekommen: „Die Summe von 5 und 3 ist 8“
 
 ## Nächste Schritte
 

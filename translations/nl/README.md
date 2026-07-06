@@ -3,27 +3,27 @@
 
 ![Generative AI voor Beginners - Java Editie](../../translated_images/nl/beg-genai-series.8b48be9951cc574c.webp)
 
-**Tijdsinvestering**: De gehele workshop kan online worden voltooid zonder lokale installatie. De omgeving installatie duurt 2 minuten, met het verkennen van de voorbeelden die 1-3 uur duren afhankelijk van de diepte van verkenning.
+**Tijdsduur**: De gehele workshop kan online worden voltooid zonder lokale installatie. Het opzetten van de omgeving duurt 2 minuten, met het verkennen van de voorbeelden kost 1-3 uur, afhankelijk van de diepte van verkenning.
 
-> **Snel Starten** 
+> **Snel aan de slag**
 
 1. Fork deze repository naar je GitHub-account
 2. Klik op **Code** → tabblad **Codespaces** → **...** → **Nieuw met opties...**
-3. Gebruik de standaardinstellingen – dit selecteert de Development container die voor deze cursus is gemaakt
-4. Klik op **Codespace maken**
-5. Wacht ongeveer 2 minuten tot de omgeving klaar is
-6. Ga direct naar [Het eerste voorbeeld](./02-SetupDevEnvironment/README.md#step-2-create-a-github-personal-access-token)
+3. Gebruik de standaardopties – hiermee wordt de ontwikkelcontainer geselecteerd die voor deze cursus is gemaakt
+4. Klik op **Maak codespace aan**
+5. Wacht ~2 minuten totdat de omgeving klaar is
+6. Ga direct naar [Hoofdstuk 2: Provision Azure AI Foundry](./02-SetupDevEnvironment/README.md#step-2-provision-azure-ai-foundry)
 
 ## Meertalige Ondersteuning
 
 ### Ondersteund via GitHub Action (Geautomatiseerd & Altijd Up-to-Date)
 
 <!-- CO-OP TRANSLATOR LANGUAGES TABLE START -->
-[Arabisch](../ar/README.md) | [Bengaals](../bn/README.md) | [Bulgaars](../bg/README.md) | [Birmaans (Myanmar)](../my/README.md) | [Chinees (Vereenvoudigd)](../zh-CN/README.md) | [Chinees (Traditioneel, Hong Kong)](../zh-HK/README.md) | [Chinees (Traditioneel, Macau)](../zh-MO/README.md) | [Chinees (Traditioneel, Taiwan)](../zh-TW/README.md) | [Kroatisch](../hr/README.md) | [Tsjechisch](../cs/README.md) | [Deens](../da/README.md) | [Nederlands](./README.md) | [Ests](../et/README.md) | [Fins](../fi/README.md) | [Frans](../fr/README.md) | [Duits](../de/README.md) | [Grieks](../el/README.md) | [Hebreeuws](../he/README.md) | [Hindi](../hi/README.md) | [Hongaars](../hu/README.md) | [Indonesisch](../id/README.md) | [Italiaans](../it/README.md) | [Japans](../ja/README.md) | [Kannada](../kn/README.md) | [Khmer](../km/README.md) | [Koreaans](../ko/README.md) | [Litouws](../lt/README.md) | [Maleis](../ms/README.md) | [Malayalam](../ml/README.md) | [Marathi](../mr/README.md) | [Nepalees](../ne/README.md) | [Nigeriaans Pidgin](../pcm/README.md) | [Noors](../no/README.md) | [Perzisch (Farsi)](../fa/README.md) | [Pools](../pl/README.md) | [Portugees (Brazilië)](../pt-BR/README.md) | [Portugees (Portugal)](../pt-PT/README.md) | [Punjabi (Gurmukhi)](../pa/README.md) | [Roemeens](../ro/README.md) | [Russisch](../ru/README.md) | [Servisch (Cyrillisch)](../sr/README.md) | [Slowaaks](../sk/README.md) | [Sloveens](../sl/README.md) | [Spaans](../es/README.md) | [Swahili](../sw/README.md) | [Zweeds](../sv/README.md) | [Tagalog (Filipijns)](../tl/README.md) | [Tamil](../ta/README.md) | [Telugu](../te/README.md) | [Thais](../th/README.md) | [Turks](../tr/README.md) | [Oekraïens](../uk/README.md) | [Urdu](../ur/README.md) | [Vietnamees](../vi/README.md)
+[Arabisch](../ar/README.md) | [Bengaals](../bn/README.md) | [Bulgaars](../bg/README.md) | [Birmaans (Myanmar)](../my/README.md) | [Chinees (Vereenvoudigd)](../zh-CN/README.md) | [Chinees (Traditioneel, Hong Kong)](../zh-HK/README.md) | [Chinees (Traditioneel, Macau)](../zh-MO/README.md) | [Chinees (Traditioneel, Taiwan)](../zh-TW/README.md) | [Kroatisch](../hr/README.md) | [Tsjechisch](../cs/README.md) | [Deens](../da/README.md) | [Nederlands](./README.md) | [Ests](../et/README.md) | [Fins](../fi/README.md) | [Frans](../fr/README.md) | [Duits](../de/README.md) | [Grieks](../el/README.md) | [Hebreeuws](../he/README.md) | [Hindi](../hi/README.md) | [Hongaars](../hu/README.md) | [Indonesisch](../id/README.md) | [Italiaans](../it/README.md) | [Japans](../ja/README.md) | [Kannada](../kn/README.md) | [Khmer](../km/README.md) | [Koreaans](../ko/README.md) | [Litouws](../lt/README.md) | [Maleis](../ms/README.md) | [Malayalam](../ml/README.md) | [Marathi](../mr/README.md) | [Nepalees](../ne/README.md) | [Nigeriaans Pidgin](../pcm/README.md) | [Noors](../no/README.md) | [Perzisch (Farsi)](../fa/README.md) | [Pools](../pl/README.md) | [Portugees (Brazilië)](../pt-BR/README.md) | [Portugees (Portugal)](../pt-PT/README.md) | [Punjabi (Gurmukhi)](../pa/README.md) | [Roemeens](../ro/README.md) | [Russisch](../ru/README.md) | [Servisch (Cyrillisch)](../sr/README.md) | [Slowaaks](../sk/README.md) | [Sloveens](../sl/README.md) | [Spaans](../es/README.md) | [Swahili](../sw/README.md) | [Zweeds](../sv/README.md) | [Tagalog (Filipijns)](../tl/README.md) | [Tamil](../ta/README.md) | [Telugu](../te/README.md) | [Thai](../th/README.md) | [Turks](../tr/README.md) | [Oekraïens](../uk/README.md) | [Urdu](../ur/README.md) | [Vietnamees](../vi/README.md)
 
-> **Liever lokaal klonen?**
+> **Lievelings om lokaal te klonen?**
 >
-> Deze repository bevat meer dan 50 taalvertalingen, wat de downloadgrootte aanzienlijk verhoogt. Om te klonen zonder vertalingen, gebruik je sparse checkout:
+> Deze repository bevat meer dan 50 taalvertalingen, wat de downloadgrootte aanzienlijk vergroot. Om te klonen zonder vertalingen, gebruik sparse checkout:
 >
 > **Bash / macOS / Linux:**
 > ```bash
@@ -45,39 +45,39 @@
 ## Cursusstructuur & Leerpad
 
 ### **Hoofdstuk 1: Introductie tot Generative AI**
-- **Kernconcepten**: Begrip van grote taalmodellen, tokens, embeddings en AI-capaciteiten
-- **Java AI Ecosysteem**: Overzicht van Spring AI en OpenAI SDK's
-- **Model Context Protocol**: Introductie tot MCP en de rol ervan in AI-agentcommunicatie
-- **Praktische toepassingen**: Realistische scenario's zoals chatbots en contentcreatie
-- **[→ Start Hoofdstuk 1](./01-IntroToGenAI/README.md)**
+- **Kernbegrippen**: Inzicht in grote taalmodellen, tokens, embeddings en AI-capaciteiten
+- **Java AI Ecosysteem**: Overzicht van Spring AI en OpenAI SDK’s
+- **Model Context Protocol**: Introductie tot MCP en de rol ervan in AI-agent communicatie
+- **Praktische Toepassingen**: Praktijksituaties inclusief chatbots en contentcreatie
+- **[→ Begin Hoofdstuk 1](./01-IntroToGenAI/README.md)**
 
-### **Hoofdstuk 2: Ontwikkelomgeving-instelling**
-- **Azure AI Foundry**: Provisioneren van model-implementaties als code met Bicep en de Azure Developer CLI (azd)
+### **Hoofdstuk 2: Ontwikkelomgeving Instellen**
+- **Azure AI Foundry**: Provision modeldeployments als code met Bicep en de Azure Developer CLI (azd)
 - **Spring Boot + Spring AI**: Best practices voor enterprise AI-applicatieontwikkeling
-- **Sleutelloze authenticatie**: Veilige verbinding met Microsoft Entra ID — geen beheerde API-sleutels
+- **Keyless Authenticatie**: Veilig verbinden met Microsoft Entra ID — geen API-sleutels om te beheren
 - **Ontwikkeltools**: Docker-containers, VS Code en GitHub Codespaces configuratie
-- **[→ Start Hoofdstuk 2](./02-SetupDevEnvironment/README.md)**
+- **[→ Begin Hoofdstuk 2](./02-SetupDevEnvironment/README.md)**
 
-### **Hoofdstuk 3: Kern Generative AI-technieken**
-- **Prompt Engineering**: Technieken voor optimale AI-modelantwoorden
-- **Embeddings & Vectoroperaties**: Implementeren van semantisch zoeken en gelijkenis matching
+### **Hoofdstuk 3: Kern Technieken Generatieve AI**
+- **Prompt Engineering**: Technieken voor optimale AI-modelresponsen
+- **Embeddings & Vector Operaties**: Implementeer semantisch zoeken en gelijkenismatching
 - **Retrieval-Augmented Generation (RAG)**: Combineer AI met je eigen databronnen
 - **Function Calling**: Breid AI-capaciteiten uit met aangepaste tools en plugins
-- **[→ Start Hoofdstuk 3](./03-CoreGenerativeAITechniques/README.md)**
+- **[→ Begin Hoofdstuk 3](./03-CoreGenerativeAITechniques/README.md)**
 
-### **Hoofdstuk 4: Praktische toepassingen & projecten**
-- **Dierenverhaalgenerator** (`petstory/`): Creatieve contentcreatie met Azure AI Foundry
+### **Hoofdstuk 4: Praktische Toepassingen & Projecten**
+- **Pet Story Generator** (`petstory/`): Creatieve contentcreatie met Azure AI Foundry
 - **Foundry Local Demo** (`foundrylocal/`): Lokale AI-modelintegratie met OpenAI Java SDK
-- **MCP Calculator Service** (`calculator/`): Basis Model Context Protocol-implementatie met Spring AI
-- **[→ Start Hoofdstuk 4](./04-PracticalSamples/README.md)**
+- **MCP Calculator Service** (`calculator/`): Basale Model Context Protocol-implementatie met Spring AI
+- **[→ Begin Hoofdstuk 4](./04-PracticalSamples/README.md)**
 
-### **Hoofdstuk 5: Verantwoorde AI-ontwikkeling**
-- **Azure AI Foundry Content Safety**: Test ingebouwde contentfiltering en veiligheidsmechanismen (harde blokkades en zachte weigeringen)
-- **Verantwoorde AI Demo**: Praktijkvoorbeeld van hoe moderne AI-veiligheidssystemen werken
-- **Best Practices**: Essentiële richtlijnen voor ethische AI-ontwikkeling en -uitrol
-- **[→ Start Hoofdstuk 5](./05-ResponsibleGenAI/README.md)**
+### **Hoofdstuk 5: Verantwoordelijke AI Ontwikkeling**
+- **Azure AI Foundry Content Safety**: Test ingebouwde contentfiltering en veiligheidsmechanismen (strikte blokkades en zachte weigeringen)
+- **Verantwoordelijke AI Demo**: Praktijkvoorbeeld dat toont hoe moderne AI-veiligheidssystemen werken
+- **Best Practices**: Essentiële richtlijnen voor ethische AI-ontwikkeling en implementatie
+- **[→ Begin Hoofdstuk 5](./05-ResponsibleGenAI/README.md)**
 
-## Aanvullende bronnen
+## Aanvullende Bronnen
 
 <!-- CO-OP TRANSLATOR OTHER COURSES START -->
 ### LangChain
@@ -94,7 +94,7 @@
 
 ---
  
-### Generative AI-serie
+### Generative AI Serie
 [![Generative AI voor Beginners](https://img.shields.io/badge/Generative%20AI%20for%20Beginners-8B5CF6?style=for-the-badge&labelColor=E5E7EB&color=8B5CF6)](https://github.com/microsoft/generative-ai-for-beginners?WT.mc_id=academic-105485-koreyst)
 [![Generative AI (.NET)](https://img.shields.io/badge/Generative%20AI%20(.NET)-9333EA?style=for-the-badge&labelColor=E5E7EB&color=9333EA)](https://github.com/microsoft/Generative-AI-for-beginners-dotnet?WT.mc_id=academic-105485-koreyst)
 [![Generative AI (Java)](https://img.shields.io/badge/Generative%20AI%20(Java)-C084FC?style=for-the-badge&labelColor=E5E7EB&color=C084FC)](https://github.com/microsoft/generative-ai-for-beginners-java?WT.mc_id=academic-105485-koreyst)
@@ -120,9 +120,9 @@
 [![Copilot Adventure](https://img.shields.io/badge/Copilot%20Adventure-FDE68A?style=for-the-badge&labelColor=E5E7EB&color=FDE68A)](https://github.com/microsoft/CopilotAdventures?WT.mc_id=academic-105485-koreyst)
 <!-- CO-OP TRANSLATOR OTHER COURSES END -->
 
-## Hulp Krijgen
+## Hulp krijgen
 
-Als je vastloopt of vragen hebt over het bouwen van AI-apps. Doe mee met medeleerlingen en ervaren ontwikkelaars in discussies over MCP. Het is een ondersteunende gemeenschap waar vragen welkom zijn en kennis vrij wordt gedeeld.
+Als je vastloopt of vragen hebt over het bouwen van AI-apps. Sluit je aan bij mede-lerenden en ervaren ontwikkelaars in discussies over MCP. Het is een ondersteunende gemeenschap waar vragen welkom zijn en kennis vrij gedeeld wordt.
 
 [![Microsoft Foundry Discord](https://dcbadge.limes.pink/api/server/nTYy5BXMWG)](https://discord.gg/nTYy5BXMWG)
 

@@ -1,32 +1,32 @@
 # Tutorial Kalkulator MCP untuk Pemula
 
-## Jadual Kandungan
+## Kandungan
 
-- [Apa Yang Akan Anda Pelajari](#apa-yang-akan-anda-pelajari)
+- [Apa Yang Anda Akan Pelajari](#apa-yang-anda-akan-pelajari)
 - [Prasyarat](#prasyarat)
 - [Memahami Struktur Projek](#memahami-struktur-projek)
-- [Komponen Utama Dijelaskan](#komponen-utama-dijelaskan)
+- [Komponen Teras Dijelaskan](#komponen-teras-dijelaskan)
   - [1. Aplikasi Utama](#1-aplikasi-utama)
   - [2. Perkhidmatan Kalkulator](#2-perkhidmatan-kalkulator)
-  - [3. Klien MCP Terus](#3-klien-mcp-terus)
+  - [3. Klien MCP Langsung](#3-klien-mcp-langsung)
   - [4. Klien Berkuasa AI](#4-klien-berkuasa-ai)
-- [Menjalankan Contoh](#menjalankan-contoh)
-- [Bagaimana Semua Berfungsi Bersama](#bagaimana-semua-berfungsi-bersama)
+- [Menjalankan Contoh-Contoh](#menjalankan-contoh-contoh)
+- [Bagaimana Ia Berfungsi Bersama](#bagaimana-ia-berfungsi-bersama)
 - [Langkah Seterusnya](#langkah-seterusnya)
 
-## Apa Yang Akan Anda Pelajari
+## Apa Yang Anda Akan Pelajari
 
-Tutorial ini menerangkan cara membina perkhidmatan kalkulator menggunakan Model Context Protocol (MCP). Anda akan memahami:
+Tutorial ini menerangkan bagaimana untuk membina perkhidmatan kalkulator menggunakan Protokol Konteks Model (MCP). Anda akan faham:
 
-- Cara mencipta perkhidmatan yang boleh digunakan AI sebagai alat
-- Cara menyiapkan komunikasi terus dengan perkhidmatan MCP
-- Bagaimana model AI boleh secara automatik memilih alat mana untuk digunakan
-- Perbezaan antara panggilan protokol terus dan interaksi dibantu AI
+- Bagaimana untuk membuat perkhidmatan yang boleh digunakan AI sebagai alat
+- Bagaimana untuk menetapkan komunikasi langsung dengan perkhidmatan MCP
+- Bagaimana model AI boleh memilih alat yang akan digunakan secara automatik
+- Perbezaan antara panggilan protokol langsung dan interaksi dibantu AI
 
 ## Prasyarat
 
-Sebelum bermula, pastikan anda mempunyai:
-- Java 21 atau lebih tinggi dipasang
+Sebelum memulakan, pastikan anda telah:
+- Memasang Java 21 atau lebih tinggi
 - Maven untuk pengurusan pergantungan
 - Penempatan model Azure AI Foundry (sediakan dengan `azd up` — lihat [Bab 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
 - [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), log masuk dengan `az login` (pengesahan tanpa kunci)
@@ -47,13 +47,13 @@ calculator/
     └── Bot.java                          # Simple chat interface
 ```
 
-## Komponen Utama Dijelaskan
+## Komponen Teras Dijelaskan
 
 ### 1. Aplikasi Utama
 
 **Fail:** `McpServerApplication.java`
 
-Ini adalah titik masuk untuk perkhidmatan kalkulator kami. Ia sebuah aplikasi Spring Boot standard dengan satu tambahan istimewa:
+Ini adalah titik masuk perkhidmatan kalkulator kami. Ia adalah aplikasi Spring Boot standard dengan satu tambahan istimewa:
 
 ```java
 @SpringBootApplication
@@ -70,16 +70,16 @@ public class McpServerApplication {
 }
 ```
 
-**Apa yang dilakukan ini:**
+**Apa yang ini lakukan:**
 - Memulakan pelayan web Spring Boot pada port 8080
-- Mencipta `ToolCallbackProvider` yang menjadikan kaedah kalkulator kami tersedia sebagai alat MCP
-- Anotasi `@Bean` memberitahu Spring untuk menguruskan ini sebagai komponen yang boleh digunakan bahagian lain
+- Membuat `ToolCallbackProvider` yang menjadikan kaedah kalkulator kami tersedia sebagai alat MCP
+- Anotasi `@Bean` memberitahu Spring untuk mengurus ini sebagai komponen yang boleh digunakan bahagian lain
 
 ### 2. Perkhidmatan Kalkulator
 
 **Fail:** `CalculatorService.java`
 
-Di sinilah semua pengiraan dibuat. Setiap kaedah ditandakan dengan `@Tool` untuk menjadikannya boleh diakses melalui MCP:
+Di sinilah semua kiraan matematik berlaku. Setiap kaedah ditandakan dengan `@Tool` untuk menjadikannya tersedia melalui MCP:
 
 ```java
 @Service
@@ -105,29 +105,29 @@ public class CalculatorService {
 }
 ```
 
-**Ciri-ciri utama:**
+**Ciri utama:**
 
 1. **Anotasi `@Tool`**: Ini memberitahu MCP bahawa kaedah ini boleh dipanggil oleh klien luar
-2. **Keterangan Jelas**: Setiap alat mempunyai penerangan yang membantu model AI memahami bila untuk menggunakannya
-3. **Format Pulangan Konsisten**: Semua operasi mengembalikan rentetan yang mudah dibaca seperti "5.00 + 3.00 = 8.00"
-4. **Pengendalian Ralat**: Pembahagian dengan sifar dan punca kuasa dua negatif mengembalikan mesej ralat
+2. **Penerangan Jelas**: Setiap alat mempunyai penerangan yang membantu model AI faham bila perlu digunakan
+3. **Format Pulangan Konsisten**: Semua operasi mengembalikan rentetan yang mudah dibaca manusia seperti "5.00 + 3.00 = 8.00"
+4. **Pengendalian Ralat**: Bahagi dengan sifar dan punca kuasa dua negatif mengembalikan mesej ralat
 
-**Operasi Yang Tersedia:**
+**Operasi Tersedia:**
 - `add(a, b)` - Menambah dua nombor
-- `subtract(a, b)` - Menolak nombor kedua daripada nombor pertama
+- `subtract(a, b)` - Menolak nombor kedua dari yang pertama
 - `multiply(a, b)` - Mendarab dua nombor
-- `divide(a, b)` - Membahagikan nombor pertama dengan nombor kedua (dengan pemeriksaan sifar)
-- `power(base, exponent)` - Menaikkan pangkalan ke kuasa eksponen
-- `squareRoot(number)` - Mengira punca kuasa dua (dengan pemeriksaan negatif)
+- `divide(a, b)` - Membahagi nombor pertama dengan kedua (dengan semakan sifar)
+- `power(base, exponent)` - Menaikkan pangkalan kepada kuasa eksponen
+- `squareRoot(number)` - Mengira punca kuasa dua (dengan semakan negatif)
 - `modulus(a, b)` - Mengembalikan baki pembahagian
 - `absolute(number)` - Mengembalikan nilai mutlak
 - `help()` - Mengembalikan maklumat tentang semua operasi
 
-### 3. Klien MCP Terus
+### 3. Klien MCP Langsung
 
 **Fail:** `SDKClient.java`
 
-Klien ini bercakap terus dengan pelayan MCP tanpa menggunakan AI. Ia memanggil fungsi kalkulator tertentu secara manual:
+Klien ini berkomunikasi terus dengan pelayan MCP tanpa menggunakan AI. Ia memanggil fungsi kalkulator tertentu secara manual:
 
 ```java
 public class SDKClient {
@@ -143,7 +143,7 @@ public class SDKClient {
         var client = McpClient.sync(this.transport).build();
         client.initialize();
         
-        // Senarai alat yang tersedia
+        // Senaraikan alat yang tersedia
         ListToolsResult toolsList = client.listTools();
         System.out.println("Available Tools = " + toolsList);
         
@@ -163,21 +163,21 @@ public class SDKClient {
 }
 ```
 
-**Apa yang dilakukan ini:**
-1. **Sambung** ke pelayan kalkulator di `http://localhost:8080` menggunakan corak pembina
-2. **Senaraikan** semua alat yang tersedia (fungsi kalkulator kami)
-3. **Panggil** fungsi tertentu dengan parameter tepat
-4. **Cetak** keputusan secara langsung
+**Apa yang ini lakukan:**
+1. **Bersambung** ke pelayan kalkulator di `http://localhost:8080` menggunakan corak pembina
+2. **Menyenaraikan** semua alat yang tersedia (fungsi kalkulator kami)
+3. **Memanggil** fungsi tertentu dengan parameter tepat
+4. **Mencetak** hasil secara langsung
 
-**Nota:** Contoh ini menggunakan pergantungan Spring AI 1.1.0-SNAPSHOT, yang memperkenalkan corak pembina untuk `WebFluxSseClientTransport`. Jika anda menggunakan versi stabil lama, anda mungkin perlu menggunakan konstruktor terus.
+**Nota:** Contoh ini menggunakan pergantungan Spring AI 1.1.0-SNAPSHOT, yang memperkenalkan corak pembina untuk `WebFluxSseClientTransport`. Jika anda menggunakan versi stabil lama, anda mungkin perlu menggunakan konstruktor langsung.
 
-**Bila digunakan:** Apabila anda tahu dengan tepat pengiraan yang ingin dilakukan dan mahu memanggilnya secara programatik.
+**Bila digunakan:** Bila anda tahu dengan tepat pengiraan yang ingin dilakukan dan mahu memanggilnya secara programatik.
 
 ### 4. Klien Berkuasa AI
 
 **Fail:** `LangChain4jClient.java`
 
-Klien ini menggunakan model AI (GPT-4o-mini) yang boleh secara automatik memutuskan alat kalkulator mana untuk digunakan:
+Klien ini menggunakan model AI (GPT-4o-mini) yang boleh menentukan alat kalkulator mana yang digunakan secara automatik:
 
 ```java
 public class LangChain4jClient {
@@ -206,7 +206,7 @@ public class LangChain4jClient {
                 .transport(transport)
                 .build();
 
-        // Berikan AI akses kepada alat kalkulator kami
+        // Berikan akses kepada AI untuk alat kalkulator kami
         ToolProvider toolProvider = McpToolProvider.builder()
                 .mcpClients(List.of(mcpClient))
                 .build();
@@ -217,7 +217,7 @@ public class LangChain4jClient {
                 .toolProvider(toolProvider)
                 .build();
 
-        // Kini kita boleh meminta AI melakukan pengiraan dalam bahasa semula jadi
+        // Sekarang kita boleh minta AI melakukan pengiraan dalam bahasa semula jadi
         String response = bot.chat("Calculate the sum of 24.5 and 17.3 using the calculator service");
         System.out.println(response);
 
@@ -227,23 +227,23 @@ public class LangChain4jClient {
 }
 ```
 
-**Apa yang dilakukan ini:**
-1. **Mencipta** sambungan model AI menggunakan token GitHub anda
-2. **Sambungkan** AI ke pelayan MCP kalkulator kami
-3. **Beri** AI akses kepada semua alat kalkulator kami
-4. **Benarkan** permintaan bahasa semula jadi seperti "Kira jumlah 24.5 dan 17.3"
+**Apa yang ini lakukan:**
+1. **Membuat** sambungan model AI menggunakan pengesahan tanpa kunci (Microsoft Entra ID)
+2. **Menyambungkan** AI ke pelayan MCP kalkulator kami
+3. **Memberi** AI akses kepada semua alat kalkulator kami
+4. **Membenarkan** permintaan bahasa semula jadi seperti "Kira jumlah 24.5 dan 17.3"
 
 **AI secara automatik:**
-- Memahami anda mahu menambah nombor
+- Faham anda mahu menambah nombor
 - Memilih alat `add`
 - Memanggil `add(24.5, 17.3)`
-- Mengembalikan keputusan dalam respons semula jadi
+- Mengembalikan hasil dalam respons semula jadi
 
-## Menjalankan Contoh
+## Menjalankan Contoh-Contoh
 
 ### Langkah 1: Mulakan Pelayan Kalkulator
 
-Mula-mula, log masuk dan tetapkan titik akhir Azure AI Foundry anda (diperlukan untuk klien AI — pengesahan tanpa kunci, tiada kunci API):
+Pertama, log masuk dan tetapkan titik akhir Azure AI Foundry anda (diperlukan untuk klien AI — pengesahan tanpa kunci, tiada kunci API):
 
 **Windows:**
 ```cmd
@@ -268,9 +268,9 @@ Pelayan akan bermula di `http://localhost:8080`. Anda akan melihat:
 Started McpServerApplication in X.XXX seconds
 ```
 
-### Langkah 2: Uji dengan Klien Terus
+### Langkah 2: Uji dengan Klien Langsung
 
-Dalam terminal **BARU** dengan pelayan masih berjalan, jalankan klien MCP terus:
+Di terminal **BARU** dengan Pelayan masih berjalan, jalankan klien MCP langsung:
 ```bash
 cd 04-PracticalSamples/calculator
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.SDKClient" -Dexec.classpathScope=test
@@ -297,19 +297,19 @@ The square root of 144 is 12.
 
 ### Langkah 4: Tutup Pelayan MCP
 
-Apabila selesai menguji, anda boleh hentikan klien AI dengan menekan `Ctrl+C` di terminalnya. Pelayan MCP akan terus berjalan sehingga anda hentikannya.
-Untuk menghentikan pelayan, tekan `Ctrl+C` di terminal tempat ia berjalan.
+Apabila selesai menguji, anda boleh hentikan klien AI dengan menekan `Ctrl+C` di terminalnya. Pelayan MCP akan terus berjalan sehingga anda menghentikannya.
+Untuk menghentikan pelayan, tekan `Ctrl+C` di terminal tempat pelayan dijalankan.
 
-## Bagaimana Semua Berfungsi Bersama
+## Bagaimana Ia Berfungsi Bersama
 
-Berikut adalah aliran lengkap apabila anda bertanya kepada AI "Berapakah 5 + 3?":
+Berikut ialah aliran lengkap apabila anda bertanya kepada AI "Berapakah 5 + 3?":
 
 1. **Anda** bertanya kepada AI dalam bahasa semula jadi
-2. **AI** menganalisis permintaan anda dan sedar anda mahu penambahan
+2. **AI** menganalisis permintaan anda dan sedar anda mahu operasi tambah
 3. **AI** memanggil pelayan MCP: `add(5.0, 3.0)`
-4. **Perkhidmatan Kalkulator** melakukan: `5.0 + 3.0 = 8.0`
+4. **Perkhidmatan Kalkulator** melaksanakan: `5.0 + 3.0 = 8.0`
 5. **Perkhidmatan Kalkulator** mengembalikan: `"5.00 + 3.00 = 8.00"`
-6. **AI** menerima keputusan dan memformat respons semula jadi
+6. **AI** menerima hasil dan menyediakan respons semula jadi
 7. **Anda** mendapat: "Jumlah 5 dan 3 adalah 8"
 
 ## Langkah Seterusnya

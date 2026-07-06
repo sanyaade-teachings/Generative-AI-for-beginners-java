@@ -5,31 +5,31 @@
 - [Apa yang Akan Anda Pelajari](#apa-yang-akan-anda-pelajari)
 - [Prasyarat](#prasyarat)
 - [Memahami Struktur Proyek](#memahami-struktur-proyek)
-- [Penjelasan Komponen Inti](#penjelasan-komponen-inti)
+- [Komponen Inti Dijelaskan](#komponen-inti-dijelaskan)
   - [1. Aplikasi Utama](#1-aplikasi-utama)
   - [2. Layanan Kalkulator](#2-layanan-kalkulator)
   - [3. Klien MCP Langsung](#3-klien-mcp-langsung)
   - [4. Klien Berbasis AI](#4-klien-berbasis-ai)
 - [Menjalankan Contoh](#menjalankan-contoh)
-- [Bagaimana Semua Bekerja Bersama](#bagaimana-semua-bekerja-bersama)
+- [Cara Kerja Keseluruhan](#cara-kerja-keseluruhan)
 - [Langkah Selanjutnya](#langkah-selanjutnya)
 
 ## Apa yang Akan Anda Pelajari
 
 Tutorial ini menjelaskan cara membangun layanan kalkulator menggunakan Model Context Protocol (MCP). Anda akan memahami:
 
-- Cara membuat layanan yang dapat digunakan AI sebagai alat
+- Cara membuat layanan yang bisa digunakan AI sebagai alat
 - Cara mengatur komunikasi langsung dengan layanan MCP
-- Cara model AI dapat secara otomatis memilih alat yang akan digunakan
-- Perbedaan antara panggilan protokol langsung dan interaksi dengan bantuan AI
+- Bagaimana model AI dapat secara otomatis memilih alat yang akan digunakan
+- Perbedaan antara panggilan protokol langsung dan interaksi yang dibantu AI
 
 ## Prasyarat
 
-Sebelum memulai, pastikan Anda sudah:
-- Terpasang Java 21 atau lebih tinggi
+Sebelum memulai, pastikan Anda memiliki:
+- Java 21 atau lebih tinggi terpasang
 - Maven untuk manajemen dependensi
-- Penempatan model Azure AI Foundry (siapkan dengan `azd up` — lihat [Bab 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
-- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), masuk dengan `az login` (autentikasi tanpa kunci)
+- Deployment model Azure AI Foundry (siapkan dengan `azd up` — lihat [Bab 2](../../02-SetupDevEnvironment/getting-started-azure-openai.md))
+- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), sudah login dengan `az login` (otentikasi tanpa kunci)
 - Pemahaman dasar tentang Java dan Spring Boot
 
 ## Memahami Struktur Proyek
@@ -47,13 +47,13 @@ calculator/
     └── Bot.java                          # Simple chat interface
 ```
 
-## Penjelasan Komponen Inti
+## Komponen Inti Dijelaskan
 
 ### 1. Aplikasi Utama
 
 **File:** `McpServerApplication.java`
 
-Ini adalah titik masuk layanan kalkulator kita. Ini adalah aplikasi Spring Boot standar dengan satu tambahan khusus:
+Ini adalah titik masuk layanan kalkulator kita. Ini adalah aplikasi Spring Boot standar dengan satu tambahan spesial:
 
 ```java
 @SpringBootApplication
@@ -70,16 +70,16 @@ public class McpServerApplication {
 }
 ```
 
-**Yang dilakukan ini:**
-- Menjalankan server web Spring Boot pada port 8080
+**Fungsi ini:**
+- Memulai server web Spring Boot pada port 8080
 - Membuat `ToolCallbackProvider` yang membuat metode kalkulator kita tersedia sebagai alat MCP
-- Anotasi `@Bean` memberitahu Spring untuk mengelola ini sebagai komponen yang dapat digunakan oleh bagian lain
+- Anotasi `@Bean` memberi tahu Spring untuk mengelola ini sebagai komponen yang dapat digunakan bagian lain
 
 ### 2. Layanan Kalkulator
 
 **File:** `CalculatorService.java`
 
-Di sinilah semua perhitungan dilakukan. Setiap metode diberi tanda `@Tool` agar tersedia melalui MCP:
+Di sinilah semua perhitungan dilakukan. Setiap metode diberi tanda dengan `@Tool` agar tersedia melalui MCP:
 
 ```java
 @Service
@@ -107,16 +107,16 @@ public class CalculatorService {
 
 **Fitur utama:**
 
-1. **Anotasi `@Tool`**: Memberitahu MCP bahwa metode ini dapat dipanggil oleh klien eksternal
-2. **Deskripsi Jelas**: Setiap alat memiliki deskripsi yang membantu model AI memahami kapan harus menggunakan
-3. **Format Keluaran Konsisten**: Semua operasi mengembalikan string yang mudah dibaca seperti "5.00 + 3.00 = 8.00"
-4. **Penanganan Error**: Pembagian dengan nol dan akar kuadrat negatif mengembalikan pesan error
+1. **Anotasi `@Tool`**: Ini memberi tahu MCP bahwa metode ini dapat dipanggil oleh klien eksternal
+2. **Deskripsi Jelas**: Setiap alat memiliki deskripsi yang membantu model AI memahami kapan harus menggunakannya
+3. **Format Hasil Konsisten**: Semua operasi mengembalikan string yang mudah dibaca seperti "5.00 + 3.00 = 8.00"
+4. **Penanganan Kesalahan**: Pembagian dengan nol dan akar kuadrat negatif mengembalikan pesan kesalahan
 
-**Operasi yang Tersedia:**
-- `add(a, b)` - Menambahkan dua angka
-- `subtract(a, b)` - Mengurangi angka kedua dari angka pertama
+**Operasi Tersedia:**
+- `add(a, b)` - Menjumlahkan dua angka
+- `subtract(a, b)` - Mengurangkan angka kedua dari pertama
 - `multiply(a, b)` - Mengalikan dua angka
-- `divide(a, b)` - Membagi angka pertama dengan angka kedua (dengan pengecekan nol)
+- `divide(a, b)` - Membagi angka pertama dengan kedua (dengan pengecekan nol)
 - `power(base, exponent)` - Memangkatkan basis dengan eksponen
 - `squareRoot(number)` - Menghitung akar kuadrat (dengan pengecekan negatif)
 - `modulus(a, b)` - Mengembalikan sisa pembagian
@@ -127,7 +127,7 @@ public class CalculatorService {
 
 **File:** `SDKClient.java`
 
-Klien ini berkomunikasi langsung ke server MCP tanpa menggunakan AI. Ia memanggil fungsi kalkulator tertentu secara manual:
+Klien ini berbicara langsung ke server MCP tanpa menggunakan AI. Ini memanggil fungsi kalkulator tertentu secara manual:
 
 ```java
 public class SDKClient {
@@ -163,15 +163,15 @@ public class SDKClient {
 }
 ```
 
-**Yang dilakukan ini:**
-1. **Menghubungkan** ke server kalkulator di `http://localhost:8080` menggunakan pola builder
+**Fungsi ini:**
+1. **Terhubung** ke server kalkulator di `http://localhost:8080` menggunakan pola builder
 2. **Mendaftar** semua alat yang tersedia (fungsi kalkulator kita)
-3. **Memanggil** fungsi tertentu dengan parameter yang tepat
+3. **Memanggil** fungsi spesifik dengan parameter tepat
 4. **Mencetak** hasil secara langsung
 
-**Catatan:** Contoh ini menggunakan dependensi Spring AI 1.1.0-SNAPSHOT, yang memperkenalkan pola builder untuk `WebFluxSseClientTransport`. Jika Anda menggunakan versi stabil yang lebih lama, mungkin perlu menggunakan konstruktor langsung.
+**Catatan:** Contoh ini menggunakan dependensi Spring AI 1.1.0-SNAPSHOT, yang memperkenalkan pola builder untuk `WebFluxSseClientTransport`. Jika Anda menggunakan versi stabil lama, Anda mungkin perlu menggunakan konstruktor langsung.
 
-**Kapan menggunakan ini:** Saat Anda tahu persis perhitungan yang ingin dilakukan dan ingin memanggilnya secara programatis.
+**Kapan digunakan:** Ketika Anda tahu persis perhitungan apa yang ingin dilakukan dan ingin memanggilnya secara programatik.
 
 ### 4. Klien Berbasis AI
 
@@ -183,7 +183,7 @@ Klien ini menggunakan model AI (GPT-4o-mini) yang dapat secara otomatis memutusk
 public class LangChain4jClient {
     
     public static void main(String[] args) throws Exception {
-        // Siapkan model AI (Azure AI Foundry, autentikasi tanpa kunci melalui Microsoft Entra ID)
+        // Atur model AI (Azure AI Foundry, otentikasi tanpa kunci melalui Microsoft Entra ID)
         String endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
         String baseUrl = (endpoint.endsWith("/") ? endpoint : endpoint + "/") + "openai/v1";
         String token = new DefaultAzureCredentialBuilder().build()
@@ -198,7 +198,7 @@ public class LangChain4jClient {
         // Sambungkan ke server kalkulator MCP kami
         McpTransport transport = new HttpMcpTransport.Builder()
                 .sseUrl("http://localhost:8080/sse")
-                .logRequests(true)  // Menunjukkan apa yang sedang dilakukan AI
+                .logRequests(true)  // Menampilkan apa yang sedang dilakukan AI
                 .logResponses(true)
                 .build();
 
@@ -206,7 +206,7 @@ public class LangChain4jClient {
                 .transport(transport)
                 .build();
 
-        // Beri akses AI ke alat kalkulator kami
+        // Beri AI akses ke alat kalkulator kami
         ToolProvider toolProvider = McpToolProvider.builder()
                 .mcpClients(List.of(mcpClient))
                 .build();
@@ -217,7 +217,7 @@ public class LangChain4jClient {
                 .toolProvider(toolProvider)
                 .build();
 
-        // Sekarang kita dapat meminta AI untuk melakukan perhitungan dalam bahasa alami
+        // Sekarang kita dapat meminta AI melakukan perhitungan dalam bahasa alami
         String response = bot.chat("Calculate the sum of 24.5 and 17.3 using the calculator service");
         System.out.println(response);
 
@@ -227,11 +227,11 @@ public class LangChain4jClient {
 }
 ```
 
-**Yang dilakukan ini:**
-1. **Membuat** koneksi model AI menggunakan token GitHub Anda
+**Fungsi ini:**
+1. **Membuat** koneksi model AI menggunakan otentikasi tanpa kunci (Microsoft Entra ID)
 2. **Menghubungkan** AI ke server MCP kalkulator kita
-3. **Memberi** AI akses ke semua alat kalkulator kita
-4. **Memungkinkan** permintaan berbahasa alami seperti "Hitung jumlah 24.5 dan 17.3"
+3. **Memberikan** AI akses ke semua alat kalkulator kita
+4. **Memungkinkan** permintaan dengan bahasa alami seperti "Hitung jumlah 24.5 dan 17.3"
 
 **AI secara otomatis:**
 - Memahami Anda ingin menjumlahkan angka
@@ -243,7 +243,7 @@ public class LangChain4jClient {
 
 ### Langkah 1: Mulai Server Kalkulator
 
-Pertama, masuk dan atur endpoint Azure AI Foundry Anda (diperlukan untuk klien AI — autentikasi tanpa kunci, tanpa API key):
+Pertama, masuk dan setel endpoint Azure AI Foundry Anda (diperlukan untuk klien AI — otentikasi tanpa kunci, tanpa kunci API):
 
 **Windows:**
 ```cmd
@@ -263,12 +263,12 @@ cd 04-PracticalSamples/calculator
 mvn clean spring-boot:run
 ```
 
-Server akan mulai pada `http://localhost:8080`. Anda akan melihat:
+Server akan berjalan di `http://localhost:8080`. Anda akan melihat:
 ```
 Started McpServerApplication in X.XXX seconds
 ```
 
-### Langkah 2: Uji dengan Klien Langsung
+### Langkah 2: Tes dengan Klien Langsung
 
 Di terminal **BARU** dengan server masih berjalan, jalankan klien MCP langsung:
 ```bash
@@ -283,13 +283,13 @@ Add Result = 5.00 + 3.00 = 8.00
 Square Root Result = √16.00 = 4.00
 ```
 
-### Langkah 3: Uji dengan Klien AI
+### Langkah 3: Tes dengan Klien AI
 
 ```bash
 mvn test-compile exec:java -Dexec.mainClass="com.microsoft.mcp.sample.client.LangChain4jClient" -Dexec.classpathScope=test
 ```
 
-Anda akan melihat AI menggunakan alat secara otomatis:
+Anda akan melihat AI secara otomatis menggunakan alat:
 ```
 The sum of 24.5 and 17.3 is 41.8.
 The square root of 144 is 12.
@@ -297,14 +297,14 @@ The square root of 144 is 12.
 
 ### Langkah 4: Tutup Server MCP
 
-Setelah selesai pengujian, Anda dapat menghentikan klien AI dengan menekan `Ctrl+C` di terminalnya. Server MCP akan tetap berjalan sampai Anda menghentikannya.
+Saat selesai pengujian, Anda dapat menghentikan klien AI dengan menekan `Ctrl+C` di terminal-nya. Server MCP akan terus berjalan sampai Anda hentikan.
 Untuk menghentikan server, tekan `Ctrl+C` di terminal tempat server berjalan.
 
-## Bagaimana Semua Bekerja Bersama
+## Cara Kerja Keseluruhan
 
-Berikut alur lengkap ketika Anda menanyakan pada AI "Berapa 5 + 3?":
+Berikut alur lengkap saat Anda bertanya pada AI "Berapa 5 + 3?":
 
-1. **Anda** bertanya pada AI dalam bahasa alami
+1. **Anda** mengajukan pertanyaan ke AI dalam bahasa alami
 2. **AI** menganalisis permintaan dan menyadari Anda ingin penjumlahan
 3. **AI** memanggil server MCP: `add(5.0, 3.0)`
 4. **Layanan Kalkulator** melakukan: `5.0 + 3.0 = 8.0`
@@ -314,7 +314,7 @@ Berikut alur lengkap ketika Anda menanyakan pada AI "Berapa 5 + 3?":
 
 ## Langkah Selanjutnya
 
-Untuk contoh lebih lanjut, lihat [Bab 04: Contoh praktis](../README.md)
+Untuk lebih banyak contoh, lihat [Bab 04: Contoh Praktis](../README.md)
 
 ---
 

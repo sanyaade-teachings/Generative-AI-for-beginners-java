@@ -1,29 +1,29 @@
-# IA Generativa para Iniciantes - Edição Java
+# Inteligência Artificial Generativa para Iniciantes - Edição Java
 [![Microsoft Foundry Discord](https://dcbadge.limes.pink/api/server/nTYy5BXMWG)](https://discord.gg/nTYy5BXMWG)
 
-![IA Generativa para Iniciantes - Edição Java](../../translated_images/pt-BR/beg-genai-series.8b48be9951cc574c.webp)
+![Inteligência Artificial Generativa para Iniciantes - Edição Java](../../translated_images/pt-BR/beg-genai-series.8b48be9951cc574c.webp)
 
-**Compromisso de Tempo**: Todo o workshop pode ser concluído online sem configuração local. A configuração do ambiente leva 2 minutos, com a exploração dos exemplos exigindo 1-3 horas dependendo da profundidade da exploração.
+**Compromisso de Tempo**: O workshop completo pode ser concluído online sem configuração local. A configuração do ambiente leva 2 minutos, com a exploração dos exemplos exigindo de 1 a 3 horas, dependendo da profundidade da exploração.
 
 > **Início Rápido** 
 
-1. Faça um fork deste repositório para sua conta GitHub
-2. Clique em **Code** → aba **Codespaces** → **...** → **Novo com opções...**
-3. Use os padrões – isso selecionará o contêiner de Desenvolvimento criado para este curso
-4. Clique em **Criar codespace**
-5. Aguarde ~2 minutos para que o ambiente fique pronto
-6. Vá direto para [O primeiro exemplo](./02-SetupDevEnvironment/README.md#step-2-create-a-github-personal-access-token)
+1. Faça fork deste repositório para sua conta do GitHub
+2. Clique em **Code** → guia **Codespaces** → **...** → **New with options...**
+3. Use os padrões – isso selecionará o container de Desenvolvimento criado para este curso
+4. Clique em **Create codespace**
+5. Aguarde cerca de 2 minutos para o ambiente ficar pronto
+6. Vá direto para [Capítulo 2: Provisionar Azure AI Foundry](./02-SetupDevEnvironment/README.md#step-2-provision-azure-ai-foundry)
 
 ## Suporte Multilíngue
 
-### Suportado via GitHub Action (Automatizado & Sempre Atualizado)
+### Suportado via GitHub Action (Automatizado e Sempre Atualizado)
 
 <!-- CO-OP TRANSLATOR LANGUAGES TABLE START -->
-[Árabe](../ar/README.md) | [Bengali](../bn/README.md) | [Búlgaro](../bg/README.md) | [Birmanês (Myanmar)](../my/README.md) | [Chinês (Simplificado)](../zh-CN/README.md) | [Chinês (Tradicional, Hong Kong)](../zh-HK/README.md) | [Chinês (Tradicional, Macau)](../zh-MO/README.md) | [Chinês (Tradicional, Taiwan)](../zh-TW/README.md) | [Croata](../hr/README.md) | [Tcheco](../cs/README.md) | [Dinamarquês](../da/README.md) | [Holandês](../nl/README.md) | [Estoniano](../et/README.md) | [Finlandês](../fi/README.md) | [Francês](../fr/README.md) | [Alemão](../de/README.md) | [Grego](../el/README.md) | [Hebraico](../he/README.md) | [Hindi](../hi/README.md) | [Húngaro](../hu/README.md) | [Indonésio](../id/README.md) | [Italiano](../it/README.md) | [Japonês](../ja/README.md) | [Kannada](../kn/README.md) | [Khmer](../km/README.md) | [Coreano](../ko/README.md) | [Lituano](../lt/README.md) | [Malaio](../ms/README.md) | [Malaiala](../ml/README.md) | [Marata](../mr/README.md) | [Nepali](../ne/README.md) | [Pidgin Nigeriano](../pcm/README.md) | [Norueguês](../no/README.md) | [Persa (Farsi)](../fa/README.md) | [Polonês](../pl/README.md) | [Português (Brasil)](./README.md) | [Português (Portugal)](../pt-PT/README.md) | [Punjabi (Gurmukhi)](../pa/README.md) | [Romeno](../ro/README.md) | [Russo](../ru/README.md) | [Sérvio (Cirílico)](../sr/README.md) | [Eslovaco](../sk/README.md) | [Esloveno](../sl/README.md) | [Espanhol](../es/README.md) | [Suaíli](../sw/README.md) | [Sueco](../sv/README.md) | [Tagalo (Filipino)](../tl/README.md) | [Tâmil](../ta/README.md) | [Telugu](../te/README.md) | [Tailandês](../th/README.md) | [Turco](../tr/README.md) | [Ucraniano](../uk/README.md) | [Urdu](../ur/README.md) | [Vietnamita](../vi/README.md)
+[Árabe](../ar/README.md) | [Bengali](../bn/README.md) | [Búlgaro](../bg/README.md) | [Birmanês (Myanmar)](../my/README.md) | [Chinês (Simplificado)](../zh-CN/README.md) | [Chinês (Tradicional, Hong Kong)](../zh-HK/README.md) | [Chinês (Tradicional, Macau)](../zh-MO/README.md) | [Chinês (Tradicional, Taiwan)](../zh-TW/README.md) | [Croata](../hr/README.md) | [Tcheco](../cs/README.md) | [Dinamarquês](../da/README.md) | [Holandês](../nl/README.md) | [Estoniano](../et/README.md) | [Finlandês](../fi/README.md) | [Francês](../fr/README.md) | [Alemão](../de/README.md) | [Grego](../el/README.md) | [Hebraico](../he/README.md) | [Hindi](../hi/README.md) | [Húngaro](../hu/README.md) | [Indonésio](../id/README.md) | [Italiano](../it/README.md) | [Japonês](../ja/README.md) | [Kannada](../kn/README.md) | [Khmer](../km/README.md) | [Coreano](../ko/README.md) | [Lituano](../lt/README.md) | [Malaio](../ms/README.md) | [Malaiala](../ml/README.md) | [Marathi](../mr/README.md) | [Nepali](../ne/README.md) | [Pidgin Nigeriano](../pcm/README.md) | [Norueguês](../no/README.md) | [Persa (Farsi)](../fa/README.md) | [Polonês](../pl/README.md) | [Português (Brasil)](./README.md) | [Português (Portugal)](../pt-PT/README.md) | [Punjabi (Gurmukhi)](../pa/README.md) | [Romeno](../ro/README.md) | [Russo](../ru/README.md) | [Sérvio (Cirílico)](../sr/README.md) | [Eslovaco](../sk/README.md) | [Esloveno](../sl/README.md) | [Espanhol](../es/README.md) | [Suaíli](../sw/README.md) | [Sueco](../sv/README.md) | [Tagalo (Filipino)](../tl/README.md) | [Tâmil](../ta/README.md) | [Telugu](../te/README.md) | [Tailandês](../th/README.md) | [Turco](../tr/README.md) | [Ucraniano](../uk/README.md) | [Urdu](../ur/README.md) | [Vietnamita](../vi/README.md)
 
 > **Prefere Clonar Localmente?**
 >
-> Este repositório inclui mais de 50 traduções de idiomas, o que aumenta significativamente o tamanho do download. Para clonar sem as traduções, use checkout esparso:
+> Este repositório inclui mais de 50 traduções de idiomas, o que aumenta significativamente o tamanho do download. Para clonar sem traduções, use sparse checkout:
 >
 > **Bash / macOS / Linux:**
 > ```bash
@@ -39,43 +39,43 @@
 > git sparse-checkout set --no-cone "/*" "!translations" "!translated_images"
 > ```
 >
-> Isso fornece tudo que você precisa para completar o curso com um download muito mais rápido.
+> Isso fornece tudo o que você precisa para concluir o curso com um download muito mais rápido.
 <!-- CO-OP TRANSLATOR LANGUAGES TABLE END -->
 
 ## Estrutura do Curso & Caminho de Aprendizagem
 
 ### **Capítulo 1: Introdução à IA Generativa**
-- **Conceitos Básicos**: Entendendo Grandes Modelos de Linguagem, tokens, embeddings e capacidades de IA
-- **Ecossistema Java AI**: Visão geral dos SDKs Spring AI e OpenAI
-- **Protocolo de Contexto de Modelo**: Introdução ao MCP e seu papel na comunicação de agentes de IA
-- **Aplicações Práticas**: Cenários do mundo real, incluindo chatbots e geração de conteúdo
-- **[→ Começar Capítulo 1](./01-IntroToGenAI/README.md)**
+- **Conceitos Básicos**: Compreendendo Grandes Modelos de Linguagem, tokens, embeddings e capacidades de IA
+- **Ecossistema de IA Java**: Visão geral dos SDKs Spring AI e OpenAI
+- **Protocolo de Contexto do Modelo**: Introdução ao MCP e seu papel na comunicação entre agentes de IA
+- **Aplicações Práticas**: Cenários do mundo real incluindo chatbots e geração de conteúdo
+- **[→ Iniciar Capítulo 1](./01-IntroToGenAI/README.md)**
 
 ### **Capítulo 2: Configuração do Ambiente de Desenvolvimento**
-- **Azure AI Foundry**: Provisionar implantações de modelos como código com Bicep e o Azure Developer CLI (azd)
+- **Azure AI Foundry**: Provisionar implantações de modelos como código com Bicep e CLI do Azure Developer (azd)
 - **Spring Boot + Spring AI**: Melhores práticas para desenvolvimento de aplicações empresariais de IA
-- **Autenticação sem Chave**: Conecte-se de forma segura com Microsoft Entra ID — sem chaves de API para gerenciar
-- **Ferramentas de Desenvolvimento**: Contêineres Docker, VS Code, e configuração do GitHub Codespaces
-- **[→ Começar Capítulo 2](./02-SetupDevEnvironment/README.md)**
+- **Autenticação sem chave**: Conecte-se com segurança usando Microsoft Entra ID — sem necessidade de gerenciar chaves API
+- **Ferramentas de Desenvolvimento**: Containers Docker, VS Code, e configuração do GitHub Codespaces
+- **[→ Iniciar Capítulo 2](./02-SetupDevEnvironment/README.md)**
 
-### **Capítulo 3: Técnicas Centrais de IA Generativa**
-- **Engenharia de Prompt**: Técnicas para respostas ótimas do modelo de IA
-- **Embeddings & Operações Vetoriais**: Implemente pesquisa semântica e correspondência de similaridade
-- **Geração com Recuperação Aprimorada (RAG)**: Combine IA com suas próprias fontes de dados
-- **Chamada de Função**: Expanda as capacidades da IA com ferramentas e plugins personalizados
-- **[→ Começar Capítulo 3](./03-CoreGenerativeAITechniques/README.md)**
+### **Capítulo 3: Técnicas Fundamentais de IA Generativa**
+- **Engenharia de Prompt**: Técnicas para respostas ótimas de modelos de IA
+- **Embeddings & Operações Vetoriais**: Implementar busca semântica e correspondência de similaridade
+- **Geração Aumentada por Recuperação (RAG)**: Combine IA com suas próprias fontes de dados
+- **Chamada de Funções**: Expanda capacidades de IA com ferramentas e plugins personalizados
+- **[→ Iniciar Capítulo 3](./03-CoreGenerativeAITechniques/README.md)**
 
 ### **Capítulo 4: Aplicações Práticas & Projetos**
 - **Gerador de Histórias de Pets** (`petstory/`): Geração criativa de conteúdo com Azure AI Foundry
-- **Demo Local Foundry** (`foundrylocal/`): Integração local de modelo de IA com o OpenAI Java SDK
-- **Serviço Calculadora MCP** (`calculator/`): Implementação básica do Protocolo de Contexto de Modelo com Spring AI
-- **[→ Começar Capítulo 4](./04-PracticalSamples/README.md)**
+- **Demonstração Local Foundry** (`foundrylocal/`): Integração local de modelo IA com o OpenAI Java SDK
+- **Serviço Calculadora MCP** (`calculator/`): Implementação básica do Protocolo de Contexto do Modelo com Spring AI
+- **[→ Iniciar Capítulo 4](./04-PracticalSamples/README.md)**
 
-### **Capítulo 5: Desenvolvimento Responsável de IA**
-- **Segurança de Conteúdo Azure AI Foundry**: Teste filtros e mecanismos de segurança embutidos (bloqueios rígidos e recusas suaves)
-- **Demo de IA Responsável**: Exemplo prático mostrando como sistemas modernos de segurança de IA funcionam na prática
+### **Capítulo 5: Desenvolvimento de IA Responsável**
+- **Segurança de Conteúdo Azure AI Foundry**: Teste filtros integrados de conteúdo e mecanismos de segurança (bloqueios rígidos e recusas suaves)
+- **Demonstração de IA Responsável**: Exemplo prático mostrando como sistemas modernos de segurança de IA funcionam
 - **Melhores Práticas**: Diretrizes essenciais para desenvolvimento e implantação ética de IA
-- **[→ Começar Capítulo 5](./05-ResponsibleGenAI/README.md)**
+- **[→ Iniciar Capítulo 5](./05-ResponsibleGenAI/README.md)**
 
 ## Recursos Adicionais
 
@@ -102,11 +102,12 @@
 
 ---
  
-### Aprendizado Central
+### Aprendizado Fundamental
 [![ML para Iniciantes](https://img.shields.io/badge/ML%20for%20Beginners-22C55E?style=for-the-badge&labelColor=E5E7EB&color=22C55E)](https://aka.ms/ml-beginners?WT.mc_id=academic-105485-koreyst)
 [![Ciência de Dados para Iniciantes](https://img.shields.io/badge/Data%20Science%20for%20Beginners-84CC16?style=for-the-badge&labelColor=E5E7EB&color=84CC16)](https://aka.ms/datascience-beginners?WT.mc_id=academic-105485-koreyst)
 [![IA para Iniciantes](https://img.shields.io/badge/AI%20for%20Beginners-A3E635?style=for-the-badge&labelColor=E5E7EB&color=A3E635)](https://aka.ms/ai-beginners?WT.mc_id=academic-105485-koreyst)
 [![Cibersegurança para Iniciantes](https://img.shields.io/badge/Cybersecurity%20for%20Beginners-F97316?style=for-the-badge&labelColor=E5E7EB&color=F97316)](https://github.com/microsoft/Security-101?WT.mc_id=academic-96948-sayoung)
+
 [![Desenvolvimento Web para Iniciantes](https://img.shields.io/badge/Web%20Dev%20for%20Beginners-EC4899?style=for-the-badge&labelColor=E5E7EB&color=EC4899)](https://aka.ms/webdev-beginners?WT.mc_id=academic-105485-koreyst)
 [![IoT para Iniciantes](https://img.shields.io/badge/IoT%20for%20Beginners-14B8A6?style=for-the-badge&labelColor=E5E7EB&color=14B8A6)](https://aka.ms/iot-beginners?WT.mc_id=academic-105485-koreyst)
 [![Desenvolvimento XR para Iniciantes](https://img.shields.io/badge/XR%20Development%20for%20Beginners-38BDF8?style=for-the-badge&labelColor=E5E7EB&color=38BDF8)](https://github.com/microsoft/xr-development-for-beginners?WT.mc_id=academic-105485-koreyst)
@@ -114,18 +115,18 @@
 ---
  
 ### Série Copilot
-[![Copilot para Programação em Par com IA](https://img.shields.io/badge/Copilot%20for%20AI%20Paired%20Programming-FACC15?style=for-the-badge&labelColor=E5E7EB&color=FACC15)](https://aka.ms/GitHubCopilotAI?WT.mc_id=academic-105485-koreyst)
+[![Copilot para Programação Emparelhada com IA](https://img.shields.io/badge/Copilot%20for%20AI%20Paired%20Programming-FACC15?style=for-the-badge&labelColor=E5E7EB&color=FACC15)](https://aka.ms/GitHubCopilotAI?WT.mc_id=academic-105485-koreyst)
 [![Copilot para C#/.NET](https://img.shields.io/badge/Copilot%20for%20C%23/.NET-FBBF24?style=for-the-badge&labelColor=E5E7EB&color=FBBF24)](https://github.com/microsoft/mastering-github-copilot-for-dotnet-csharp-developers?WT.mc_id=academic-105485-koreyst)
 [![Aventura Copilot](https://img.shields.io/badge/Copilot%20Adventure-FDE68A?style=for-the-badge&labelColor=E5E7EB&color=FDE68A)](https://github.com/microsoft/CopilotAdventures?WT.mc_id=academic-105485-koreyst)
 <!-- CO-OP TRANSLATOR OTHER COURSES END -->
 
 ## Obter Ajuda
 
-Se você ficar preso ou tiver alguma dúvida sobre como criar aplicativos de IA. Junte-se a outros aprendizes e desenvolvedores experientes nas discussões sobre MCP. É uma comunidade de apoio onde perguntas são bem-vindas e o conhecimento é compartilhado livremente.
+Se você ficar preso ou tiver alguma dúvida sobre como criar aplicativos de IA, junte-se a outros aprendizes e desenvolvedores experientes nas discussões sobre MCP. É uma comunidade acolhedora onde perguntas são bem-vindas e o conhecimento é compartilhado livremente.
 
 [![Microsoft Foundry Discord](https://dcbadge.limes.pink/api/server/nTYy5BXMWG)](https://discord.gg/nTYy5BXMWG)
 
-Se você tiver feedback sobre o produto ou erros durante a construção, visite:
+Se você tiver feedback sobre o produto ou encontrar erros durante o desenvolvimento, visite:
 
 [![Fórum de Desenvolvedores Microsoft Foundry](https://img.shields.io/badge/GitHub-Microsoft_Foundry_Developer_Forum-blue?style=for-the-badge&logo=github&color=000000&logoColor=fff)](https://aka.ms/foundry/forum)
 

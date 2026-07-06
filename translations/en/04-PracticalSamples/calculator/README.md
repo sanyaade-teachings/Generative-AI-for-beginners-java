@@ -198,7 +198,7 @@ public class LangChain4jClient {
         // Connect to our calculator MCP server
         McpTransport transport = new HttpMcpTransport.Builder()
                 .sseUrl("http://localhost:8080/sse")
-                .logRequests(true)  // Displays what the AI is doing
+                .logRequests(true)  // Shows what the AI is doing
                 .logResponses(true)
                 .build();
 
@@ -217,7 +217,7 @@ public class LangChain4jClient {
                 .toolProvider(toolProvider)
                 .build();
 
-        // Now we can ask the AI to perform calculations in natural language
+        // Now we can ask the AI to do calculations in natural language
         String response = bot.chat("Calculate the sum of 24.5 and 17.3 using the calculator service");
         System.out.println(response);
 
@@ -228,7 +228,7 @@ public class LangChain4jClient {
 ```
 
 **What this does:**
-1. **Creates** an AI model connection using your GitHub token
+1. **Creates** an AI model connection using keyless authentication (Microsoft Entra ID)
 2. **Connects** the AI to our calculator MCP server
 3. **Gives** the AI access to all our calculator tools
 4. **Allows** natural language requests like "Calculate the sum of 24.5 and 17.3"
